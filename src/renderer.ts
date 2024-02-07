@@ -786,6 +786,10 @@ namespace Main {
         document.getElementById("page-home-input-tags-container").addEventListener("click",() => {
             focus_input_tag_box("pages:home")
         })
+        hotkey_map.set_hotkey("ArrowDown", new When([], "pages:home"), UserCommand.u_bkmk_list_focus_down)
+        hotkey_map.set_hotkey("ArrowUp", new When([], "pages:home"), UserCommand.u_bkmk_list_focus_up)
+        hotkey_map.set_hotkey("Enter", new When([], "pages:home"), UserCommand.u_open_bookmark)
+        hotkey_map.set_hotkey("ctrl+Enter",new When([],"pages:home"),UserCommand.u_search_google_for_tags)
 
 
 
@@ -797,10 +801,6 @@ namespace Main {
         hotkey_map.set_hotkey("ArrowUp", new When(["tag_suggestion"]), UserCommand.tag_suggestion_focus_up)
         hotkey_map.set_hotkey("Enter", new When(["tag_suggestion"]), UserCommand.u_tag_complement)
 
-        hotkey_map.set_hotkey("ArrowDown", new When([], "pages:home"), UserCommand.u_bkmk_list_focus_down)
-        hotkey_map.set_hotkey("ArrowUp", new When([], "pages:home"), UserCommand.u_bkmk_list_focus_up)
-        hotkey_map.set_hotkey("Enter", new When([], "pages:home"), UserCommand.u_open_bookmark)
-        hotkey_map.set_hotkey("ctrl+Enter",new When([],"pages:home"),UserCommand.u_search_google_for_tags)
 
         hotkey_map.set_hotkey("ctrl+l",new When([],"anypage"),UserCommand.next_page)
         hotkey_map.set_hotkey("ctrl+h",new When([],"anypage"),UserCommand.prev_page)
