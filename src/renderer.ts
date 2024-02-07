@@ -520,9 +520,11 @@ function notice(msg: string, notice_type: NoticeType) {
 }
 
 function create_suggestion_list_item(find_word:string,word: string) {
-    let html = `<span class="suggestion-item-match-str">${find_word}</span>`
     let div = document.createElement("div")
-    word = word.replace(find_word,html)
+    let re = new RegExp(find_word,"i")
+    let match_str = word.match(re)[0]
+    let html = `<span class="suggestion-item-match-str">${match_str}</span>`
+    word = word.replace(re,html)
     div.innerHTML = word
     div.classList.add("suggestion-item")
     return div
