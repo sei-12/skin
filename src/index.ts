@@ -360,7 +360,7 @@ ipcMain.handle("fetch-suggestion", async (_, word) => {
     return await handleFetchSuggestion(word)
 })
 
-ipcMain.handle("fetch-title-from-url", async (_, url) => {
+ipcMain.handle("fetch-pageinfo",async (_,url) => {
     let res
 
     try{
@@ -368,7 +368,6 @@ ipcMain.handle("fetch-title-from-url", async (_, url) => {
     }catch{
         return null
     }
-    
 
     if (res.status !== 200) {
         return null
@@ -381,7 +380,17 @@ ipcMain.handle("fetch-title-from-url", async (_, url) => {
     if (title === null) {
         return null
     }
-    return title.innerText
+
+    let description = root.querySelector('meta[name="description"]').attrs.content
+
+    console.log(description)
+    console.log(typeof description)
+
+    return {
+        title:title.innerText,
+        description
+    }
+
 })
 
 

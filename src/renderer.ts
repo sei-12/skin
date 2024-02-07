@@ -658,21 +658,32 @@ async function add_bookmark() {
     clear_add_page_form()
 }
 
-async function complement_title_from_url() {
+async function complement_info_from_url() {
     let input_url = <HTMLInputElement>document.getElementById("page-add-input-url")
     let input_title = <HTMLInputElement>document.getElementById("page-add-input-title")
+    let input_description = <HTMLInputElement>document.getElementById("page-add-input-description")
 
-    if (input_url === null || input_title === null) {
+    if (input_url === null || input_title === null || input_description === null ) {
         console.error("bug")
         return
     }
 
     let url = input_url.value
-    let title = await window.app.fetch_title_from_url(url)
+    let pageinfo = await window.app.fetch_pageinfo(url)
 
-    if (title !== null && input_title.value === "") {
-        input_title.value = title
+    if(pageinfo === null){
+        return
     }
+
+    if (pageinfo.title !== null && input_title.value === "") {
+        input_title.value = pageinfo.title
+    }
+
+    console.log(pageinfo.description)
+    if( pageinfo.description !== null && input_description.value === ""){
+        input_description.value = pageinfo.description
+    }
+    
 }
 
 // 「巡回」という英語がわからん
@@ -770,7 +781,7 @@ namespace Main {
         }
 
         document.getElementById("page-add-done-btn")?.addEventListener("click", add_bookmark)
-        document.getElementById("page-add-input-url")?.addEventListener("input", complement_title_from_url)
+        document.getElementById("page-add-input-url")?.addEventListener("input", complement_info_from_url)
 
 
         page_add_input_tags_elm.addEventListener("input", (e) => {

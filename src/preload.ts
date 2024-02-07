@@ -9,8 +9,8 @@ contextBridge.exposeInMainWorld(
             return ipcRenderer.invoke("add-bkmk",url,title,tags,description)
         },
         
-        fetch_title_from_url: (url:string) => {
-            return ipcRenderer.invoke("fetch-title-from-url",url)
+        fetch_pageinfo: (url:string) => {
+            return ipcRenderer.invoke("fetch-pageinfo",url)
         },
 
         fetch_suggestion: (word:string) => {

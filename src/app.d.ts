@@ -9,7 +9,10 @@ export interface IMainProcess {
         err: boolean,
         message: string
     }>;
-    fetch_title_from_url: (url:string) => Promise<string|null>;
+    fetch_pageinfo: (url:string) => Promise<{
+        title:string|null,
+        description:string|null 
+    }|null>;
     tag_exists_db: (tag_name:string) => Promise<boolean>;
     search_bookmarks: (tags:string[]) => Promise<{
         title:string,
