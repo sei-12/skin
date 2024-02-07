@@ -663,6 +663,12 @@ function move_page(current:PAGE_ELM_IDS,to:"prev"|"next"){
 async function insert_tag_not_complement(input_elm: HTMLInputElement) {
     // スペースとコンマを削除
     let tag_name = input_elm.value.replace(" ", "").replace(",", "")
+
+    if (tag_name === ""){
+        input_elm.value = ""
+        return
+    }
+
     // tag_suggestion_windowが更新されるかどうかが問題
     let exists_db = await window.app.tag_exists_db(tag_name)
     let tag_elm = create_new_tag_element(tag_name, exists_db)
@@ -735,7 +741,7 @@ namespace Main {
                 remove_tag_elm_from_inputed(page_add_input_tags_elm.id)
             }
         })
-        page_add_input_tags_elm.addEventListener("keydown", (e) => {
+        page_add_input_tags_elm.addEventListener("keyup", (e) => {
             if (e.key == " ") {
                 insert_tag_not_complement(page_add_input_tags_elm)
             }
@@ -754,7 +760,7 @@ namespace Main {
                 remove_tag_elm_from_inputed(page_home_input_tags_elm.id)
             }
         })
-        page_home_input_tags_elm.addEventListener("keydown", (e) => {
+        page_home_input_tags_elm.addEventListener("keyup", (e) => {
             if (e.key == " ") {
                 insert_tag_not_complement(page_home_input_tags_elm)
             }
