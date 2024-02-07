@@ -1,7 +1,34 @@
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica,
-    Arial, sans-serif;
-  margin: auto;
-  max-width: 38rem;
-  padding: 2rem;
+    background-color: #292D3E;
+    color: white;
+    font-size: xx-large;
 }
+
+#tag-suggestion-window{
+    position: absolute;
+    padding: 10px;
+    background-color: black;
+}
+.suggestion-item-focus{
+    border: solid red 3px;
+    box-sizing: border-box;
+}
+
+.tag-exists-db{
+    color: green;
+}
+
+.tag-not-exists-db{
+    color: red;
+}
+
+.bkmk-list-item-focus{
+    border: solid red 3px;
+    box-sizing: border-box;
+}
+
+#pages {
+    margin-block: 5%;
+    margin-inline: 5%;
+}
+

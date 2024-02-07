@@ -1,12 +1,30 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="UTF-8" />
-    <title>Hello World!</title>
-
-  </head>
-  <body>
-    <h1>💖 Hello World!</h1>
-    <p>Welcome to your Electron application.</p>
-  </body>
+<html lang="ja">
+<head>
+    <meta charset="utf-8" />
+    <title>Page Title</title>
+</head>
+<body>
+    <div id="tag-suggestion-window">
+        <div id="inner-tag-suggestion-window0"></div>
+        <div id="inner-tag-suggestion-window1"></div>
+    </div>
+    <div id="pages">
+        <div id="pages:home">pages:home
+            <div id="page:home-inputed-tags"></div>
+            <input type="text" id="page:home-input-tags">
+            <div id="page:home-search-results"></div>
+        </div>
+        <div id="pages:add">
+            pages:add
+            <input type="text" id="page:add-input-url" placeholder="url">
+            <input type="text" id="page:add-input-title" placeholder="title">
+            <div id="page:add-inputed-tags"></div>
+            <input type="text" id="page:add-input-tags" placeholder="tags">
+            <input type="button" id="page:add-done-btn" value="add">
+        </div>
+        <div id="pages:edit">pages:edit</div>
+        <div id="pages:list">pages:list</div>
+    </div>
+</body>
 </html>
