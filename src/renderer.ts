@@ -326,7 +326,7 @@ class TagSuggestionWindow {
     async update(find_word: string) {
         this.focus_index = new CycleIndex(0)
         let datas = await window.app.fetch_suggestion(find_word)
-        this.suggestion_items = datas.data.map(d => create_suggestion_list_item(d.name))
+        this.suggestion_items = datas.data.map(d => create_suggestion_list_item(find_word,d.name))
         TagSuggestion.switch_and_update_inner(this.inners, this.suggestion_items)
         if (this.suggestion_items.length === 0) {
             return
@@ -519,9 +519,11 @@ function notice(msg: string, notice_type: NoticeType) {
     console[notice_type](msg)
 }
 
-function create_suggestion_list_item(word: string) {
+function create_suggestion_list_item(find_word:string,word: string) {
+    let html = `<span class="suggestion-item-match-str">${find_word}</span>`
     let div = document.createElement("div")
-    div.innerText = word
+    word = word.replace(find_word,html)
+    div.innerHTML = word
     div.classList.add("suggestion-item")
     return div
 }

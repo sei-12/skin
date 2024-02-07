@@ -8,6 +8,7 @@ body {
 
 :root{
     --font-color-white: #f8f8f8;
+    --font-color-usui-white: #999999;
     --tag-suggestion-window-z: 10;
     --input-box-background-color: #393D4E;
     --background-color: #292D3E;
@@ -24,9 +25,11 @@ body {
 
 .suggestion-item {
     width: 100%;
-    color: var(--font-color-white);
+    color: var(--font-color-usui-white);
 }
-
+.suggestion-item-match-str {
+    color: white;
+}
 .suggestion-item-focus{
     /* border: solid red 3px; */
     /* box-sizing: border-box; */
