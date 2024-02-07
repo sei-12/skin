@@ -80,6 +80,16 @@ function how_to_open_url(protcol: string): UrlOpenCommand | null {
     return new UrlOpenCommand(open_cmd.cmd, open_cmd.args)
 }
 
+function make_url_search_google(tags:string[]):string{
+    return `https://www.google.com/search?q=${tags.join("+")}`
+}
+
+function search_google(tags:string[]){
+    let url = make_url_search_google(tags)
+    let open_cmd = how_to_open_url(new URL(url).protocol)
+    open_cmd.open(url)
+}
+
 async function open_bookmark(bookmark_id: number):Promise<null> {
     let bookmark = await wrap_db_get(querys.get_bkmk_from_id, bookmark_id)
 
@@ -375,6 +385,10 @@ ipcMain.handle("fetch-title-from-url", async (_, url) => {
     return title.innerText
 })
 
+
+ipcMain.handle("search-google",(_,tags) => {
+    search_google(tags)
+})
 
 ipcMain.handle("tag-exists-db", async (_, tag_name) => {
     return await tag_exists(tag_name)

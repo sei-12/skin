@@ -26,6 +26,9 @@ contextBridge.exposeInMainWorld(
         },
         open_bookmark:(bookmark_id:number) => {
             return ipcRenderer.invoke("open-bookmark",bookmark_id)
+        },
+        search_google:(tags:string[]) => {
+            ipcRenderer.invoke("search-google",tags)
         }
     }
 );

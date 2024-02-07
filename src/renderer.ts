@@ -710,6 +710,16 @@ function focus_input_tag_box(cur_page: PAGE_ELM_IDS){
 
     elm.focus()
 }
+
+function search_google_for_tags(){
+    let inputed_elm = document.getElementById("page-home-inputed-tags")!
+    let tags = get_inputed_tags(inputed_elm)
+    if (tags.length === 0){
+        return
+    }
+    window.app.search_google(tags)
+}
+
 //----------------------------------------------------------------------------------------------------//
 //                                                                                                    //
 //                                                MAIN                                                //
@@ -790,6 +800,7 @@ namespace Main {
         hotkey_map.set_hotkey("ArrowDown", new When([], "pages:home"), UserCommand.u_bkmk_list_focus_down)
         hotkey_map.set_hotkey("ArrowUp", new When([], "pages:home"), UserCommand.u_bkmk_list_focus_up)
         hotkey_map.set_hotkey("Enter", new When([], "pages:home"), UserCommand.u_open_bookmark)
+        hotkey_map.set_hotkey("ctrl+Enter",new When([],"pages:home"),UserCommand.u_search_google_for_tags)
 
         hotkey_map.set_hotkey("ctrl+l",new When([],"anypage"),UserCommand.next_page)
         hotkey_map.set_hotkey("ctrl+h",new When([],"anypage"),UserCommand.prev_page)
@@ -844,6 +855,10 @@ namespace Main {
 
         export function u_focus_input_tag_box(){
             focus_input_tag_box(get_display_block_page_id())
+        }
+
+        export function u_search_google_for_tags(){
+            search_google_for_tags()
         }
     }
 

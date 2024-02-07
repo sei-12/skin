@@ -21,6 +21,7 @@ export interface IMainProcess {
         data: {
             name:string
         }[]
-    }>,
+    }>;
     open_bookmark:(bookmark_id:number) => Promise<void>;
+    search_google:(tags:string[]) => void
 }
