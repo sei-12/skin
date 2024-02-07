@@ -7,8 +7,11 @@ body {
 }
 
 :root{
+    --font-color-white: #f8f8f8;
     --tag-suggestion-window-z: 10;
-    --input-box-background-color: #393D4E
+    --input-box-background-color: #393D4E;
+    --background-color: #292D3E;
+    --kurome-background-color: #191D2E;
 }
 
 #tag-suggestion-window{
@@ -45,6 +48,43 @@ body {
     margin-inline: 5%;
 }
 
+#page-add-input-url {
+    color: var(--font-color-white);
+    padding: 7px;
+    margin-block: 5px;
+    border-radius: 5px;
+    border: none;
+    width: 88%;
+    background-color: var(--input-box-background-color);
+    outline: none;
+    background-color: var(--input-box-background-color);
+    font-size: x-large;
+}
+
+#page-add-input-title {
+    color: var(--font-color-white);
+    padding: 7px;
+    margin-block: 5px;
+    border-radius: 5px;
+    border: none;
+    width: 88%;
+    background-color: var(--input-box-background-color);
+    outline: none;
+    background-color: var(--input-box-background-color);
+    font-size: x-large;
+}
+
+#page-add-done-btn {
+    font-size: x-large;
+    background-color: rgb(50, 50, 50);
+    color: var(--font-color-white);
+    padding: 8px;
+    padding-inline: 20px;
+    border: none;
+    border-radius: 5px;
+    outline: none;
+}
+
 .input-tag {
     /* background-color: red; */
     font-size: x-large;
@@ -64,9 +104,14 @@ body {
     display: flex;
     background-color: var(--input-box-background-color);
     border-radius: 5px;
-    margin: 10px;
-    /* height: min-c; */
-    /* min-height: 40px; */
+    margin-block: 10px;
+}
+
+.pages-add-form-container{
+    padding: 8%;
+    border-radius: 30px;
+    margin: 5%;
+    background-color: var(--kurome-background-color);
 }
 
 .inputed-tags {
