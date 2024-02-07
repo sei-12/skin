@@ -796,7 +796,7 @@ namespace Main {
             }
         })
         page_add_input_tags_elm.addEventListener("keyup", (e) => {
-            if (e.key == " ") {
+            if (e.key == " " && e.isComposing === false) {
                 insert_tag_not_complement(page_add_input_tags_elm)
             }
         })
@@ -819,7 +819,7 @@ namespace Main {
             }
         })
         page_home_input_tags_elm.addEventListener("keyup", (e) => {
-            if (e.key == " ") {
+            if (e.key == " " && e.isComposing === false ) {
                 insert_tag_not_complement(page_home_input_tags_elm)
             }
         })
