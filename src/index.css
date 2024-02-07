@@ -17,12 +17,20 @@ body {
 #tag-suggestion-window{
     position: absolute;
     padding: 10px;
-    background-color: black;
+    background-color: var(--kurome-background-color);
     z-index: var(--tag-suggestion-window-z);
+    width: 30vw;
 }
+
+.suggestion-item {
+    width: 100%;
+    color: var(--font-color-white);
+}
+
 .suggestion-item-focus{
-    border: solid red 3px;
-    box-sizing: border-box;
+    /* border: solid red 3px; */
+    /* box-sizing: border-box; */
+    background-color: var(--input-box-background-color);
 }
 
 .tag {

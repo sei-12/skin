@@ -202,7 +202,7 @@ class SearchedBookmarkList {
     }
 
     private update_elm_focus_css(old: null | number, next: null | number) {
-        
+
         if (next !== null) {
             let f = this.elm.childNodes[next]
 
@@ -211,7 +211,7 @@ class SearchedBookmarkList {
             }
         }
 
-        if(next === old){
+        if (next === old) {
             return
         }
 
@@ -239,7 +239,7 @@ class SearchedBookmarkList {
             console.error("bug")
             return null
         }
-        
+
         return bkmk_data_from_bkmk_elm(c)
     }
 
@@ -326,7 +326,7 @@ class TagSuggestionWindow {
     async update(find_word: string) {
         this.focus_index = new CycleIndex(0)
         let datas = await window.app.fetch_suggestion(find_word)
-        this.suggestion_items = datas.data.map(d => build_suggestion_item(d.name))
+        this.suggestion_items = datas.data.map(d => create_suggestion_list_item(d.name))
         TagSuggestion.switch_and_update_inner(this.inners, this.suggestion_items)
         if (this.suggestion_items.length === 0) {
             return
@@ -519,9 +519,10 @@ function notice(msg: string, notice_type: NoticeType) {
     console[notice_type](msg)
 }
 
-function build_suggestion_item(word: string) {
+function create_suggestion_list_item(word: string) {
     let div = document.createElement("div")
     div.innerText = word
+    div.classList.add("suggestion-item")
     return div
 }
 
@@ -641,7 +642,7 @@ async function add_bookmark() {
 
     let tags = get_inputed_tags(inputed_tags)
 
-    if(url === "" || title === "" || tags.length === 0){
+    if (url === "" || title === "" || tags.length === 0) {
         // TODO message
         return
     }
@@ -663,7 +664,7 @@ async function complement_info_from_url() {
     let input_title = <HTMLInputElement>document.getElementById("page-add-input-title")
     let input_description = <HTMLInputElement>document.getElementById("page-add-input-description")
 
-    if (input_url === null || input_title === null || input_description === null ) {
+    if (input_url === null || input_title === null || input_description === null) {
         console.error("bug")
         return
     }
@@ -671,7 +672,7 @@ async function complement_info_from_url() {
     let url = input_url.value
     let pageinfo = await window.app.fetch_pageinfo(url)
 
-    if(pageinfo === null){
+    if (pageinfo === null) {
         return
     }
 
@@ -680,23 +681,23 @@ async function complement_info_from_url() {
     }
 
     console.log(pageinfo.description)
-    if( pageinfo.description !== null && input_description.value === ""){
+    if (pageinfo.description !== null && input_description.value === "") {
         input_description.value = pageinfo.description
     }
-    
+
 }
 
 // 「巡回」という英語がわからん
-function move_page(current:PAGE_ELM_IDS,to:"prev"|"next"){
-    const PAGES:PAGE_ELM_IDS[] = ["pages:add","pages:list","pages:home","pages:edit"] 
-    let  current_index = PAGES.findIndex(p => p === current)
-    if(current_index === -1) { 
+function move_page(current: PAGE_ELM_IDS, to: "prev" | "next") {
+    const PAGES: PAGE_ELM_IDS[] = ["pages:add", "pages:list", "pages:home", "pages:edit"]
+    let current_index = PAGES.findIndex(p => p === current)
+    if (current_index === -1) {
         console.error("bug")
         current_index = 0
     }
     let ci = new CycleIndex(current_index)
     let next_page_index = to === "next" ? ci.plus(PAGES.length) : ci.minus(PAGES.length)
-    switch_page(current,PAGES[next_page_index.val])
+    switch_page(current, PAGES[next_page_index.val])
 }
 
 // input_elm.valueを補完しないままinputed_tagsに入れる
@@ -704,7 +705,7 @@ async function insert_tag_not_complement(input_elm: HTMLInputElement) {
     // スペースとコンマを削除
     let tag_name = input_elm.value.replace(" ", "").replace(",", "")
 
-    if (tag_name === ""){
+    if (tag_name === "") {
         input_elm.value = ""
         return
     }
@@ -733,29 +734,29 @@ async function update_searched_bookmark_list(bkmk_list: SearchedBookmarkList) {
     bkmk_list.insert(data)
 }
 
-function focus_input_tag_box(cur_page: PAGE_ELM_IDS){
+function focus_input_tag_box(cur_page: PAGE_ELM_IDS) {
     let elm: HTMLInputElement
 
-    if(cur_page === "pages:add"){
+    if (cur_page === "pages:add") {
         elm = <HTMLInputElement>document.getElementById("page-add-input-tags")
     }
-    else if(cur_page === "pages:home"){
+    else if (cur_page === "pages:home") {
         elm = <HTMLInputElement>document.getElementById("page-home-input-tags")
-    }else{
+    } else {
         return
     }
 
-    if (elm === null){
+    if (elm === null) {
         console.error("bug")
     }
 
     elm.focus()
 }
 
-function search_google_for_tags(){
+function search_google_for_tags() {
     let inputed_elm = document.getElementById("page-home-inputed-tags")!
     let tags = get_inputed_tags(inputed_elm)
-    if (tags.length === 0){
+    if (tags.length === 0) {
         return
     }
     window.app.search_google(tags)
@@ -798,7 +799,7 @@ namespace Main {
             }
         })
 
-        document.getElementById("page-add-input-tags-container").addEventListener("click",() => {
+        document.getElementById("page-add-input-tags-container").addEventListener("click", () => {
             focus_input_tag_box("pages:add")
         })
 
@@ -824,13 +825,13 @@ namespace Main {
             update_searched_bookmark_list(searched_bookmark_list)
         })
         mo.observe(page_home_inputed_elm, { childList: true })
-        document.getElementById("page-home-input-tags-container").addEventListener("click",() => {
+        document.getElementById("page-home-input-tags-container").addEventListener("click", () => {
             focus_input_tag_box("pages:home")
         })
         hotkey_map.set_hotkey("ArrowDown", new When([], "pages:home"), UserCommand.u_bkmk_list_focus_down)
         hotkey_map.set_hotkey("ArrowUp", new When([], "pages:home"), UserCommand.u_bkmk_list_focus_up)
         hotkey_map.set_hotkey("Enter", new When([], "pages:home"), UserCommand.u_open_bookmark)
-        hotkey_map.set_hotkey("ctrl+Enter",new When([],"pages:home"),UserCommand.u_search_google_for_tags)
+        hotkey_map.set_hotkey("ctrl+Enter", new When([], "pages:home"), UserCommand.u_search_google_for_tags)
 
 
 
@@ -843,10 +844,10 @@ namespace Main {
         hotkey_map.set_hotkey("Enter", new When(["tag_suggestion"]), UserCommand.u_tag_complement)
 
 
-        hotkey_map.set_hotkey("ctrl+l",new When([],"anypage"),UserCommand.next_page)
-        hotkey_map.set_hotkey("ctrl+h",new When([],"anypage"),UserCommand.prev_page)
+        hotkey_map.set_hotkey("ctrl+l", new When([], "anypage"), UserCommand.next_page)
+        hotkey_map.set_hotkey("ctrl+h", new When([], "anypage"), UserCommand.prev_page)
 
-        hotkey_map.set_hotkey("ctrl+/",new When([],"anypage"),UserCommand.u_focus_input_tag_box)
+        hotkey_map.set_hotkey("ctrl+/", new When([], "anypage"), UserCommand.u_focus_input_tag_box)
     }
 
     //
@@ -886,19 +887,19 @@ namespace Main {
             window.app.open_bookmark(bkmk_data.id)
         }
 
-        export function prev_page(){
-            move_page(get_display_block_page_id(),"prev")
+        export function prev_page() {
+            move_page(get_display_block_page_id(), "prev")
         }
 
-        export function next_page(){
-            move_page(get_display_block_page_id(),"next")
+        export function next_page() {
+            move_page(get_display_block_page_id(), "next")
         }
 
-        export function u_focus_input_tag_box(){
+        export function u_focus_input_tag_box() {
             focus_input_tag_box(get_display_block_page_id())
         }
 
-        export function u_search_google_for_tags(){
+        export function u_search_google_for_tags() {
             search_google_for_tags()
         }
     }
@@ -941,7 +942,7 @@ namespace Main {
         let cur_page: PAGE_ELM_IDS | null = null
 
         parent_elm.childNodes.forEach(node => {
-            if (!(node instanceof HTMLElement )) {
+            if (!(node instanceof HTMLElement)) {
                 return
             }
 
