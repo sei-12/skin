@@ -216,7 +216,8 @@ async function handleAddBookmark(url: string, title: string, tags: string[],desc
     //
     // bookmarksに追加
     //
-    let result_add_bkmk = await wrap_db_run(querys.add_bkmk, [title, url,description])
+    let tag_count = tags.length
+    let result_add_bkmk = await wrap_db_run(querys.add_bkmk, [title, url,description,tag_count])
 
 
     //
@@ -272,12 +273,13 @@ const querys = {
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             title text,
             url text,
-            description text
+            description text,
+            tag_count int not null
         );
 
         create table if not exists tags (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name text
+            name text unique
         );
 
         create table if not exists tag_map (
@@ -298,13 +300,15 @@ const querys = {
         JOIN tags t ON tm.tag_id = t.id
         WHERE t.name IN (${s})
         GROUP BY b.id
-        HAVING COUNT(DISTINCT t.name) = ${length};
+        HAVING COUNT(DISTINCT t.name) = ${length}
+        ORDER BY b.tag_count DESC
+        ;
         `
     },
     get_tag_id: "select id from tags where name = ?",
     add_tag: "insert into tags values (null,?)",
     get_bkmk_id: "select id from bookmarks where title = ? and url = ?;",
-    add_bkmk: "insert into bookmarks values (null,?,?,?);",
+    add_bkmk: "insert into bookmarks values (null,?,?,?,?);",
     add_tag_map: "insert into tag_map values (null,?,?)",
     get_bkmk_from_id: "select * from bookmarks where id = ?",
 
