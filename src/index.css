@@ -43,6 +43,18 @@ body {
     margin-inline: 5%;
 }
 
+#page-add-input-description {
+    color: var(--font-color-white);
+    padding: 7px;
+    margin-block: 5px;
+    border-radius: 5px;
+    border: none;
+    width: 95%;
+    outline: none;
+    background-color: var(--input-box-background-color);
+    font-size: large;
+}
+
 #page-add-input-url {
     color: var(--font-color-white);
     padding: 7px;
@@ -50,7 +62,6 @@ body {
     border-radius: 5px;
     border: none;
     width: 88%;
-    background-color: var(--input-box-background-color);
     outline: none;
     background-color: var(--input-box-background-color);
     font-size: x-large;
@@ -103,7 +114,9 @@ body {
 }
 
 .pages-add-form-container{
-    padding: 8%;
+    /* padding: 8%; */
+    padding-block: 4%;
+    padding-inline: 7%;
     border-radius: 30px;
     margin: 5%;
     background-color: var(--kurome-background-color);
