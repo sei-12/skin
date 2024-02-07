@@ -352,7 +352,14 @@ ipcMain.handle("fetch-suggestion", async (_, word) => {
 })
 
 ipcMain.handle("fetch-title-from-url", async (_, url) => {
-    let res = await fetch(url)
+    let res
+
+    try{
+        res = await fetch(url)
+    }catch{
+        return null
+    }
+    
 
     if (res.status !== 200) {
         return null
