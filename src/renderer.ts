@@ -747,6 +747,10 @@ namespace Main {
             }
         })
 
+        document.getElementById("page-add-input-tags-container").addEventListener("click",() => {
+            focus_input_tag_box("pages:add")
+        })
+
         //----------------------------------------//
         //               HOME PAGE                //
         //----------------------------------------//
@@ -769,7 +773,9 @@ namespace Main {
             update_searched_bookmark_list(searched_bookmark_list)
         })
         mo.observe(page_home_inputed_elm, { childList: true })
-
+        document.getElementById("page-home-input-tags-container").addEventListener("click",() => {
+            focus_input_tag_box("pages:home")
+        })
 
 
 
