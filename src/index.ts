@@ -243,8 +243,9 @@ async function handleAddBookmark(url: string, title: string, tags: string[],desc
 }
 
 async function handleFetchSuggestion(word: string) {
-    word = word + "%"
-    let result = await wrap_db_all(querys.fetch_suggestion, word)
+    let find_word = word + "%"
+    let fuzzy = "%" + word + "%"
+    let result = await wrap_db_all(querys.fetch_suggestion, [find_word,fuzzy,find_word])
     if (result.err) {
         return {
             err: true,
@@ -306,7 +307,11 @@ const querys = {
     add_bkmk: "insert into bookmarks values (null,?,?,?);",
     add_tag_map: "insert into tag_map values (null,?,?)",
     get_bkmk_from_id: "select * from bookmarks where id = ?",
-    fetch_suggestion: "select name from tags where name like ?;",
+
+    fetch_suggestion: `
+        select name from tags where name like ? 
+        union all
+        select name from tags where name like ? and name not like ?;`,
 
 
     // TODO RENAME
