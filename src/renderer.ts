@@ -121,7 +121,8 @@ class CycleIndex {
 type SearchedBookmarkItem = {
     title: string,
     id: number,
-    url: string
+    url: string,
+    description: string
 }
 
 function create_new_bookmark_elm(data: SearchedBookmarkItem) {
@@ -131,7 +132,8 @@ function create_new_bookmark_elm(data: SearchedBookmarkItem) {
     inner.style.display = "none"
 
     let div = document.createElement("div")
-    div.innerText = data.title
+    // TODO
+    div.innerText = data.title + "\n" + data.description
     div.appendChild(inner)
     return div
 }
@@ -592,8 +594,9 @@ function clear_add_page_form() {
     let input_url = <HTMLInputElement>document.getElementById("page-add-input-url")
     let input_title = <HTMLInputElement>document.getElementById("page-add-input-title")
     let inputed_tags = document.getElementById("page-add-inputed-tags")
+    let input_description = <HTMLInputElement>document.getElementById("page-add-input-description")
 
-    if (input_url === null || input_title === null || inputed_tags === null) {
+    if (input_url === null || input_title === null || inputed_tags === null || input_description === null) {
         console.error("bug")
         return
     }
@@ -601,14 +604,16 @@ function clear_add_page_form() {
     input_title.value = ""
     input_url.value = ""
     inputed_tags.innerHTML = ""
+    input_description.value = ""
 }
 
 async function add_bookmark() {
     let input_url = <HTMLInputElement>document.getElementById("page-add-input-url")
     let input_title = <HTMLInputElement>document.getElementById("page-add-input-title")
+    let input_description = <HTMLInputElement>document.getElementById("page-add-input-description")
     let inputed_tags = document.getElementById("page-add-inputed-tags")
 
-    if (input_url === null || input_title === null || inputed_tags === null) {
+    if (input_url === null || input_title === null || inputed_tags === null || input_description === null) {
         console.error("bug")
         return
     }
@@ -616,9 +621,18 @@ async function add_bookmark() {
     let url = input_url.value
     let title = input_title.value
 
+    let description = input_description.value
+    console.log(description)
+
     let tags = get_inputed_tags(inputed_tags)
 
-    let result = await window.app.add_bookmark(url, title, tags)
+    if(url === "" || title === "" || tags.length === 0){
+        // TODO message
+        return
+    }
+
+    let result = await window.app.add_bookmark(url, title, tags, description)
+
 
     if (result.err) {
         notice(result.message, "error")
@@ -689,6 +703,7 @@ async function update_searched_bookmark_list(bkmk_list: SearchedBookmarkList) {
     let inputed_tags = get_inputed_tags(inputed_tags_elm)
     let data = await window.app.search_bookmarks(inputed_tags)
 
+    console.log(data)
     bkmk_list.insert(data)
 }
 

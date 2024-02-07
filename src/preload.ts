@@ -5,8 +5,8 @@ import { contextBridge, ipcRenderer, IpcRendererEvent } from 'electron'
 
 contextBridge.exposeInMainWorld(
     "app", {
-        add_bookmark: (url:string,title:string,tags:string[]) => {
-            return ipcRenderer.invoke("add-bkmk",url,title,tags)
+        add_bookmark: (url:string,title:string,tags:string[],description: string) => {
+            return ipcRenderer.invoke("add-bkmk",url,title,tags,description)
         },
         
         fetch_title_from_url: (url:string) => {

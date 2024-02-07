@@ -5,7 +5,7 @@ declare global {
 }
 
 export interface IMainProcess {
-    add_bookmark: (url:string,title:string,tags:string[]) => Promise<{
+    add_bookmark: (url:string,title:string,tags:string[],description: string) => Promise<{
         err: boolean,
         message: string
     }>;
@@ -14,7 +14,8 @@ export interface IMainProcess {
     search_bookmarks: (tags:string[]) => Promise<{
         title:string,
         id: number,
-        url:string
+        url:string,
+        description: string
     }[]>;
     fetch_suggestion:(word:string) => Promise<{
         err: boolean,

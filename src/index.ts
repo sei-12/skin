@@ -174,7 +174,7 @@ async function search_bookmarks(tags: string[]) {
     return res.rows
 }
 
-async function handleAddBookmark(url: string, title: string, tags: string[]): Promise<{ err: boolean, message: string }> {
+async function handleAddBookmark(url: string, title: string, tags: string[],description: string): Promise<{ err: boolean, message: string }> {
     //
     // SQL文で実行すれば性能がよくなるかもしれないのにJSで実装している箇所
     //  繰り返し処理
@@ -217,7 +217,8 @@ async function handleAddBookmark(url: string, title: string, tags: string[]): Pr
     //
     // bookmarksに追加
     //
-    let result_add_bkmk = await wrap_db_run(querys.add_bkmk, [title, url])
+    console.log("desc(220)",description)
+    let result_add_bkmk = await wrap_db_run(querys.add_bkmk, [title, url,description])
 
 
     //
@@ -273,7 +274,8 @@ const querys = {
         create table if not exists bookmarks (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             title text,
-            url text
+            url text,
+            description text
         );
 
         create table if not exists tags (
@@ -305,7 +307,7 @@ const querys = {
     get_tag_id: "select id from tags where name = ?",
     add_tag: "insert into tags values (null,?)",
     get_bkmk_id: "select id from bookmarks where title = ? and url = ?;",
-    add_bkmk: "insert into bookmarks values (null,?,?);",
+    add_bkmk: "insert into bookmarks values (null,?,?,?);",
     add_tag_map: "insert into tag_map values (null,?,?)",
     get_bkmk_from_id: "select * from bookmarks where id = ?",
     fetch_suggestion: "select name from tags where name like ?;",
@@ -347,12 +349,9 @@ const db = new Database(DB_FILE_PATH, (err) => {
     });
 })
 
-ipcMain.handle("add-bkmk", async (_, url, title, tags) => {
-    console.info("call add-bkmk")
-    console.info("url", url)
-    console.info("title", title)
-    console.info("tags", tags)
-    let res = await handleAddBookmark(url, title, tags)
+ipcMain.handle("add-bkmk", async (_, url, title, tags,description) => {
+    console.log("desc",description)
+    let res = await handleAddBookmark(url, title, tags,description)
     console.info("res", res)
     return res
 })
