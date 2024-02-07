@@ -170,7 +170,6 @@ async function search_bookmarks(tags: string[]) {
         console.error(res.err.message)
         return []
     }
-    console.log(res.rows)
     return res.rows
 }
 
@@ -217,7 +216,6 @@ async function handleAddBookmark(url: string, title: string, tags: string[],desc
     //
     // bookmarksに追加
     //
-    console.log("desc(220)",description)
     let result_add_bkmk = await wrap_db_run(querys.add_bkmk, [title, url,description])
 
 
@@ -227,14 +225,12 @@ async function handleAddBookmark(url: string, title: string, tags: string[],desc
     let bkmk_id = await wrap_db_get(querys.get_bkmk_id, [title, url])
     let tag_ids = []
     for (let i = 0; i < tags.length; i++) {
-        console.log(tags[i])
         let res = await wrap_db_get(querys.get_tag_id, tags[i])
         if (res.err) { return { err: true, message: res.err.message } }
         tag_ids.push(res.row)
     }
     for (let i = 0; i < tags.length; i++) {
         let params = [bkmk_id.row.id, tag_ids[i].id]
-        console.log(params)
         let res = await wrap_db_run(querys.add_tag_map, params)
         if (res) { return { err: true, message: res.message } }
     }
@@ -350,9 +346,7 @@ const db = new Database(DB_FILE_PATH, (err) => {
 })
 
 ipcMain.handle("add-bkmk", async (_, url, title, tags,description) => {
-    console.log("desc",description)
     let res = await handleAddBookmark(url, title, tags,description)
-    console.info("res", res)
     return res
 })
 
@@ -376,18 +370,14 @@ ipcMain.handle("fetch-pageinfo",async (_,url) => {
     let text = await res.text()
 
     let root = parse(text)
-    let title = root.querySelector("title")
-    if (title === null) {
-        return null
-    }
+    let title_elm = root.querySelector("title")
+    let title = title_elm === null ? null : title_elm.innerText
 
-    let description = root.querySelector('meta[name="description"]').attrs.content
-
-    console.log(description)
-    console.log(typeof description)
+    let description_elm = root.querySelector('meta[name="description"]')
+    let description = description_elm === null ? null : description_elm.attrs.content
 
     return {
-        title:title.innerText,
+        title,
         description
     }
 
