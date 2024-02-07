@@ -126,15 +126,25 @@ type SearchedBookmarkItem = {
 }
 
 function create_new_bookmark_elm(data: SearchedBookmarkItem) {
-    let inner = document.createElement("div")
-    inner.innerText = JSON.stringify(data)
-    inner.classList.add("data")
-    inner.style.display = "none"
+    let data_elm = document.createElement("div")
+    data_elm.innerText = JSON.stringify(data)
+    data_elm.classList.add("data")
+    data_elm.style.display = "none"
+
+    let title_elm = document.createElement("div")
+    title_elm.innerText = data.title
+    title_elm.classList.add("bookmark-list-item-title")
+
+    let description_elm = document.createElement("div")
+    description_elm.innerText = data.description
+    description_elm.classList.add("bookmark-list-item-desc")
 
     let div = document.createElement("div")
+    div.classList.add("bookmark-list-item-container")
+    div.appendChild(title_elm)
+    div.appendChild(description_elm)
     // TODO
-    div.innerText = data.title + "\n" + data.description
-    div.appendChild(inner)
+    div.appendChild(data_elm)
     return div
 }
 
@@ -192,19 +202,24 @@ class SearchedBookmarkList {
     }
 
     private update_elm_focus_css(old: null | number, next: null | number) {
+        
         if (next !== null) {
             let f = this.elm.childNodes[next]
 
             if (f instanceof HTMLElement) {
-                f.classList.add("bkmk-list-item-focus")
+                f.classList.add("bookmark-list-item-container-focus")
             }
+        }
+
+        if(next === old){
+            return
         }
 
         if (old !== null) {
             let unf = this.elm.childNodes[old]
 
             if (unf instanceof HTMLElement) {
-                unf.classList.remove("bkmk-list-item-focus")
+                unf.classList.remove("bookmark-list-item-container-focus")
             }
         }
 

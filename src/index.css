@@ -38,11 +38,6 @@ body {
     color: red;
 }
 
-.bkmk-list-item-focus{
-    border: solid red 3px;
-    box-sizing: border-box;
-}
-
 #pages {
     margin-block: 5%;
     margin-inline: 5%;
@@ -119,3 +114,29 @@ body {
     display: flex;
 }
 
+
+.bookmark-list-item-title {
+    margin: 3px;
+    inline-size: 100%;
+    overflow-wrap: break-word;
+}
+
+.bookmark-list-item-desc {
+    margin: 3px;
+    font-size: medium;
+    font-weight: 400;  
+    inline-size: 100%;
+    overflow-wrap: break-word;
+}
+
+.bookmark-list-item-container {
+    border-radius: 10px;
+    padding: 10px;
+    margin-block: 8px;
+    background-color: var(--kurome-background-color);
+    box-sizing: border-box;
+}
+
+.bookmark-list-item-container-focus {
+    background-color: var(--input-box-background-color);
+}
