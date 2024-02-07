@@ -777,22 +777,29 @@ namespace Main {
         //                ANY PAGE                //
         //----------------------------------------//
         window.addEventListener("keydown", hotkey_caller)
-        hotkey_map.set_hotkey("ArrowDown", new When(["tag_suggestion"]), UserAction.tag_suggestion_focus_down)
-        hotkey_map.set_hotkey("ArrowUp", new When(["tag_suggestion"]), UserAction.tag_suggestion_focus_up)
-        hotkey_map.set_hotkey("Enter", new When(["tag_suggestion"]), UserAction.handle_tag_complement)
+        hotkey_map.set_hotkey("ArrowDown", new When(["tag_suggestion"]), UserCommand.tag_suggestion_focus_down)
+        hotkey_map.set_hotkey("ArrowUp", new When(["tag_suggestion"]), UserCommand.tag_suggestion_focus_up)
+        hotkey_map.set_hotkey("Enter", new When(["tag_suggestion"]), UserCommand.u_tag_complement)
 
-        hotkey_map.set_hotkey("ArrowDown", new When([], "pages:home"), UserAction.handle_bkmk_list_focus_down)
-        hotkey_map.set_hotkey("ArrowUp", new When([], "pages:home"), UserAction.handle_bkmk_list_focus_up)
-        hotkey_map.set_hotkey("Enter", new When([], "pages:home"), UserAction.handle_open_bookmark)
+        hotkey_map.set_hotkey("ArrowDown", new When([], "pages:home"), UserCommand.u_bkmk_list_focus_down)
+        hotkey_map.set_hotkey("ArrowUp", new When([], "pages:home"), UserCommand.u_bkmk_list_focus_up)
+        hotkey_map.set_hotkey("Enter", new When([], "pages:home"), UserCommand.u_open_bookmark)
 
-        hotkey_map.set_hotkey("ctrl+l",new When([],"anypage"),UserAction.next_page)
-        hotkey_map.set_hotkey("ctrl+h",new When([],"anypage"),UserAction.prev_page)
+        hotkey_map.set_hotkey("ctrl+l",new When([],"anypage"),UserCommand.next_page)
+        hotkey_map.set_hotkey("ctrl+h",new When([],"anypage"),UserCommand.prev_page)
 
-        hotkey_map.set_hotkey("ctrl+/",new When([],"anypage"),UserAction.handle_focus_input_tag_box)
+        hotkey_map.set_hotkey("ctrl+/",new When([],"anypage"),UserCommand.u_focus_input_tag_box)
     }
 
-    // よくよく考えてたらhandleという名前はおかしい気がしてきた
-    namespace UserAction {
+    //
+    // ユーザーからの命令があったときに呼ばれる
+    // 処理の中身は外に書く。
+    // ずっと生きている変数のスコープを小さくするためでもある
+    // 
+    namespace UserCommand {
+        // ラッパーみたいなものだから外の関数と名前がかぶる。
+        // 名前がかぶるときは先頭にu_をつけることにする
+
         export function tag_suggestion_focus_up() {
             tag_suggestion_window.handle_move_focus("up")
         }
@@ -801,19 +808,19 @@ namespace Main {
             tag_suggestion_window.handle_move_focus("down")
         }
 
-        export async function handle_tag_complement() {
+        export async function u_tag_complement() {
             tag_complement(tag_suggestion_window)
         }
 
-        export function handle_bkmk_list_focus_down() {
+        export function u_bkmk_list_focus_down() {
             searched_bookmark_list.move_focus("down")
         }
 
-        export function handle_bkmk_list_focus_up() {
+        export function u_bkmk_list_focus_up() {
             searched_bookmark_list.move_focus("up")
         }
 
-        export function handle_open_bookmark() {
+        export function u_open_bookmark() {
             let bkmk_data = searched_bookmark_list.get_focused_item()
             if (bkmk_data === null) {
                 return
@@ -829,7 +836,7 @@ namespace Main {
             move_page(get_display_block_page_id(),"next")
         }
 
-        export function handle_focus_input_tag_box(){
+        export function u_focus_input_tag_box(){
             focus_input_tag_box(get_display_block_page_id())
         }
     }
