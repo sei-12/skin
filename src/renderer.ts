@@ -686,6 +686,24 @@ async function update_searched_bookmark_list(bkmk_list: SearchedBookmarkList) {
     bkmk_list.insert(data)
 }
 
+function focus_input_tag_box(cur_page: PAGE_ELM_IDS){
+    let elm: HTMLInputElement
+
+    if(cur_page === "pages:add"){
+        elm = <HTMLInputElement>document.getElementById("page-add-input-tags")
+    }
+    else if(cur_page === "pages:home"){
+        elm = <HTMLInputElement>document.getElementById("page-home-input-tags")
+    }else{
+        return
+    }
+
+    if (elm === null){
+        console.error("bug")
+    }
+
+    elm.focus()
+}
 //----------------------------------------------------------------------------------------------------//
 //                                                                                                    //
 //                                                MAIN                                                //
@@ -763,11 +781,11 @@ namespace Main {
 
         hotkey_map.set_hotkey("ctrl+l",new When([],"anypage"),UserAction.next_page)
         hotkey_map.set_hotkey("ctrl+h",new When([],"anypage"),UserAction.prev_page)
-        // hotkey_map.set_hotkey("ArrowDown",new When([],"pages:home"),)
 
-
+        hotkey_map.set_hotkey("ctrl+/",new When([],"anypage"),UserAction.handle_focus_input_tag_box)
     }
 
+    // よくよく考えてたらhandleという名前はおかしい気がしてきた
     namespace UserAction {
         export function tag_suggestion_focus_up() {
             tag_suggestion_window.handle_move_focus("up")
@@ -803,6 +821,10 @@ namespace Main {
 
         export function next_page(){
             move_page(get_display_block_page_id(),"next")
+        }
+
+        export function handle_focus_input_tag_box(){
+            focus_input_tag_box(get_display_block_page_id())
         }
     }
 
