@@ -163,7 +163,7 @@ class SearchedBookmarkList {
     private focus_index: CycleIndex | null
 
     constructor() {
-        this.elm = <HTMLDivElement>document.getElementById("page:home-search-results")!
+        this.elm = <HTMLDivElement>document.getElementById("page-home-search-results")!
         this.focus_index = null
     }
 
@@ -533,8 +533,8 @@ function pressKeyStr(e: KeyboardEvent) {
 // intoというより、対応付けされている。削除のときにも使うし、
 function tag_into_elm_id(input_elm_id: string) {
     const map: { [key: string]: string } = {
-        "page:add-input-tags": "page:add-inputed-tags",
-        "page:home-input-tags": "page:home-inputed-tags",
+        "page-add-input-tags": "page-add-inputed-tags",
+        "page-home-input-tags": "page-home-inputed-tags",
     }
 
     let into_elm_id = map[input_elm_id]
@@ -588,9 +588,9 @@ async function tag_complement(tag_suggestion_window: TagSuggestionWindow) {
 }
 
 function clear_add_page_form() {
-    let input_url = <HTMLInputElement>document.getElementById("page:add-input-url")
-    let input_title = <HTMLInputElement>document.getElementById("page:add-input-title")
-    let inputed_tags = document.getElementById("page:add-inputed-tags")
+    let input_url = <HTMLInputElement>document.getElementById("page-add-input-url")
+    let input_title = <HTMLInputElement>document.getElementById("page-add-input-title")
+    let inputed_tags = document.getElementById("page-add-inputed-tags")
 
     if (input_url === null || input_title === null || inputed_tags === null) {
         console.error("bug")
@@ -603,9 +603,9 @@ function clear_add_page_form() {
 }
 
 async function add_bookmark() {
-    let input_url = <HTMLInputElement>document.getElementById("page:add-input-url")
-    let input_title = <HTMLInputElement>document.getElementById("page:add-input-title")
-    let inputed_tags = document.getElementById("page:add-inputed-tags")
+    let input_url = <HTMLInputElement>document.getElementById("page-add-input-url")
+    let input_title = <HTMLInputElement>document.getElementById("page-add-input-title")
+    let inputed_tags = document.getElementById("page-add-inputed-tags")
 
     if (input_url === null || input_title === null || inputed_tags === null) {
         console.error("bug")
@@ -629,8 +629,8 @@ async function add_bookmark() {
 }
 
 async function complement_title_from_url() {
-    let input_url = <HTMLInputElement>document.getElementById("page:add-input-url")
-    let input_title = <HTMLInputElement>document.getElementById("page:add-input-title")
+    let input_url = <HTMLInputElement>document.getElementById("page-add-input-url")
+    let input_title = <HTMLInputElement>document.getElementById("page-add-input-title")
 
     if (input_url === null || input_title === null) {
         console.error("bug")
@@ -673,7 +673,7 @@ async function insert_tag_not_complement(input_elm: HTMLInputElement) {
 }
 
 async function update_searched_bookmark_list(bkmk_list: SearchedBookmarkList) {
-    let inputed_tags_elm = document.getElementById("page:home-inputed-tags")
+    let inputed_tags_elm = document.getElementById("page-home-inputed-tags")
     if (inputed_tags_elm === null) {
         console.error("bug")
         return
@@ -699,13 +699,13 @@ namespace Main {
         //----------------------------------------//
         //                ADD PAGE                //
         //----------------------------------------//
-        const page_add_input_tags_elm = <HTMLInputElement>document.getElementById("page:add-input-tags")
+        const page_add_input_tags_elm = <HTMLInputElement>document.getElementById("page-add-input-tags")
         if (page_add_input_tags_elm === null) {
             return
         }
 
-        document.getElementById("page:add-done-btn")?.addEventListener("click", add_bookmark)
-        document.getElementById("page:add-input-url")?.addEventListener("input", complement_title_from_url)
+        document.getElementById("page-add-done-btn")?.addEventListener("click", add_bookmark)
+        document.getElementById("page-add-input-url")?.addEventListener("input", complement_title_from_url)
 
 
         page_add_input_tags_elm.addEventListener("input", (e) => {
@@ -725,8 +725,8 @@ namespace Main {
         //----------------------------------------//
         //               HOME PAGE                //
         //----------------------------------------//
-        const page_home_inputed_elm = <HTMLDivElement>document.getElementById("page:home-inputed-tags")
-        const page_home_input_tags_elm = <HTMLInputElement>document.getElementById("page:home-input-tags")
+        const page_home_inputed_elm = <HTMLDivElement>document.getElementById("page-home-inputed-tags")
+        const page_home_input_tags_elm = <HTMLInputElement>document.getElementById("page-home-input-tags")
         page_home_input_tags_elm.addEventListener("input", (e) => {
             tag_suggestion_window.handle_input(page_home_input_tags_elm)
         })

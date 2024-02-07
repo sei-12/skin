@@ -12,7 +12,7 @@ import { spawn } from 'child_process';
 declare const MAIN_WINDOW_WEBPACK_ENTRY: string;
 declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string;
 
-const APP_NAME = "bkmk"
+const APP_NAME = "skin"
 const DATA_DIR = `${process.env.HOME}/.${APP_NAME}`
 const DB_FILE_PATH = `${DATA_DIR}/database.sqlite3`
 
@@ -39,9 +39,6 @@ const createWindow = (): void => {
 
   // and load the index.html of the app.
   mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
-
-  // Open the DevTools.
-  mainWindow.webContents.openDevTools();
 };
 
 //-

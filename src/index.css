@@ -32,3 +32,14 @@ body {
     margin-inline: 5%;
 }
 
+#page-home-input-tags {
+    /* background-color: red; */
+    font-size: large;
+    /* background-color: #292D3E; */
+    background-color: #393D4E;
+    color: #fafafa;
+    border-radius: 5px;
+    border: none;
+    padding: 5px;
+}
+
