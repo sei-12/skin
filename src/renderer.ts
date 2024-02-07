@@ -450,6 +450,7 @@ class HotkeyMap {
 function create_new_tag_element(tagname: string, exists_db: boolean) {
     let elm = document.createElement("div")
     elm.innerText = tagname
+    elm.classList.add("tag")
     if (exists_db) {
         elm.classList.add("tag-exists-db")
     } else {

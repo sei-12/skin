@@ -10,17 +10,21 @@
         <div id="inner-tag-suggestion-window1"></div>
     </div>
     <div id="pages">
-        <div id="pages:home">pages:home
-            <div id="page-home-inputed-tags"></div>
-            <input type="text" id="page-home-input-tags">
+        <div id="pages:home">
+            <div class="input-tag-container">
+                <div class="inputed-tags" id="page-home-inputed-tags"></div>
+                <input placeholder="tag" class="input-tag type="text" id="page-home-input-tags">
+            </div>
             <div id="page-home-search-results"></div>
         </div>
         <div id="pages:add">
             pages:add
             <input type="text" id="page-add-input-url" placeholder="url">
             <input type="text" id="page-add-input-title" placeholder="title">
-            <div id="page-add-inputed-tags"></div>
-            <input type="text" id="page-add-input-tags" placeholder="tags">
+            <div class="input-tag-container">
+                <div class="inputed-tags" id="page-add-inputed-tags"></div>
+                <input type="text" class="input-tag"  id="page-add-input-tags" placeholder="tag">
+            </div>
             <input type="button" id="page-add-done-btn" value="add">
         </div>
         <div id="pages:edit">pages:edit</div>

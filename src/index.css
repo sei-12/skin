@@ -1,21 +1,34 @@
 body {
     background-color: #292D3E;
     color: white;
-    font-size: xx-large;
+    font-size: x-large;
+    font-family: Hack;
+    font-weight: 700;
+}
+
+:root{
+    --tag-suggestion-window-z: 10;
+    --input-box-background-color: #393D4E
 }
 
 #tag-suggestion-window{
     position: absolute;
     padding: 10px;
     background-color: black;
+    z-index: var(--tag-suggestion-window-z);
 }
 .suggestion-item-focus{
     border: solid red 3px;
     box-sizing: border-box;
 }
 
+.tag {
+    padding: 5px;
+    margin: 5px;
+}
+
 .tag-exists-db{
-    color: green;
+    color: rgb(20, 220, 20);
 }
 
 .tag-not-exists-db{
@@ -32,14 +45,32 @@ body {
     margin-inline: 5%;
 }
 
-#page-home-input-tags {
+.input-tag {
     /* background-color: red; */
-    font-size: large;
+    font-size: x-large;
     /* background-color: #292D3E; */
-    background-color: #393D4E;
+    background-color: var(--input-box-background-color);
     color: #fafafa;
     border-radius: 5px;
     border: none;
     padding: 5px;
+    margin: 5px;
+    outline: none;
+    flex-wrap: wrap;
+}
+
+.input-tag-container {
+    flex-wrap: wrap;
+    display: flex;
+    background-color: var(--input-box-background-color);
+    border-radius: 5px;
+    margin: 10px;
+    /* height: min-c; */
+    /* min-height: 40px; */
+}
+
+.inputed-tags {
+    flex-wrap: wrap;
+    display: flex;
 }
 
