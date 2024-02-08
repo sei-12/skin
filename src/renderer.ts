@@ -133,10 +133,14 @@ function create_new_bookmark_elm(data: BookmarkData) {
     description_elm.innerText = data.description
     description_elm.classList.add("bookmark-list-item-desc")
 
+    let craeted_at_elm = document.createElement("div")
+    craeted_at_elm.innerText = data.created_at
+
     let div = document.createElement("div")
     div.classList.add("bookmark-list-item-container")
     div.appendChild(title_elm)
     div.appendChild(description_elm)
+    div.appendChild(craeted_at_elm)
     // TODO
     div.appendChild(data_elm)
     return div

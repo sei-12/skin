@@ -274,7 +274,8 @@ const querys = {
             title text,
             url text,
             description text,
-            tag_count int not null
+            tag_count int not null,
+            created_at datetime
         );
 
         create table if not exists tags (
@@ -308,7 +309,7 @@ const querys = {
     get_tag_id: "select id from tags where name = ?",
     add_tag: "insert into tags values (null,?)",
     get_bkmk_id: "select id from bookmarks where title = ? and url = ?;",
-    add_bkmk: "insert into bookmarks values (null,?,?,?,?);",
+    add_bkmk: "insert into bookmarks values (null,?,?,?,?,strftime('%Y-%m-%d', CURRENT_DATE));",
     add_tag_map: "insert into tag_map values (null,?,?)",
     get_bkmk_from_id: "select * from bookmarks where id = ?",
 
