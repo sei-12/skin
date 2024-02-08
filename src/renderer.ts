@@ -40,6 +40,10 @@ type WhenStr = "tag_suggestion"
 type Handler = () => void
 type NoticeType = "info" | "warn" | "error"
 type PAGE_ELM_IDS = "pages:home" | "pages:add" | "pages:edit" | "pages:list"
+type InputTagElms = {
+    add: HTMLInputElement,
+    home: HTMLInputElement
+}
 
 
 //----------------------------------------------------------------------------------------------------//
@@ -744,23 +748,16 @@ async function update_searched_bookmark_list(bkmk_list: SearchedBookmarkList) {
     bkmk_list.insert(data)
 }
 
-function focus_input_tag_box(cur_page: PAGE_ELM_IDS) {
-    let elm: HTMLInputElement
+function focus_input_tag_box(cur_page: PAGE_ELM_IDS,inputElms:InputTagElms) {
 
     if (cur_page === "pages:add") {
-        elm = <HTMLInputElement>document.getElementById("page-add-input-tags")
+        inputElms.add.focus()
     }
     else if (cur_page === "pages:home") {
-        elm = <HTMLInputElement>document.getElementById("page-home-input-tags")
+        inputElms.home.focus()
     } else {
         return
     }
-
-    if (elm === null) {
-        console.error("bug")
-    }
-
-    elm.focus()
 }
 
 function is_inputed_tag(inputed_elm:HTMLElement,tag:string){
@@ -768,13 +765,32 @@ function is_inputed_tag(inputed_elm:HTMLElement,tag:string){
     return childNodes.find( n => n instanceof HTMLElement ? n.innerText === tag : false )
 }
 
-function search_google_for_tags() {
-    let inputed_elm = document.getElementById("page-home-inputed-tags")!
+function search_google_for_tags(inputed_elm:HTMLElement) {
     let tags = get_inputed_tags(inputed_elm)
     if (tags.length === 0) {
         return
     }
     window.app.search_google(tags)
+}
+
+/**
+ * Main以外からアクセスしてほしくない
+ * でもわざわざMainの中にかきたくもない
+ */
+function html_root(){
+    return {
+        home: {
+            input_tag:  <HTMLInputElement>document.getElementById("page-home-input-tags")!,
+            inputed_tags: document.getElementById("page-home-inputed-tags")!,
+            input_tags_container: document.getElementById("page-home-input-tags-container")
+        },
+        add: {
+            add_btn: document.getElementById("page-add-done-btn")!,
+            input_url: <HTMLInputElement>document.getElementById("page-add-input-url")!,
+            input_tag:  <HTMLInputElement>document.getElementById("page-add-input-tags")!,
+            input_tags_container: document.getElementById("page-add-input-tags-container")
+        }
+    }
 }
 
 //----------------------------------------------------------------------------------------------------//
@@ -791,58 +807,53 @@ namespace Main {
         //----------------------------------------//
         //                ADD PAGE                //
         //----------------------------------------//
-        const page_add_input_tags_elm = <HTMLInputElement>document.getElementById("page-add-input-tags")
-        if (page_add_input_tags_elm === null) {
-            return
-        }
+        root.add.add_btn.addEventListener("click", add_bookmark)
+        root.add.input_url.addEventListener("input", complement_info_from_url)
 
-        document.getElementById("page-add-done-btn")?.addEventListener("click", add_bookmark)
-        document.getElementById("page-add-input-url")?.addEventListener("input", complement_info_from_url)
-
-
-        page_add_input_tags_elm.addEventListener("input", (e) => {
-            tag_suggestion_window.handle_input(page_add_input_tags_elm)
+        root.add.input_tag.addEventListener("input", (e) => {
+            tag_suggestion_window.handle_input(root.add.input_tag)
         })
-        page_add_input_tags_elm.addEventListener("keydown", (e) => {
-            if (e.key === "Backspace" && page_add_input_tags_elm.value === "") {
-                remove_tag_elm_from_inputed(page_add_input_tags_elm.id)
+        root.add.input_tag.addEventListener("keydown", (e) => {
+            if (e.key === "Backspace" && root.add.input_tag.value === "") {
+                remove_tag_elm_from_inputed(root.add.input_tag.id)
             }
         })
-        page_add_input_tags_elm.addEventListener("keyup", (e) => {
+        root.add.input_tag.addEventListener("keyup", (e) => {
             if (e.key == " " && e.isComposing === false) {
-                insert_tag_not_complement(page_add_input_tags_elm)
+                insert_tag_not_complement(root.add.input_tag)
             }
         })
-
-        document.getElementById("page-add-input-tags-container").addEventListener("click", () => {
-            focus_input_tag_box("pages:add")
+        root.add.input_tags_container.addEventListener("click", () => {
+            focus_input_tag_box("pages:add",alias_input_tag_elms)
         })
+
+
 
         //----------------------------------------//
         //               HOME PAGE                //
         //----------------------------------------//
-        const page_home_inputed_elm = <HTMLDivElement>document.getElementById("page-home-inputed-tags")
-        const page_home_input_tags_elm = <HTMLInputElement>document.getElementById("page-home-input-tags")
-        page_home_input_tags_elm.addEventListener("input", (e) => {
-            tag_suggestion_window.handle_input(page_home_input_tags_elm)
+        root.home.input_tag.addEventListener("input", (e) => {
+            tag_suggestion_window.handle_input(root.home.input_tag)
         })
-        page_home_input_tags_elm.addEventListener("keydown", (e) => {
-            if (e.key === "Backspace" && page_home_input_tags_elm.value === "") {
-                remove_tag_elm_from_inputed(page_home_input_tags_elm.id)
+        root.home.input_tag.addEventListener("keydown", (e) => {
+            if (e.key === "Backspace" && root.home.input_tag.value === "") {
+                remove_tag_elm_from_inputed(root.home.input_tag.id)
             }
         })
-        page_home_input_tags_elm.addEventListener("keyup", (e) => {
+        root.home.input_tag.addEventListener("keyup", (e) => {
             if (e.key == " " && e.isComposing === false ) {
-                insert_tag_not_complement(page_home_input_tags_elm)
+                insert_tag_not_complement(root.home.input_tag)
             }
         })
         const mo = new MutationObserver(() => {
             update_searched_bookmark_list(searched_bookmark_list)
         })
-        mo.observe(page_home_inputed_elm, { childList: true })
-        document.getElementById("page-home-input-tags-container").addEventListener("click", () => {
-            focus_input_tag_box("pages:home")
+        mo.observe(root.home.inputed_tags, { childList: true })
+        root.home.input_tags_container.addEventListener("click", () => {
+            focus_input_tag_box("pages:home",alias_input_tag_elms)
         })
+
+
         hotkey_map.set_hotkey("ArrowDown", new When([], "pages:home"), UserCommand.u_bkmk_list_focus_down)
         hotkey_map.set_hotkey("ArrowUp", new When([], "pages:home"), UserCommand.u_bkmk_list_focus_up)
         hotkey_map.set_hotkey("Enter", new When([], "pages:home"), UserCommand.u_open_bookmark)
@@ -911,11 +922,11 @@ namespace Main {
         }
 
         export function u_focus_input_tag_box() {
-            focus_input_tag_box(get_display_block_page_id())
+            focus_input_tag_box(get_display_block_page_id(),alias_input_tag_elms)
         }
 
         export function u_search_google_for_tags() {
-            search_google_for_tags()
+            search_google_for_tags(root.home.inputed_tags)
         }
     }
 
@@ -980,8 +991,17 @@ namespace Main {
 
         return cur_page
     }
+
+    
+    const root = html_root()
     const hotkey_map = new HotkeyMap()
     const tag_suggestion_window = new TagSuggestionWindow()
     const searched_bookmark_list = new SearchedBookmarkList()
+
+    const alias_input_tag_elms : InputTagElms = {
+        add: root.add.input_tag,
+        home: root.home.input_tag
+    }
+
     main()
 }
