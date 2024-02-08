@@ -134,13 +134,15 @@ function create_new_bookmark_elm(data: BookmarkData) {
     description_elm.classList.add("bookmark-list-item-desc")
 
     let craeted_at_elm = document.createElement("div")
-    craeted_at_elm.innerText = data.created_at
+    let replace_re = new RegExp("-","g")
+    craeted_at_elm.innerText = "created at: " + data.created_at.replace(replace_re,"/")
+    craeted_at_elm.classList.add("bookmark-list-item-created-at")
 
     let div = document.createElement("div")
     div.classList.add("bookmark-list-item-container")
     div.appendChild(title_elm)
-    div.appendChild(description_elm)
     div.appendChild(craeted_at_elm)
+    div.appendChild(description_elm)
     // TODO
     div.appendChild(data_elm)
     return div

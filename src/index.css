@@ -140,17 +140,27 @@ body {
 
 
 .bookmark-list-item-title {
-    margin: 3px;
+    margin: 5px;
+    margin-bottom: 8px;
     inline-size: 100%;
     overflow-wrap: break-word;
 }
 
 .bookmark-list-item-desc {
-    margin: 3px;
     font-size: medium;
+    margin: 5px;
+    margin-bottom: 2px;
     font-weight: 400;  
     inline-size: 100%;
     overflow-wrap: break-word;
+    color: #999999;
+}
+
+.bookmark-list-item-created-at {
+    margin: 5px;
+    font-size: medium;
+    font-weight: 600;  
+    color: #999999;
 }
 
 .bookmark-list-item-container {
