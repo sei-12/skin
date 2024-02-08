@@ -148,12 +148,6 @@ function create_new_bookmark_elm(data: BookmarkData) {
     return div
 }
 
-function create_new_bkmklist_sep() {
-    let div = document.createElement("div")
-    div.innerText = "---".repeat(10)
-    return div
-}
-
 function bkmk_data_from_bkmk_elm(elm: HTMLDivElement): BookmarkData {
 
     let divs = elm.querySelectorAll("div")
@@ -326,7 +320,7 @@ class TagSuggestionWindow {
     async update(find_word: string) {
         this.focus_index = new CycleIndex(0)
         let datas = await window.app.fetch_suggestion(find_word)
-        this.suggestion_items = datas.data.map(d => create_suggestion_list_item(find_word,d.name))
+        this.suggestion_items = datas.data.map(d => create_suggestion_list_item(find_word,d))
         TagSuggestion.switch_and_update_inner(this.inners, this.suggestion_items)
         if (this.suggestion_items.length === 0) {
             return
@@ -519,13 +513,13 @@ function notice(msg: string, notice_type: NoticeType) {
     console[notice_type](msg)
 }
 
-function create_suggestion_list_item(find_word:string,word: string) {
+function create_suggestion_list_item(find_word:string,tag_data: TagData) {
     let div = document.createElement("div")
     let re = new RegExp(find_word,"i")
-    let match_str = word.match(re)[0]
+    let match_str = tag_data.name.match(re)[0]
     let html = `<span class="suggestion-item-match-str">${match_str}</span>`
-    word = word.replace(re,html)
-    div.innerHTML = word
+    let name = tag_data.name.replace(re,html)
+    div.innerHTML = name
     div.classList.add("suggestion-item")
     return div
 }

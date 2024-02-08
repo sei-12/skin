@@ -10,6 +10,11 @@ declare global {
         description: string,
         created_at: string
     }
+
+    type TagData = {
+        name: string,
+        oto: string
+    }
 }
 
 export interface IMainProcess {
@@ -25,9 +30,7 @@ export interface IMainProcess {
     search_bookmarks: (tags:string[]) => Promise<BookmarkData[]>;
     fetch_suggestion:(word:string) => Promise<{
         err: boolean,
-        data: {
-            name:string
-        }[]
+        data: TagData[]
     }>;
     open_bookmark:(bookmark_id:number) => Promise<void>;
     search_google:(tags:string[]) => void

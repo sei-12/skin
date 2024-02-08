@@ -208,7 +208,7 @@ async function handleAddBookmark(url: string, title: string, tags: string[],desc
     }
     for (let i = 0; i < require_add_tags.length; i++) {
         const tag = require_add_tags[i];
-        let res = await wrap_db_run(querys.add_tag, [tag])
+        let res = await wrap_db_run(querys.add_tag, [tag,tag])
         if (res) { return { err: true, message: res.message } }
     }
 
@@ -280,7 +280,8 @@ const querys = {
 
         create table if not exists tags (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name text unique
+            name text unique,
+            oto text
         );
 
         create table if not exists tag_map (
@@ -307,16 +308,16 @@ const querys = {
         `
     },
     get_tag_id: "select id from tags where name = ?",
-    add_tag: "insert into tags values (null,?)",
+    add_tag: "insert into tags values (null,?,?)",
     get_bkmk_id: "select id from bookmarks where title = ? and url = ?;",
     add_bkmk: "insert into bookmarks values (null,?,?,?,?,strftime('%Y-%m-%d', CURRENT_DATE));",
     add_tag_map: "insert into tag_map values (null,?,?)",
     get_bkmk_from_id: "select * from bookmarks where id = ?",
 
     fetch_suggestion: `
-        select name from tags where name like ? 
+        select name,oto from tags where oto like ? 
         union all
-        select name from tags where name like ? and name not like ?;`,
+        select name,oto from tags where oto like ? and oto not like ?;`,
 
 
     // TODO RENAME
