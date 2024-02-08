@@ -2,6 +2,13 @@ declare global {
     interface Window {
         app: IMainProcess;
     }
+
+    type BookmarkData = {
+        title: string,
+        id: number,
+        url: string,
+        description: string,
+    }
 }
 
 export interface IMainProcess {
@@ -14,12 +21,7 @@ export interface IMainProcess {
         description:string|null 
     }|null>;
     tag_exists_db: (tag_name:string) => Promise<boolean>;
-    search_bookmarks: (tags:string[]) => Promise<{
-        title:string,
-        id: number,
-        url:string,
-        description: string
-    }[]>;
+    search_bookmarks: (tags:string[]) => Promise<BookmarkData[]>;
     fetch_suggestion:(word:string) => Promise<{
         err: boolean,
         data: {

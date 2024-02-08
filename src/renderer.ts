@@ -118,14 +118,8 @@ class CycleIndex {
 //                                       SEARCHED BOOKMARK LIST                                       //
 //                                                                                                    //
 //----------------------------------------------------------------------------------------------------//
-type SearchedBookmarkItem = {
-    title: string,
-    id: number,
-    url: string,
-    description: string
-}
 
-function create_new_bookmark_elm(data: SearchedBookmarkItem) {
+function create_new_bookmark_elm(data: BookmarkData) {
     let data_elm = document.createElement("div")
     data_elm.innerText = JSON.stringify(data)
     data_elm.classList.add("data")
@@ -154,7 +148,7 @@ function create_new_bkmklist_sep() {
     return div
 }
 
-function bkmk_data_from_bkmk_elm(elm: HTMLDivElement): SearchedBookmarkItem {
+function bkmk_data_from_bkmk_elm(elm: HTMLDivElement): BookmarkData {
 
     let divs = elm.querySelectorAll("div")
     let divs_ary = Array.from(divs)
@@ -243,7 +237,7 @@ class SearchedBookmarkList {
         return bkmk_data_from_bkmk_elm(c)
     }
 
-    insert(datas: SearchedBookmarkItem[]) {
+    insert(datas: BookmarkData[]) {
         // この処理がおもたいなら要素を２つ用いて切り替えながら表示する
         this.elm.innerHTML = ""
 
