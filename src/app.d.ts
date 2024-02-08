@@ -12,6 +12,7 @@ declare global {
     }
 
     type TagData = {
+        id: number,
         name: string,
         oto: string
     }

@@ -601,6 +601,12 @@ async function tag_complement(tag_suggestion_window: TagSuggestionWindow) {
 
     let target_elm_id = tag_into_elm_id(input_elm.id)
     let target_elm = document.getElementById(target_elm_id)!
+
+    if( is_inputed_tag(target_elm,comp)){
+        notice(`${comp} is inputed`,"info")
+        return
+    }
+    
     target_elm.appendChild(tag_elm)
 }
 
@@ -714,6 +720,12 @@ async function insert_tag_not_complement(input_elm: HTMLInputElement) {
 
     let target_elm_id = tag_into_elm_id(input_elm.id)
     let target_elm = document.getElementById(target_elm_id)!
+
+    if( is_inputed_tag(target_elm,tag_name)){
+        notice(`${tag_name} is inputed`,"info")
+        input_elm.value = ""
+        return
+    }
     target_elm.appendChild(tag_elm)
     input_elm.value = ""
 }
@@ -749,6 +761,11 @@ function focus_input_tag_box(cur_page: PAGE_ELM_IDS) {
     }
 
     elm.focus()
+}
+
+function is_inputed_tag(inputed_elm:HTMLElement,tag:string){
+    let childNodes = Array.from(inputed_elm.childNodes)
+    return childNodes.find( n => n instanceof HTMLElement ? n.innerText === tag : false )
 }
 
 function search_google_for_tags() {
