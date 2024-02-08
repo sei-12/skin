@@ -53,7 +53,12 @@ type AddPageForm = {
     input_description: HTMLInputElement,
     inputed_tags: HTMLElement
 }
-
+type Pages = {
+    add: HTMLElement,
+    home: HTMLElement,
+    edit: HTMLElement,
+    list: HTMLElement,
+}
 
 
 //----------------------------------------------------------------------------------------------------//
@@ -630,7 +635,7 @@ async function complement_info_from_url(form: AddPageForm) {
 }
 
 // 「巡回」という英語がわからん
-function move_page(current: PAGE_ELM_IDS, to: "prev" | "next") {
+function move_page(pages: Pages,current: PAGE_ELM_IDS, to: "prev" | "next") {
     const PAGES: PAGE_ELM_IDS[] = ["pages:add", "pages:list", "pages:home", "pages:edit"]
     let current_index = PAGES.findIndex(p => p === current)
     if (current_index === -1) {
@@ -639,10 +644,10 @@ function move_page(current: PAGE_ELM_IDS, to: "prev" | "next") {
     }
     let ci = new CycleIndex(current_index)
     let next_page_index = to === "next" ? ci.plus(PAGES.length) : ci.minus(PAGES.length)
-    switch_page(current, PAGES[next_page_index.val])
+    switch_page(pages,current, PAGES[next_page_index.val])
 }
 
-function switch_page(from: PAGE_ELM_IDS, to: PAGE_ELM_IDS) {
+function switch_page(pages: Pages,from: PAGE_ELM_IDS, to: PAGE_ELM_IDS) {
     let old_page = document.getElementById(from)
     let new_page = document.getElementById(to)
 
@@ -722,11 +727,15 @@ function search_google_for_tags(inputed_elm:HTMLElement) {
  */
 function html_root(){
     return {
+        page_root: document.getElementById("pages"),
+
+        home_elm: document.getElementById("pages:home"),
         home: {
             input_tag:  <HTMLInputElement>document.getElementById("page-home-input-tags")!,
             inputed_tags: document.getElementById("page-home-inputed-tags")!,
             input_tags_container: document.getElementById("page-home-input-tags-container")
         },
+        add_elm: document.getElementById("pages:add"),
         add: {
             add_btn: document.getElementById("page-add-done-btn")!,
             input_url: <HTMLInputElement>document.getElementById("page-add-input-url")!,
@@ -735,7 +744,10 @@ function html_root(){
             inputed_tags: document.getElementById("page-add-inputed-tags")!,
             input_tag:  <HTMLInputElement>document.getElementById("page-add-input-tags")!,
             input_tags_container: document.getElementById("page-add-input-tags-container")
-        }
+        },
+
+        edit_elm: document.getElementById("pages:edit"),
+        list_elm: document.getElementById("pages:list"),
     }
 }
 
@@ -745,9 +757,8 @@ function html_root(){
 //                                                                                                    //
 //----------------------------------------------------------------------------------------------------//
 
-function initialize_pages() {
-    let p = document.getElementById("pages")
-    p?.childNodes.forEach(n => {
+function initialize_pages(page_parent: HTMLElement) {
+    page_parent.childNodes.forEach(n => {
         if (n instanceof HTMLDivElement) {
             if (n.id == "pages:home") {
                 n.style.display = "block"
@@ -758,10 +769,11 @@ function initialize_pages() {
     })
 }
 
+
 namespace Main {
     function main() {
-        initialize_pages()
-        switch_page(get_display_block_page_id(), "pages:home")
+        initialize_pages(root.page_root)
+        switch_page(alias_pages,get_display_block_page_id(), "pages:home")
 
         //----------------------------------------//
         //                ADD PAGE                //
@@ -883,11 +895,11 @@ namespace Main {
         }
 
         export function prev_page() {
-            move_page(get_display_block_page_id(), "prev")
+            move_page(alias_pages,get_display_block_page_id(), "prev")
         }
 
         export function next_page() {
-            move_page(get_display_block_page_id(), "next")
+            move_page(alias_pages,get_display_block_page_id(), "next")
         }
 
         export function u_focus_input_tag_box() {
@@ -979,6 +991,13 @@ namespace Main {
         input_title: root.add.input_title,
         input_description: root.add.input_description,
         inputed_tags: root.add.inputed_tags
+    }
+
+    const alias_pages: Pages = {
+        add: root.add_elm,
+        home: root.home_elm,
+        edit: root.edit_elm,
+        list: root.list_elm
     }
 
     main()
