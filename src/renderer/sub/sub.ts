@@ -80,6 +80,11 @@ export class HotkeyMap {
     }
 }
 
+//----------------------------------------------------------------------------------------------------//
+//                                                                                                    //
+//                                            STAND ALONE                                             //
+//                                                                                                    //
+//----------------------------------------------------------------------------------------------------//
 export function create_new_tag_element(tagname: string, exists_db: boolean) {
     let elm = document.createElement("div")
     elm.innerText = tagname
@@ -92,16 +97,3 @@ export function create_new_tag_element(tagname: string, exists_db: boolean) {
     return elm
 }
 
-export function create_suggestion_list_item(find_word:string,tag_data: TagData): HTMLDivElement | null{
-    let div = document.createElement("div")
-    let re = new RegExp(find_word,"i")
-    let match_str = tag_data.name.match(re)
-    if (match_str === null){
-        return null
-    }
-    let html = `<span class="suggestion-item-match-str">${match_str}</span>`
-    let name = tag_data.name.replace(re,html)
-    div.innerHTML = name
-    div.classList.add("suggestion-item")
-    return div
-}

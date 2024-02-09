@@ -1,4 +1,4 @@
-import { HotkeyMap, When, create_new_tag_element, create_suggestion_list_item } from "./sub"
+import { HotkeyMap, When, create_new_tag_element } from "./sub"
 
 
 test("When", () => {
@@ -60,21 +60,4 @@ test("create_new_tag_element", () => {
     expect(test2.classList.contains("tag")).toBe(true)
     expect(test2.classList.contains("tag-exists-db")).toBe(false)
     expect(test2.classList.contains("tag-not-exists-db")).toBe(true)
-})
-
-test("create_suggesion_list_elm",() => {
-    let test1 = create_suggestion_list_item("hello",{
-        id: 1,
-        name: "hello",
-        oto: "hello"
-    })
-    expect(test1 instanceof HTMLDivElement).toBe(true)
-
-
-    let test2 = create_suggestion_list_item("aaa",{
-        id: 1,
-        name: "hello",
-        oto: "hello"
-    })
-    expect(test2).toBeNull()
 })
