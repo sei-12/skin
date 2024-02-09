@@ -28,16 +28,10 @@
 import './index.css';
 
 import { SearchedBookmarkList } from './sub/search_bookmark_list';
-import { HotkeyMap, PAGE_ELM_IDS, When, WhenStr } from './sub/sub';
+import { HotkeyMap, PAGE_ELM_IDS, When, WhenStr, create_new_tag_element, create_suggestion_list_item } from './sub/sub';
 import { CycleIndex } from './sub/utils';
 
-//----------------------------------------------------------------------------------------------------//
-//                                                                                                    //
-//                                               CONST                                                //
-//                                                                                                    //
-//----------------------------------------------------------------------------------------------------//
 const TAG_SUGGESTION_WINDOW_ID = "tag-suggestion-window"
-const SUGGESTION_WINDOW_ID = "tag-suggestion-window"
 
 type NoticeType = "info" | "warn" | "error"
 
@@ -60,32 +54,6 @@ type Pages = {
     edit: HTMLElement,
     list: HTMLElement,
 }
-
-
-//----------------------------------------------------------------------------------------------------//
-//                                                                                                    //
-//                                               CLASS                                                //
-//                                                                                                    //
-//----------------------------------------------------------------------------------------------------//
-
-
-
-
-
-//----------------------------------------------------------------------------------------------------//
-//                                                                                                    //
-//                                       SEARCHED BOOKMARK LIST                                       //
-//                                                                                                    //
-//----------------------------------------------------------------------------------------------------//
-
-
-
-
-//----------------------------------------------------------------------------------------------------//
-//                                                                                                    //
-//                                       TAG SUGGESTION WINDOW                                        //
-//                                                                                                    //
-//----------------------------------------------------------------------------------------------------//
 
 namespace TagSuggestion {
 
@@ -148,7 +116,17 @@ class TagSuggestionWindow {
     async update(find_word: string) {
         this.focus_index = new CycleIndex(0)
         let datas = await window.app.fetch_suggestion(find_word)
-        this.suggestion_items = datas.data.map(d => create_suggestion_list_item(find_word,d))
+
+        let elms =  datas.data .map(d => create_suggestion_list_item(find_word,d)) 
+        let tmp: HTMLDivElement[] = []
+        elms.forEach( elm => {
+            if(elm !== null){
+                tmp.push(elm)
+            }
+        })
+
+        this.suggestion_items = tmp
+
         TagSuggestion.switch_and_update_inner(this.inners, this.suggestion_items)
         if (this.suggestion_items.length === 0) {
             return
@@ -250,20 +228,6 @@ class TagSuggestionWindow {
 //----------------------------------------------------------------------------------------------------//
 
 
-function create_new_tag_element(tagname: string, exists_db: boolean) {
-    let elm = document.createElement("div")
-    elm.innerText = tagname
-    elm.classList.add("tag")
-    if (exists_db) {
-        elm.classList.add("tag-exists-db")
-    } else {
-        elm.classList.add("tag-not-exists-db")
-    }
-    return elm
-}
-
-
-
 function get_inputed_tags(inputed_tags_elm: HTMLElement): string[] {
     let tags: string[] = []
     inputed_tags_elm.childNodes.forEach(child => {
@@ -281,19 +245,6 @@ function notice(msg: string, notice_type: NoticeType) {
     console[notice_type](msg)
 }
 
-function create_suggestion_list_item(find_word:string,tag_data: TagData) {
-    let div = document.createElement("div")
-    let re = new RegExp(find_word,"i")
-    let match_str = tag_data.name.match(re)
-    if (match_str === null){
-        throw Error()
-    }
-    let html = `<span class="suggestion-item-match-str">${match_str}</span>`
-    let name = tag_data.name.replace(re,html)
-    div.innerHTML = name
-    div.classList.add("suggestion-item")
-    return div
-}
 
 
 function pressKeyStr(e: KeyboardEvent) {
