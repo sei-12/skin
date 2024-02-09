@@ -1,7 +1,5 @@
 import { CycleIndex } from "./utils"
 
-const TAG_SUGGESTION_WINDOW_ID = "tag-suggestion-window"
-
 function create_suggestion_list_item(find_word: string, tag_data: TagData): HTMLDivElement | null {
     let div = document.createElement("div")
     let re = new RegExp(find_word, "i")
@@ -45,17 +43,9 @@ export class TagSuggestionWindow {
     focus_index: CycleIndex
     target_elm: HTMLInputElement | null
 
-    constructor() {
-        this.inners = [
-            <HTMLDivElement>document.getElementById(
-                "inner-" + TAG_SUGGESTION_WINDOW_ID + "0"
-            ),
-            <HTMLDivElement>document.getElementById(
-                "inner-" + TAG_SUGGESTION_WINDOW_ID + "1"
-            ),
-        ]
-
-        this.elm = <HTMLDivElement>document.getElementById(TAG_SUGGESTION_WINDOW_ID)
+    constructor(elm: HTMLDivElement,inners: HTMLDivElement[]) {
+        this.inners = inners
+        this.elm = elm
         this.showing_now = false
         this.focus_index = new CycleIndex(0)
         this.suggestion_items = []

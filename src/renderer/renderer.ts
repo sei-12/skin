@@ -1,8 +1,10 @@
 import './index.css';
 
 import { SearchedBookmarkList } from './sub/search_bookmark_list';
-import { AddPageForm, HotkeyMap, InputTagElms, PAGE_ELM_IDS, Pages, When, WhenStr, add_bookmark, clear_add_page_form, clear_inputed_tags, complement_info_from_url, create_new_tag_element, focus_input_tag_box, get_inputed_tags, insert_tag_not_complement, is_inputed_tag, move_page, notice, pressKeyStr, remove_tag_elm_from_inputed, search_google_for_tags, switch_page } from './sub/sub';
+import { AddPageForm, HotkeyMap, InputTagElms, PAGE_ELM_IDS, Pages, When, WhenStr, add_bookmark, clear_inputed_tags, complement_info_from_url, create_new_tag_element, focus_input_tag_box, get_inputed_tags, insert_tag_not_complement, is_inputed_tag, move_page, notice, pressKeyStr, remove_tag_elm_from_inputed, search_google_for_tags, switch_page } from './sub/sub';
 import { TagSuggestionWindow } from './sub/tag_suggestion_window';
+
+const TAG_SUGGESTION_WINDOW_ID = "tag-suggestion-window"
 
 export async function tag_complement(tag_suggestion_window: TagSuggestionWindow, into: HTMLElement) {
 
@@ -33,7 +35,8 @@ export async function tag_complement(tag_suggestion_window: TagSuggestionWindow,
 
     into.appendChild(tag_elm)
 }
-export async function update_searched_bookmark_list(bkmk_list: SearchedBookmarkList, inputed_tags_elm: HTMLElement) {
+
+async function update_searched_bookmark_list(bkmk_list: SearchedBookmarkList, inputed_tags_elm: HTMLElement) {
     if (inputed_tags_elm === null) {
         console.error("bug")
         return
@@ -310,7 +313,17 @@ namespace Main {
 
     const root = html_root()
     const hotkey_map = new HotkeyMap()
-    const tag_suggestion_window = new TagSuggestionWindow()
+    const tag_suggestion_window = new TagSuggestionWindow(
+        <HTMLDivElement>document.getElementById(TAG_SUGGESTION_WINDOW_ID)!,
+        [
+            <HTMLDivElement>document.getElementById(
+                "inner-" + TAG_SUGGESTION_WINDOW_ID + "0"
+            ),
+            <HTMLDivElement>document.getElementById(
+                "inner-" + TAG_SUGGESTION_WINDOW_ID + "1"
+            ),
+        ]
+    )
     const searched_bookmark_list = new SearchedBookmarkList(
         <HTMLDivElement>document.getElementById("page-home-search-results")
     )
