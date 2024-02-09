@@ -2,6 +2,7 @@
 
 export type PAGE_ELM_IDS = "pages:home" | "pages:add" | "pages:edit" | "pages:list"
 export type WhenStr = "tag_suggestion"
+type Handler = () => void
 
 export class When {
     // ユーザーの設定から変換
@@ -39,5 +40,42 @@ export class When {
         }
 
         return true
+    }
+}
+
+export class HotkeyMap {
+    keydownHotkeyMap: {
+        [key: string]: {
+            when: When,
+            handler: Handler
+        }[]
+    }
+
+    constructor() {
+        this.keydownHotkeyMap = {}
+    }
+
+    set_hotkey(key_str: string, when: When, handler: () => void) {
+        if (this.keydownHotkeyMap[key_str] === undefined) {
+            this.keydownHotkeyMap[key_str] = []
+        }
+
+        this.keydownHotkeyMap[key_str].push({ when, handler })
+    }
+
+    get_hotkey(cur_page: PAGE_ELM_IDS, key_str: string, now: WhenStr[]): Handler | null {
+        if (this.keydownHotkeyMap[key_str] === undefined) {
+            return null
+        }
+
+        let matched = this.keydownHotkeyMap[key_str].find(v => {
+            return v.when.match(cur_page, now)
+        })
+
+        if (matched === undefined) {
+            return null
+        }
+
+        return matched.handler
     }
 }

@@ -28,7 +28,7 @@
 import './index.css';
 
 import { SearchedBookmarkList } from './sub/search_bookmark_list';
-import { PAGE_ELM_IDS, When, WhenStr } from './sub/sub';
+import { HotkeyMap, PAGE_ELM_IDS, When, WhenStr } from './sub/sub';
 import { CycleIndex } from './sub/utils';
 
 //----------------------------------------------------------------------------------------------------//
@@ -39,7 +39,6 @@ import { CycleIndex } from './sub/utils';
 const TAG_SUGGESTION_WINDOW_ID = "tag-suggestion-window"
 const SUGGESTION_WINDOW_ID = "tag-suggestion-window"
 
-type Handler = () => void
 type NoticeType = "info" | "warn" | "error"
 
 //
@@ -249,42 +248,6 @@ class TagSuggestionWindow {
 //                                             HOTKEY MAP                                             //
 //                                                                                                    //
 //----------------------------------------------------------------------------------------------------//
-class HotkeyMap {
-    keydownHotkeyMap: {
-        [key: string]: {
-            when: When,
-            handler: Handler
-        }[]
-    }
-
-    constructor() {
-        this.keydownHotkeyMap = {}
-    }
-
-    set_hotkey(key_str: string, when: When, handler: () => void) {
-        if (this.keydownHotkeyMap[key_str] === undefined) {
-            this.keydownHotkeyMap[key_str] = []
-        }
-
-        this.keydownHotkeyMap[key_str].push({ when, handler })
-    }
-
-    get_hotkey(cur_page: PAGE_ELM_IDS, key_str: string, now: WhenStr[]): Handler | null {
-        if (this.keydownHotkeyMap[key_str] === undefined) {
-            return null
-        }
-
-        let matched = this.keydownHotkeyMap[key_str].find(v => {
-            return v.when.match(cur_page, now)
-        })
-
-        if (matched === undefined) {
-            return null
-        }
-
-        return matched.handler
-    }
-}
 
 
 function create_new_tag_element(tagname: string, exists_db: boolean) {
@@ -321,7 +284,10 @@ function notice(msg: string, notice_type: NoticeType) {
 function create_suggestion_list_item(find_word:string,tag_data: TagData) {
     let div = document.createElement("div")
     let re = new RegExp(find_word,"i")
-    let match_str = tag_data.name.match(re)[0]
+    let match_str = tag_data.name.match(re)
+    if (match_str === null){
+        throw Error()
+    }
     let html = `<span class="suggestion-item-match-str">${match_str}</span>`
     let name = tag_data.name.replace(re,html)
     div.innerHTML = name
@@ -362,7 +328,6 @@ function remove_tag_elm_from_inputed(inputed_elm: HTMLElement) {
 async function tag_complement(tag_suggestion_window: TagSuggestionWindow,into: HTMLElement) {
 
     if (tag_suggestion_window.get_showing_now() === false) {
-        // HotkeyのWhenの設定が間違っている可能性あり
         console.warn("bug?")
         return
     }
@@ -541,15 +506,15 @@ function search_google_for_tags(inputed_elm:HTMLElement) {
  */
 function html_root(){
     return {
-        page_root: document.getElementById("pages"),
+        page_root: document.getElementById("pages")!,
 
-        home_elm: document.getElementById("pages:home"),
+        home_elm: document.getElementById("pages:home")!,
         home: {
             input_tag:  <HTMLInputElement>document.getElementById("page-home-input-tags")!,
             inputed_tags: document.getElementById("page-home-inputed-tags")!,
-            input_tags_container: document.getElementById("page-home-input-tags-container")
+            input_tags_container: document.getElementById("page-home-input-tags-container")!
         },
-        add_elm: document.getElementById("pages:add"),
+        add_elm: document.getElementById("pages:add")!,
         add: {
             add_btn: document.getElementById("page-add-done-btn")!,
             input_url: <HTMLInputElement>document.getElementById("page-add-input-url")!,
@@ -557,11 +522,11 @@ function html_root(){
             input_description: <HTMLInputElement>document.getElementById("page-add-input-description")!,
             inputed_tags: document.getElementById("page-add-inputed-tags")!,
             input_tag:  <HTMLInputElement>document.getElementById("page-add-input-tags")!,
-            input_tags_container: document.getElementById("page-add-input-tags-container")
+            input_tags_container: document.getElementById("page-add-input-tags-container")!
         },
 
-        edit_elm: document.getElementById("pages:edit"),
-        list_elm: document.getElementById("pages:list"),
+        edit_elm: document.getElementById("pages:edit")!,
+        list_elm: document.getElementById("pages:list")!,
     }
 }
 
@@ -687,7 +652,7 @@ namespace Main {
             if(cur === "pages:home"){
                 into = root.home.inputed_tags
             }
-            if(cur === null){
+            if(cur === null || into === null){
                 return
             }
             tag_complement(tag_suggestion_window,into)
