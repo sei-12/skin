@@ -26,7 +26,7 @@
  */
 
 import './index.css';
-import { CycleIndex } from './sub/sub';
+import { CycleIndex } from './sub/utils';
 
 //----------------------------------------------------------------------------------------------------//
 //                                                                                                    //
