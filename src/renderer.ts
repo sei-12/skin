@@ -683,6 +683,10 @@ async function insert_tag_not_complement(input_elm: HTMLInputElement,into: HTMLE
     input_elm.value = ""
 }
 
+function clear_inputed_tags(inputed_elm: HTMLElement){
+    inputed_elm.innerHTML = ""
+}
+
 async function update_searched_bookmark_list(bkmk_list: SearchedBookmarkList,inputed_tags_elm:HTMLElement) {
     if (inputed_tags_elm === null) {
         console.error("bug")
@@ -891,6 +895,7 @@ namespace Main {
             if (bkmk_data === null) {
                 return
             }
+            clear_inputed_tags(root.home.inputed_tags)
             window.app.open_bookmark(bkmk_data.id)
         }
 
@@ -908,6 +913,7 @@ namespace Main {
 
         export function u_search_google_for_tags() {
             search_google_for_tags(root.home.inputed_tags)
+            clear_inputed_tags(root.home.inputed_tags)
         }
     }
 
