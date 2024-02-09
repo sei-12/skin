@@ -1,9 +1,25 @@
 
 # Subのルール
 
-- 一切のImport文を禁止 (
-    ファイルサイズがおおきくなって分割したい場合は、フォルダを追加、”型情報”はフォルダ内でimport/exportしてOK
-)
+## Import文に関して
+基本禁止
+utilsをImportはOK
+子モジュールをImportはOK
+
+## ファイルサイズが大きくなった場合はフォルダを作る(子モジュール)
+hello.tsではないファイルからhello/*をImportするのは禁止
+Before
+```
+hello.ts 
+```
+After
+```
+hello.ts
+hello/
+    aaa.ts
+    bbb.ts
+```
+
 - utilsからのImportはOK
 - Import文を書かなくていい、且つ、300行を超えたぐらいでファイルを分割する(だいたいでOK)
 - 寿命がstaticな変数を作らない(readonlyはおｋ)
