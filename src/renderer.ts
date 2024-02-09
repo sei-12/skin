@@ -782,7 +782,7 @@ namespace Main {
         //----------------------------------------//
         //                ADD PAGE                //
         //----------------------------------------//
-        root.add.add_btn.addEventListener("click", () => { add_bookmark(alias_add_page_form) })
+        root.add.add_btn.addEventListener("click", UserCommand.u_add_bookmark )
         root.add.input_url.addEventListener("input", () => { complement_info_from_url(alias_add_page_form) })
         root.add.input_tag.addEventListener("input", () => { tag_suggestion_window.handle_input(root.add.input_tag) })
 
@@ -800,6 +800,7 @@ namespace Main {
             focus_input_tag_box("pages:add",alias_input_tag_elms)
         })
 
+        hotkey_map.set_hotkey("ctrl+Enter", new When([],"pages:add"), UserCommand.u_add_bookmark )
 
 
         //----------------------------------------//
@@ -880,6 +881,10 @@ namespace Main {
                 return
             }
             tag_complement(tag_suggestion_window,into)
+        }
+
+        export function u_add_bookmark(){
+            add_bookmark(alias_add_page_form)
         }
 
         export function u_bkmk_list_focus_down() {
