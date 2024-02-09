@@ -1,4 +1,4 @@
-import { HotkeyMap, When, create_new_tag_element } from "./sub"
+import { HotkeyMap, When, create_new_tag_element, get_inputed_tags } from "./sub"
 
 
 test("When", () => {
@@ -60,4 +60,42 @@ test("create_new_tag_element", () => {
     expect(test2.classList.contains("tag")).toBe(true)
     expect(test2.classList.contains("tag-exists-db")).toBe(false)
     expect(test2.classList.contains("tag-not-exists-db")).toBe(true)
+})
+
+test("get_inputed_tags", () => {
+    { // case1
+        let tag_elms = [
+            create_new_tag_element("test1", true),
+            create_new_tag_element("test2", true),
+            create_new_tag_element("test3", false),
+            create_new_tag_element("test4", true),
+            create_new_tag_element("test5", false)
+        ]
+
+        let elm = document.createElement("div")
+
+        tag_elms.forEach(t => elm.appendChild(t))
+
+        let tags = get_inputed_tags(elm)
+
+        expect(tags).toEqual([
+            "test1",
+            "test2",
+            "test3",
+            "test4",
+            "test5",
+        ])
+    }
+
+    { // case2
+        let tag_elms: HTMLElement[] = []
+
+        let elm = document.createElement("div")
+
+        tag_elms.forEach(t => elm.appendChild(t))
+
+        let tags = get_inputed_tags(elm)
+
+        expect(tags).toEqual([])
+    }
 })

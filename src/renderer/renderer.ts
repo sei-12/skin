@@ -1,90 +1,10 @@
 import './index.css';
 
 import { SearchedBookmarkList } from './sub/search_bookmark_list';
-import { HotkeyMap, PAGE_ELM_IDS, When, WhenStr, create_new_tag_element } from './sub/sub';
+import { AddPageForm, HotkeyMap, InputTagElms, PAGE_ELM_IDS, Pages, When, WhenStr, add_bookmark, clear_add_page_form, clear_inputed_tags, complement_info_from_url, create_new_tag_element, focus_input_tag_box, get_inputed_tags, insert_tag_not_complement, is_inputed_tag, move_page, notice, pressKeyStr, remove_tag_elm_from_inputed, search_google_for_tags, switch_page } from './sub/sub';
 import { TagSuggestionWindow } from './sub/tag_suggestion_window';
-import { CycleIndex } from './sub/utils';
 
-
-type NoticeType = "info" | "warn" | "error"
-
-//
-// HTML
-//
-type InputTagElms = {
-    add: HTMLInputElement,
-    home: HTMLInputElement
-}
-type AddPageForm = {
-    input_url: HTMLInputElement,
-    input_title: HTMLInputElement,
-    input_description: HTMLInputElement,
-    inputed_tags: HTMLElement
-}
-type Pages = {
-    add: HTMLElement,
-    home: HTMLElement,
-    edit: HTMLElement,
-    list: HTMLElement,
-}
-
-
-//----------------------------------------------------------------------------------------------------//
-//                                                                                                    //
-//                                             HOTKEY MAP                                             //
-//                                                                                                    //
-//----------------------------------------------------------------------------------------------------//
-
-
-function get_inputed_tags(inputed_tags_elm: HTMLElement): string[] {
-    let tags: string[] = []
-    inputed_tags_elm.childNodes.forEach(child => {
-        if (!(child instanceof HTMLElement)) {
-            return
-        }
-        tags.push(child.innerText)
-    })
-    return tags
-}
-
-// TODO
-function notice(msg: string, notice_type: NoticeType) {
-    console.error("notice is not implement")
-    console[notice_type](msg)
-}
-
-
-
-function pressKeyStr(e: KeyboardEvent) {
-    let pressKeys: string[] = []
-
-    if (e.ctrlKey) {
-        pressKeys.push("ctrl")
-    }
-    if (e.shiftKey) {
-        pressKeys.push("shift")
-    }
-    if (e.metaKey) {
-        pressKeys.push("meta")
-    }
-    if (e.altKey) {
-        pressKeys.push("alt")
-    }
-    pressKeys.push(e.key)
-
-    return pressKeys.join("+")
-}
-
-
-function remove_tag_elm_from_inputed(inputed_elm: HTMLElement) {
-    let last = inputed_elm.lastElementChild
-    if (last === null) {
-        return
-    }
-    inputed_elm.removeChild(last)
-}
-
-async function tag_complement(tag_suggestion_window: TagSuggestionWindow,into: HTMLElement) {
+export async function tag_complement(tag_suggestion_window: TagSuggestionWindow, into: HTMLElement) {
 
     if (tag_suggestion_window.get_showing_now() === false) {
         console.warn("bug?")
@@ -106,122 +26,14 @@ async function tag_complement(tag_suggestion_window: TagSuggestionWindow,into: H
     let exists_db = await window.app.tag_exists_db(comp)
     let tag_elm = create_new_tag_element(comp, exists_db)
 
-    if( is_inputed_tag(into,comp)){
-        notice(`${comp} is inputed`,"info")
+    if (is_inputed_tag(into, comp)) {
+        notice(`${comp} is inputed`, "info")
         return
     }
-    
+
     into.appendChild(tag_elm)
 }
-
-function clear_add_page_form(form: AddPageForm) {
-    form.input_title.value = ""
-    form.input_url.value = ""
-    form.inputed_tags.innerHTML = ""
-    form.input_description.value = ""
-}
-
-async function add_bookmark(form: AddPageForm) {
-
-    let url = form.input_url.value
-    let title = form.input_title.value
-
-    let description = form.input_description.value
-    console.log(description)
-
-    let tags = get_inputed_tags(form.inputed_tags)
-
-    if (url === "" || title === "" || tags.length === 0) {
-        // TODO message
-        return
-    }
-
-    let result = await window.app.add_bookmark(url, title, tags, description)
-
-
-    if (result.err) {
-        notice(result.message, "error")
-        return
-    }
-
-    notice("complete!", "info")
-    clear_add_page_form(form)
-}
-
-async function complement_info_from_url(form: AddPageForm) {
-
-    let url = form.input_url.value
-    let pageinfo = await window.app.fetch_pageinfo(url)
-
-    if (pageinfo === null) {
-        return
-    }
-
-    if (pageinfo.title !== null && form.input_title.value === "") {
-        form.input_title.value = pageinfo.title
-    }
-
-    console.log(pageinfo.description)
-    if (pageinfo.description !== null && form.input_description.value === "") {
-        form.input_description.value = pageinfo.description
-    }
-
-}
-
-// 「巡回」という英語がわからん
-function move_page(pages: Pages,current: PAGE_ELM_IDS, to: "prev" | "next") {
-    const PAGES: PAGE_ELM_IDS[] = ["pages:add", "pages:list", "pages:home", "pages:edit"]
-    let current_index = PAGES.findIndex(p => p === current)
-    if (current_index === -1) {
-        console.error("bug")
-        current_index = 0
-    }
-    let ci = new CycleIndex(current_index)
-    let next_page_index = to === "next" ? ci.plus(PAGES.length) : ci.minus(PAGES.length)
-    switch_page(pages,current, PAGES[next_page_index.val])
-}
-
-function switch_page(pages: Pages,from: PAGE_ELM_IDS, to: PAGE_ELM_IDS) {
-    let old_page = document.getElementById(from)
-    let new_page = document.getElementById(to)
-
-    if (old_page === null || new_page === null) {
-        console.error("switch_page: bug")
-        return
-    }
-
-    old_page.style.display = "none"
-    new_page.style.display = "block"
-}
-
-// input_elm.valueを補完しないままinputed_tagsに入れる
-async function insert_tag_not_complement(input_elm: HTMLInputElement,into: HTMLElement) {
-    // スペースとコンマを削除
-    let tag_name = input_elm.value.replace(" ", "").replace(",", "")
-
-    if (tag_name === "") {
-        input_elm.value = ""
-        return
-    }
-
-    // tag_suggestion_windowが更新されるかどうかが問題
-    let exists_db = await window.app.tag_exists_db(tag_name)
-    let tag_elm = create_new_tag_element(tag_name, exists_db)
-
-    if( is_inputed_tag(into,tag_name)){
-        notice(`${tag_name} is inputed`,"info")
-        input_elm.value = ""
-        return
-    }
-    into.appendChild(tag_elm)
-    input_elm.value = ""
-}
-
-function clear_inputed_tags(inputed_elm: HTMLElement){
-    inputed_elm.innerHTML = ""
-}
-
-async function update_searched_bookmark_list(bkmk_list: SearchedBookmarkList,inputed_tags_elm:HTMLElement) {
+export async function update_searched_bookmark_list(bkmk_list: SearchedBookmarkList, inputed_tags_elm: HTMLElement) {
     if (inputed_tags_elm === null) {
         console.error("bug")
         return
@@ -234,42 +46,19 @@ async function update_searched_bookmark_list(bkmk_list: SearchedBookmarkList,inp
     bkmk_list.insert(data)
 }
 
-function focus_input_tag_box(cur_page: PAGE_ELM_IDS,inputElms:InputTagElms) {
-
-    if (cur_page === "pages:add") {
-        inputElms.add.focus()
-    }
-    else if (cur_page === "pages:home") {
-        inputElms.home.focus()
-    } else {
-        return
-    }
-}
-
-function is_inputed_tag(inputed_elm:HTMLElement,tag:string){
-    let childNodes = Array.from(inputed_elm.childNodes)
-    return childNodes.find( n => n instanceof HTMLElement ? n.innerText === tag : false )
-}
-
-function search_google_for_tags(inputed_elm:HTMLElement) {
-    let tags = get_inputed_tags(inputed_elm)
-    if (tags.length === 0) {
-        return
-    }
-    window.app.search_google(tags)
-}
+// 「巡回」という英語がわからん
 
 /**
  * Main以外からアクセスしてほしくない
  * でもわざわざMainの中にかきたくもない
  */
-function html_root(){
+function html_root() {
     return {
         page_root: document.getElementById("pages")!,
 
         home_elm: document.getElementById("pages:home")!,
         home: {
-            input_tag:  <HTMLInputElement>document.getElementById("page-home-input-tags")!,
+            input_tag: <HTMLInputElement>document.getElementById("page-home-input-tags")!,
             inputed_tags: document.getElementById("page-home-inputed-tags")!,
             input_tags_container: document.getElementById("page-home-input-tags-container")!
         },
@@ -280,7 +69,7 @@ function html_root(){
             input_title: <HTMLInputElement>document.getElementById("page-add-input-title")!,
             input_description: <HTMLInputElement>document.getElementById("page-add-input-description")!,
             inputed_tags: document.getElementById("page-add-inputed-tags")!,
-            input_tag:  <HTMLInputElement>document.getElementById("page-add-input-tags")!,
+            input_tag: <HTMLInputElement>document.getElementById("page-add-input-tags")!,
             input_tags_container: document.getElementById("page-add-input-tags-container")!
         },
 
@@ -311,12 +100,12 @@ function initialize_pages(page_parent: HTMLElement) {
 namespace Main {
     function main() {
         initialize_pages(root.page_root)
-        switch_page(alias_pages,get_display_block_page_id(), "pages:home")
+        switch_page(alias_pages, get_display_block_page_id(), "pages:home")
 
         //----------------------------------------//
         //                ADD PAGE                //
         //----------------------------------------//
-        root.add.add_btn.addEventListener("click", UserCommand.u_add_bookmark )
+        root.add.add_btn.addEventListener("click", UserCommand.u_add_bookmark)
         root.add.input_url.addEventListener("input", () => { complement_info_from_url(alias_add_page_form) })
         root.add.input_tag.addEventListener("input", () => { tag_suggestion_window.handle_input(root.add.input_tag) })
 
@@ -327,14 +116,14 @@ namespace Main {
         })
         root.add.input_tag.addEventListener("keyup", (e) => {
             if (e.key == " " && e.isComposing === false) {
-                insert_tag_not_complement(root.add.input_tag,root.add.inputed_tags)
+                insert_tag_not_complement(root.add.input_tag, root.add.inputed_tags)
             }
         })
         root.add.input_tags_container.addEventListener("click", () => {
-            focus_input_tag_box("pages:add",alias_input_tag_elms)
+            focus_input_tag_box("pages:add", alias_input_tag_elms)
         })
 
-        hotkey_map.set_hotkey("ctrl+Enter", new When([],"pages:add"), UserCommand.u_add_bookmark )
+        hotkey_map.set_hotkey("ctrl+Enter", new When([], "pages:add"), UserCommand.u_add_bookmark)
 
 
         //----------------------------------------//
@@ -349,16 +138,16 @@ namespace Main {
             }
         })
         root.home.input_tag.addEventListener("keyup", (e) => {
-            if (e.key == " " && e.isComposing === false ) {
-                insert_tag_not_complement(root.home.input_tag,root.home.inputed_tags)
+            if (e.key == " " && e.isComposing === false) {
+                insert_tag_not_complement(root.home.input_tag, root.home.inputed_tags)
             }
         })
         const mo = new MutationObserver(() => {
-            update_searched_bookmark_list(searched_bookmark_list,root.home.inputed_tags)
+            update_searched_bookmark_list(searched_bookmark_list, root.home.inputed_tags)
         })
         mo.observe(root.home.inputed_tags, { childList: true })
         root.home.input_tags_container.addEventListener("click", () => {
-            focus_input_tag_box("pages:home",alias_input_tag_elms)
+            focus_input_tag_box("pages:home", alias_input_tag_elms)
         })
 
 
@@ -405,19 +194,19 @@ namespace Main {
             // TODO
             let cur = get_display_block_page_id()
             let into = null
-            if(cur === "pages:add"){
+            if (cur === "pages:add") {
                 into = root.add.inputed_tags
             }
-            if(cur === "pages:home"){
+            if (cur === "pages:home") {
                 into = root.home.inputed_tags
             }
-            if(cur === null || into === null){
+            if (cur === null || into === null) {
                 return
             }
-            tag_complement(tag_suggestion_window,into)
+            tag_complement(tag_suggestion_window, into)
         }
 
-        export function u_add_bookmark(){
+        export function u_add_bookmark() {
             add_bookmark(alias_add_page_form)
         }
 
@@ -439,15 +228,15 @@ namespace Main {
         }
 
         export function prev_page() {
-            move_page(alias_pages,get_display_block_page_id(), "prev")
+            move_page(alias_pages, get_display_block_page_id(), "prev")
         }
 
         export function next_page() {
-            move_page(alias_pages,get_display_block_page_id(), "next")
+            move_page(alias_pages, get_display_block_page_id(), "next")
         }
 
         export function u_focus_input_tag_box() {
-            focus_input_tag_box(get_display_block_page_id(),alias_input_tag_elms)
+            focus_input_tag_box(get_display_block_page_id(), alias_input_tag_elms)
         }
 
         export function u_search_google_for_tags() {
@@ -518,7 +307,7 @@ namespace Main {
         return cur_page
     }
 
-    
+
     const root = html_root()
     const hotkey_map = new HotkeyMap()
     const tag_suggestion_window = new TagSuggestionWindow()
@@ -526,7 +315,7 @@ namespace Main {
         <HTMLDivElement>document.getElementById("page-home-search-results")
     )
 
-    const alias_input_tag_elms : InputTagElms = {
+    const alias_input_tag_elms: InputTagElms = {
         add: root.add.input_tag,
         home: root.home.input_tag
     }
