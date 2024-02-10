@@ -43,7 +43,7 @@ export class TagSuggestionWindow {
     focus_index: CycleIndex
     target_elm: HTMLInputElement | null
 
-    constructor(elm: HTMLDivElement,inners: HTMLDivElement[]) {
+    constructor(elm: HTMLDivElement, inners: HTMLDivElement[]) {
         this.inners = inners
         this.elm = elm
         this.showing_now = false
@@ -68,10 +68,10 @@ export class TagSuggestionWindow {
         this.focus_index = new CycleIndex(0)
         let datas = await window.app.fetch_suggestion(find_word)
 
-        let elms =  datas.data .map(d => create_suggestion_list_item(find_word,d)) 
+        let elms = datas.data.map(d => create_suggestion_list_item(find_word, d))
         let tmp: HTMLDivElement[] = []
-        elms.forEach( elm => {
-            if(elm !== null){
+        elms.forEach(elm => {
+            if (elm !== null) {
                 tmp.push(elm)
             }
         })

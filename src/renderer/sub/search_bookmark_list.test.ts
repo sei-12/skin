@@ -1,11 +1,11 @@
 import { __local__ } from "./search_bookmark_list"
 
-test("SearchBookmarkList",() => {
+test("SearchBookmarkList", () => {
 
 })
 
-test("elm <--> data",() => {
-    let data : BookmarkData = {
+test("elm <--> data", () => {
+    let data: BookmarkData = {
         title: "title",
         url: "url",
         description: "desc",

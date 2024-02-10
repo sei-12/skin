@@ -30,8 +30,8 @@ function create_new_bookmark_elm(data: BookmarkData) {
     description_elm.classList.add("bookmark-list-item-desc")
 
     let craeted_at_elm = document.createElement("div")
-    let replace_re = new RegExp("-","g")
-    craeted_at_elm.innerText = "created at: " + data.created_at.replace(replace_re,"/")
+    let replace_re = new RegExp("-", "g")
+    craeted_at_elm.innerText = "created at: " + data.created_at.replace(replace_re, "/")
     craeted_at_elm.classList.add("bookmark-list-item-created-at")
 
     let div = document.createElement("div")
