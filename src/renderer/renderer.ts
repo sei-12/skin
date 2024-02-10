@@ -1,7 +1,7 @@
 import './index.css';
 
 import { SearchedBookmarkList } from './sub/search_bookmark_list';
-import { AddPageForm, HotkeyMap, InputTagElms, PAGE_ELM_IDS, Pages, When, WhenStr, add_bookmark, clear_inputed_tags, complement_info_from_url, create_new_tag_element, focus_input_tag_box, get_inputed_tags, insert_tag_not_complement, is_inputed_tag, move_page, notice, pressKeyStr, remove_tag_elm_from_inputed, search_google_for_tags, switch_page } from './sub/sub';
+import { AddPageForm, HotkeyMap, InputTagElms, Pages, When, WhenStr, add_bookmark, clear_inputed_tags, complement_info_from_url, create_new_tag_element, focus_input_tag_box, get_current_page_name, get_inputed_tags, insert_tag_not_complement, is_inputed_tag, move_page, notice, pressKeyStr, remove_tag_elm_from_inputed, search_google_for_tags, switch_page } from './sub/sub';
 import { reload_taglist_elm } from './sub/tag_list';
 import { TagSuggestionWindow } from './sub/tag_suggestion_window';
 
@@ -146,7 +146,10 @@ function initialize_pages(page_parent: HTMLElement) {
 namespace Main {
     function main() {
         initialize_pages(root.page_root)
-        switch_page(alias_pages, get_display_block_page_id(), "pages:home")
+        switch_page(
+            alias_pages[get_current_page_name(alias_pages)!]!,
+            alias_pages.home
+        )
 
         //----------------------------------------//
         //                ADD PAGE                //
@@ -166,10 +169,10 @@ namespace Main {
             }
         })
         root.add.input_tags_container.addEventListener("click", () => {
-            focus_input_tag_box("pages:add", alias_input_tag_elms)
+            focus_input_tag_box("add", alias_input_tag_elms)
         })
 
-        hotkey_map.set_hotkey("ctrl+Enter", new When([], "pages:add"), UserCommand.u_add_bookmark)
+        hotkey_map.set_hotkey("ctrl+Enter", new When([], "add"), UserCommand.u_add_bookmark)
 
 
         //----------------------------------------//
@@ -193,14 +196,14 @@ namespace Main {
         })
         mo.observe(root.home.inputed_tags, { childList: true })
         root.home.input_tags_container.addEventListener("click", () => {
-            focus_input_tag_box("pages:home", alias_input_tag_elms)
+            focus_input_tag_box("home", alias_input_tag_elms)
         })
 
 
-        hotkey_map.set_hotkey("ArrowDown", new When([], "pages:home"), UserCommand.u_bkmk_list_focus_down)
-        hotkey_map.set_hotkey("ArrowUp", new When([], "pages:home"), UserCommand.u_bkmk_list_focus_up)
-        hotkey_map.set_hotkey("Enter", new When([], "pages:home"), UserCommand.u_open_bookmark)
-        hotkey_map.set_hotkey("ctrl+Enter", new When([], "pages:home"), UserCommand.u_search_google_for_tags)
+        hotkey_map.set_hotkey("ArrowDown", new When([], "home"), UserCommand.u_bkmk_list_focus_down)
+        hotkey_map.set_hotkey("ArrowUp", new When([], "home"), UserCommand.u_bkmk_list_focus_up)
+        hotkey_map.set_hotkey("Enter", new When([], "home"), UserCommand.u_open_bookmark)
+        hotkey_map.set_hotkey("ctrl+Enter", new When([], "home"), UserCommand.u_search_google_for_tags)
 
 
         const tag_list_page_mo = new MutationDisplayObserver((_, old, cur) => {
@@ -248,12 +251,13 @@ namespace Main {
 
         export async function u_tag_complement() {
             // TODO
-            let cur = get_display_block_page_id()
+            let cur = get_current_page_name(alias_pages)!
+
             let into = null
-            if (cur === "pages:add") {
+            if (cur === "add") {
                 into = root.add.inputed_tags
             }
-            if (cur === "pages:home") {
+            if (cur === "home") {
                 into = root.home.inputed_tags
             }
             if (cur === null || into === null) {
@@ -284,15 +288,29 @@ namespace Main {
         }
 
         export function prev_page() {
-            move_page(alias_pages, get_display_block_page_id(), "prev")
+            let current_page_name = get_current_page_name(alias_pages)
+            if (current_page_name === undefined ) return 
+            let next_pagename = move_page(current_page_name,"prev")
+            switch_page(
+                alias_pages[current_page_name],
+                alias_pages[next_pagename]
+            )
         }
 
         export function next_page() {
-            move_page(alias_pages, get_display_block_page_id(), "next")
+            let current_page_name = get_current_page_name(alias_pages)
+            if (current_page_name === undefined ) return 
+            let next_pagename = move_page(current_page_name,"next")
+            switch_page(
+                alias_pages[current_page_name],
+                alias_pages[next_pagename]
+            )
         }
 
         export function u_focus_input_tag_box() {
-            focus_input_tag_box(get_display_block_page_id(), alias_input_tag_elms)
+            let current_page_name = get_current_page_name(alias_pages)
+            if (current_page_name === undefined ) return 
+            focus_input_tag_box(current_page_name, alias_input_tag_elms)
         }
 
         export function u_search_google_for_tags() {
@@ -314,7 +332,12 @@ namespace Main {
     function hotkey_caller(e: KeyboardEvent) {
         let key_str = pressKeyStr(e)
         let when = get_when_strs()
-        let cur_page = get_display_block_page_id()
+        let cur_page = get_current_page_name(alias_pages)
+        if ( cur_page === undefined ){
+            console.error("bug")
+            return
+        }
+
         let handler = hotkey_map.get_hotkey(cur_page, key_str, when)
 
         if (handler === null) {
@@ -323,46 +346,6 @@ namespace Main {
 
         handler()
     }
-
-    /**
-     * get_current_page_idという名前でもいい
-     * @throws ひとつも表示されていない場合もしくは複数表示されている場合はバグ
-     * @returns 
-     */
-    function get_display_block_page_id(): PAGE_ELM_IDS {
-        let parent_elm = document.getElementById("pages")
-
-        if (parent_elm === null) {
-            throw Error("bug")
-        }
-
-        let cur_page: PAGE_ELM_IDS | null = null
-
-        parent_elm.childNodes.forEach(node => {
-            if (!(node instanceof HTMLElement)) {
-                return
-            }
-
-            if (node.style.display !== "block") {
-                return
-            }
-
-            if (cur_page !== null) {
-                throw Error("複数表示されている")
-            }
-
-            cur_page = node.id as PAGE_ELM_IDS
-        })
-
-        if (cur_page === null) {
-            throw Error("表示されているページが無い")
-        }
-
-        console.debug("cur_page_id:", cur_page)
-
-        return cur_page
-    }
-
 
     const root = html_root()
     const hotkey_map = new HotkeyMap()
@@ -397,7 +380,8 @@ namespace Main {
         add: root.add_elm,
         home: root.home_elm,
         edit: root.edit_elm,
-        list: root.list_elm
+        list: root.list_elm,
+        taglist: root.taglist_elm 
     }
 
     main()

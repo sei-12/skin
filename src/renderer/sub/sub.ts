@@ -15,16 +15,16 @@ export type AddPageForm = {
     input_description: HTMLInputElement,
     inputed_tags: HTMLElement
 }
-export type Pages = {
-    add: HTMLElement,
-    home: HTMLElement,
-    edit: HTMLElement,
-    list: HTMLElement,
-}
+// export type Pages = {
+//     add: HTMLElement,
+//     home: HTMLElement,
+//     edit: HTMLElement,
+//     list: HTMLElement,
+// }
 
 
 type NoticeType = "info" | "warn" | "error"
-export type PAGE_ELM_IDS = "pages:home" | "pages:add" | "pages:edit" | "pages:list" | "pages:taglist"
+// export type PAGE_ELM_IDS = "pages:home" | "pages:add" | "pages:edit" | "pages:list" | "pages:taglist"
 export type WhenStr = "tag_suggestion"
 type Handler = () => void
 
@@ -34,10 +34,10 @@ export class When {
 
     }
 
-    page: PAGE_ELM_IDS | "anypage"
+    page: PageName | "anypage"
     private values: WhenStr[]
 
-    constructor(vals: WhenStr[] | undefined = undefined, page: PAGE_ELM_IDS | "anypage" | undefined = undefined) {
+    constructor(vals: WhenStr[] | undefined = undefined, page: PageName | "anypage" | undefined = undefined) {
         if (vals === undefined) {
             vals = []
         }
@@ -50,7 +50,7 @@ export class When {
         this.page = page
     }
 
-    match(cur_page: PAGE_ELM_IDS, when_strs: WhenStr[]): boolean {
+    match(cur_page: PageName, when_strs: WhenStr[]): boolean {
         if (this.page !== "anypage" && this.page !== cur_page) {
             return false
         }
@@ -87,7 +87,7 @@ export class HotkeyMap {
         this.keydownHotkeyMap[key_str].push({ when, handler })
     }
 
-    get_hotkey(cur_page: PAGE_ELM_IDS, key_str: string, now: WhenStr[]): Handler | null {
+    get_hotkey(cur_page: PageName, key_str: string, now: WhenStr[]): Handler | null {
         if (this.keydownHotkeyMap[key_str] === undefined) {
             return null
         }
@@ -104,6 +104,67 @@ export class HotkeyMap {
     }
 }
 
+export type PageName = "add" | "home" | "edit" | "list" | "taglist"
+export type Pages = {
+    add: HTMLElement,
+    home: HTMLElement,
+    edit: HTMLElement,
+    list: HTMLElement,
+    taglist: HTMLElement,
+}
+
+export function get_current_page(parent_elm: HTMLElement): HTMLElement {
+
+    let cur_page: HTMLElement | null = null
+
+    parent_elm.childNodes.forEach(node => {
+        if (!(node instanceof HTMLElement)) {
+            return
+        }
+
+        if (node.style.display !== "block") {
+            return
+        }
+
+        if (cur_page !== null) {
+            throw Error("複数表示されている")
+        }
+
+        cur_page = node
+    })
+
+    if (cur_page === null) {
+        throw Error("表示されているページが無い")
+    }
+
+    console.debug("cur_page_id:", cur_page)
+
+    return cur_page
+}
+
+export function get_current_page_name(pages: Pages): PageName | undefined {
+    let page_names: PageName[] = ["add","home","edit","list","taglist"]
+    return page_names.find( name => pages[name].style.display === "block" )
+}
+
+
+export function move_page(current: PageName, to: "next" | "prev"): PageName {
+    let page_names: PageName[] = ["add","home","edit","list","taglist"]
+
+    let current_index = page_names.findIndex(p => p === current)
+    if (current_index === -1) {
+        console.error("bug")
+        current_index = 0
+    }
+    let ci = new CycleIndex(current_index)
+    let next_page_index = to === "next" ? ci.plus(page_names.length) : ci.minus(page_names.length)
+    return page_names[next_page_index.val]
+}
+
+export function switch_page(from: HTMLElement, to: HTMLElement) {
+    from.style.display = "none"
+    to.style.display = "block"
+}
 //----------------------------------------------------------------------------------------------------//
 //                                                                                                    //
 //                                            STAND ALONE                                             //
@@ -233,30 +294,30 @@ export function search_google_for_tags(inputed_elm: HTMLElement) {
     window.app.search_google(tags)
 }
 
-export function move_page(pages: Pages, current: PAGE_ELM_IDS, to: "prev" | "next") {
-    const PAGES: PAGE_ELM_IDS[] = ["pages:add", "pages:list", "pages:home", "pages:edit","pages:taglist"]
-    let current_index = PAGES.findIndex(p => p === current)
-    if (current_index === -1) {
-        console.error("bug")
-        current_index = 0
-    }
-    let ci = new CycleIndex(current_index)
-    let next_page_index = to === "next" ? ci.plus(PAGES.length) : ci.minus(PAGES.length)
-    switch_page(pages, current, PAGES[next_page_index.val])
-}
+// export function move_page(pages: Pages, current: PAGE_ELM_IDS, to: "prev" | "next") {
+//     const PAGES: PAGE_ELM_IDS[] = ["pages:add", "pages:list", "pages:home", "pages:edit","pages:taglist"]
+//     let current_index = PAGES.findIndex(p => p === current)
+//     if (current_index === -1) {
+//         console.error("bug")
+//         current_index = 0
+//     }
+//     let ci = new CycleIndex(current_index)
+//     let next_page_index = to === "next" ? ci.plus(PAGES.length) : ci.minus(PAGES.length)
+//     switch_page(pages, current, PAGES[next_page_index.val])
+// }
 
-export function switch_page(pages: Pages, from: PAGE_ELM_IDS, to: PAGE_ELM_IDS) {
-    let old_page = document.getElementById(from)
-    let new_page = document.getElementById(to)
+// export function switch_page(pages: Pages, from: PAGE_ELM_IDS, to: PAGE_ELM_IDS) {
+//     let old_page = document.getElementById(from)
+//     let new_page = document.getElementById(to)
 
-    if (old_page === null || new_page === null) {
-        console.error("switch_page: bug")
-        return
-    }
+//     if (old_page === null || new_page === null) {
+//         console.error("switch_page: bug")
+//         return
+//     }
 
-    old_page.style.display = "none"
-    new_page.style.display = "block"
-}
+//     old_page.style.display = "none"
+//     new_page.style.display = "block"
+// }
 
 // input_elm.valueを補完しないままinputed_tagsに入れる
 export async function insert_tag_not_complement(input_elm: HTMLInputElement, into: HTMLElement) {
@@ -286,12 +347,12 @@ export function clear_inputed_tags(inputed_elm: HTMLElement) {
 }
 
 
-export function focus_input_tag_box(cur_page: PAGE_ELM_IDS, inputElms: InputTagElms) {
+export function focus_input_tag_box(cur_page: PageName, inputElms: InputTagElms) {
 
-    if (cur_page === "pages:add") {
+    if (cur_page === "add") {
         inputElms.add.focus()
     }
-    else if (cur_page === "pages:home") {
+    else if (cur_page === "home") {
         inputElms.home.focus()
     } else {
         return
