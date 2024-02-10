@@ -2,6 +2,7 @@ import './index.css';
 
 import { SearchedBookmarkList } from './sub/search_bookmark_list';
 import { AddPageForm, HotkeyMap, InputTagElms, PAGE_ELM_IDS, Pages, When, WhenStr, add_bookmark, clear_inputed_tags, complement_info_from_url, create_new_tag_element, focus_input_tag_box, get_inputed_tags, insert_tag_not_complement, is_inputed_tag, move_page, notice, pressKeyStr, remove_tag_elm_from_inputed, search_google_for_tags, switch_page } from './sub/sub';
+import { reload_taglist_elm } from './sub/tag_list';
 import { TagSuggestionWindow } from './sub/tag_suggestion_window';
 
 const TAG_SUGGESTION_WINDOW_ID = "tag-suggestion-window"
@@ -76,8 +77,50 @@ function html_root() {
             input_tags_container: document.getElementById("page-add-input-tags-container")!
         },
 
+        taglist_elm: document.getElementById("pages:taglist")!,
+        taglist: {
+            list: document.getElementById("tag-list-container")!
+        },
+
         edit_elm: document.getElementById("pages:edit")!,
         list_elm: document.getElementById("pages:list")!,
+    }
+}
+
+
+// Utils候補
+class MutationDisplayObserver {
+    private mo: MutationObserver
+    private current_display: string | null
+
+    constructor(callback: (mutations_list: MutationRecord[], old_display: string, current_display: string) => void) {
+        this.mo = new MutationObserver((mutations_list) => {
+            for (const mutation of mutations_list) {
+                if (mutation.type !== 'attributes' || mutation.attributeName !== 'style') {
+                    continue
+                }
+
+                if (!(mutation.target instanceof HTMLElement)) {
+                    continue
+                }
+
+                if (this.current_display === null) {
+                    console.error("bug MutationDisplayObserver")
+                    continue
+                }
+
+                if (this.current_display === mutation.target.style.display) {
+                    continue
+                }
+
+                callback(mutations_list, this.current_display, mutation.target.style.display)
+            }
+        })
+    }
+
+    observe(target: HTMLElement) {
+        this.current_display = target.style.display
+        this.mo.observe(target, { attributes: true })
     }
 }
 
@@ -159,6 +202,16 @@ namespace Main {
         hotkey_map.set_hotkey("Enter", new When([], "pages:home"), UserCommand.u_open_bookmark)
         hotkey_map.set_hotkey("ctrl+Enter", new When([], "pages:home"), UserCommand.u_search_google_for_tags)
 
+
+        const tag_list_page_mo = new MutationDisplayObserver((_, old, cur) => {
+            console.log(old, "to", cur)
+            if (old !== "none" || cur !== "block") {
+                return
+            }
+
+            reload_taglist_elm(root.taglist.list)
+        })
+        tag_list_page_mo.observe(root.taglist_elm)
 
 
         //----------------------------------------//

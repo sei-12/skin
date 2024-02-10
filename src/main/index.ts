@@ -58,17 +58,17 @@ function search_google(tags: string[]) {
 }
 
 
-function open_url(url:string){
+function open_url(url: string) {
 
-    console.log("call open url",url)
+    console.log("call open url", url)
 
     let protcol = url.split(":")[0]
-    if(protcol === ""){
+    if (protcol === "") {
         return
     }
 
     let opener = config.how_to_open_url[protcol]
-    if(opener === undefined){
+    if (opener === undefined) {
         return
     }
 
@@ -82,7 +82,7 @@ function open_url(url:string){
     }
 
     spawn(opener.cmd, args)
-} 
+}
 
 async function open_bookmark(bookmark_id: number): Promise<null> {
     let bookmark = await wrap_db_get(querys.get_bkmk_from_id, bookmark_id)
@@ -247,6 +247,21 @@ async function handleFetchSuggestion(word: string) {
     }
 }
 
+async function fetch_tag_list() {
+    let q1 = querys.fetch_tag_list()
+    let tags = await wrap_db_all(q1.query, q1.param)
+    if (tags.err !== null) {
+        return {
+            err: tags.err,
+            data: []
+        }
+    }
+
+    return {
+        err: null,
+        data: tags.rows
+    }
+}
 
 function load_config_file(): any {
 
@@ -269,26 +284,26 @@ function load_config_file(): any {
 }
 
 
-function is_how_to_open_url_data(data:any):boolean{
+function is_how_to_open_url_data(data: any): boolean {
     try {
 
-        if( typeof data["cmd"] !== "string" ){
+        if (typeof data["cmd"] !== "string") {
             console.log("1--")
             return false
         }
 
-        if( data["args"] instanceof Array === false){
+        if (data["args"] instanceof Array === false) {
             console.log("2--")
             return false
         }
 
-        if ( data["args"].every( (v:any) => typeof v === "string") === false ){
+        if (data["args"].every((v: any) => typeof v === "string") === false) {
             console.log("3--")
             return false
         }
 
 
-    }catch{
+    } catch {
         return false
     }
 
@@ -305,13 +320,13 @@ function apply_config(config: any): Config {
     if (config["how_to_open_url"] !== undefined) {
         let alias = config["how_to_open_url"]
 
-        for(let key in alias){
-            if( !is_how_to_open_url_data(alias[key]) ){
-                console.log(alias[key],"is false")
+        for (let key in alias) {
+            if (!is_how_to_open_url_data(alias[key])) {
+                console.log(alias[key], "is false")
                 continue
             }
 
-            console.log(alias[key],"is ok")
+            console.log(alias[key], "is ok")
 
             ret_config.how_to_open_url[key] = alias[key]
         }
@@ -384,6 +399,12 @@ const querys = {
         let where = new Array(len).fill("where = ?")
         let stmt = "select id from tags " + where.join(" or ")
         return stmt
+    },
+
+    fetch_tag_list: () => {
+        let query = "select * from tags;"
+        let param = undefined
+        return { query, param }
     }
 }
 
@@ -422,6 +443,8 @@ ipcMain.handle("add-bkmk", async (_, url, title, tags, description) => {
     return res
 })
 
+
+ipcMain.handle("fetch-tag-list", async () => await fetch_tag_list())
 ipcMain.handle("fetch-suggestion", async (_, word) => {
     return await handleFetchSuggestion(word)
 })

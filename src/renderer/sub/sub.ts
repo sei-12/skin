@@ -24,7 +24,7 @@ export type Pages = {
 
 
 type NoticeType = "info" | "warn" | "error"
-export type PAGE_ELM_IDS = "pages:home" | "pages:add" | "pages:edit" | "pages:list"
+export type PAGE_ELM_IDS = "pages:home" | "pages:add" | "pages:edit" | "pages:list" | "pages:taglist"
 export type WhenStr = "tag_suggestion"
 type Handler = () => void
 
@@ -234,7 +234,7 @@ export function search_google_for_tags(inputed_elm: HTMLElement) {
 }
 
 export function move_page(pages: Pages, current: PAGE_ELM_IDS, to: "prev" | "next") {
-    const PAGES: PAGE_ELM_IDS[] = ["pages:add", "pages:list", "pages:home", "pages:edit"]
+    const PAGES: PAGE_ELM_IDS[] = ["pages:add", "pages:list", "pages:home", "pages:edit","pages:taglist"]
     let current_index = PAGES.findIndex(p => p === current)
     if (current_index === -1) {
         console.error("bug")

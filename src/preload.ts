@@ -29,6 +29,7 @@ contextBridge.exposeInMainWorld(
         },
         search_google:(tags:string[]) => {
             ipcRenderer.invoke("search-google",tags)
-        }
+        },
+        fetch_tag_list:() => ipcRenderer.invoke("fetch-tag-list")
     }
 );
