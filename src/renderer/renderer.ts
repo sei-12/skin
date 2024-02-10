@@ -4,6 +4,7 @@ import { SearchedBookmarkList } from './sub/search_bookmark_list';
 import { AddPageForm, HotkeyMap, InputTagElms, Pages, When, WhenStr, add_bookmark, clear_inputed_tags, complement_info_from_url, create_new_tag_element, focus_input_tag_box, get_current_page_name, get_inputed_tags, insert_tag_not_complement, is_inputed_tag, move_page, notice, pressKeyStr, remove_tag_elm_from_inputed, search_google_for_tags, switch_page } from './sub/sub';
 import { reload_taglist_elm } from './sub/tag_list';
 import { TagSuggestionWindow } from './sub/tag_suggestion_window';
+import { MutationDisplayObserver } from './sub/utils';
 
 const TAG_SUGGESTION_WINDOW_ID = "tag-suggestion-window"
 
@@ -88,41 +89,6 @@ function html_root() {
 }
 
 
-// Utils候補
-class MutationDisplayObserver {
-    private mo: MutationObserver
-    private current_display: string | null
-
-    constructor(callback: (mutations_list: MutationRecord[], old_display: string, current_display: string) => void) {
-        this.mo = new MutationObserver((mutations_list) => {
-            for (const mutation of mutations_list) {
-                if (mutation.type !== 'attributes' || mutation.attributeName !== 'style') {
-                    continue
-                }
-
-                if (!(mutation.target instanceof HTMLElement)) {
-                    continue
-                }
-
-                if (this.current_display === null) {
-                    console.error("bug MutationDisplayObserver")
-                    continue
-                }
-
-                if (this.current_display === mutation.target.style.display) {
-                    continue
-                }
-
-                callback(mutations_list, this.current_display, mutation.target.style.display)
-            }
-        })
-    }
-
-    observe(target: HTMLElement) {
-        this.current_display = target.style.display
-        this.mo.observe(target, { attributes: true })
-    }
-}
 
 //----------------------------------------------------------------------------------------------------//
 //                                                                                                    //
