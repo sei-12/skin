@@ -242,9 +242,9 @@ body {
     font-size: x-large;
     font-weight: 300;
     max-width: 80%;
-    /* width: 70%; */
     overflow: hidden;
     text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .hit-tag-list-item-count {
