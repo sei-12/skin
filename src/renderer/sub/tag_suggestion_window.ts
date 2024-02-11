@@ -39,6 +39,42 @@ namespace TagSuggestion {
     }
 }
 
+/**
+ * 子要素と親要素のスクロール位置の関係性
+ */
+function todo_rename(container_elm: HTMLElement, child_elm: HTMLElement): ">" | "<=>" | "<" {
+
+    if (child_elm.offsetTop < container_elm.scrollTop ) {
+        return ">"
+    }
+
+    if (child_elm.offsetTop + child_elm.offsetHeight > container_elm.scrollTop + container_elm.offsetHeight) {
+        return "<"
+    }
+
+    return "<=>"
+}
+
+function scroll_to_focus_elm(focus_elm: HTMLElement, container_elm: HTMLElement) {
+    console.log(todo_rename(container_elm, focus_elm))
+
+    let a = todo_rename(container_elm, focus_elm)
+    if (a === "<=>") {
+        return
+    }
+
+    let top = 0
+    if (a === "<") {
+        top = focus_elm.offsetTop + focus_elm.offsetHeight - container_elm.offsetHeight
+    } else {
+        top = focus_elm.offsetTop
+    }
+
+    container_elm.scroll({
+        top: top
+    })
+}
+
 
 export class TagSuggestionWindow {
     inners: HTMLDivElement[]
@@ -106,7 +142,11 @@ export class TagSuggestionWindow {
         // divにフォーカスしてもスクロールされるかわからん
         // TODO
 
-        this.suggestion_items[new_index.val].focus()
+        // this.suggestion_items[new_index.val].focus()
+        scroll_to_focus_elm(
+            this.suggestion_items[new_index.val],
+            this.elm
+        )
 
         this.focus_index = new_index
     }

@@ -6,7 +6,7 @@ body {
     font-weight: 700;
 }
 
-:root{
+:root {
     --font-color-white: #f8f8f8;
     --font-color-usui-white: #999999;
     --tag-suggestion-window-z: 10;
@@ -15,22 +15,30 @@ body {
     --kurome-background-color: #191D2E;
 }
 
-#tag-suggestion-window{
+#tag-suggestion-window {
     position: absolute;
     padding: 10px;
     background-color: var(--kurome-background-color);
     z-index: var(--tag-suggestion-window-z);
     width: 30vw;
+    max-height: 50vh;
+    overflow: hidden;
+}
+
+#tag-suggestion-window::-webkit-scrollbar {
+    display: none;
 }
 
 .suggestion-item {
     width: 100%;
     color: var(--font-color-usui-white);
 }
+
 .suggestion-item-match-str {
     color: white;
 }
-.suggestion-item-focus{
+
+.suggestion-item-focus {
     /* border: solid red 3px; */
     /* box-sizing: border-box; */
     background-color: var(--input-box-background-color);
@@ -41,11 +49,11 @@ body {
     margin: 5px;
 }
 
-.tag-exists-db{
+.tag-exists-db {
     color: rgb(20, 220, 20);
 }
 
-.tag-not-exists-db{
+.tag-not-exists-db {
     color: red;
 }
 
@@ -124,7 +132,7 @@ body {
     margin-block: 10px;
 }
 
-.pages-add-form-container{
+.pages-add-form-container {
     /* padding: 8%; */
     padding-block: 4%;
     padding-inline: 7%;
@@ -150,7 +158,7 @@ body {
     font-size: medium;
     margin: 5px;
     margin-bottom: 2px;
-    font-weight: 400;  
+    font-weight: 400;
     inline-size: 100%;
     overflow-wrap: break-word;
     color: #999999;
@@ -159,7 +167,7 @@ body {
 .bookmark-list-item-created-at {
     margin: 5px;
     font-size: medium;
-    font-weight: 600;  
+    font-weight: 600;
     color: #999999;
 }
 
