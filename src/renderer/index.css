@@ -17,12 +17,15 @@ body {
 
 #tag-suggestion-window {
     position: absolute;
-    padding: 10px;
     background-color: var(--kurome-background-color);
     z-index: var(--tag-suggestion-window-z);
     width: 30vw;
-    max-height: 50vh;
+}
+
+#tag-suggestion-window-inner-padding {
+    margin: 10px;
     overflow: hidden;
+    max-height: 50vh;
 }
 
 #tag-suggestion-window::-webkit-scrollbar {

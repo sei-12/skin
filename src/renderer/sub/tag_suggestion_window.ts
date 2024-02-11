@@ -67,7 +67,7 @@ function scroll_to_focus_elm(focus_elm: HTMLElement, container_elm: HTMLElement)
     if (a === "<") {
         top = focus_elm.offsetTop + focus_elm.offsetHeight - container_elm.offsetHeight
     } else {
-        top = focus_elm.offsetTop
+        top = focus_elm.offsetTop - container_elm.offsetTop
     }
 
     container_elm.scroll({
@@ -127,7 +127,7 @@ export class TagSuggestionWindow {
     }
 
 
-    handle_move_focus(to: "up" | "down") {
+    handle_move_focus(to: "up" | "down", container_elm: HTMLElement) {
         let new_index
 
         if (to == "down") {
@@ -145,7 +145,8 @@ export class TagSuggestionWindow {
         // this.suggestion_items[new_index.val].focus()
         scroll_to_focus_elm(
             this.suggestion_items[new_index.val],
-            this.elm
+            // this.elm
+            container_elm
         )
 
         this.focus_index = new_index

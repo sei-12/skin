@@ -85,6 +85,10 @@ function html_root() {
 
         edit_elm: document.getElementById("pages:edit")!,
         list_elm: document.getElementById("pages:list")!,
+
+        tag_suggestion: {
+            inner_padding: document.getElementById("tag-suggestion-window-inner-padding")!
+        }
     }
 }
 
@@ -208,11 +212,11 @@ namespace Main {
         // 名前がかぶるときは先頭にu_をつけることにする
 
         export function tag_suggestion_focus_up() {
-            tag_suggestion_window.handle_move_focus("up")
+            tag_suggestion_window.handle_move_focus("up",root.tag_suggestion.inner_padding)
         }
 
         export function tag_suggestion_focus_down() {
-            tag_suggestion_window.handle_move_focus("down")
+            tag_suggestion_window.handle_move_focus("down",root.tag_suggestion.inner_padding)
         }
 
         export async function u_tag_complement() {
