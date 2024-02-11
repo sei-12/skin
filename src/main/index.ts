@@ -238,11 +238,11 @@ async function fetch_hit_tags(tags: string[]): Promise<{
 }> {
 
     let q = querys.fetch_hit_tags(tags)
-    let result = await wrap_db_all(q.query,q.param)
-    if (result.err !== null){
+    let result = await wrap_db_all(q.query, q.param)
+    if (result.err !== null) {
         return {
             err: result.err,
-            data:[]
+            data: []
         }
     }
 
@@ -445,6 +445,7 @@ const querys = {
             ORDER BY COUNT(*) DESC
         )
         WHERE name NOT IN (${s})
+        LIMIT 30
         `
         let param = [
             ...tags,
@@ -452,7 +453,7 @@ const querys = {
             ...tags
         ]
 
-        return {query,param}
+        return { query, param }
     },
 
     get_tag_id: "select id from tags where name = ?",
