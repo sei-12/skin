@@ -4,6 +4,7 @@ body {
     font-size: x-large;
     font-family: Hack;
     font-weight: 700;
+    overflow: hidden;
 }
 
 :root {
@@ -26,6 +27,7 @@ body {
     margin: 10px;
     overflow: hidden;
     max-height: 50vh;
+    position: relative;
 }
 
 #tag-suggestion-window::-webkit-scrollbar {
@@ -100,6 +102,16 @@ body {
     outline: none;
     background-color: var(--input-box-background-color);
     font-size: x-large;
+}
+
+#page-home-search-results {
+    overflow: hidden;
+    max-height: 80vh;
+    position: relative;
+}
+
+#page-home-search-results::-webkit-scrollbar {
+    display: none;
 }
 
 #page-add-done-btn {

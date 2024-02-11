@@ -1,4 +1,4 @@
-import { CycleIndex } from "./utils"
+import { CycleIndex, scroll_to_focus_elm } from "./utils"
 
 function create_suggestion_list_item(find_word: string, tag_data: TagData): HTMLDivElement | null {
     let div = document.createElement("div")
@@ -38,42 +38,6 @@ namespace TagSuggestion {
         cur_index = next_index
     }
 }
-
-/**
- * 子要素と親要素のスクロール位置の関係性
- */
-function child_elm_pos(container_elm: HTMLElement, child_elm: HTMLElement): ">" | "<=>" | "<" {
-
-    if (child_elm.offsetTop < container_elm.scrollTop ) {
-        return ">"
-    }
-
-    if (child_elm.offsetTop + child_elm.offsetHeight > container_elm.scrollTop + container_elm.offsetHeight) {
-        return "<"
-    }
-
-    return "<=>"
-}
-
-function scroll_to_focus_elm(focus_elm: HTMLElement, container_elm: HTMLElement) {
-    
-    let pos = child_elm_pos(container_elm, focus_elm)
-    if (pos === "<=>") {
-        return
-    }
-
-    let top = 0
-    if (pos === "<") {
-        top = focus_elm.offsetTop + focus_elm.offsetHeight - container_elm.offsetHeight
-    } else {
-        top = focus_elm.offsetTop - container_elm.offsetTop
-    }
-
-    container_elm.scroll({
-        top: top
-    })
-}
-
 
 export class TagSuggestionWindow {
     inners: HTMLDivElement[]

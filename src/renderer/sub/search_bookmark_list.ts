@@ -1,4 +1,5 @@
-import { CycleIndex } from "./utils"
+import { CycleIndex, scroll_to_focus_elm } from "./utils"
+
 
 function bkmk_data_from_bkmk_elm(elm: HTMLDivElement): BookmarkData {
 
@@ -74,6 +75,20 @@ export class SearchedBookmarkList {
             old?.val ?? null,
             this.focus_index?.val ?? null
         )
+
+        // TODO 関数化
+        if (this.focus_index !== null) {
+            let focus_elm = this.elm.childNodes[this.focus_index.val]
+
+            if (!(focus_elm instanceof HTMLElement)) {
+                return
+            }
+
+            scroll_to_focus_elm(
+                focus_elm,
+                this.elm
+            )
+        }
     }
 
     private update_elm_focus_css(old: null | number, next: null | number) {
