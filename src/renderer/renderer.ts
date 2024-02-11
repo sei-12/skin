@@ -1,4 +1,5 @@
 import './index.css';
+import { reload_hit_tag_list } from './sub/hit_tag_list';
 
 import { SearchedBookmarkList } from './sub/search_bookmark_list';
 import { AddPageForm, HotkeyMap, InputTagElms, Pages, When, WhenStr, add_bookmark, clear_inputed_tags, complement_info_from_url, create_new_tag_element, focus_input_tag_box, get_current_page_name, get_inputed_tags, insert_tag_not_complement, is_inputed_tag, move_page, notice, pressKeyStr, remove_tag_elm_from_inputed, search_google_for_tags, switch_page } from './sub/sub';
@@ -65,7 +66,9 @@ function html_root() {
         home: {
             input_tag: <HTMLInputElement>document.getElementById("page-home-input-tags")!,
             inputed_tags: document.getElementById("page-home-inputed-tags")!,
-            input_tags_container: document.getElementById("page-home-input-tags-container")!
+            input_tags_container: document.getElementById("page-home-input-tags-container")!,
+
+            hit_tag_list: document.getElementById("hit-tag-list")!
         },
         add_elm: document.getElementById("pages:add")!,
         add: {
@@ -163,6 +166,7 @@ namespace Main {
         })
         const mo = new MutationObserver(() => {
             update_searched_bookmark_list(searched_bookmark_list, root.home.inputed_tags)
+            reload_hit_tag_list(get_inputed_tags(root.home.inputed_tags),root.home.hit_tag_list)
         })
         mo.observe(root.home.inputed_tags, { childList: true })
         root.home.input_tags_container.addEventListener("click", () => {
@@ -182,7 +186,7 @@ namespace Main {
                 return
             }
 
-            reload_taglist_elm(root.taglist.list,(tagdata) => UserCommand.update_tag(tagdata) )
+            reload_taglist_elm(root.taglist.list, (tagdata) => UserCommand.update_tag(tagdata))
         })
         tag_list_page_mo.observe(root.taglist_elm)
 
@@ -212,11 +216,11 @@ namespace Main {
         // 名前がかぶるときは先頭にu_をつけることにする
 
         export function tag_suggestion_focus_up() {
-            tag_suggestion_window.handle_move_focus("up",root.tag_suggestion.inner_padding)
+            tag_suggestion_window.handle_move_focus("up", root.tag_suggestion.inner_padding)
         }
 
         export function tag_suggestion_focus_down() {
-            tag_suggestion_window.handle_move_focus("down",root.tag_suggestion.inner_padding)
+            tag_suggestion_window.handle_move_focus("down", root.tag_suggestion.inner_padding)
         }
 
         export async function u_tag_complement() {
@@ -236,7 +240,7 @@ namespace Main {
             tag_complement(tag_suggestion_window, into)
         }
 
-        export async function update_tag(new_data: TagData){
+        export async function update_tag(new_data: TagData) {
             let result = await window.app.edit_tag(new_data)
         }
 
@@ -263,8 +267,8 @@ namespace Main {
 
         export function prev_page() {
             let current_page_name = get_current_page_name(alias_pages)
-            if (current_page_name === undefined ) return 
-            let next_pagename = move_page(current_page_name,"prev")
+            if (current_page_name === undefined) return
+            let next_pagename = move_page(current_page_name, "prev")
             switch_page(
                 alias_pages[current_page_name],
                 alias_pages[next_pagename]
@@ -273,8 +277,8 @@ namespace Main {
 
         export function next_page() {
             let current_page_name = get_current_page_name(alias_pages)
-            if (current_page_name === undefined ) return 
-            let next_pagename = move_page(current_page_name,"next")
+            if (current_page_name === undefined) return
+            let next_pagename = move_page(current_page_name, "next")
             switch_page(
                 alias_pages[current_page_name],
                 alias_pages[next_pagename]
@@ -283,7 +287,7 @@ namespace Main {
 
         export function u_focus_input_tag_box() {
             let current_page_name = get_current_page_name(alias_pages)
-            if (current_page_name === undefined ) return 
+            if (current_page_name === undefined) return
             focus_input_tag_box(current_page_name, alias_input_tag_elms)
         }
 
@@ -307,7 +311,7 @@ namespace Main {
         let key_str = pressKeyStr(e)
         let when = get_when_strs()
         let cur_page = get_current_page_name(alias_pages)
-        if ( cur_page === undefined ){
+        if (cur_page === undefined) {
             console.error("bug")
             return
         }
@@ -355,7 +359,7 @@ namespace Main {
         home: root.home_elm,
         edit: root.edit_elm,
         list: root.list_elm,
-        taglist: root.taglist_elm 
+        taglist: root.taglist_elm
     }
 
     main()

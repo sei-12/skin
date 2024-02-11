@@ -44,4 +44,12 @@ export interface IMainProcess {
     edit_tag: (data: TagData) => Promise<{
         err: Error | null,
     }>
+
+    fetch_hit_tags: (tags: string[]) => Promise<{
+        err: Error| null,
+        data: {
+            name: string,
+            count: number
+        }[]
+    }>
 }

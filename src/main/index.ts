@@ -229,6 +229,25 @@ async function handleAddBookmark(url: string, title: string, tags: string[], des
     }
 }
 
+async function fetch_hit_tags(tags:string[]):Promise<{
+    err: Error| null,
+    data: {
+        name: string,
+        count: number
+    }[]
+}> {
+    
+    return {
+        err: null,
+        data: [
+            {name: "hoooo", count: 1600},
+            {name: "sssss", count: 600},
+            {name: "world", count: 22},
+            {name: "hello", count: 1},
+        ]
+    }
+}
+
 async function handleFetchSuggestion(word: string) {
     let find_word = word + "%"
     let fuzzy = "%" + word + "%"
@@ -462,6 +481,7 @@ const db = new Database(DB_FILE_PATH, (err) => {
     });
 })
 
+ipcMain.handle("fetch-hit-tags",async (_,tags) => await fetch_hit_tags(tags) )
 ipcMain.handle("add-bkmk", async (_, url, title, tags, description) => {
     let res = await handleAddBookmark(url, title, tags, description)
     return res

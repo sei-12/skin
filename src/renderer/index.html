@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
     <meta charset="utf-8" />
     <title>Page Title</title>
 </head>
+
 <body>
     <div id="tag-suggestion-window">
         <div id="tag-suggestion-window-inner-padding">
@@ -13,22 +15,40 @@
         </div>
     </div>
     <div id="pages">
+        <!-- 
+        //----------------------------------------------------------------------------------------------------//
+        //                                                                                                    //
+        //                                             PAGE HOME                                              //
+        //                                                                                                    //
+        //----------------------------------------------------------------------------------------------------//
+        -->
         <div id="pages:home">
-            <div id="page-home-input-tags-container" class="input-tag-container">
-                <div class="inputed-tags" id="page-home-inputed-tags"></div>
-                <input placeholder="tag" class="input-tag" type="text" id="page-home-input-tags">
+            <div id="page-home-inner-flex">
+                <div id="page-home-search">
+                    <div id="page-home-input-tags-container" class="input-tag-container">
+                        <div class="inputed-tags" id="page-home-inputed-tags"></div>
+                        <input placeholder="tag" class="input-tag" type="text" id="page-home-input-tags">
+                    </div>
+                    <div id="page-home-search-results"></div>
+                </div>
+                <div id="hit-tag-list-container">
+                    <div id="hit-tag-list">
+
+                    </div>
+                </div>
             </div>
-            <div id="page-home-search-results"></div>
         </div>
+
+
         <div id="pages:add">
-            <div  class="pages-add-form-container">
+            <div class="pages-add-form-container">
                 <h4>add bookmark</h4>
                 <!-- <div>input</div> -->
                 <input type="text" id="page-add-input-url" placeholder="url">
                 <input type="text" id="page-add-input-title" placeholder="title">
                 <div id="page-add-input-tags-container" class="input-tag-container">
                     <div class="inputed-tags" id="page-add-inputed-tags"></div>
-                    <input type="text" class="input-tag"  id="page-add-input-tags" placeholder="tag">
+                    <input type="text" class="input-tag" id="page-add-input-tags" placeholder="tag">
                 </div>
                 <textarea id="page-add-input-description" cols="30" rows="4" placeholder="description"></textarea>
                 <input type="button" id="page-add-done-btn" value="add">
@@ -41,4 +61,5 @@
         <div id="pages:list">pages:list</div>
     </div>
 </body>
+
 </html>

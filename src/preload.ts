@@ -5,32 +5,33 @@ import { contextBridge, ipcRenderer, IpcRendererEvent } from 'electron'
 
 contextBridge.exposeInMainWorld(
     "app", {
-        add_bookmark: (url:string,title:string,tags:string[],description: string) => {
-            return ipcRenderer.invoke("add-bkmk",url,title,tags,description)
-        },
-        
-        fetch_pageinfo: (url:string) => {
-            return ipcRenderer.invoke("fetch-pageinfo",url)
-        },
+    add_bookmark: (url: string, title: string, tags: string[], description: string) => {
+        return ipcRenderer.invoke("add-bkmk", url, title, tags, description)
+    },
 
-        fetch_suggestion: (word:string) => {
-            return ipcRenderer.invoke("fetch-suggestion",word)
-        },
+    fetch_pageinfo: (url: string) => {
+        return ipcRenderer.invoke("fetch-pageinfo", url)
+    },
 
-        search_bookmarks: (tags:string[]) => {
-            return ipcRenderer.invoke("search-bookmarks",tags)
-        },
+    fetch_suggestion: (word: string) => {
+        return ipcRenderer.invoke("fetch-suggestion", word)
+    },
 
-        tag_exists_db:(tag_name:string) => {
-            return ipcRenderer.invoke("tag-exists-db",tag_name)
-        },
-        open_bookmark:(bookmark_id:number) => {
-            return ipcRenderer.invoke("open-bookmark",bookmark_id)
-        },
-        search_google:(tags:string[]) => {
-            ipcRenderer.invoke("search-google",tags)
-        },
-        fetch_tag_list:() => ipcRenderer.invoke("fetch-tag-list"),
-        edit_tag:(data: TagData) => ipcRenderer.invoke("edit-tag",data)
-    }
+    search_bookmarks: (tags: string[]) => {
+        return ipcRenderer.invoke("search-bookmarks", tags)
+    },
+
+    tag_exists_db: (tag_name: string) => {
+        return ipcRenderer.invoke("tag-exists-db", tag_name)
+    },
+    open_bookmark: (bookmark_id: number) => {
+        return ipcRenderer.invoke("open-bookmark", bookmark_id)
+    },
+    search_google: (tags: string[]) => {
+        ipcRenderer.invoke("search-google", tags)
+    },
+    fetch_tag_list: () => ipcRenderer.invoke("fetch-tag-list"),
+    edit_tag: (data: TagData) => ipcRenderer.invoke("edit-tag", data),
+    fetch_hit_tags: (tags: string[]) => ipcRenderer.invoke("fetch-hit-tags", tags)
+}
 );

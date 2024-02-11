@@ -14,13 +14,17 @@ body {
     --input-box-background-color: #393D4E;
     --background-color: #292D3E;
     --kurome-background-color: #191D2E;
+    --kurome-background-color2: #191D31;
 }
 
 #tag-suggestion-window {
     position: absolute;
-    background-color: var(--kurome-background-color);
+    background-color: var(--kurome-background-color2);
     z-index: var(--tag-suggestion-window-z);
     width: 30vw;
+    border-radius: 3px;
+    /* border: solid 0.1px var(--font-color-usui-white); */
+    border: solid 0.1px rgb(20, 20, 20);
 }
 
 #tag-suggestion-window-inner-padding {
@@ -28,6 +32,29 @@ body {
     overflow: hidden;
     max-height: 50vh;
     position: relative;
+}
+
+#hit-tag-list {
+    margin: 9px;
+    margin-inline: 6%;
+    border-radius: 10px;
+    background-color: #191D2E;
+    padding-block: 4px;
+    width: 100%;
+    height: 100%;
+}
+
+#hit-tag-list-container {
+    width: 25%;
+    height: 90vh;
+}
+
+#page-home-search {
+    width: 75%;
+}
+
+#page-home-inner-flex {
+    display: flex;
 }
 
 #tag-suggestion-window::-webkit-scrollbar {
@@ -63,7 +90,7 @@ body {
 }
 
 #pages {
-    margin-block: 5%;
+    margin-block: 2%;
     margin-inline: 5%;
 }
 
@@ -106,7 +133,7 @@ body {
 
 #page-home-search-results {
     overflow: hidden;
-    max-height: 80vh;
+    max-height: 84vh;
     position: relative;
 }
 
@@ -196,4 +223,26 @@ body {
 
 .bookmark-list-item-container-focus {
     background-color: var(--input-box-background-color);
+}
+
+.hit-tag-list-item {
+    width: 80%;
+    position: relative;
+    margin: 3px;
+    margin-inline: auto;
+    padding: 7px;
+    padding-bottom: 4px;
+    border-bottom: solid var(--input-box-background-color);
+    display: flex;
+    justify-content: space-between;
+}
+
+.hit-tag-list-item-name {
+    font-size: x-large;
+    font-weight: 300;
+}
+
+.hit-tag-list-item-count {
+    font-size: large;
+    font-weight: 100;
 }
