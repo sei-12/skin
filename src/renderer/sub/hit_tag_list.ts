@@ -2,11 +2,11 @@
 
 function create_elm(data: { name: string, count: number }) {
 
-    let name_elm = document.createElement("span")
+    let name_elm = document.createElement("div")
     name_elm.innerText = data.name
     name_elm.classList.add("hit-tag-list-item-name")
 
-    let count_elm = document.createElement("span")
+    let count_elm = document.createElement("div")
     count_elm.innerText = "" + data.count
     count_elm.classList.add("hit-tag-list-item-count")
 
