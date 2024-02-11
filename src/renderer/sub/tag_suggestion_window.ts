@@ -4,11 +4,16 @@ function create_suggestion_list_item(find_word: string, tag_data: TagData): HTML
     let div = document.createElement("div")
     let re = new RegExp(find_word, "i")
     let match_str = tag_data.name.match(re)
-    if (match_str === null) {
-        return null
+
+    let name = ""
+
+    if (match_str !== null) {
+        let html = `<span class="suggestion-item-match-str">${match_str}</span>`
+        name = tag_data.name.replace(re, html)
+    } else {
+        name = `<span class="suggestion-item-match-str">${tag_data.name}</span>`
     }
-    let html = `<span class="suggestion-item-match-str">${match_str}</span>`
-    let name = tag_data.name.replace(re, html)
+
     div.innerHTML = name
     div.classList.add("suggestion-item")
     return div

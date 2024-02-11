@@ -247,6 +247,24 @@ async function handleFetchSuggestion(word: string) {
     }
 }
 
+async function edit_tag(data: { name: string, oto: string, id: number }): Promise<{
+    err: Error | null
+}> {
+
+    let q = querys.edit_tag(data.id,data.name,data.oto)
+    let result = await wrap_db_run(q.query,q.param)
+
+    if (result !== null ){
+        return {
+            err: result
+        }
+    }
+
+    return {
+        err: null
+    }
+}
+
 async function fetch_tag_list() {
     let q1 = querys.fetch_tag_list()
     let tags = await wrap_db_all(q1.query, q1.param)
@@ -405,6 +423,12 @@ const querys = {
         let query = "select * from tags;"
         let param = undefined
         return { query, param }
+    },
+
+    edit_tag:(id:number,new_name:string,new_oto:string) => {
+        let query = "update tags set name = ?, oto = ? where id = ?"
+        let param = [new_name,new_oto,id]
+        return { query, param }
     }
 }
 
@@ -477,6 +501,8 @@ ipcMain.handle("fetch-pageinfo", async (_, url) => {
     }
 
 })
+
+ipcMain.handle("edit-tag",async (_,data) => await edit_tag(data) )
 
 
 ipcMain.handle("search-google", (_, tags) => {

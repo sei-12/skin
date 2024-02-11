@@ -178,9 +178,7 @@ namespace Main {
                 return
             }
 
-            reload_taglist_elm(root.taglist.list,(tagdata) => {
-                console.table(tagdata)
-            })
+            reload_taglist_elm(root.taglist.list,(tagdata) => UserCommand.update_tag(tagdata) )
         })
         tag_list_page_mo.observe(root.taglist_elm)
 
@@ -232,6 +230,10 @@ namespace Main {
                 return
             }
             tag_complement(tag_suggestion_window, into)
+        }
+
+        export async function update_tag(new_data: TagData){
+            let result = await window.app.edit_tag(new_data)
         }
 
         export function u_add_bookmark() {

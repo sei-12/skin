@@ -40,4 +40,8 @@ export interface IMainProcess {
         err: Error | null,
         data: TagData[]
     }>
+
+    edit_tag: (data: TagData) => Promise<{
+        err: Error | null,
+    }>
 }
