@@ -42,7 +42,7 @@ namespace TagSuggestion {
 /**
  * 子要素と親要素のスクロール位置の関係性
  */
-function todo_rename(container_elm: HTMLElement, child_elm: HTMLElement): ">" | "<=>" | "<" {
+function child_elm_pos(container_elm: HTMLElement, child_elm: HTMLElement): ">" | "<=>" | "<" {
 
     if (child_elm.offsetTop < container_elm.scrollTop ) {
         return ">"
@@ -56,15 +56,14 @@ function todo_rename(container_elm: HTMLElement, child_elm: HTMLElement): ">" | 
 }
 
 function scroll_to_focus_elm(focus_elm: HTMLElement, container_elm: HTMLElement) {
-    console.log(todo_rename(container_elm, focus_elm))
-
-    let a = todo_rename(container_elm, focus_elm)
-    if (a === "<=>") {
+    
+    let pos = child_elm_pos(container_elm, focus_elm)
+    if (pos === "<=>") {
         return
     }
 
     let top = 0
-    if (a === "<") {
+    if (pos === "<") {
         top = focus_elm.offsetTop + focus_elm.offsetHeight - container_elm.offsetHeight
     } else {
         top = focus_elm.offsetTop - container_elm.offsetTop
