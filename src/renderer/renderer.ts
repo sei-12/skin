@@ -178,7 +178,9 @@ namespace Main {
                 return
             }
 
-            reload_taglist_elm(root.taglist.list)
+            reload_taglist_elm(root.taglist.list,(tagdata) => {
+                console.table(tagdata)
+            })
         })
         tag_list_page_mo.observe(root.taglist_elm)
 
