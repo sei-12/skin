@@ -229,22 +229,26 @@ async function handleAddBookmark(url: string, title: string, tags: string[], des
     }
 }
 
-async function fetch_hit_tags(tags:string[]):Promise<{
-    err: Error| null,
+async function fetch_hit_tags(tags: string[]): Promise<{
+    err: Error | null,
     data: {
         name: string,
         count: number
     }[]
 }> {
-    
+
+    let q = querys.fetch_hit_tags(tags)
+    let result = await wrap_db_all(q.query,q.param)
+    if (result.err !== null){
+        return {
+            err: result.err,
+            data:[]
+        }
+    }
+
     return {
         err: null,
-        data: [
-            {name: "hoooo", count: 1600},
-            {name: "sssss", count: 600},
-            {name: "world", count: 22},
-            {name: "hello", count: 1},
-        ]
+        data: result.rows
     }
 }
 
@@ -270,10 +274,10 @@ async function edit_tag(data: { name: string, oto: string, id: number }): Promis
     err: Error | null
 }> {
 
-    let q = querys.edit_tag(data.id,data.name,data.oto)
-    let result = await wrap_db_run(q.query,q.param)
+    let q = querys.edit_tag(data.id, data.name, data.oto)
+    let result = await wrap_db_run(q.query, q.param)
 
-    if (result !== null ){
+    if (result !== null) {
         return {
             err: result
         }
@@ -418,6 +422,39 @@ const querys = {
         ;
         `
     },
+
+    fetch_hit_tags: (tags: string[]) => {
+        let s = new Array(tags.length).fill("?").join(",")
+        let query = `
+        SELECT *
+        FROM (
+            SELECT name, COUNT(*) as count
+            FROM tag_map
+            JOIN tags t ON tag_map.tag_id = t.id
+            WHERE bkmk_id IN (
+                SELECT b.id
+                FROM bookmarks b
+                JOIN tag_map tm ON b.id = tm.bkmk_id
+                JOIN tags t ON tm.tag_id = t.id
+                WHERE t.name IN (${s})
+                GROUP BY b.id
+                HAVING COUNT(DISTINCT t.name) = ?
+                ORDER BY b.tag_count DESC
+            )
+            GROUP BY tag_id
+            ORDER BY COUNT(*) DESC
+        )
+        WHERE name NOT IN (${s})
+        `
+        let param = [
+            ...tags,
+            tags.length,
+            ...tags
+        ]
+
+        return {query,param}
+    },
+
     get_tag_id: "select id from tags where name = ?",
     add_tag: "insert into tags values (null,?,?)",
     get_bkmk_id: "select id from bookmarks where title = ? and url = ?;",
@@ -444,9 +481,9 @@ const querys = {
         return { query, param }
     },
 
-    edit_tag:(id:number,new_name:string,new_oto:string) => {
+    edit_tag: (id: number, new_name: string, new_oto: string) => {
         let query = "update tags set name = ?, oto = ? where id = ?"
-        let param = [new_name,new_oto,id]
+        let param = [new_name, new_oto, id]
         return { query, param }
     }
 }
@@ -481,7 +518,7 @@ const db = new Database(DB_FILE_PATH, (err) => {
     });
 })
 
-ipcMain.handle("fetch-hit-tags",async (_,tags) => await fetch_hit_tags(tags) )
+ipcMain.handle("fetch-hit-tags", async (_, tags) => await fetch_hit_tags(tags))
 ipcMain.handle("add-bkmk", async (_, url, title, tags, description) => {
     let res = await handleAddBookmark(url, title, tags, description)
     return res
@@ -522,7 +559,7 @@ ipcMain.handle("fetch-pageinfo", async (_, url) => {
 
 })
 
-ipcMain.handle("edit-tag",async (_,data) => await edit_tag(data) )
+ipcMain.handle("edit-tag", async (_, data) => await edit_tag(data))
 
 
 ipcMain.handle("search-google", (_, tags) => {
