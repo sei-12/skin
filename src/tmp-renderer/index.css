@@ -1,0 +1,34 @@
+body {
+    background-color: #292D3E;
+    color: white;
+    font-size: x-large;
+    font-family: Hack;
+    font-weight: 700;
+    overflow: hidden;
+}
+
+:root {
+    --font-color-white: #f8f8f8;
+    --font-color-usui-white: #999999;
+    --tag-suggestion-window-z: 10;
+    --input-box-background-color: #393D4E;
+    --background-color: #25293A;
+    --kurome-background-color: #191D2E;
+    --kurome-background-color2: #191D31;
+}
+
+.tag-suggestion-window {
+    position: absolute;
+    background-color: var(--kurome-background-color2);
+    z-index: var(--tag-suggestion-window-z);
+    width: 30vw;
+    border-radius: 3px;
+    border: solid 0.1px rgb(20, 20, 20);
+}
+
+.tag-suggestion-window-inner-padding {
+    margin: 10px;
+    overflow: hidden;
+    max-height: 50vh;
+    position: relative;
+}
