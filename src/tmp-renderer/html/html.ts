@@ -1,4 +1,4 @@
-import { TagSuggestionWindowElm } from "./tag_suggestion_winodw"
+import { TagSuggestionWindowElm } from "../app/tag_suggestion"
 
 class InputTagElm {
     elm: HTMLElement

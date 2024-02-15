@@ -16,6 +16,12 @@ declare global {
         name: string,
         oto: string
     }
+
+
+    type f_FetchSuggestion = (word: string) => Promise<{
+        err: boolean,
+        data: TagData[]
+    }>
 }
 
 export interface IMainProcess {
@@ -46,7 +52,7 @@ export interface IMainProcess {
     }>
 
     fetch_hit_tags: (tags: string[]) => Promise<{
-        err: Error| null,
+        err: Error | null,
         data: {
             name: string,
             count: number
