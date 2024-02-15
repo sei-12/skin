@@ -32,3 +32,18 @@ body {
     max-height: 50vh;
     position: relative;
 }
+
+.suggestion-item {
+    width: 100%;
+    color: var(--font-color-usui-white);
+}
+
+.suggestion-item-match-str {
+    color: white;
+}
+
+.suggestion-item-focus {
+    /* border: solid red 3px; */
+    /* box-sizing: border-box; */
+    background-color: var(--input-box-background-color);
+}

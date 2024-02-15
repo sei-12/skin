@@ -24,7 +24,8 @@ export class TagSuggestionWindowElm {
     constructor() {
 
         this.elm = document.createElement("div")
-        this.elm.classList.add("tag-suggesion-window")
+        this.elm.classList.add("tag-suggestion-window")
+        this.elm.style.display = "none"
 
         this.inners = [
             document.createElement("div"),
@@ -57,7 +58,7 @@ function move_winow(win: TagSuggestionWindowElm, input_elm: Readonly<HTMLInputEl
     win.elm.style.left = input_elm.offsetLeft + "px"
 }
 
-function insert_data(win: TagSuggestionWindowElm, new_items: HTMLElement[]){
+function insert_data(win: TagSuggestionWindowElm, new_items: HTMLElement[]) {
     let inners = win.inners
     let cur_index = inners.findIndex(e => e.style.display === "block")
     if (cur_index === -1) {
@@ -107,8 +108,8 @@ export async function handle_input_tagbox(
         move_winow(win, input_elm)
     }
 
-    let new_items = datas.data.map(tag_data => create_suggestion_list_item(input_value,tag_data))
-    insert_data(win,new_items)
+    let new_items = datas.data.map(tag_data => create_suggestion_list_item(input_value, tag_data))
+    insert_data(win, new_items)
 
     return null
 }
