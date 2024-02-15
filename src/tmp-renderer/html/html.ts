@@ -26,6 +26,7 @@ class HomeElm {
 
     constructor() {
         this.elm = document.createElement("div")
+        this.elm.style.display = "block"
         this.input_tag = new InputTagElm()
         this.hit_tag_list = document.createElement("div")
         this.tag_sugestion_window = new TagSuggestionWindowElm()
