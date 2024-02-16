@@ -418,7 +418,7 @@ const querys = {
         WHERE t.name IN (${s})
         GROUP BY b.id
         HAVING COUNT(DISTINCT t.name) = ${length}
-        ORDER BY b.tag_count DESC
+        ORDER BY b.tag_count ASC
         ;
         `
     },

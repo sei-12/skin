@@ -21,6 +21,8 @@ export class InputTagElm {
         this.elm.classList.add("input-tag-container")
         this.input_box = document.createElement("input")
         this.input_box.classList.add("input-tag-box")
+        this.input_box.spellcheck = false
+        this.input_box.placeholder = "tag"
         this.inputed_tags = document.createElement("div")
         this.inputed_tags.classList.add("inputed-tags")
 
