@@ -2,8 +2,9 @@
 // for はだめ
 // 処理の中身は別のところに書く
 
-import { InputTagElm, clear_input_box, handle_backspace_on_input_tag_box, insert_tag, insert_tag_not_complement } from "../app/input_tag";
+import { InputTagElm, clear_input_box, get_inputed_tags, handle_backspace_on_input_tag_box, insert_tag, insert_tag_not_complement } from "../app/input_tag";
 import { TagSuggestionWindowElm, done_suggestion, handle_input_tagbox, move_focus_tag_suggestion_window } from "../app/tag_suggestion";
+import * as SB from '../app/searched_bookmarks'
 
 export namespace Home {
     export async function handle_input_input_tag_box(
@@ -42,8 +43,14 @@ export namespace Home {
         }
     }
 
-    export function handle_mut_tag_list() {
-
+    export async function handle_mut_tag_list(
+        input_tag: InputTagElm,
+        f: f_SearchBookmarks,
+        searched_bookmark_list: SB.SearchedBookmarkListElm
+    ) {
+        let tags = get_inputed_tags(input_tag)
+        let bkmks = await f(tags)
+        SB.insert_searched_bookmarks(bkmks, searched_bookmark_list)
     }
 
     export function focus_up_tag_suggestion(

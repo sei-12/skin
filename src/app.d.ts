@@ -22,6 +22,7 @@ declare global {
         err: boolean,
         data: TagData[]
     }>
+    type f_SearchBookmarks = (tags: string[]) => Promise<BookmarkData[]>;
 }
 
 export interface IMainProcess {
@@ -34,7 +35,7 @@ export interface IMainProcess {
         description: string | null
     } | null>;
     tag_exists_db: (tag_name: string) => Promise<boolean>;
-    search_bookmarks: (tags: string[]) => Promise<BookmarkData[]>;
+    search_bookmarks: f_SearchBookmarks
     fetch_suggestion: (word: string) => Promise<{
         err: boolean,
         data: TagData[]

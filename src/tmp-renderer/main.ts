@@ -53,7 +53,13 @@ root_elm.home.input_tag.input_box.addEventListener(
         root_elm.home.input_tag
     )
 )
-const mo1 = new MutationObserver(() => UI.Home.handle_mut_tag_list())
+const mo1 = new MutationObserver(
+    () => UI.Home.handle_mut_tag_list(
+        root_elm.home.input_tag,
+        window.app.search_bookmarks,
+        root_elm.home.searched_bkmks
+    )
+)
 mo1.observe(root_elm.home.input_tag.inputed_tags, { childList: true })
 
 

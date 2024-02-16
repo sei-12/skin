@@ -50,3 +50,16 @@ export function insert_tag_not_complement(input_tag: InputTagElm){
     clear_input_box(input_tag)
     insert_tag(input_tag,val)
 }
+
+export function get_inputed_tags(input_tag: InputTagElm){
+    let child_nodes = input_tag.inputed_tags.childNodes 
+    let tags: string[] = []
+
+    child_nodes.forEach( node => {
+        if ( node instanceof HTMLElement ){
+            tags.push(node.innerText)
+        }
+    })
+
+    return tags
+}
