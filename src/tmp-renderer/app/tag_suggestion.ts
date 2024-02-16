@@ -35,6 +35,10 @@ function show_window(win: TagSuggestionWindowElm) {
     win.elm.style.display = "block"
 }
 
+function clear_inners(win: TagSuggestionWindowElm){
+
+}
+
 function move_winow(win: TagSuggestionWindowElm, input_elm: Readonly<HTMLInputElement>) {
     let input_elm_bottom = input_elm.offsetTop + input_elm.offsetHeight
     win.elm.style.top = input_elm_bottom + "px"
@@ -58,6 +62,7 @@ function insert_data(win: TagSuggestionWindowElm, new_items: HTMLElement[]) {
     inners[cur_index].innerHTML = ""
     cur_index = next_index
 }
+
 
 //----------------------------------------------------------------------------------------------------//
 //                                               EXPORT                                               //
@@ -148,6 +153,28 @@ export function move_focus_tag_suggestion_window(
     win.focus_index = new_index
 
     return null
+}
+
+export function done_suggestion(win: TagSuggestionWindowElm){
+    if (!is_showing(win)){
+        return new Error("bug")
+    } 
+
+    let inner = find_current_inner(win)
+    if (inner === undefined) {
+        return new Error("bug")
+    }
+
+
+    let focus_elm = inner.childNodes[win.focus_index.val]
+    if (focus_elm === undefined || !(focus_elm instanceof HTMLElement)) {
+        return new Error("bug")
+    }
+
+    hide_window(win)
+    clear_inners(win)
+
+    return focus_elm.innerText
 }
 
 export class TagSuggestionWindowElm {

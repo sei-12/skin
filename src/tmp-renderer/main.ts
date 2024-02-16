@@ -16,6 +16,13 @@ hotkey_map.set_hotkey("home+ArrowDown",
 hotkey_map.set_hotkey("home+ArrowUp",
     () => UI.Home.focus_up_bookmarklist()
 )
+
+hotkey_map.set_hotkey("home+tag_suggestion+Enter",
+    () => UI.Home.tag_complement(
+        root_elm.home.tag_sugestion_window,
+        root_elm.home.input_tag
+    )
+)
 hotkey_map.set_hotkey("home+tag_suggestion+ArrowDown",
     () => UI.Home.focus_down_tag_suggestion(
         root_elm.home.tag_sugestion_window

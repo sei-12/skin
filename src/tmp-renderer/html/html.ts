@@ -1,19 +1,5 @@
+import { InputTagElm } from "../app/input_tag"
 import { TagSuggestionWindowElm } from "../app/tag_suggestion"
-
-class InputTagElm {
-    elm: HTMLElement
-    input_box: HTMLInputElement
-    inputed_tags: HTMLDivElement
-
-    constructor(){
-        this.elm = document.createElement("div")
-        this.input_box = document.createElement("input")
-        this.inputed_tags = document.createElement("div")
-
-        this.elm.appendChild(this.inputed_tags)
-        this.elm.appendChild(this.input_box)
-    }
-}
 
 class HomeElm {
     elm: HTMLElement

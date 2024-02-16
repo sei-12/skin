@@ -2,7 +2,8 @@
 // for はだめ
 // 処理の中身は別のところに書く
 
-import { TagSuggestionWindowElm, handle_input_tagbox, move_focus_tag_suggestion_window } from "../app/tag_suggestion";
+import { InputTagElm, clear_input_box, insert_tag } from "../app/input_tag";
+import { TagSuggestionWindowElm, done_suggestion, handle_input_tagbox, move_focus_tag_suggestion_window } from "../app/tag_suggestion";
 
 export namespace Home {
     export async function handle_input_input_tag_box(
@@ -45,6 +46,19 @@ export namespace Home {
         win: TagSuggestionWindowElm
     ) {
         let result = move_focus_tag_suggestion_window("down",win)
+    }
+
+    export function tag_complement(
+        win: TagSuggestionWindowElm,
+        input_tag: InputTagElm
+    ){
+        let tag = done_suggestion(win)
+        if ( tag instanceof Error ){
+            throw tag
+        }
+
+        insert_tag(input_tag,tag)
+        clear_input_box(input_tag)
     }
 
     export function focus_up_bookmarklist() {
