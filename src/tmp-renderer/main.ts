@@ -48,7 +48,10 @@ root_elm.home.input_tag.input_box.addEventListener(
     )
 )
 root_elm.home.input_tag.input_box.addEventListener(
-    "keyup", (e) => UI.Home.handle_keyup_input_tag_box(e)
+    "keyup", (e) => UI.Home.handle_keyup_input_tag_box(
+        e,
+        root_elm.home.input_tag
+    )
 )
 const mo1 = new MutationObserver(() => UI.Home.handle_mut_tag_list())
 mo1.observe(root_elm.home.input_tag.inputed_tags, { childList: true })

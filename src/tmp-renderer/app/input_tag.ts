@@ -32,6 +32,9 @@ export function insert_tag(input_tag: InputTagElm, tag: string) {
 }
 
 export function handle_backspace_on_input_tag_box(input_tag: InputTagElm) {
+    if (input_tag.input_box.value !== ""){
+        return
+    }
 
     let last = input_tag.inputed_tags.lastElementChild 
     if ( last ===  null ){
@@ -40,4 +43,10 @@ export function handle_backspace_on_input_tag_box(input_tag: InputTagElm) {
 
     input_tag.inputed_tags.removeChild(last)
 
+}
+
+export function insert_tag_not_complement(input_tag: InputTagElm){
+    let val = input_tag.input_box.value
+    clear_input_box(input_tag)
+    insert_tag(input_tag,val)
 }

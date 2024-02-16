@@ -2,7 +2,7 @@
 // for はだめ
 // 処理の中身は別のところに書く
 
-import { InputTagElm, clear_input_box, handle_backspace_on_input_tag_box, insert_tag } from "../app/input_tag";
+import { InputTagElm, clear_input_box, handle_backspace_on_input_tag_box, insert_tag, insert_tag_not_complement } from "../app/input_tag";
 import { TagSuggestionWindowElm, done_suggestion, handle_input_tagbox, move_focus_tag_suggestion_window } from "../app/tag_suggestion";
 
 export namespace Home {
@@ -33,8 +33,13 @@ export namespace Home {
         }
     }
 
-    export function handle_keyup_input_tag_box(e: KeyboardEvent) {
-
+    export function handle_keyup_input_tag_box(
+        e: KeyboardEvent,
+        input_tag: InputTagElm
+    ) {
+        if (e.key == " " && e.isComposing === false) {
+            insert_tag_not_complement(input_tag)
+        }
     }
 
     export function handle_mut_tag_list() {
