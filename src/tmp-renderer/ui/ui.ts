@@ -5,6 +5,7 @@
 import { InputTagElm, clear_input_box, get_inputed_tags, handle_backspace_on_input_tag_box, insert_tag, insert_tag_not_complement } from "../app/input_tag";
 import { TagSuggestionWindowElm, done_suggestion, handle_input_tagbox, move_focus_tag_suggestion_window } from "../app/tag_suggestion";
 import * as SB from '../app/searched_bookmarks'
+import * as HTL from "../app/hit_tag_list";
 
 export namespace Home {
     export async function handle_input_input_tag_box(
@@ -46,11 +47,15 @@ export namespace Home {
     export async function handle_mut_tag_list(
         input_tag: InputTagElm,
         f: f_SearchBookmarks,
+        fetch_hit_tags: f_FetchHitTags,
+        hit_tag_list: HTL.HitTagListElm,
         searched_bookmark_list: SB.SearchedBookmarkListElm
     ) {
         let tags = get_inputed_tags(input_tag)
         let bkmks = await f(tags)
         SB.insert_searched_bookmarks(bkmks, searched_bookmark_list)
+
+        HTL.reload_hittaglist_elm(tags,fetch_hit_tags,hit_tag_list)
     }
 
     export function focus_up_tag_suggestion(

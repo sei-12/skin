@@ -57,6 +57,8 @@ const mo1 = new MutationObserver(
     () => UI.Home.handle_mut_tag_list(
         root_elm.home.input_tag,
         window.app.search_bookmarks,
+        window.app.fetch_hit_tags,
+        root_elm.home.hit_tag_list,
         root_elm.home.searched_bkmks
     )
 )
@@ -64,15 +66,15 @@ mo1.observe(root_elm.home.input_tag.inputed_tags, { childList: true })
 
 
 
-window.addEventListener("keydown",(e) => {
-    let when = get_when(e,root_elm)
-    if ( when instanceof Error ){
+window.addEventListener("keydown", (e) => {
+    let when = get_when(e, root_elm)
+    if (when instanceof Error) {
         throw when
     }
 
     let handler = hotkey_map.get_hotkey(when)
 
-    if ( handler === null ){
+    if (handler === null) {
         return
     }
 
