@@ -55,15 +55,15 @@ export class SearchedBookmarkListElm {
     }
 }
 
-export function get_focued_elm_or_first_elm(elm: SearchedBookmarkListElm): BookmarkData | null{
-    if ( elm.elm.childNodes.length === 0 ){
+export function get_focued_elm_or_first_elm(elm: SearchedBookmarkListElm): BookmarkData | null {
+    if (elm.elm.childNodes.length === 0) {
         return null
     }
 
     let target_index = elm.focus?.val
-    if (target_index === undefined ) target_index = 0
+    if (target_index === undefined) target_index = 0
     let target_elm = elm.elm.childNodes[target_index]
-    if ( !(target_elm instanceof HTMLElement )){
+    if (!(target_elm instanceof HTMLElement)) {
         return null
     }
 
@@ -71,6 +71,7 @@ export function get_focued_elm_or_first_elm(elm: SearchedBookmarkListElm): Bookm
 }
 
 export function insert_searched_bookmarks(bkmks: BookmarkData[], into: SearchedBookmarkListElm) {
+    into.focus = null
     let elms = bkmks.map(data => create_bkmk_list_item_elm(data))
     into.elm.innerHTML = ""
     elms.forEach(elm => {
@@ -83,13 +84,13 @@ export function move_focus_searched_bookmarks(to: "up" | "down", elm: SearchedBo
         return
     }
 
-    if ( elm.focus !== null ){
+    if (elm.focus !== null) {
         let current_elm = elm.elm.childNodes[elm.focus.val]
-        if ( !(current_elm instanceof HTMLElement) ){
+        if (!(current_elm instanceof HTMLElement)) {
             return new Error("bug")
         }
 
-        if (current_elm === undefined ) {
+        if (current_elm === undefined) {
             return new Error("TODO")
         }
 
@@ -97,9 +98,9 @@ export function move_focus_searched_bookmarks(to: "up" | "down", elm: SearchedBo
     }
 
     let next: CycleIndex
-    if ( elm.focus === null ){
+    if (elm.focus === null) {
         next = new CycleIndex(0)
-    }else{
+    } else {
         if (to === "down") {
             next = elm.focus.plus(elm.elm.childNodes.length)
         } else {
