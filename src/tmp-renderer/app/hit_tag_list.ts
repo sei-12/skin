@@ -19,8 +19,14 @@ function create_elm(data: { name: string, count: number }) {
 
 export class HitTagListElm {
     elm: HTMLElement
+    inner: HTMLElement
     constructor() {
         this.elm = document.createElement("div")
+        this.elm.classList.add("hit-tag-list-container")
+        this.inner = document.createElement("div")
+        this.inner.classList.add("hit-tag-list")
+
+        this.elm.appendChild(this.inner)
     }
 }
 
@@ -30,10 +36,10 @@ export async function reload_hittaglist_elm(tags: string[], f: f_FetchHitTags, e
         return responce.err
     }
 
-    elm.elm.innerHTML = ""
+    elm.inner.innerHTML = ""
 
     responce.data.forEach(data => {
-        elm.elm.appendChild(
+        elm.inner.appendChild(
             create_elm(data)
         )
     })

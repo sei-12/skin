@@ -17,14 +17,22 @@ class HomeElm {
     constructor() {
         this.elm = document.createElement("div")
         this.elm.style.display = "block"
+
+
         this.input_tag = new InputTagElm()
         this.hit_tag_list = new HitTagListElm()
         this.tag_sugestion_window = new TagSuggestionWindowElm()
         this.searched_bkmks = new SearchedBookmarkListElm()
 
         let inner_flex = document.createElement("div")
-        inner_flex.appendChild(this.input_tag.elm)
-        inner_flex.appendChild(this.searched_bkmks.elm)
+        inner_flex.classList.add("home-inner-flex")
+
+        let layout_left = document.createElement("div")
+        layout_left.classList.add("home-inner-layout-left")
+        layout_left.appendChild(this.input_tag.elm)
+        layout_left.appendChild(this.searched_bkmks.elm)
+
+        inner_flex.appendChild(layout_left)
         inner_flex.appendChild(this.hit_tag_list.elm)
 
         this.elm.appendChild(this.tag_sugestion_window.elm)
