@@ -12,8 +12,11 @@ export class InputTagElm {
 
     constructor() {
         this.elm = document.createElement("div")
+        this.elm.classList.add("input-tag-container")
         this.input_box = document.createElement("input")
+        this.input_box.classList.add("input-tag-box")
         this.inputed_tags = document.createElement("div")
+        this.inputed_tags.classList.add("inputed-tags")
 
         this.elm.appendChild(this.inputed_tags)
         this.elm.appendChild(this.input_box)

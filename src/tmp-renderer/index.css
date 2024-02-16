@@ -47,3 +47,28 @@ body {
     /* box-sizing: border-box; */
     background-color: var(--input-box-background-color);
 }
+
+.inputed-tags {
+    flex-wrap: wrap;
+    display: flex;
+}
+
+.input-tag-container {
+    flex-wrap: wrap;
+    display: flex;
+    background-color: var(--input-box-background-color);
+    border-radius: 5px;
+    margin-block: 10px;
+}
+
+.input-tag-box {
+    font-size: x-large;
+    background-color: var(--input-box-background-color);
+    color: #fafafa;
+    border-radius: 5px;
+    border: none;
+    padding: 5px;
+    margin: 5px;
+    outline: none;
+    flex-wrap: wrap;
+}
