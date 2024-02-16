@@ -83,12 +83,16 @@ export namespace Home {
         clear_input_box(input_tag)
     }
 
-    export function focus_up_bookmarklist() {
-
+    export function focus_up_bookmarklist(
+        elm: SB.SearchedBookmarkListElm
+    ) {
+        SB.move_focus_searched_bookmarks("up",elm)
     }
 
-    export function focus_down_bookmarklist() {
-
+    export function focus_down_bookmarklist(
+        elm: SB.SearchedBookmarkListElm
+    ) {
+        SB.move_focus_searched_bookmarks("down",elm)
     }
 
     export function update_searched_bookmark_list() {

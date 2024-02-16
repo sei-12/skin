@@ -11,10 +11,14 @@ hotkey_map.set_hotkey("home+Enter",
     () => UI.Home.open_bookmark()
 )
 hotkey_map.set_hotkey("home+ArrowDown",
-    () => UI.Home.focus_down_bookmarklist()
+    () => UI.Home.focus_down_bookmarklist(
+        root_elm.home.searched_bkmks
+    )
 )
 hotkey_map.set_hotkey("home+ArrowUp",
-    () => UI.Home.focus_up_bookmarklist()
+    () => UI.Home.focus_up_bookmarklist(
+        root_elm.home.searched_bkmks
+    )
 )
 
 hotkey_map.set_hotkey("home+tag_suggestion+Enter",

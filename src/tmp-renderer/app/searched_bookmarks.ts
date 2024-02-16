@@ -1,3 +1,4 @@
+import { CycleIndex, scroll_to_focus_elm } from "../utils"
 
 function create_bkmk_list_item_elm(data: BookmarkData) {
     let data_elm = document.createElement("div")
@@ -29,17 +30,66 @@ function create_bkmk_list_item_elm(data: BookmarkData) {
 }
 
 export class SearchedBookmarkListElm {
+    focus: CycleIndex | null
     elm: HTMLElement
     constructor() {
         this.elm = document.createElement("div")
         this.elm.classList.add("searched-bkmks")
+
+        this.focus = null
     }
 }
 
 export function insert_searched_bookmarks(bkmks: BookmarkData[], into: SearchedBookmarkListElm) {
-    let elms = bkmks.map( data => create_bkmk_list_item_elm(data) )
+    let elms = bkmks.map(data => create_bkmk_list_item_elm(data))
     into.elm.innerHTML = ""
-    elms.forEach( elm => {
+    elms.forEach(elm => {
         into.elm.appendChild(elm)
     })
+}
+
+export function move_focus_searched_bookmarks(to: "up" | "down", elm: SearchedBookmarkListElm) {
+    if (elm.elm.childNodes.length === 0) {
+        return
+    }
+
+    if ( elm.focus !== null ){
+        let current_elm = elm.elm.childNodes[elm.focus.val]
+        if ( !(current_elm instanceof HTMLElement) ){
+            return new Error("bug")
+        }
+
+        if (current_elm === undefined ) {
+            return new Error("TODO")
+        }
+
+        current_elm.classList.remove("bookmark-list-item-container-focus")
+    }
+
+    let next: CycleIndex
+    if ( elm.focus === null ){
+        next = new CycleIndex(0)
+    }else{
+        if (to === "down") {
+            next = elm.focus.plus(elm.elm.childNodes.length)
+        } else {
+            next = elm.focus.minus(elm.elm.childNodes.length)
+        }
+
+    }
+
+    let next_elm = elm.elm.childNodes[next.val]
+
+    if (next_elm === undefined || !(next_elm instanceof HTMLElement)) {
+        return
+    }
+
+    next_elm.classList.add("bookmark-list-item-container-focus")
+
+    scroll_to_focus_elm(
+        next_elm,
+        elm.elm
+    )
+
+    elm.focus = next
 }
