@@ -329,17 +329,14 @@ function is_how_to_open_url_data(data: any): boolean {
     try {
 
         if (typeof data["cmd"] !== "string") {
-            console.log("1--")
             return false
         }
 
         if (data["args"] instanceof Array === false) {
-            console.log("2--")
             return false
         }
 
         if (data["args"].every((v: any) => typeof v === "string") === false) {
-            console.log("3--")
             return false
         }
 
@@ -363,11 +360,8 @@ function apply_config(config: any): Config {
 
         for (let key in alias) {
             if (!is_how_to_open_url_data(alias[key])) {
-                console.log(alias[key], "is false")
                 continue
             }
-
-            console.log(alias[key], "is ok")
 
             ret_config.how_to_open_url[key] = alias[key]
         }
