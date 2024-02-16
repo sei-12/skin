@@ -88,7 +88,7 @@ body {
 
 .hit-tag-list-container {
     width: 25%;
-    height: 90vh;
+    height: 91vh;
 }
 
 .hit-tag-list-item {
@@ -160,4 +160,15 @@ body {
 
 .bookmark-list-item-container-focus {
     background-color: var(--input-box-background-color);
+}
+
+
+.searched-bkmks {
+    overflow: hidden;
+    max-height: 84vh;
+    position: relative;
+}
+
+.searched-bkmks::-webkit-scrollbar {
+    display: none;
 }

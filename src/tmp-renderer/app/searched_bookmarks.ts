@@ -32,6 +32,7 @@ export class SearchedBookmarkListElm {
     elm: HTMLElement
     constructor() {
         this.elm = document.createElement("div")
+        this.elm.classList.add("searched-bkmks")
     }
 }
 
