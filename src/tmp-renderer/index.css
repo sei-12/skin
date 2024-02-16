@@ -172,3 +172,16 @@ body {
 .searched-bkmks::-webkit-scrollbar {
     display: none;
 }
+
+.tag {
+    padding: 5px;
+    margin: 5px;
+}
+
+.tag-exists-db {
+    color: rgb(20, 220, 20);
+}
+
+.tag-not-exists-db {
+    color: red;
+}

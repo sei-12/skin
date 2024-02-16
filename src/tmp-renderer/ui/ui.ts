@@ -37,10 +37,11 @@ export namespace Home {
 
     export function handle_keyup_input_tag_box(
         e: KeyboardEvent,
+        f: f_TagExistsDB,
         input_tag: InputTagElm
     ) {
         if (e.key == " " && e.isComposing === false) {
-            insert_tag_not_complement(input_tag)
+            insert_tag_not_complement(input_tag,f)
         }
     }
 
@@ -70,16 +71,17 @@ export namespace Home {
         let result = move_focus_tag_suggestion_window("down", win)
     }
 
-    export function tag_complement(
+    export async function tag_complement(
         win: TagSuggestionWindowElm,
-        input_tag: InputTagElm
+        input_tag: InputTagElm,
+        f: f_TagExistsDB
     ) {
         let tag = done_suggestion(win)
         if (tag instanceof Error) {
             throw tag
         }
-
-        insert_tag(input_tag, tag)
+        let exists = await f(tag)
+        insert_tag(input_tag, tag, exists)
         clear_input_box(input_tag)
     }
 

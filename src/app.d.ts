@@ -31,6 +31,7 @@ declare global {
             count: number
         }[]
     }>
+    type f_TagExistsDB =  (tag_name: string) => Promise<boolean>
 }
 
 export interface IMainProcess {
@@ -42,7 +43,7 @@ export interface IMainProcess {
         title: string | null,
         description: string | null
     } | null>;
-    tag_exists_db: (tag_name: string) => Promise<boolean>;
+    tag_exists_db: f_TagExistsDB,
     search_bookmarks: f_SearchBookmarks
     fetch_suggestion: (word: string) => Promise<{
         err: boolean,

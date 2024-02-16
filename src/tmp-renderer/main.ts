@@ -33,7 +33,8 @@ hotkey_map.set_hotkey("home+ctrl+/",
 hotkey_map.set_hotkey("home+tag_suggestion+Enter",
     () => UI.Home.tag_complement(
         root_elm.home.tag_sugestion_window,
-        root_elm.home.input_tag
+        root_elm.home.input_tag,
+        window.app.tag_exists_db
     )
 )
 hotkey_map.set_hotkey("home+tag_suggestion+ArrowDown",
@@ -63,6 +64,7 @@ root_elm.home.input_tag.input_box.addEventListener(
 root_elm.home.input_tag.input_box.addEventListener(
     "keyup", (e) => UI.Home.handle_keyup_input_tag_box(
         e,
+        window.app.tag_exists_db,
         root_elm.home.input_tag
     )
 )

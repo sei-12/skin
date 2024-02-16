@@ -1,7 +1,13 @@
 
-function create_inputed_tag_elm(tag: string) {
+function create_inputed_tag_elm(tag: string,exists_db: boolean) {
     let elm = document.createElement("div")
     elm.innerText = tag
+    elm.classList.add("tag")
+    if (exists_db) {
+        elm.classList.add("tag-exists-db")
+    } else {
+        elm.classList.add("tag-not-exists-db")
+    }
     return elm
 }
 
@@ -28,9 +34,9 @@ export function clear_input_box(input_tag: InputTagElm) {
 }
 
 
-export function insert_tag(input_tag: InputTagElm, tag: string) {
+export function insert_tag(input_tag: InputTagElm, tag: string, exists_db: boolean) {
     input_tag.inputed_tags.appendChild(
-        create_inputed_tag_elm(tag)
+        create_inputed_tag_elm(tag,exists_db)
     )
 }
 
@@ -48,10 +54,11 @@ export function handle_backspace_on_input_tag_box(input_tag: InputTagElm) {
 
 }
 
-export function insert_tag_not_complement(input_tag: InputTagElm){
+export async function insert_tag_not_complement(input_tag: InputTagElm, f: f_TagExistsDB){
     let val = input_tag.input_box.value
     clear_input_box(input_tag)
-    insert_tag(input_tag,val)
+    let exists_db = await f(val)
+    insert_tag(input_tag,val,exists_db)
 }
 
 export function get_inputed_tags(input_tag: InputTagElm){
