@@ -2,7 +2,7 @@
 // for はだめ
 // 処理の中身は別のところに書く
 
-import { InputTagElm, clear_input_box, insert_tag } from "../app/input_tag";
+import { InputTagElm, clear_input_box, handle_backspace_on_input_tag_box, insert_tag } from "../app/input_tag";
 import { TagSuggestionWindowElm, done_suggestion, handle_input_tagbox, move_focus_tag_suggestion_window } from "../app/tag_suggestion";
 
 export namespace Home {
@@ -19,13 +19,18 @@ export namespace Home {
             f, win, e.target
         )
 
-        if ( result !== null ){
+        if (result !== null) {
             return
         }
     }
 
-    export function handle_keydown_input_tag_box(e: KeyboardEvent) {
-
+    export function handle_keydown_input_tag_box(
+        e: KeyboardEvent,
+        input_tag: InputTagElm
+    ) {
+        if (e.key === "Backspace") {
+            handle_backspace_on_input_tag_box(input_tag)
+        }
     }
 
     export function handle_keyup_input_tag_box(e: KeyboardEvent) {
@@ -39,25 +44,25 @@ export namespace Home {
     export function focus_up_tag_suggestion(
         win: TagSuggestionWindowElm
     ) {
-        let result = move_focus_tag_suggestion_window("up",win)
+        let result = move_focus_tag_suggestion_window("up", win)
     }
 
     export function focus_down_tag_suggestion(
         win: TagSuggestionWindowElm
     ) {
-        let result = move_focus_tag_suggestion_window("down",win)
+        let result = move_focus_tag_suggestion_window("down", win)
     }
 
     export function tag_complement(
         win: TagSuggestionWindowElm,
         input_tag: InputTagElm
-    ){
+    ) {
         let tag = done_suggestion(win)
-        if ( tag instanceof Error ){
+        if (tag instanceof Error) {
             throw tag
         }
 
-        insert_tag(input_tag,tag)
+        insert_tag(input_tag, tag)
         clear_input_box(input_tag)
     }
 

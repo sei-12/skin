@@ -157,17 +157,20 @@ export function move_focus_tag_suggestion_window(
 
 export function done_suggestion(win: TagSuggestionWindowElm){
     if (!is_showing(win)){
+        console.log("hello")
         return new Error("bug")
     } 
 
     let inner = find_current_inner(win)
     if (inner === undefined) {
+        console.log("hello")
         return new Error("bug")
     }
 
 
     let focus_elm = inner.childNodes[win.focus_index.val]
     if (focus_elm === undefined || !(focus_elm instanceof HTMLElement)) {
+        console.log("hello")
         return new Error("bug")
     }
 

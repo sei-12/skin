@@ -1,5 +1,5 @@
 
-function create_inputed_tag_elm(tag: string){
+function create_inputed_tag_elm(tag: string) {
     let elm = document.createElement("div")
     elm.innerText = tag
     return elm
@@ -10,7 +10,7 @@ export class InputTagElm {
     input_box: HTMLInputElement
     inputed_tags: HTMLDivElement
 
-    constructor(){
+    constructor() {
         this.elm = document.createElement("div")
         this.input_box = document.createElement("input")
         this.inputed_tags = document.createElement("div")
@@ -20,13 +20,24 @@ export class InputTagElm {
     }
 }
 
-export function clear_input_box(input_tag: InputTagElm){
+export function clear_input_box(input_tag: InputTagElm) {
     input_tag.input_box.value = ""
 }
 
 
-export function insert_tag(input_tag: InputTagElm,tag: string){
+export function insert_tag(input_tag: InputTagElm, tag: string) {
     input_tag.inputed_tags.appendChild(
         create_inputed_tag_elm(tag)
     )
+}
+
+export function handle_backspace_on_input_tag_box(input_tag: InputTagElm) {
+
+    let last = input_tag.inputed_tags.lastElementChild 
+    if ( last ===  null ){
+        return
+    }
+
+    input_tag.inputed_tags.removeChild(last)
+
 }

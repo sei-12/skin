@@ -42,7 +42,10 @@ root_elm.home.input_tag.input_box.addEventListener(
     )
 )
 root_elm.home.input_tag.input_box.addEventListener(
-    "keydown", (e) => UI.Home.handle_keydown_input_tag_box(e)
+    "keydown", (e) => UI.Home.handle_keydown_input_tag_box(
+        e,
+        root_elm.home.input_tag
+    )
 )
 root_elm.home.input_tag.input_box.addEventListener(
     "keyup", (e) => UI.Home.handle_keyup_input_tag_box(e)
