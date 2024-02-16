@@ -23,7 +23,7 @@ declare global {
         data: TagData[]
     }>
     type f_SearchBookmarks = (tags: string[]) => Promise<BookmarkData[]>;
-
+    type f_OpenBookmark = (bookmark_id: number) => Promise<void>;
     type f_FetchHitTags = (tags: string[]) => Promise<{
         err: Error | null,
         data: {
@@ -48,7 +48,7 @@ export interface IMainProcess {
         err: boolean,
         data: TagData[]
     }>;
-    open_bookmark: (bookmark_id: number) => Promise<void>;
+    open_bookmark: f_OpenBookmark
     search_google: (tags: string[]) => void
 
     fetch_tag_list: () => Promise<{

@@ -29,6 +29,21 @@ function create_bkmk_list_item_elm(data: BookmarkData) {
     return div
 }
 
+function bkmk_data_from_bkmk_elm(elm: HTMLElement): BookmarkData {
+
+    let divs = elm.querySelectorAll("div")
+    let divs_ary = Array.from(divs)
+    let inner = divs_ary.find(e => e.classList.contains("data"))
+
+    if (inner === undefined) {
+        throw Error("bug")
+    }
+
+    let parsed = JSON.parse(inner.innerText)
+
+    return parsed
+}
+
 export class SearchedBookmarkListElm {
     focus: CycleIndex | null
     elm: HTMLElement
@@ -38,6 +53,21 @@ export class SearchedBookmarkListElm {
 
         this.focus = null
     }
+}
+
+export function get_focued_elm_or_first_elm(elm: SearchedBookmarkListElm): BookmarkData | null{
+    if ( elm.elm.childNodes.length === 0 ){
+        return null
+    }
+
+    let target_index = elm.focus?.val
+    if (target_index === undefined ) target_index = 0
+    let target_elm = elm.elm.childNodes[target_index]
+    if ( !(target_elm instanceof HTMLElement )){
+        return null
+    }
+
+    return bkmk_data_from_bkmk_elm(target_elm)
 }
 
 export function insert_searched_bookmarks(bkmks: BookmarkData[], into: SearchedBookmarkListElm) {

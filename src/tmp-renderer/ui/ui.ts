@@ -55,7 +55,7 @@ export namespace Home {
         let bkmks = await f(tags)
         SB.insert_searched_bookmarks(bkmks, searched_bookmark_list)
 
-        HTL.reload_hittaglist_elm(tags,fetch_hit_tags,hit_tag_list)
+        HTL.reload_hittaglist_elm(tags, fetch_hit_tags, hit_tag_list)
     }
 
     export function focus_up_tag_suggestion(
@@ -86,21 +86,29 @@ export namespace Home {
     export function focus_up_bookmarklist(
         elm: SB.SearchedBookmarkListElm
     ) {
-        SB.move_focus_searched_bookmarks("up",elm)
+        SB.move_focus_searched_bookmarks("up", elm)
     }
 
     export function focus_down_bookmarklist(
         elm: SB.SearchedBookmarkListElm
     ) {
-        SB.move_focus_searched_bookmarks("down",elm)
+        SB.move_focus_searched_bookmarks("down", elm)
     }
 
-    export function update_searched_bookmark_list() {
-
+    export function focus_input_tag_box(input_tag: InputTagElm) {
+        input_tag.input_box.focus()
     }
 
-    export function open_bookmark() {
+    export function open_bookmark(
+        f: f_OpenBookmark,
+        elm: SB.SearchedBookmarkListElm
+    ) {
+        let target_bkmk = SB.get_focued_elm_or_first_elm(elm)
+        if ( target_bkmk === null ){
+            return
+        }
 
+        f(target_bkmk.id)
     }
 }
 

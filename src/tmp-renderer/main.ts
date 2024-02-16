@@ -8,7 +8,10 @@ const root_elm = new RootElement(document.body as HTMLBodyElement)
 const hotkey_map = new HotkeyMap()
 
 hotkey_map.set_hotkey("home+Enter",
-    () => UI.Home.open_bookmark()
+    () => UI.Home.open_bookmark(
+        window.app.open_bookmark,
+        root_elm.home.searched_bkmks,
+    )
 )
 hotkey_map.set_hotkey("home+ArrowDown",
     () => UI.Home.focus_down_bookmarklist(
@@ -18,6 +21,12 @@ hotkey_map.set_hotkey("home+ArrowDown",
 hotkey_map.set_hotkey("home+ArrowUp",
     () => UI.Home.focus_up_bookmarklist(
         root_elm.home.searched_bkmks
+    )
+)
+
+hotkey_map.set_hotkey("home+ctrl+/",
+    () => UI.Home.focus_input_tag_box(
+        root_elm.home.input_tag
     )
 )
 
