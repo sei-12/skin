@@ -195,7 +195,7 @@ async function handleAddBookmark(url: string, title: string, tags: string[], des
     }
     for (let i = 0; i < require_add_tags.length; i++) {
         const tag = require_add_tags[i];
-        let res = await wrap_db_run(querys.add_tag, [tag, tag])
+        let res = await wrap_db_run(querys.add_tag, [tag])
         if (res) { return { err: true, message: res.message } }
     }
 
@@ -305,9 +305,9 @@ async function fetch_tag_list() {
     }
 }
 
-async function remove_bkmk(data: BookmarkData): Promise<{err: Error | null}>{
+async function remove_bkmk(data: BookmarkData): Promise<{ err: Error | null }> {
     let q = querys.remove_bookmark(data.id)
-    let result = await wrap_db_run(q.query,q.param)
+    let result = await wrap_db_run(q.query, q.param)
     return {
         err: result
     }
@@ -503,8 +503,7 @@ const querys = {
 
         create table if not exists tags (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name text unique,
-            oto text
+            name text unique
         );
 
         create table if not exists tag_map (
@@ -565,7 +564,7 @@ const querys = {
     },
 
     get_tag_id: "select id from tags where name = ?",
-    add_tag: "insert into tags values (null,?,?)",
+    add_tag: "insert into tags values (null,?)",
     get_bkmk_id: "select id from bookmarks where title = ? and url = ?;",
     add_bkmk: "insert into bookmarks values (null,?,?,?,?,strftime('%Y-%m-%d', CURRENT_DATE));",
     // add_tag_map: "insert into tag_map values (null,?,?)",
@@ -588,9 +587,9 @@ const querys = {
 
 
     fetch_suggestion: `
-        select name,oto from tags where oto like ? 
+        select name from tags where name like ? 
         union all
-        select name,oto from tags where oto like ? and oto not like ?;`,
+        select name from tags where name like ? and name not like ?;`,
 
 
     // TODO RENAME
@@ -613,7 +612,7 @@ const querys = {
     },
 
     edit_tag: (id: number, new_name: string, new_oto: string) => {
-        let query = "update tags set name = ?, oto = ? where id = ?"
+        let query = "update tags set name = ? where id = ?"
         let param = [new_name, new_oto, id]
         return { query, param }
     },
@@ -734,7 +733,7 @@ ipcMain.handle("search-bookmarks", async (_, tags: string[]) => {
 })
 
 
-ipcMain.handle("remove-bkmk",async (_,data) => await remove_bkmk(data) )
+ipcMain.handle("remove-bkmk", async (_, data) => await remove_bkmk(data))
 
 ipcMain.handle("update-bkmk", async (_, data, tags) => await update_bkmk(data, tags))
 ipcMain.handle("fetch-tags-where-link-bkmk", async (_, bkmkid) => await fetch_tags_where_link_bkmk(bkmkid))
