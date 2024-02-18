@@ -1,4 +1,6 @@
+import { BookmarkForm } from "../app/bkmk_form"
 import { GotoAddPageButton } from "../app/goto_add_page_btn"
+import { GotuPrevPageButton } from "../app/goto_prev_button"
 import { HitTagListElm } from "../app/hit_tag_list"
 import { InputTagElm } from "../app/input_tag"
 import { SearchedBookmarkListElm } from "../app/searched_bookmarks"
@@ -50,20 +52,32 @@ class HomePageElm {
 
 class AddPageElm {
     elm: HTMLElement
+    form: BookmarkForm
+    go_home: GotuPrevPageButton
 
-    constructor(){
+    constructor() {
         this.elm = document.createElement("div")
-        this.elm.innerText = "HELLO WORLD"
         this.elm.style.display = "none"
+
+        this.go_home = new GotuPrevPageButton()
+
+        this.form = new BookmarkForm()
+
+        let go_prev_pos = document.createElement("div")
+        go_prev_pos.classList.add("add-page-go-prev-button-pos")
+        go_prev_pos.appendChild(this.go_home.elm)
+
+        this.elm.appendChild(this.form.elm)
+        this.elm.appendChild(go_prev_pos)
     }
-    
+
 }
 
 export class RootElement {
     elm: HTMLBodyElement
 
     home: HomePageElm
-    add:  AddPageElm
+    add: AddPageElm
 
     constructor(elm: HTMLBodyElement) {
         this.elm = elm

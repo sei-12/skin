@@ -20,6 +20,7 @@ body {
     --background-color: #25293A;
     --kurome-background-color: #191D2E;
     --kurome-background-color2: #191D31;
+    --black: #030303;
 }
 
 .tag-suggestion-window {
@@ -207,4 +208,63 @@ body {
     font-size: x-large;
     margin-inline: 6%;
     border-radius: 10px;
+}
+
+
+.bookmark-form-container {
+    background-color: var(--kurome-background-color);
+    border-radius: 10px;
+    padding: 5%;
+    margin-block: 8%;
+    margin-top: 10%;
+    margin-inline: 3%;
+}
+
+.bookmark-form-input-box {
+    color: var(--font-color-white);
+    background-color: var(--input-box-background-color);
+    border: none;
+    width: 80%;
+    font-size: x-large;
+    border-radius: 5px;
+    outline: none;
+    margin-top: 1%;
+    padding: 10px;
+}
+
+.bookmark-form-done-button {
+    outline: none;
+    background-color: var(--black);
+    color: var(--font-color-white);
+    border: none;
+    display: block;
+    border-radius: 5px;
+    font-size: x-large;
+    padding: 10px;
+    margin-top: 4px;
+}
+
+.bookmark-form-text-area {
+    resize: none;
+    color: var(--font-color-white);
+    outline: none;
+    background-color: var(--input-box-background-color);
+    border-radius: 5px;
+    border: none;
+    font-size: large;
+    width: 85%;
+    padding: 10px;
+}
+
+.go-prev-page-button {
+    background-color: rgba(0, 0, 0, 0);
+    border: none;
+    color: white;
+    font-size: x-large;
+}
+
+.add-page-go-prev-button-pos {
+    position: absolute;
+    top: 3vw;
+    left: 3vw;
 }
