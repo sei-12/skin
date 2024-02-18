@@ -31,6 +31,11 @@ export class InputTagElm {
     }
 }
 
+export function clear_input_tag_elm(input_tag: InputTagElm){
+    clear_input_box(input_tag)
+    input_tag.inputed_tags.innerHTML = ""
+}
+
 export function clear_input_box(input_tag: InputTagElm) {
     input_tag.input_box.value = ""
 }

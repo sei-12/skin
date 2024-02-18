@@ -8,6 +8,7 @@ import * as SB from '../app/searched_bookmarks'
 import * as HTL from "../app/hit_tag_list";
 import { RootElement } from "../html/html";
 import { switch_page } from "../app/page";
+import { BookmarkForm, check_inputed_data, clear_form as clear_bookmark_form, parse_inputed_data } from "../app/bkmk_form";
 
 export namespace AnyPage {
     export function focus_up_tag_suggestion(
@@ -55,7 +56,7 @@ export namespace AnyPage {
         input_tag: InputTagElm
     ) {
         if (e.key == " " && e.isComposing === false) {
-            insert_tag_not_complement(input_tag,f)
+            insert_tag_not_complement(input_tag, f)
         }
     }
 
@@ -110,7 +111,7 @@ export namespace Home {
         elm: SB.SearchedBookmarkListElm
     ) {
         let target_bkmk = SB.get_focued_elm_or_first_elm(elm)
-        if ( target_bkmk === null ){
+        if (target_bkmk === null) {
             return
         }
 
@@ -119,19 +120,44 @@ export namespace Home {
 
     export function goto_add_page(
         root: RootElement
-    ){
-        switch_page(root,"add")
+    ) {
+        switch_page(root, "add")
     }
 }
 
 
-export  namespace Add {
-    export function go_home(root: RootElement){
-        switch_page(root,"home")
+export namespace Add {
+    export function go_home(root: RootElement) {
+        switch_page(root, "home")
     }
 
     export function focus_input_tag_box(input_tag: InputTagElm) {
         input_tag.input_box.focus()
     }
 
+    export async function add_bookmark(
+        form: BookmarkForm,
+        f: f_AddBookmark,
+    ) {
+        let data = parse_inputed_data(form)
+        let errors = check_inputed_data(data)
+
+        if (errors.length !== 0) {
+            // TODO
+            return
+        }
+
+        let result = await f(
+            data.url,
+            data.title,
+            data.tags,
+            data.description
+        )
+
+        if (result.err) {
+            return
+        }
+
+        clear_bookmark_form(form)
+    }
 }

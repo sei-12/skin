@@ -150,10 +150,21 @@ hotkey_map.set_hotkey("add+ctrl+/",
 hotkey_map.set_hotkey("add+ctrl+h",
     () => UI.Add.go_home(root_elm)
 )
+hotkey_map.set_hotkey("add+ctrl+Enter",
+    () => UI.Add.add_bookmark(
+        root_elm.add.form,
+        window.app.add_bookmark
+    )
+)
+root_elm.add.form.done_button.addEventListener(
+    "click", () => UI.Add.add_bookmark(
+        root_elm.add.form,
+        window.app.add_bookmark
+    )
+)
 root_elm.add.go_home.elm.addEventListener(
     "click", () => UI.Add.go_home(root_elm)
 )
-
 root_elm.add.form.input_tag.elm.addEventListener(
     "click", () => UI.Home.focus_input_tag_box(
         root_elm.home.input_tag

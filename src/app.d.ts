@@ -32,13 +32,14 @@ declare global {
         }[]
     }>
     type f_TagExistsDB =  (tag_name: string) => Promise<boolean>
+    type f_AddBookmark = (url: string, title: string, tags: string[], description: string) => Promise<{
+        err: boolean,
+        message: string
+    }>
 }
 
 export interface IMainProcess {
-    add_bookmark: (url: string, title: string, tags: string[], description: string) => Promise<{
-        err: boolean,
-        message: string
-    }>;
+    add_bookmark: f_AddBookmark
     fetch_pageinfo: (url: string) => Promise<{
         title: string | null,
         description: string | null

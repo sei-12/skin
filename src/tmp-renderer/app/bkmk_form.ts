@@ -1,4 +1,4 @@
-import { InputTagElm } from "./input_tag"
+import { InputTagElm, clear_input_tag_elm, get_inputed_tags } from "./input_tag"
 import { TagSuggestionWindowElm } from "./tag_suggestion"
 
 export class BookmarkForm {
@@ -48,3 +48,47 @@ export class BookmarkForm {
     }
 }
 
+type InputedBookmarkData = {
+    url: string,
+    title: string,
+    tags: string[],
+    description: string
+}
+
+export function check_inputed_data(data: InputedBookmarkData): string[] {
+    let errors:string[] = []
+    if ( data.title === "" ){
+        errors.push("タイトルが入力されていません")
+    }
+
+    if ( data.url === "" ){
+        errors.push("URLが入力されていません")
+    }
+
+    if (data.tags.length === 0){
+        errors.push("タグが入力されていません。最低一つ以上入力する必要があります")
+    }
+
+    return errors
+}
+
+export function parse_inputed_data(form: BookmarkForm): InputedBookmarkData {
+    let url = form.url_box.value
+    let title = form.title_box.value
+    let tags = get_inputed_tags(form.input_tag)
+    let description = form.description.value
+
+    return {
+        url,
+        title,
+        tags,
+        description
+    }
+}
+
+export function clear_form(form: BookmarkForm){
+    form.url_box.value = ""
+    form.title_box.value = ""
+    form.description.value = ""
+    clear_input_tag_elm(form.input_tag)
+}
