@@ -127,6 +127,7 @@ body {
 
 .home-inner-layout-left {
     width: 70vw;
+    overflow: hidden;
 }
 
 .home-inner-layout-right {
