@@ -2,7 +2,7 @@ import { BookmarkForm } from "../app/bkmk_form"
 import { EditBookmarkPageElm } from "../app/edit_bookmark"
 import { GotoAddPageButton } from "../sub/goto_add_page_btn"
 import { GotuPrevPageButton } from "../sub/goto_prev_button"
-import { HitTagListElm } from "../sub/hit_tag_list"
+import { HitTagList } from "../sub/hit_tag_list"
 import { InputTagElm } from "../sub/input_tag"
 import { SearchedBookmarkListElm } from "../sub/searched_bookmarks"
 import { TagSuggestionWindowElm } from "../sub/tag_suggestion"
@@ -14,7 +14,7 @@ class HomePageElm {
     tag_suggestion_window: TagSuggestionWindowElm
     input_tag: InputTagElm
 
-    hit_tag_list: HitTagListElm
+    hit_tag_list: HitTagList.Elm
 
     searched_bkmks: SearchedBookmarkListElm
     goto_add_page: GotoAddPageButton
@@ -26,7 +26,7 @@ class HomePageElm {
         this.goto_add_page = new GotoAddPageButton()
 
         this.input_tag = new InputTagElm()
-        this.hit_tag_list = new HitTagListElm()
+        this.hit_tag_list = new HitTagList.Elm()
         this.tag_suggestion_window = new TagSuggestionWindowElm()
         this.searched_bkmks = new SearchedBookmarkListElm()
 

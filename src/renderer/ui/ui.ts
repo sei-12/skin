@@ -5,11 +5,11 @@
 import { InputTagElm, clear_input_box, get_inputed_tags, handle_backspace_on_input_tag_box, insert_tag, insert_tag_not_complement } from "../sub/input_tag";
 import { TagSuggestionWindowElm, done_suggestion, handle_input_tagbox, move_focus_tag_suggestion_window } from "../sub/tag_suggestion";
 import * as SB from '../sub/searched_bookmarks'
-import * as HTL from "../sub/hit_tag_list";
 import { RootElement } from "../html/html";
 import { switch_page } from "../app/page";
 import { BookmarkForm, check_inputed_data, clear_form as clear_bookmark_form, complement_form, parse_inputed_data } from "../app/bkmk_form";
 import { EditBookmarkPageElm, clear_edit_page, parse_edit_page_form, set_bookmark_data_into_edit_page } from "../app/edit_bookmark";
+import { HitTagList } from "../sub/hit_tag_list";
 
 export namespace AnyPage {
     export function focus_up_tag_suggestion(
@@ -114,7 +114,7 @@ export namespace Home {
         input_tag: InputTagElm,
         f: f_SearchBookmarks,
         fetch_hit_tags: f_FetchHitTags,
-        hit_tag_list: HTL.HitTagListElm,
+        hit_tag_list: HitTagList.Elm,
         searched_bookmark_list: SB.SearchedBookmarkListElm,
         handle_click_edit_bkmk: (data: BookmarkData) => void,
         handle_click_delete_bkmk: (data: BookmarkData) => void
@@ -129,7 +129,7 @@ export namespace Home {
             handle_click_delete_bkmk
         )
 
-        HTL.reload_hittaglist_elm(tags, fetch_hit_tags, hit_tag_list)
+        HitTagList.reload(tags,fetch_hit_tags,hit_tag_list)
     }
 
     export function focus_up_bookmarklist(
