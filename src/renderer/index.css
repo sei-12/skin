@@ -138,8 +138,22 @@ body {
 .bookmark-list-item-title {
     margin: 5px;
     margin-bottom: 8px;
-    inline-size: 100%;
-    overflow-wrap: break-word;
+    inline-size: 90%;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    display: inline;
+}
+
+.bookmark-list-item-icon-button {
+    background-color: rgba(0, 0, 0, 0);
+    color: #999999;
+    font-size: x-large;
+    border: none;
+}
+
+.bookmark-list-item-icon-button:hover {
+    color: white;
 }
 
 .bookmark-list-item-desc {
@@ -165,6 +179,11 @@ body {
     margin-block: 8px;
     background-color: var(--kurome-background-color);
     box-sizing: border-box;
+}
+
+.bookmark-list-item-layout-top {
+    width: 100%;
+    display: flex;
 }
 
 .bookmark-list-item-container-focus {

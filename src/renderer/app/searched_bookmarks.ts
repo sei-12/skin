@@ -6,6 +6,9 @@ function create_bkmk_list_item_elm(data: BookmarkData) {
     data_elm.classList.add("data")
     data_elm.style.display = "none"
 
+    let layout_top = document.createElement("div")
+    layout_top.classList.add("bookmark-list-item-layout-top")
+
     let title_elm = document.createElement("div")
     title_elm.innerText = data.title
     title_elm.classList.add("bookmark-list-item-title")
@@ -19,9 +22,30 @@ function create_bkmk_list_item_elm(data: BookmarkData) {
     craeted_at_elm.innerText = "created at: " + data.created_at.replace(replace_re, "/")
     craeted_at_elm.classList.add("bookmark-list-item-created-at")
 
+
+    let edit_button = document.createElement("button")
+    edit_button.classList.add("bookmark-list-item-icon-button")
+    let edit_icon = document.createElement("i")
+    edit_icon.classList.add("nf")
+    edit_icon.innerText = "\udb82\udd0c"
+    edit_button.appendChild(edit_icon)
+
+
+    let delete_button = document.createElement("button")
+    delete_button.classList.add("bookmark-list-item-icon-button")
+    let delete_icon = document.createElement("i")
+    delete_icon.classList.add("nf")
+    delete_icon.innerText = "\udb82\udde7"
+    delete_button.appendChild(delete_icon)
+
+
     let div = document.createElement("div")
     div.classList.add("bookmark-list-item-container")
-    div.appendChild(title_elm)
+    layout_top.appendChild(title_elm)
+    layout_top.appendChild(edit_button)
+    layout_top.appendChild(delete_button)
+
+    div.appendChild(layout_top)
     div.appendChild(craeted_at_elm)
     div.appendChild(description_elm)
     // TODO
