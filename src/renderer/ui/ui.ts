@@ -2,10 +2,10 @@
 // for はだめ
 // 処理の中身は別のところに書く
 
-import { InputTagElm, clear_input_box, get_inputed_tags, handle_backspace_on_input_tag_box, insert_tag, insert_tag_not_complement } from "../app/input_tag";
-import { TagSuggestionWindowElm, done_suggestion, handle_input_tagbox, move_focus_tag_suggestion_window } from "../app/tag_suggestion";
-import * as SB from '../app/searched_bookmarks'
-import * as HTL from "../app/hit_tag_list";
+import { InputTagElm, clear_input_box, get_inputed_tags, handle_backspace_on_input_tag_box, insert_tag, insert_tag_not_complement } from "../sub/input_tag";
+import { TagSuggestionWindowElm, done_suggestion, handle_input_tagbox, move_focus_tag_suggestion_window } from "../sub/tag_suggestion";
+import * as SB from '../sub/searched_bookmarks'
+import * as HTL from "../sub/hit_tag_list";
 import { RootElement } from "../html/html";
 import { switch_page } from "../app/page";
 import { BookmarkForm, check_inputed_data, clear_form as clear_bookmark_form, complement_form, parse_inputed_data } from "../app/bkmk_form";

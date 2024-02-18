@@ -1,5 +1,5 @@
-import { InputTagElm, clear_input_tag_elm, get_inputed_tags } from "./input_tag"
-import { TagSuggestionWindowElm } from "./tag_suggestion"
+import { InputTagElm, clear_input_tag_elm, get_inputed_tags } from "../sub/input_tag"
+import { TagSuggestionWindowElm } from "../sub/tag_suggestion"
 
 export class BookmarkForm {
     elm: HTMLElement

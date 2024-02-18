@@ -1,11 +1,11 @@
 import { BookmarkForm } from "../app/bkmk_form"
 import { EditBookmarkPageElm } from "../app/edit_bookmark"
-import { GotoAddPageButton } from "../app/goto_add_page_btn"
-import { GotuPrevPageButton } from "../app/goto_prev_button"
-import { HitTagListElm } from "../app/hit_tag_list"
-import { InputTagElm } from "../app/input_tag"
-import { SearchedBookmarkListElm } from "../app/searched_bookmarks"
-import { TagSuggestionWindowElm } from "../app/tag_suggestion"
+import { GotoAddPageButton } from "../sub/goto_add_page_btn"
+import { GotuPrevPageButton } from "../sub/goto_prev_button"
+import { HitTagListElm } from "../sub/hit_tag_list"
+import { InputTagElm } from "../sub/input_tag"
+import { SearchedBookmarkListElm } from "../sub/searched_bookmarks"
+import { TagSuggestionWindowElm } from "../sub/tag_suggestion"
 
 
 
