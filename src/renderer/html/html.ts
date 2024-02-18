@@ -1,4 +1,5 @@
 import { BookmarkForm } from "../app/bkmk_form"
+import { EditBookmarkPageElm } from "../app/edit_bookmark"
 import { GotoAddPageButton } from "../app/goto_add_page_btn"
 import { GotuPrevPageButton } from "../app/goto_prev_button"
 import { HitTagListElm } from "../app/hit_tag_list"
@@ -50,6 +51,7 @@ class HomePageElm {
     }
 }
 
+
 class AddPageElm {
     elm: HTMLElement
     form: BookmarkForm
@@ -78,13 +80,16 @@ export class RootElement {
 
     home: HomePageElm
     add: AddPageElm
+    edit_bkmk: EditBookmarkPageElm
 
     constructor(elm: HTMLBodyElement) {
         this.elm = elm
         this.home = new HomePageElm()
         this.add = new AddPageElm()
+        this.edit_bkmk = new EditBookmarkPageElm()
 
         this.elm.appendChild(this.home.elm)
         this.elm.appendChild(this.add.elm)
+        this.elm.appendChild(this.edit_bkmk.elm)
     }
 }

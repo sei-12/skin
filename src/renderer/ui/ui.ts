@@ -9,6 +9,7 @@ import * as HTL from "../app/hit_tag_list";
 import { RootElement } from "../html/html";
 import { switch_page } from "../app/page";
 import { BookmarkForm, check_inputed_data, clear_form as clear_bookmark_form, complement_form, parse_inputed_data } from "../app/bkmk_form";
+import { EditBookmarkPageElm, clear_edit_page, parse_edit_page_form, set_bookmark_data_into_edit_page } from "../app/edit_bookmark";
 
 export namespace AnyPage {
     export function focus_up_tag_suggestion(
@@ -73,6 +74,25 @@ export namespace AnyPage {
         insert_tag(input_tag, tag, exists)
         clear_input_box(input_tag)
     }
+
+    export async function goto_edit_bookmark_page(
+        target_data: BookmarkData,
+        root: RootElement,
+        f: f_FetchTagsWhereLinkBkmk
+    ) {
+        let tags = await f(target_data.id)
+        if (tags.err !== null) {
+            return
+        }
+
+        set_bookmark_data_into_edit_page(
+            root.edit_bkmk,
+            target_data,
+            tags.tags
+        )
+
+        switch_page(root, "edit_bkmk")
+    }
 }
 
 export namespace Home {
@@ -81,11 +101,17 @@ export namespace Home {
         f: f_SearchBookmarks,
         fetch_hit_tags: f_FetchHitTags,
         hit_tag_list: HTL.HitTagListElm,
-        searched_bookmark_list: SB.SearchedBookmarkListElm
+        searched_bookmark_list: SB.SearchedBookmarkListElm,
+        handle_click_edit_bkmk: (data:BookmarkData) => void
+
     ) {
         let tags = get_inputed_tags(input_tag)
         let bkmks = await f(tags)
-        SB.insert_searched_bookmarks(bkmks, searched_bookmark_list)
+        SB.insert_searched_bookmarks(
+            bkmks,
+            searched_bookmark_list,
+            handle_click_edit_bkmk
+        )
 
         HTL.reload_hittaglist_elm(tags, fetch_hit_tags, hit_tag_list)
     }
@@ -170,5 +196,36 @@ export namespace Add {
             return
         }
         complement_form(data, form)
+    }
+}
+
+export namespace EditBkmk {
+    export function go_home(root: RootElement) {
+        clear_edit_page(root.edit_bkmk)
+        switch_page(root, "home")
+    }
+
+    export function focus_input_tag_box(input_tag: InputTagElm) {
+        input_tag.input_box.focus()
+    }
+
+    export async function update_bkmk(
+        page: EditBookmarkPageElm,
+        f: f_UpdateBookmark,
+        root: RootElement,
+    ){
+        let data = parse_edit_page_form(page)
+        if (data instanceof Error ){
+            throw data
+        }
+
+        let res = await f(data.data,data.tags)
+        console.table(res)
+        if ( res.err !== null ){
+            throw res.err
+        }
+
+        clear_edit_page(page)
+        switch_page(root,"home")
     }
 }

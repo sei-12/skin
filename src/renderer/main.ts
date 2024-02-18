@@ -96,7 +96,12 @@ const mo1 = new MutationObserver(
         window.app.search_bookmarks,
         window.app.fetch_hit_tags,
         root_elm.home.hit_tag_list,
-        root_elm.home.searched_bkmks
+        root_elm.home.searched_bkmks,
+        (data) => UI.AnyPage.goto_edit_bookmark_page(
+            data,
+            root_elm,
+            window.app.fetch_tags_where_link_bkmk
+        )
     )
 )
 mo1.observe(root_elm.home.input_tag.inputed_tags, { childList: true })
@@ -166,12 +171,12 @@ root_elm.add.go_home.elm.addEventListener(
     "click", () => UI.Add.go_home(root_elm)
 )
 root_elm.add.form.input_tag.elm.addEventListener(
-    "click", () => UI.Home.focus_input_tag_box(
-        root_elm.home.input_tag
+    "click", () => UI.Add.focus_input_tag_box(
+        root_elm.add.form.input_tag
     )
 )
 root_elm.add.form.url_box.addEventListener(
-    "input",() => UI.Add.complement_form_from_url(
+    "input", () => UI.Add.complement_form_from_url(
         root_elm.add.form,
         window.app.fetch_pageinfo
     )
@@ -194,5 +199,73 @@ root_elm.add.form.input_tag.input_box.addEventListener(
         e,
         window.app.tag_exists_db,
         root_elm.add.form.input_tag
+    )
+)
+
+//----------------------------------------------------------------------------------------------------//
+//                                                                                                    //
+//                                         EDIT BOOKMARK PAGE                                         //
+//                                                                                                    //
+//----------------------------------------------------------------------------------------------------//
+hotkey_map.set_hotkey("edit_bkmk+ctrl+h",
+    () => UI.EditBkmk.go_home(root_elm)
+)
+hotkey_map.set_hotkey("edit_bkmk+tag_suggestion+Enter",
+    () => UI.AnyPage.tag_complement(
+        root_elm.edit_bkmk.form.tag_suggestion_window,
+        root_elm.edit_bkmk.form.input_tag,
+        window.app.tag_exists_db
+    )
+)
+hotkey_map.set_hotkey("edit_bkmk+tag_suggestion+ArrowDown",
+    () => UI.AnyPage.focus_down_tag_suggestion(
+        root_elm.edit_bkmk.form.tag_suggestion_window
+    )
+)
+hotkey_map.set_hotkey("edit_bkmk+tag_suggestion+ArrowUp",
+    () => UI.AnyPage.focus_up_tag_suggestion(
+        root_elm.edit_bkmk.form.tag_suggestion_window
+    )
+)
+hotkey_map.set_hotkey("edit_bkmk+ctrl+/",
+    () => UI.EditBkmk.focus_input_tag_box(
+        root_elm.edit_bkmk.form.input_tag
+    )
+)
+root_elm.edit_bkmk.go_home.elm.addEventListener(
+    "click", () => UI.EditBkmk.go_home(
+        root_elm
+    )
+)
+root_elm.edit_bkmk.form.done_button.addEventListener(
+    "click", () => UI.EditBkmk.update_bkmk(
+        root_elm.edit_bkmk,
+        window.app.update_bkmk,
+        root_elm
+    )
+)
+root_elm.edit_bkmk.form.input_tag.input_box.addEventListener(
+    "input", (e) => UI.AnyPage.handle_input_input_tag_box(
+        e,
+        window.app.fetch_suggestion,
+        root_elm.edit_bkmk.form.tag_suggestion_window
+    )
+)
+root_elm.edit_bkmk.form.input_tag.input_box.addEventListener(
+    "keydown", (e) => UI.AnyPage.handle_keydown_input_tag_box(
+        e,
+        root_elm.edit_bkmk.form.input_tag
+    )
+)
+root_elm.edit_bkmk.form.input_tag.input_box.addEventListener(
+    "keyup", (e) => UI.AnyPage.handle_keyup_input_tag_box(
+        e,
+        window.app.tag_exists_db,
+        root_elm.edit_bkmk.form.input_tag
+    )
+)
+root_elm.edit_bkmk.form.input_tag.elm.addEventListener(
+    "click", () => UI.EditBkmk.focus_input_tag_box(
+        root_elm.edit_bkmk.form.input_tag
     )
 )

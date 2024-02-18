@@ -96,11 +96,20 @@ export function clear_form(form: BookmarkForm) {
 export function complement_form(data: {
     title: string | null,
     description: string | null
-},form: BookmarkForm){
-    if ( form.title_box.value === "" && data.title !== null){
+}, form: BookmarkForm) {
+    if (form.title_box.value === "" && data.title !== null) {
         form.title_box.value = data.title
     }
-    if ( form.description.value === "" && data.description !== null){
+    if (form.description.value === "" && data.description !== null) {
         form.description.value = data.description
     }
+}
+
+export function set_bookmark_data_into_form(
+    data: BookmarkData,
+    form: BookmarkForm
+) {
+    form.url_box.value = data.url
+    form.title_box.value = data.title
+    form.description.value = data.description
 }

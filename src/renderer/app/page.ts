@@ -1,6 +1,6 @@
 import { RootElement } from "../html/html"
 
-type PageName = "home" | "add"
+type PageName = "home" | "add" | "edit_bkmk"
 
 export function get_current_page_name(
     root: RootElement
@@ -13,6 +13,9 @@ export function get_current_page_name(
     }
     if ( root.add.elm.style.display === "block"){
         return "add"
+    }
+    if ( root.edit_bkmk.elm.style.display === "block") {
+        return "edit_bkmk"
     }
 
     return new Error("bug")

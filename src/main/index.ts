@@ -85,7 +85,8 @@ function open_url(url: string) {
 }
 
 async function open_bookmark(bookmark_id: number): Promise<null> {
-    let bookmark = await wrap_db_get(querys.get_bkmk_from_id, bookmark_id)
+    let q = querys.get_bkmk_from_id(bookmark_id)
+    let bookmark = await wrap_db_get(q.query, q.param)
 
     if (bookmark.err) {
         console.error(bookmark.err.message)
@@ -217,8 +218,8 @@ async function handleAddBookmark(url: string, title: string, tags: string[], des
         tag_ids.push(res.row)
     }
     for (let i = 0; i < tags.length; i++) {
-        let params = [bkmk_id.row.id, tag_ids[i].id]
-        let res = await wrap_db_run(querys.add_tag_map, params)
+        let q = querys.insert_tag_map(bkmk_id.row.id, tag_ids[i].id)
+        let res = await wrap_db_run(q.query, q.param)
         if (res) { return { err: true, message: res.message } }
     }
 
@@ -301,6 +302,111 @@ async function fetch_tag_list() {
     return {
         err: null,
         data: tags.rows
+    }
+}
+
+async function update_bkmk(data: BookmarkData, tags: string[]): Promise<{
+    err: Error | null
+}> {
+
+    console.log(data)
+    console.log(tags)
+
+    // bkmkidの存在確認
+    let q1 = querys.get_bkmk_from_id(data.id)
+    let bkmk_data = await wrap_db_get(q1.query, q1.param)
+    if (bkmk_data.row === undefined) {
+        return {
+            err: new Error("bug")
+        }
+    }
+
+    await wrap_db_run('BEGIN TRANSACTION', undefined);
+
+    let q = querys.update_bkmk(data, tags.length)
+    let res = await wrap_db_run(q.query, q.param)
+    if (res !== null) {
+        await wrap_db_run("ROLLBACK", undefined)
+        return {
+            err: res
+        }
+    }
+
+    //
+    // テーブルにないタグを追加
+    //
+    let require_add_tags = []
+    for (let i = 0; i < tags.length; i++) {
+        const tag = tags[i];
+        if (await tag_exists(tag) === false) {
+            require_add_tags.push(tag)
+        }
+    }
+    for (let i = 0; i < require_add_tags.length; i++) {
+        const tag = require_add_tags[i];
+        let res = await wrap_db_run(querys.add_tag, [tag, tag])
+        if (res) {
+            await wrap_db_run("ROLLBACK", undefined)
+            return {
+                err: new Error(res.message)
+            }
+        }
+    }
+
+    // tag_mapからすべて削除
+    let q2 = querys.delete_tag_map_where_bkmkid(data.id)
+    let res2 = await wrap_db_run(q2.query, q2.param)
+    if (res2 !== null) {
+        await wrap_db_run("ROLLBACK", undefined)
+        return {
+            err: new Error(res2.message)
+        }
+    }
+
+    // tagsをすべて追加
+
+    let tag_ids = []
+    for (let i = 0; i < tags.length; i++) {
+        let res = await wrap_db_get(querys.get_tag_id, tags[i])
+        if (res.err) {
+            await wrap_db_run("ROLLBACK", undefined)
+            return {
+                err: new Error(res.err.message),
+            }
+        }
+        tag_ids.push(res.row)
+    }
+    for (let i = 0; i < tags.length; i++) {
+        let q3 = querys.insert_tag_map(data.id, tag_ids[i].id)
+        let res = await wrap_db_run(q3.query, q3.param)
+        if (res !== null) {
+            await wrap_db_run("ROLLBACK", undefined)
+            return {
+                err: new Error(res.message),
+            }
+        }
+    }
+
+
+    console.log("commit!!!")
+    await wrap_db_run('COMMIT', undefined);
+
+    return {
+        err: null
+    }
+}
+
+async function fetch_tags_where_link_bkmk(bkmk_id: number): Promise<{
+    err: Error | null,
+    tags: string[]
+}> {
+    let q = querys.fetch_tags_where_link_bkmk(bkmk_id)
+    let res = await wrap_db_all(q.query, q.param)
+    let tags: string[] = res.rows.map(r => r.name)
+
+    return {
+        err: res.err,
+        tags
     }
 }
 
@@ -454,8 +560,18 @@ const querys = {
     add_tag: "insert into tags values (null,?,?)",
     get_bkmk_id: "select id from bookmarks where title = ? and url = ?;",
     add_bkmk: "insert into bookmarks values (null,?,?,?,?,strftime('%Y-%m-%d', CURRENT_DATE));",
-    add_tag_map: "insert into tag_map values (null,?,?)",
-    get_bkmk_from_id: "select * from bookmarks where id = ?",
+    // add_tag_map: "insert into tag_map values (null,?,?)",
+    insert_tag_map: (bkmkid: number, tagid: number) => {
+        let query = "insert into tag_map values (null,?,?)"
+        let param = [bkmkid, tagid]
+        return { query, param }
+    },
+    get_bkmk_from_id: (id: number) => {
+        let query = "select * from bookmarks where id = ?"
+        let param = [id]
+        return { query, param }
+    },
+
 
     fetch_suggestion: `
         select name,oto from tags where oto like ? 
@@ -470,6 +586,12 @@ const querys = {
         return stmt
     },
 
+    delete_tag_map_where_bkmkid: (bkmkid: number) => {
+        let query = "delete from tag_map where bkmk_id = ?"
+        let param = [bkmkid]
+        return { query, param }
+    },
+
     fetch_tag_list: () => {
         let query = "select * from tags;"
         let param = undefined
@@ -479,6 +601,33 @@ const querys = {
     edit_tag: (id: number, new_name: string, new_oto: string) => {
         let query = "update tags set name = ?, oto = ? where id = ?"
         let param = [new_name, new_oto, id]
+        return { query, param }
+    },
+
+    update_bkmk: (data: BookmarkData, tag_count: number) => {
+        let query = `
+            update bookmarks 
+            set url = ?,
+            title = ?,
+            description = ?,
+            tag_count = ?
+            where id = ?;`
+        let param = [
+            data.url,
+            data.title,
+            data.description,
+            tag_count,
+            data.id
+        ]
+        return { query, param }
+    },
+    fetch_tags_where_link_bkmk: (bkmkid: number) => {
+        let query = `
+        select t.name 
+        from tag_map tm
+        join tags t on tm.tag_id = t.id
+        where tm.bkmk_id = ?`
+        let param = [bkmkid]
         return { query, param }
     }
 }
@@ -570,6 +719,9 @@ ipcMain.handle("search-bookmarks", async (_, tags: string[]) => {
     return await search_bookmarks(tags)
 })
 
+
+ipcMain.handle("update-bkmk", async (_, data, tags) => await update_bkmk(data, tags))
+ipcMain.handle("fetch-tags-where-link-bkmk", async (_, bkmkid) => await fetch_tags_where_link_bkmk(bkmkid))
 ipcMain.handle("open-bookmark", async (_, bookmark_id: number) => {
     return await open_bookmark(bookmark_id)
 })

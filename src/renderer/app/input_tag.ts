@@ -1,5 +1,5 @@
 
-function create_inputed_tag_elm(tag: string,exists_db: boolean) {
+function create_inputed_tag_elm(tag: string, exists_db: boolean) {
     let elm = document.createElement("div")
     elm.innerText = tag
     elm.classList.add("tag")
@@ -31,7 +31,7 @@ export class InputTagElm {
     }
 }
 
-export function clear_input_tag_elm(input_tag: InputTagElm){
+export function clear_input_tag_elm(input_tag: InputTagElm) {
     clear_input_box(input_tag)
     input_tag.inputed_tags.innerHTML = ""
 }
@@ -43,17 +43,17 @@ export function clear_input_box(input_tag: InputTagElm) {
 
 export function insert_tag(input_tag: InputTagElm, tag: string, exists_db: boolean) {
     input_tag.inputed_tags.appendChild(
-        create_inputed_tag_elm(tag,exists_db)
+        create_inputed_tag_elm(tag, exists_db)
     )
 }
 
 export function handle_backspace_on_input_tag_box(input_tag: InputTagElm) {
-    if (input_tag.input_box.value !== ""){
+    if (input_tag.input_box.value !== "") {
         return
     }
 
-    let last = input_tag.inputed_tags.lastElementChild 
-    if ( last ===  null ){
+    let last = input_tag.inputed_tags.lastElementChild
+    if (last === null) {
         return
     }
 
@@ -61,22 +61,34 @@ export function handle_backspace_on_input_tag_box(input_tag: InputTagElm) {
 
 }
 
-export async function insert_tag_not_complement(input_tag: InputTagElm, f: f_TagExistsDB){
+export async function insert_tag_not_complement(input_tag: InputTagElm, f: f_TagExistsDB) {
     let val = input_tag.input_box.value
     clear_input_box(input_tag)
     let exists_db = await f(val)
-    insert_tag(input_tag,val,exists_db)
+    insert_tag(input_tag, val, exists_db)
 }
 
-export function get_inputed_tags(input_tag: InputTagElm){
-    let child_nodes = input_tag.inputed_tags.childNodes 
+export function get_inputed_tags(input_tag: InputTagElm) {
+    let child_nodes = input_tag.inputed_tags.childNodes
     let tags: string[] = []
 
-    child_nodes.forEach( node => {
-        if ( node instanceof HTMLElement ){
+    child_nodes.forEach(node => {
+        if (node instanceof HTMLElement) {
             tags.push(node.innerText)
         }
     })
 
     return tags
+}
+
+/**
+ * 重要!!! すべてDBに存在するタグとして扱います
+ * @param tags 
+ * @param input_tag 
+ */
+export function set_tags_into_input_tag(
+    tags: string[],
+    input_tag: InputTagElm
+) {
+    tags.forEach(t => insert_tag(input_tag,t,true) )
 }

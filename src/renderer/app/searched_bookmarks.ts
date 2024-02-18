@@ -1,6 +1,9 @@
 import { CycleIndex, scroll_to_focus_elm } from "../utils"
 
-function create_bkmk_list_item_elm(data: BookmarkData) {
+function create_bkmk_list_item_elm(
+    data: BookmarkData,
+    handle_click_edit_bkmk: (data:BookmarkData) => void
+) {
     let data_elm = document.createElement("div")
     data_elm.innerText = JSON.stringify(data)
     data_elm.classList.add("data")
@@ -24,6 +27,7 @@ function create_bkmk_list_item_elm(data: BookmarkData) {
 
 
     let edit_button = document.createElement("button")
+    edit_button.addEventListener("click",() => handle_click_edit_bkmk(data))
     edit_button.classList.add("bookmark-list-item-icon-button")
     let edit_icon = document.createElement("i")
     edit_icon.classList.add("nf")
@@ -94,9 +98,13 @@ export function get_focued_elm_or_first_elm(elm: SearchedBookmarkListElm): Bookm
     return bkmk_data_from_bkmk_elm(target_elm)
 }
 
-export function insert_searched_bookmarks(bkmks: BookmarkData[], into: SearchedBookmarkListElm) {
+export function insert_searched_bookmarks(
+    bkmks: BookmarkData[],
+    into: SearchedBookmarkListElm,
+    handle_click_edit_bkmk: (data:BookmarkData) => void
+) {
     into.focus = null
-    let elms = bkmks.map(data => create_bkmk_list_item_elm(data))
+    let elms = bkmks.map(data => create_bkmk_list_item_elm(data,handle_click_edit_bkmk))
     into.elm.innerHTML = ""
     elms.forEach(elm => {
         into.elm.appendChild(elm)
