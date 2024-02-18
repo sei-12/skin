@@ -35,5 +35,6 @@ contextBridge.exposeInMainWorld(
     fetch_hit_tags: (tags: string[]) => ipcRenderer.invoke("fetch-hit-tags", tags),
     fetch_tags_where_link_bkmk: (bkmkid: number) => ipcRenderer.invoke("fetch-tags-where-link-bkmk", bkmkid),
     update_bkmk: (data: BookmarkData,tags: string[]) => ipcRenderer.invoke("update-bkmk",data,tags),
+    remove_bkmk: (data: BookmarkData) => ipcRenderer.invoke("remove-bkmk",data)
 }
 );

@@ -91,7 +91,7 @@ root_elm.home.goto_add_page.elm.addEventListener(
     )
 )
 const mo1 = new MutationObserver(
-    () => UI.Home.handle_mut_tag_list(
+    () => UI.Home.reload_bookmarks(
         root_elm.home.input_tag,
         window.app.search_bookmarks,
         window.app.fetch_hit_tags,
@@ -101,6 +101,10 @@ const mo1 = new MutationObserver(
             data,
             root_elm,
             window.app.fetch_tags_where_link_bkmk
+        ),
+        (data) => UI.AnyPage.remove_bookmark(
+            data,
+            window.app.remove_bkmk,
         )
     )
 )

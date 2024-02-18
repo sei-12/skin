@@ -2,7 +2,8 @@ import { CycleIndex, scroll_to_focus_elm } from "../utils"
 
 function create_bkmk_list_item_elm(
     data: BookmarkData,
-    handle_click_edit_bkmk: (data:BookmarkData) => void
+    handle_click_edit_bkmk: (data:BookmarkData) => void,
+    handle_click_delete_bkmk: (data:BookmarkData) => void
 ) {
     let data_elm = document.createElement("div")
     data_elm.innerText = JSON.stringify(data)
@@ -37,6 +38,7 @@ function create_bkmk_list_item_elm(
 
     let delete_button = document.createElement("button")
     delete_button.classList.add("bookmark-list-item-icon-button")
+    delete_button.addEventListener("click",() => handle_click_delete_bkmk(data))
     let delete_icon = document.createElement("i")
     delete_icon.classList.add("nf")
     delete_icon.innerText = "\udb82\udde7"
@@ -101,10 +103,15 @@ export function get_focued_elm_or_first_elm(elm: SearchedBookmarkListElm): Bookm
 export function insert_searched_bookmarks(
     bkmks: BookmarkData[],
     into: SearchedBookmarkListElm,
-    handle_click_edit_bkmk: (data:BookmarkData) => void
+    handle_click_edit_bkmk: (data:BookmarkData) => void,
+    handle_click_delete_bkmk: (data:BookmarkData) => void
 ) {
     into.focus = null
-    let elms = bkmks.map(data => create_bkmk_list_item_elm(data,handle_click_edit_bkmk))
+    let elms = bkmks.map(data => create_bkmk_list_item_elm(
+        data,
+        handle_click_edit_bkmk,
+        handle_click_delete_bkmk
+    ))
     into.elm.innerHTML = ""
     elms.forEach(elm => {
         into.elm.appendChild(elm)

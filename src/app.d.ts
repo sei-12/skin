@@ -47,6 +47,9 @@ declare global {
     type f_UpdateBookmark = (data:BookmarkData,tags: string[]) => Promise<{
         err: Error | null
     }>
+    type f_RemoveBookmark = (data: BookmarkData) => Promise<{
+        err: Error | null
+    }>
 }
 
 export interface IMainProcess {
@@ -59,6 +62,7 @@ export interface IMainProcess {
     fetch_hit_tags: f_FetchHitTags
     fetch_tags_where_link_bkmk: f_FetchTagsWhereLinkBkmk
     update_bkmk: f_UpdateBookmark
+    remove_bkmk: f_RemoveBookmark
 
 
     // search_google: (tags: string[]) => void

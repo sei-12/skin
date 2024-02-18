@@ -5,9 +5,6 @@ type PageName = "home" | "add" | "edit_bkmk"
 export function get_current_page_name(
     root: RootElement
 ): PageName | Error{
-    console.table({
-        display: root.home.elm.style.display
-    })
     if (root.home.elm.style.display === "block") {
         return "home"
     }

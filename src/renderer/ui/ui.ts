@@ -93,16 +93,31 @@ export namespace AnyPage {
 
         switch_page(root, "edit_bkmk")
     }
+
+    export async function remove_bookmark(
+        target_data: BookmarkData,
+        f: f_RemoveBookmark,
+    ) {
+        let input = confirm(target_data.title + " を削除します。この操作は取り消せません")
+        if (input === false) {
+            return
+        }
+        let result = await f(target_data)
+        if (result.err !== null) {
+            throw result.err
+        }
+    }
 }
 
 export namespace Home {
-    export async function handle_mut_tag_list(
+    export async function reload_bookmarks(
         input_tag: InputTagElm,
         f: f_SearchBookmarks,
         fetch_hit_tags: f_FetchHitTags,
         hit_tag_list: HTL.HitTagListElm,
         searched_bookmark_list: SB.SearchedBookmarkListElm,
-        handle_click_edit_bkmk: (data:BookmarkData) => void
+        handle_click_edit_bkmk: (data: BookmarkData) => void,
+        handle_click_delete_bkmk: (data: BookmarkData) => void
 
     ) {
         let tags = get_inputed_tags(input_tag)
@@ -110,7 +125,8 @@ export namespace Home {
         SB.insert_searched_bookmarks(
             bkmks,
             searched_bookmark_list,
-            handle_click_edit_bkmk
+            handle_click_edit_bkmk,
+            handle_click_delete_bkmk
         )
 
         HTL.reload_hittaglist_elm(tags, fetch_hit_tags, hit_tag_list)
@@ -213,19 +229,19 @@ export namespace EditBkmk {
         page: EditBookmarkPageElm,
         f: f_UpdateBookmark,
         root: RootElement,
-    ){
+    ) {
         let data = parse_edit_page_form(page)
-        if (data instanceof Error ){
+        if (data instanceof Error) {
             throw data
         }
 
-        let res = await f(data.data,data.tags)
+        let res = await f(data.data, data.tags)
         console.table(res)
-        if ( res.err !== null ){
+        if (res.err !== null) {
             throw res.err
         }
 
         clear_edit_page(page)
-        switch_page(root,"home")
+        switch_page(root, "home")
     }
 }

@@ -305,6 +305,14 @@ async function fetch_tag_list() {
     }
 }
 
+async function remove_bkmk(data: BookmarkData): Promise<{err: Error | null}>{
+    let q = querys.remove_bookmark(data.id)
+    let result = await wrap_db_run(q.query,q.param)
+    return {
+        err: result
+    }
+}
+
 async function update_bkmk(data: BookmarkData, tags: string[]): Promise<{
     err: Error | null
 }> {
@@ -572,6 +580,12 @@ const querys = {
         return { query, param }
     },
 
+    remove_bookmark: (bkmk_id: number) => {
+        let query = "delete from bookmarks where id = ?"
+        let param = [bkmk_id]
+        return { query, param }
+    },
+
 
     fetch_suggestion: `
         select name,oto from tags where oto like ? 
@@ -719,6 +733,8 @@ ipcMain.handle("search-bookmarks", async (_, tags: string[]) => {
     return await search_bookmarks(tags)
 })
 
+
+ipcMain.handle("remove-bkmk",async (_,data) => await remove_bkmk(data) )
 
 ipcMain.handle("update-bkmk", async (_, data, tags) => await update_bkmk(data, tags))
 ipcMain.handle("fetch-tags-where-link-bkmk", async (_, bkmkid) => await fetch_tags_where_link_bkmk(bkmkid))
