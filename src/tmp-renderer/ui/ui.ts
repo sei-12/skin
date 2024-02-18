@@ -6,6 +6,8 @@ import { InputTagElm, clear_input_box, get_inputed_tags, handle_backspace_on_inp
 import { TagSuggestionWindowElm, done_suggestion, handle_input_tagbox, move_focus_tag_suggestion_window } from "../app/tag_suggestion";
 import * as SB from '../app/searched_bookmarks'
 import * as HTL from "../app/hit_tag_list";
+import { RootElement } from "../html/html";
+import { switch_page } from "../app/page";
 
 export namespace Home {
     export async function handle_input_input_tag_box(
@@ -111,6 +113,12 @@ export namespace Home {
         }
 
         f(target_bkmk.id)
+    }
+
+    export function goto_add_page(
+        root: RootElement
+    ){
+        switch_page(root,"add")
     }
 }
 

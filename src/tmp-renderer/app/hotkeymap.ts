@@ -1,4 +1,5 @@
 import { RootElement } from "../html/html"
+import { get_current_page_name } from "./page"
 
 type Handler = () => void
 
@@ -24,16 +25,7 @@ export class HotkeyMap {
     }
 }
 
-function get_current_page_name(root: RootElement) {
-    console.table({
-        display: root.home.elm.style.display
-    })
-    if (root.home.elm.style.display === "block") {
-        return "home"
-    }
 
-    return new Error("bug")
-}
 
 export function get_when(e: KeyboardEvent, root: RootElement) {
     let elms: string[] = []
@@ -46,7 +38,7 @@ export function get_when(e: KeyboardEvent, root: RootElement) {
     }
 
     // TODO 設計に問題あり
-    if (root.home.tag_sugestion_window.elm.style.display === "block" ) {
+    if (root.home.tag_sugestion_window.elm.style.display === "block") {
         elms.push("tag_suggestion")
     }
 

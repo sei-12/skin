@@ -30,6 +30,12 @@ hotkey_map.set_hotkey("home+ctrl+/",
     )
 )
 
+hotkey_map.set_hotkey("home+ctrl+n",
+    () => UI.Home.goto_add_page(
+        root_elm
+    )
+)
+
 hotkey_map.set_hotkey("home+tag_suggestion+Enter",
     () => UI.Home.tag_complement(
         root_elm.home.tag_sugestion_window,
@@ -48,6 +54,11 @@ hotkey_map.set_hotkey("home+tag_suggestion+ArrowUp",
     )
 )
 
+root_elm.home.input_tag.elm.addEventListener(
+    "click",() => UI.Home.focus_input_tag_box(
+        root_elm.home.input_tag
+    )
+)
 root_elm.home.input_tag.input_box.addEventListener(
     "input", (e) => UI.Home.handle_input_input_tag_box(
         e,
@@ -66,6 +77,11 @@ root_elm.home.input_tag.input_box.addEventListener(
         e,
         window.app.tag_exists_db,
         root_elm.home.input_tag
+    )
+)
+root_elm.home.goto_add_page.elm.addEventListener(
+    "click",() => UI.Home.goto_add_page(
+        root_elm
     )
 )
 const mo1 = new MutationObserver(
