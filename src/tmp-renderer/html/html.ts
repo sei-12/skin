@@ -10,7 +10,7 @@ import { TagSuggestionWindowElm } from "../app/tag_suggestion"
 
 class HomePageElm {
     elm: HTMLElement
-    tag_sugestion_window: TagSuggestionWindowElm
+    tag_suggestion_window: TagSuggestionWindowElm
     input_tag: InputTagElm
 
     hit_tag_list: HitTagListElm
@@ -26,7 +26,7 @@ class HomePageElm {
 
         this.input_tag = new InputTagElm()
         this.hit_tag_list = new HitTagListElm()
-        this.tag_sugestion_window = new TagSuggestionWindowElm()
+        this.tag_suggestion_window = new TagSuggestionWindowElm()
         this.searched_bkmks = new SearchedBookmarkListElm()
 
         let inner_flex = document.createElement("div")
@@ -45,7 +45,7 @@ class HomePageElm {
         inner_flex.appendChild(layout_left)
         inner_flex.appendChild(layout_right)
 
-        this.elm.appendChild(this.tag_sugestion_window.elm)
+        this.elm.appendChild(this.tag_suggestion_window.elm)
         this.elm.appendChild(inner_flex)
     }
 }

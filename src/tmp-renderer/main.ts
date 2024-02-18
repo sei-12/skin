@@ -7,6 +7,12 @@ import './index.css';
 const root_elm = new RootElement(document.body as HTMLBodyElement)
 const hotkey_map = new HotkeyMap()
 
+
+//----------------------------------------------------------------------------------------------------//
+//                                                                                                    //
+//                                             HOME PAGE                                              //
+//                                                                                                    //
+//----------------------------------------------------------------------------------------------------//
 hotkey_map.set_hotkey("home+Enter",
     () => UI.Home.open_bookmark(
         window.app.open_bookmark,
@@ -37,50 +43,50 @@ hotkey_map.set_hotkey("home+ctrl+n",
 )
 
 hotkey_map.set_hotkey("home+tag_suggestion+Enter",
-    () => UI.Home.tag_complement(
-        root_elm.home.tag_sugestion_window,
+    () => UI.AnyPage.tag_complement(
+        root_elm.home.tag_suggestion_window,
         root_elm.home.input_tag,
         window.app.tag_exists_db
     )
 )
 hotkey_map.set_hotkey("home+tag_suggestion+ArrowDown",
-    () => UI.Home.focus_down_tag_suggestion(
-        root_elm.home.tag_sugestion_window
+    () => UI.AnyPage.focus_down_tag_suggestion(
+        root_elm.home.tag_suggestion_window
     )
 )
 hotkey_map.set_hotkey("home+tag_suggestion+ArrowUp",
-    () => UI.Home.focus_up_tag_suggestion(
-        root_elm.home.tag_sugestion_window
+    () => UI.AnyPage.focus_up_tag_suggestion(
+        root_elm.home.tag_suggestion_window
     )
 )
 
 root_elm.home.input_tag.elm.addEventListener(
-    "click",() => UI.Home.focus_input_tag_box(
+    "click", () => UI.Home.focus_input_tag_box(
         root_elm.home.input_tag
     )
 )
 root_elm.home.input_tag.input_box.addEventListener(
-    "input", (e) => UI.Home.handle_input_input_tag_box(
+    "input", (e) => UI.AnyPage.handle_input_input_tag_box(
         e,
         window.app.fetch_suggestion,
-        root_elm.home.tag_sugestion_window
+        root_elm.home.tag_suggestion_window
     )
 )
 root_elm.home.input_tag.input_box.addEventListener(
-    "keydown", (e) => UI.Home.handle_keydown_input_tag_box(
+    "keydown", (e) => UI.AnyPage.handle_keydown_input_tag_box(
         e,
         root_elm.home.input_tag
     )
 )
 root_elm.home.input_tag.input_box.addEventListener(
-    "keyup", (e) => UI.Home.handle_keyup_input_tag_box(
+    "keyup", (e) => UI.AnyPage.handle_keyup_input_tag_box(
         e,
         window.app.tag_exists_db,
         root_elm.home.input_tag
     )
 )
 root_elm.home.goto_add_page.elm.addEventListener(
-    "click",() => UI.Home.goto_add_page(
+    "click", () => UI.Home.goto_add_page(
         root_elm
     )
 )
@@ -111,3 +117,65 @@ window.addEventListener("keydown", (e) => {
 
     handler()
 })
+
+
+//----------------------------------------------------------------------------------------------------//
+//                                                                                                    //
+//                                              ADD PAGE                                              //
+//                                                                                                    //
+//----------------------------------------------------------------------------------------------------//
+
+hotkey_map.set_hotkey("add+tag_suggestion+Enter",
+    () => UI.AnyPage.tag_complement(
+        root_elm.add.form.tag_suggestion_window,
+        root_elm.add.form.input_tag,
+        window.app.tag_exists_db
+    )
+)
+hotkey_map.set_hotkey("add+tag_suggestion+ArrowDown",
+    () => UI.AnyPage.focus_down_tag_suggestion(
+        root_elm.add.form.tag_suggestion_window
+    )
+)
+hotkey_map.set_hotkey("add+tag_suggestion+ArrowUp",
+    () => UI.AnyPage.focus_up_tag_suggestion(
+        root_elm.add.form.tag_suggestion_window
+    )
+)
+hotkey_map.set_hotkey("add+ctrl+/",
+    () => UI.Add.focus_input_tag_box(
+        root_elm.add.form.input_tag
+    )
+)
+hotkey_map.set_hotkey("add+ctrl+h",
+    () => UI.Add.go_home(root_elm)
+)
+root_elm.add.go_home.elm.addEventListener(
+    "click", () => UI.Add.go_home(root_elm)
+)
+
+root_elm.add.form.input_tag.elm.addEventListener(
+    "click", () => UI.Home.focus_input_tag_box(
+        root_elm.home.input_tag
+    )
+)
+root_elm.add.form.input_tag.input_box.addEventListener(
+    "input", (e) => UI.AnyPage.handle_input_input_tag_box(
+        e,
+        window.app.fetch_suggestion,
+        root_elm.add.form.tag_suggestion_window
+    )
+)
+root_elm.add.form.input_tag.input_box.addEventListener(
+    "keydown", (e) => UI.AnyPage.handle_keydown_input_tag_box(
+        e,
+        root_elm.add.form.input_tag
+    )
+)
+root_elm.add.form.input_tag.input_box.addEventListener(
+    "keyup", (e) => UI.AnyPage.handle_keyup_input_tag_box(
+        e,
+        window.app.tag_exists_db,
+        root_elm.add.form.input_tag
+    )
+)

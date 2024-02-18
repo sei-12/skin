@@ -9,7 +9,19 @@ import * as HTL from "../app/hit_tag_list";
 import { RootElement } from "../html/html";
 import { switch_page } from "../app/page";
 
-export namespace Home {
+export namespace AnyPage {
+    export function focus_up_tag_suggestion(
+        win: TagSuggestionWindowElm
+    ) {
+        let result = move_focus_tag_suggestion_window("up", win)
+    }
+
+    export function focus_down_tag_suggestion(
+        win: TagSuggestionWindowElm
+    ) {
+        let result = move_focus_tag_suggestion_window("down", win)
+    }
+
     export async function handle_input_input_tag_box(
         e: Event,
         f: f_FetchSuggestion,
@@ -47,32 +59,6 @@ export namespace Home {
         }
     }
 
-    export async function handle_mut_tag_list(
-        input_tag: InputTagElm,
-        f: f_SearchBookmarks,
-        fetch_hit_tags: f_FetchHitTags,
-        hit_tag_list: HTL.HitTagListElm,
-        searched_bookmark_list: SB.SearchedBookmarkListElm
-    ) {
-        let tags = get_inputed_tags(input_tag)
-        let bkmks = await f(tags)
-        SB.insert_searched_bookmarks(bkmks, searched_bookmark_list)
-
-        HTL.reload_hittaglist_elm(tags, fetch_hit_tags, hit_tag_list)
-    }
-
-    export function focus_up_tag_suggestion(
-        win: TagSuggestionWindowElm
-    ) {
-        let result = move_focus_tag_suggestion_window("up", win)
-    }
-
-    export function focus_down_tag_suggestion(
-        win: TagSuggestionWindowElm
-    ) {
-        let result = move_focus_tag_suggestion_window("down", win)
-    }
-
     export async function tag_complement(
         win: TagSuggestionWindowElm,
         input_tag: InputTagElm,
@@ -85,6 +71,22 @@ export namespace Home {
         let exists = await f(tag)
         insert_tag(input_tag, tag, exists)
         clear_input_box(input_tag)
+    }
+}
+
+export namespace Home {
+    export async function handle_mut_tag_list(
+        input_tag: InputTagElm,
+        f: f_SearchBookmarks,
+        fetch_hit_tags: f_FetchHitTags,
+        hit_tag_list: HTL.HitTagListElm,
+        searched_bookmark_list: SB.SearchedBookmarkListElm
+    ) {
+        let tags = get_inputed_tags(input_tag)
+        let bkmks = await f(tags)
+        SB.insert_searched_bookmarks(bkmks, searched_bookmark_list)
+
+        HTL.reload_hittaglist_elm(tags, fetch_hit_tags, hit_tag_list)
     }
 
     export function focus_up_bookmarklist(
@@ -122,3 +124,14 @@ export namespace Home {
     }
 }
 
+
+export  namespace Add {
+    export function go_home(root: RootElement){
+        switch_page(root,"home")
+    }
+
+    export function focus_input_tag_box(input_tag: InputTagElm) {
+        input_tag.input_box.focus()
+    }
+
+}

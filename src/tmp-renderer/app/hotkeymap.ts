@@ -38,7 +38,10 @@ export function get_when(e: KeyboardEvent, root: RootElement) {
     }
 
     // TODO 設計に問題あり
-    if (root.home.tag_sugestion_window.elm.style.display === "block") {
+    if (
+        root.home.tag_suggestion_window.elm.style.display === "block" ||
+        root.add.form.tag_suggestion_window.elm.style.display === "block"
+    ) {
         elms.push("tag_suggestion")
     }
 
