@@ -31,19 +31,20 @@ declare global {
             count: number
         }[]
     }>
-    type f_TagExistsDB =  (tag_name: string) => Promise<boolean>
+    type f_TagExistsDB = (tag_name: string) => Promise<boolean>
     type f_AddBookmark = (url: string, title: string, tags: string[], description: string) => Promise<{
         err: boolean,
         message: string
     }>
+    type f_FetchPageInfo = (url: string) => Promise<{
+        title: string | null,
+        description: string | null
+    } | null>
 }
 
 export interface IMainProcess {
     add_bookmark: f_AddBookmark
-    fetch_pageinfo: (url: string) => Promise<{
-        title: string | null,
-        description: string | null
-    } | null>;
+    fetch_pageinfo: f_FetchPageInfo;
     tag_exists_db: f_TagExistsDB,
     search_bookmarks: f_SearchBookmarks
     fetch_suggestion: (word: string) => Promise<{

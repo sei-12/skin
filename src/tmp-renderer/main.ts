@@ -170,6 +170,12 @@ root_elm.add.form.input_tag.elm.addEventListener(
         root_elm.home.input_tag
     )
 )
+root_elm.add.form.url_box.addEventListener(
+    "input",() => UI.Add.complement_form_from_url(
+        root_elm.add.form,
+        window.app.fetch_pageinfo
+    )
+)
 root_elm.add.form.input_tag.input_box.addEventListener(
     "input", (e) => UI.AnyPage.handle_input_input_tag_box(
         e,

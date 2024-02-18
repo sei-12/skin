@@ -8,7 +8,7 @@ import * as SB from '../app/searched_bookmarks'
 import * as HTL from "../app/hit_tag_list";
 import { RootElement } from "../html/html";
 import { switch_page } from "../app/page";
-import { BookmarkForm, check_inputed_data, clear_form as clear_bookmark_form, parse_inputed_data } from "../app/bkmk_form";
+import { BookmarkForm, check_inputed_data, clear_form as clear_bookmark_form, complement_form, parse_inputed_data } from "../app/bkmk_form";
 
 export namespace AnyPage {
     export function focus_up_tag_suggestion(
@@ -159,5 +159,16 @@ export namespace Add {
         }
 
         clear_bookmark_form(form)
+    }
+
+    export async function complement_form_from_url(
+        form: BookmarkForm,
+        f: f_FetchPageInfo
+    ) {
+        let data = await f(form.url_box.value)
+        if (data === null) {
+            return
+        }
+        complement_form(data, form)
     }
 }

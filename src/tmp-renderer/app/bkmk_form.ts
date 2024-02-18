@@ -56,16 +56,16 @@ type InputedBookmarkData = {
 }
 
 export function check_inputed_data(data: InputedBookmarkData): string[] {
-    let errors:string[] = []
-    if ( data.title === "" ){
+    let errors: string[] = []
+    if (data.title === "") {
         errors.push("タイトルが入力されていません")
     }
 
-    if ( data.url === "" ){
+    if (data.url === "") {
         errors.push("URLが入力されていません")
     }
 
-    if (data.tags.length === 0){
+    if (data.tags.length === 0) {
         errors.push("タグが入力されていません。最低一つ以上入力する必要があります")
     }
 
@@ -86,9 +86,21 @@ export function parse_inputed_data(form: BookmarkForm): InputedBookmarkData {
     }
 }
 
-export function clear_form(form: BookmarkForm){
+export function clear_form(form: BookmarkForm) {
     form.url_box.value = ""
     form.title_box.value = ""
     form.description.value = ""
     clear_input_tag_elm(form.input_tag)
+}
+
+export function complement_form(data: {
+    title: string | null,
+    description: string | null
+},form: BookmarkForm){
+    if ( form.title_box.value === "" && data.title !== null){
+        form.title_box.value = data.title
+    }
+    if ( form.description.value === "" && data.description !== null){
+        form.description.value = data.description
+    }
 }
