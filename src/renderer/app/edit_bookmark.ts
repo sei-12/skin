@@ -14,7 +14,7 @@ export class EditBookmarkPageElm {
         this.elm = document.createElement("div")
         this.elm.style.display = "none"
 
-        this.form = new BookmarkForm()
+        this.form = new BookmarkForm("Edit Bookmark")
         this.go_home = new GotuPrevPageButton()
 
         let go_prev_pos = document.createElement("div")

@@ -11,12 +11,12 @@ export class BookmarkForm {
     done_button: HTMLButtonElement
     description: HTMLTextAreaElement
 
-    constructor() {
+    constructor(title: string) {
         this.elm = document.createElement("div")
         this.elm.classList.add("bookmark-form-container")
 
         let h3 = document.createElement("h3")
-        h3.innerText = "Create New Bookmark"
+        h3.innerText = title
 
         this.tag_suggestion_window = new TagSuggestionWindowElm()
         this.input_tag = new InputTagElm()

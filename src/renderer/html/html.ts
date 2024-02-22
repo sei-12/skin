@@ -63,7 +63,7 @@ class AddPageElm {
 
         this.go_home = new GotuPrevPageButton()
 
-        this.form = new BookmarkForm()
+        this.form = new BookmarkForm("Create New Bookmark")
 
         let go_prev_pos = document.createElement("div")
         go_prev_pos.classList.add("add-page-go-prev-button-pos")
