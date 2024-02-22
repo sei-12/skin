@@ -13,14 +13,54 @@ body {
 
 
 :root {
+    --tag-suggestion-window-z: 10;
+    --notice-contaner-z: 9;
+
+
     --font-color-white: #f8f8f8;
     --font-color-usui-white: #999999;
-    --tag-suggestion-window-z: 10;
     --input-box-background-color: #393D4E;
     --background-color: #25293A;
     --kurome-background-color: #191D2E;
     --kurome-background-color2: #191D31;
     --black: #030303;
+}
+
+.notice-container {
+    position: absolute;
+    z-index: var(--notice-contaner-z);
+
+    right: 1vh;
+    bottom: 1vh;
+
+    width: 30vw;
+    height: 100vh;
+    
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.notice-item {
+    background-color: var(--kurome-background-color2); 
+    color: var(--font-color-white);
+    margin-top: 8px;
+    border-radius: 10px;
+    border: solid 2px black;
+
+    font-size: medium;
+    padding: 10%;
+    padding-block: 5%;
+    margin-block: 2%;
+}
+
+.notice-item-warn {
+    border-color: rgb(90,95,0);
+}
+.notice-item-info {
+    border-color: rgb(0,90,75);
+}
+.notice-item-err {
+    border-color: rgb(130, 0, 0);
 }
 
 .tag-suggestion-window {
