@@ -52,15 +52,44 @@ export function scroll_to_focus_elm(focus_elm: HTMLElement, container_elm: HTMLE
 const NOTICE_TIME_MS = 8000
 type NoticeType = "err"|"info"|"warn"
 
+function create_new_notice_icon_elm(type: NoticeType){
+    let elm = document.createElement("i")
+    elm.classList.add("nf")
+    elm.classList.add("notice-icon")
+    
+    if ( type === "err" ){
+        elm.innerText = "\uea87" 
+    }
+    if ( type === "info" ){
+        elm.innerText = "\uea74" 
+    }
+    if ( type === "warn" ){
+        elm.innerText = "\uf071"
+    }
+    
+    return elm
+}
+
+// function span(inner: HTMLElement){
+//     let elm = document.createElement("span") 
+//     elm.appendChild(inner)
+//     return elm
+// }
+
 function create_new_notice_window(type: NoticeType, msg: string){
+    let inner_txt = document.createElement("div")
+    inner_txt.innerText = msg
+    inner_txt.classList.add("notice-item-inner-txt")
+
     let elm = document.createElement("div")
     let type_css = "notice-item-" + type
     
     elm.classList.add("notice-item")
     elm.classList.add(type_css)
     
-    elm.innerText = msg
-    
+    elm.appendChild(create_new_notice_icon_elm(type))
+    elm.appendChild(inner_txt)
+
     return elm
 }
 

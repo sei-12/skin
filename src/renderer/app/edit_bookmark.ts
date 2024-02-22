@@ -44,11 +44,11 @@ export function parse_edit_page_form(
 ): {
     data: BookmarkData,
     tags: string[]
-} | Error {
+} | string[] | Error{
     let bkmkdata = parse_inputed_data(elm.form)
     let errors = check_inputed_data(bkmkdata)
     if (errors.length !== 0) {
-        return new Error()
+        return errors
     }
 
     if (elm.target_data === null) {

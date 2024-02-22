@@ -24,6 +24,11 @@ body {
     --kurome-background-color: #191D2E;
     --kurome-background-color2: #191D31;
     --black: #030303;
+    
+
+    --notice-warn-color: rgb(130,130,0);
+    --notice-info-color: rgb(0,100,100);
+    --notice-err-color:  rgb(130,0,0);
 }
 
 .notice-container {
@@ -47,20 +52,37 @@ body {
     border-radius: 10px;
     border: solid 2px black;
 
-    font-size: medium;
-    padding: 10%;
-    padding-block: 5%;
+    padding: 5%;
     margin-block: 2%;
+    display: flex;
 }
-
+.notice-item-inner-txt {
+    display: inline;
+    font-size: medium;
+    font-weight: 400;
+}
+.notice-icon {
+    font-size: x-large;    
+    display: inline;
+    margin-right: 2%;
+}
 .notice-item-warn {
-    border-color: rgb(90,95,0);
+    border-color: var(--notice-warn-color);
+}
+.notice-item-warn .notice-icon {
+    color: var(--notice-warn-color);
 }
 .notice-item-info {
-    border-color: rgb(0,90,75);
+    border-color: var(--notice-info-color)
+}
+.notice-item-info .notice-icon {
+    color: var(--notice-info-color);
 }
 .notice-item-err {
-    border-color: rgb(130, 0, 0);
+    border-color: var(--notice-err-color);
+}
+.notice-item-err .notice-icon {
+    color: var(--notice-err-color);
 }
 
 .tag-suggestion-window {

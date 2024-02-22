@@ -69,7 +69,7 @@ export namespace AnyPage {
     ) {
         let tag = done_suggestion(win)
         if (tag instanceof Error) {
-            Notice.notice("err","エラーが発生しました")
+            Notice.notice("err", "エラーが発生しました")
             console.error(tag.message)
             return
         }
@@ -85,7 +85,7 @@ export namespace AnyPage {
     ) {
         let tags = await f(target_data.id)
         if (tags.err !== null) {
-            Notice.notice("err","エラーが発生しました")
+            Notice.notice("err", "エラーが発生しました")
             console.error(tags.err.message)
             return
         }
@@ -109,12 +109,12 @@ export namespace AnyPage {
         }
         let result = await f(target_data)
         if (result.err !== null) {
-            Notice.notice("err","エラーが発生しました")
+            Notice.notice("err", "エラーが発生しました")
             console.error(result.err.message)
             return
         }
-        
-        Notice.notice("info","削除が完了しました")        
+
+        Notice.notice("info", "削除が完了しました")
     }
 }
 
@@ -138,7 +138,7 @@ export namespace Home {
             handle_click_delete_bkmk
         )
 
-        HitTagList.reload(tags,fetch_hit_tags,hit_tag_list)
+        HitTagList.reload(tags, fetch_hit_tags, hit_tag_list)
     }
 
     export function focus_up_bookmarklist(
@@ -194,7 +194,9 @@ export namespace Add {
         let errors = check_inputed_data(data)
 
         if (errors.length !== 0) {
-            // TODO
+            errors.forEach(err => {
+                Notice.notice("warn", err)
+            })
             return
         }
 
@@ -210,8 +212,8 @@ export namespace Add {
         }
 
         clear_bookmark_form(form)
-        
-        Notice.notice("info","ブックマークを追加しました")
+
+        Notice.notice("info", "ブックマークを追加しました")
     }
 
     export async function complement_form_from_url(
@@ -245,17 +247,24 @@ export namespace EditBkmk {
         if (data instanceof Error) {
             throw data
         }
+        
+        if ( data instanceof Array ){
+            data.forEach(err => {
+                Notice.notice("warn", err)
+            })
+            return
+        }
 
         let res = await f(data.data, data.tags)
         console.table(res)
         if (res.err !== null) {
-            Notice.notice("err","ブックマークの更新に失敗しました")
+            Notice.notice("err", "ブックマークの更新に失敗しました")
             console.error(res.err.message)
             return
         }
 
         clear_edit_page(page)
         switch_page(root, "home")
-        Notice.notice("info","ブックマークを更新しました")
+        Notice.notice("info", "ブックマークを更新しました")
     }
 }
