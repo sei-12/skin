@@ -10,6 +10,7 @@ import { switch_page } from "../app/page";
 import { BookmarkForm, check_inputed_data, clear_form as clear_bookmark_form, complement_form, parse_inputed_data } from "../app/bkmk_form";
 import { EditBookmarkPageElm, clear_edit_page, parse_edit_page_form, set_bookmark_data_into_edit_page } from "../app/edit_bookmark";
 import { HitTagList } from "../sub/hit_tag_list";
+import { Notice } from "../notice";
 
 export namespace AnyPage {
     export function focus_up_tag_suggestion(
@@ -68,7 +69,9 @@ export namespace AnyPage {
     ) {
         let tag = done_suggestion(win)
         if (tag instanceof Error) {
-            throw tag
+            Notice.notice("err","エラーが発生しました")
+            console.error(tag.message)
+            return
         }
         let exists = await f(tag)
         insert_tag(input_tag, tag, exists)
@@ -82,6 +85,8 @@ export namespace AnyPage {
     ) {
         let tags = await f(target_data.id)
         if (tags.err !== null) {
+            Notice.notice("err","エラーが発生しました")
+            console.error(tags.err.message)
             return
         }
 
@@ -104,8 +109,12 @@ export namespace AnyPage {
         }
         let result = await f(target_data)
         if (result.err !== null) {
-            throw result.err
+            Notice.notice("err","エラーが発生しました")
+            console.error(result.err.message)
+            return
         }
+        
+        Notice.notice("info","削除が完了しました")        
     }
 }
 
@@ -201,6 +210,8 @@ export namespace Add {
         }
 
         clear_bookmark_form(form)
+        
+        Notice.notice("info","ブックマークを追加しました")
     }
 
     export async function complement_form_from_url(
@@ -238,10 +249,13 @@ export namespace EditBkmk {
         let res = await f(data.data, data.tags)
         console.table(res)
         if (res.err !== null) {
-            throw res.err
+            Notice.notice("err","ブックマークの更新に失敗しました")
+            console.error(res.err.message)
+            return
         }
 
         clear_edit_page(page)
         switch_page(root, "home")
+        Notice.notice("info","ブックマークを更新しました")
     }
 }

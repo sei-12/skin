@@ -3,10 +3,11 @@ import { RootElement } from "./html/html";
 import * as UI from "./ui/ui"
 
 import './index.css';
+import { Notice } from "./notice";
 
 const root_elm = new RootElement(document.body as HTMLBodyElement)
 const hotkey_map = new HotkeyMap()
-
+Notice.init(document.body)
 
 //----------------------------------------------------------------------------------------------------//
 //                                                                                                    //
