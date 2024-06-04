@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import "./CreateNewTag.css"
 import { DbAPI } from "../ts/db";
-import { isHankaku } from "../ts/utils";
+import { checkNewTag } from "./checkNewTag";
 
 type CreateNewTagProps = {
     hidden: boolean,
@@ -41,35 +41,36 @@ export const useCreateNewTag = () => {
         close()
     }
 
-    useEffect(() => { onChangeInputBox() });
-    
-    const onChangeInputBox = async () => {
+    useEffect(() => {
         if ( inputBox.current === null ){
             setcanCreate(false)
             seterrmsg("")
             return
         }
+        
+        updateCanCreate(inputBox.current.value)
+    });
+    
+    const updateCanCreate = async (tag: string) => {
+        let result = await checkNewTag(tag)
 
-        if ( inputBox.current.value === "" ){
-            setcanCreate(false)
+        if ( result.isErr === false ){
+            setcanCreate(true)
             seterrmsg("")
             return
         }
         
-        if ( isHankaku(inputBox.current.value) === false ){
-            setcanCreate(false)
-            seterrmsg("無効な文字が含まれてます")
+        setcanCreate(false)
+
+        if (result.errMessages.length === 1 && result.errMessages[0] === "空文字です" ){
             return
         }
+        
+        seterrmsg(result.errMessages.join("\n"))
+    }
 
-        let exists = await DbAPI.existsTag(inputBox.current.value)
-        if ( exists ){
-            setcanCreate(false)
-            seterrmsg("すでに存在しているタグです")
-        }else{
-            setcanCreate(true)
-            seterrmsg("")
-        }
+    const onChangeInputBox = (e: React.ChangeEvent<HTMLInputElement>) => {
+        updateCanCreate(e.target.value)
     }
 
     const props: CreateNewTagProps = {
