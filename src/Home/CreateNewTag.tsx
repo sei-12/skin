@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import "./CreateNewTag.css"
 import { DbAPI } from "../ts/db";
 import { checkNewTag } from "./checkNewTag";
+import { useHotkeys } from "react-hotkeys-hook";
 
 type CreateNewTagProps = {
     hidden: boolean,
@@ -36,7 +37,9 @@ export const useCreateNewTag = () => {
     const onClickCancel = () => close()
     
     const onClickDone = async () => {
+        console.log("call onClickDone")
         if ( inputBox.current === null ){ return }
+        if ( canCreate === false ) { throw Error() }
         await DbAPI.insertNewTag(inputBox.current.value).catch( err => console.error(err) )
         close()
     }
@@ -72,6 +75,17 @@ export const useCreateNewTag = () => {
     const onChangeInputBox = (e: React.ChangeEvent<HTMLInputElement>) => {
         updateCanCreate(e.target.value)
     }
+    
+    useHotkeys("Enter",() => {
+        if ( !canCreate ) {
+            return
+        } 
+        onClickDone()
+    },[hidden,canCreate],{enableOnFormTags:["INPUT"],enabled: !hidden})
+    
+    useHotkeys("esc",() => {
+        close()
+    },[hidden],{enableOnFormTags:["INPUT"],enabled: !hidden})
 
     const props: CreateNewTagProps = {
         canCreate,
