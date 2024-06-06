@@ -132,13 +132,34 @@ export const useTagSuggesion = (
     //
     // Functions
     //
-    function rePosition(_option: {
-        width  : string | undefined
-        height : string | undefined
-        top    : string | undefined
-        left   : string | undefined
+    function rePosition(option: {
+        width?  : string
+        max_height? : string
+        top?    : string
+        left?   : string
     }){
-                
+        console.log(option)
+
+        if ( windowElm.current === null ){
+            return
+        }
+        if ( listOuter.current === null ){
+            return
+        }
+
+        if ( option.width !== undefined ){
+            windowElm.current.style.width = option.width
+        }
+        if ( option.max_height !== undefined ){
+            // htmlの構造上、ここだけlistOuterを操作している
+            listOuter.current.style.maxHeight = option.max_height
+        }
+        if ( option.top !== undefined ){
+            windowElm.current.style.top = option.top
+        }
+        if ( option.left !== undefined ){
+            windowElm.current.style.left = option.left
+        }
     }
     
     function open(){
@@ -176,7 +197,7 @@ export const useTagSuggesion = (
 
 export const TagSuggestion = (p: TagSuggestionProps) => {
     return (
-        <div hidden={p.windowHidden || p.itemProps.length == 0} className="tag-suggestion-window">
+        <div ref={p.windowElm} hidden={p.windowHidden || p.itemProps.length == 0} className="tag-suggestion-window">
         <div ref={p.listOuter} className="tag-suggestion-window-list-outer">
         {
             p.itemProps.map((item,index) => (
