@@ -1,11 +1,11 @@
 body {
 	margin: 0;
 	background-color: var(--base-bg);
+    font-family: Hack Nerd Font Bold;
 }
 
 .tag-suggestion-window {
-	background-color: var(--color1);
-	border: solid 1px var(--color2);
+	background-color: var(--color7);
 	width: 30vw;
 	height: 10vh;
     position: relative;
@@ -17,10 +17,32 @@ body {
     position: relative;
     height: 100%;
     overflow: scroll;
+    border: solid 1px var(--color8);
 }
 
 .tag-suggestion-window-list-outer::-webkit-scrollbar {
 	display: none;
+}
+
+.tag-suggestion-window-list-outer span {
+    font-size: small
+}
+
+.tag-suggestion-unmatch {
+    color: var(--color5);    
+}
+
+.tag-suggestion-match {
+    color: var(--color6);    
+}
+
+.tag-suggestion-list-item {
+    box-sizing: border-box;
+    padding: 1px;
+}
+
+.focused-tag-suggestion-list-item {
+    background-color: var(--color9);
 }
 
 :root {
@@ -28,6 +50,11 @@ body {
     --color2: #c1e4e9;
     --color3: #393f4c;
     --color4: #20242f;
+    --color5: rgb(150,150,150);
+    --color6: white;
+    --color7: #151a26; 
+    --color8: rgb(20,20,20);
+    --color9: rgb(31,36,48);
     --create-new-tag-window-bg: var(--color3);    
     --create-new-tag-bg: rgba(10,10,10,0.5);
     --base-bg: var(--color4);

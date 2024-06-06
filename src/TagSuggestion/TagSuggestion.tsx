@@ -1,6 +1,6 @@
 import { RefObject, createRef, forwardRef, useEffect, useRef, useState } from "react"
-import { DbAPI } from "../ts/db"
 import { useHotkeys } from "react-hotkeys-hook"
+import { DbAPI } from "../ts/db"
 import { scroll_to_focus_elm } from "../ts/utils"
 
 type TagSuggestionProps = {
@@ -14,12 +14,26 @@ type TagSuggestionProps = {
 
 type ItemProps = {
     tagData: DbAPI.TagsRecord 
+    input: string
+    a: string
+    b: string
+
     // 増える予定（絶対。多分とかではない
 }
 
-function itemPropsFromRecord(data: DbAPI.TagsRecord): ItemProps {
+function itemPropsFromRecord(input: string,data: DbAPI.TagsRecord): ItemProps {
+    let splited = data.value.split(input,2)
+    if ( splited.length !== 2 ){
+        throw Error()
+    }
+
+    let [a,...b] = data.value.split(input)
+
     return {
-        tagData: data
+        tagData: data,
+        input,
+        a: a,
+        b: b.join(input )
     }    
 }
 
@@ -53,7 +67,7 @@ export const useTagSuggesion = (
             throw Error()
         }
 
-        let items = records.map(itemPropsFromRecord)
+        let items = records.map(data => itemPropsFromRecord(input,data))
         setitemProps(items)
         if ( items.length > 0 ){
             setfocusIndex(0)
@@ -182,8 +196,14 @@ export const TagSuggestion = (p: TagSuggestionProps) => {
 const ListItem = forwardRef((p: ItemProps & {isFocus: boolean},ref) => {
     const div = ref as React.MutableRefObject<HTMLDivElement>
     return (
-        <div ref={div}>
-              {p.tagData.value} {p.isFocus ? "focused!" : ""}
+        <div ref={div} className={ 
+            p.isFocus ? 
+            "tag-suggestion-list-item focused-tag-suggestion-list-item" :
+            "tag-suggestion-list-item"  
+        }>
+            <span className="tag-suggestion-unmatch">{p.a}</span>
+            <span className="tag-suggestion-match">{p.input}</span>
+            <span className="tag-suggestion-unmatch">{p.b}</span>
         </div>
     )
 })
