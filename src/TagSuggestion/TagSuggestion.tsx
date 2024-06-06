@@ -1,12 +1,15 @@
-import { useEffect, useRef, useState } from "react"
+import { RefObject, createRef, forwardRef, useEffect, useRef, useState } from "react"
 import { DbAPI } from "../ts/db"
 import { useHotkeys } from "react-hotkeys-hook"
+import { scroll_to_focus_elm } from "../ts/utils"
 
 type TagSuggestionProps = {
     windowElm: React.RefObject<HTMLDivElement>
     windowHidden: boolean
     itemProps: ItemProps[]
     focusIndex: number | null
+    itemDivs: React.MutableRefObject<RefObject<HTMLDivElement>[]>
+    listOuter: RefObject<HTMLDivElement>
 }
 
 type ItemProps = {
@@ -32,6 +35,8 @@ export const useTagSuggesion = (
     const [windowHidden, setwindowHidden] = useState(true);
     const [itemProps, setitemProps] = useState<ItemProps[]>([]);
     const [focusIndex, setfocusIndex] = useState<number | null>(null);
+    const itemDivs = useRef<RefObject<HTMLDivElement>[]>([])
+    const listOuter = useRef<HTMLDivElement>(null)
 
     //
     // useEffect
@@ -57,6 +62,26 @@ export const useTagSuggesion = (
         }
     })()},[input])
     
+    useEffect(() => {;(async () => {
+        itemDivs.current = itemProps.map(() => createRef<HTMLDivElement>())
+    })()},[itemProps])
+
+    useEffect(() => {
+        if ( focusIndex == null ){
+            return
+        }
+        if ( listOuter.current === null ){
+            return
+        }
+        if ( itemDivs.current[focusIndex].current === null ){
+            return
+        }
+
+        scroll_to_focus_elm(
+            itemDivs.current[focusIndex].current!,
+            listOuter.current
+        )
+    },[focusIndex])
     //
     // useHotkeys
     //
@@ -122,7 +147,9 @@ export const useTagSuggesion = (
         windowElm,
         windowHidden,
         itemProps,
-        focusIndex
+        focusIndex,
+        itemDivs,
+        listOuter
     }    
 
     return {
@@ -136,23 +163,27 @@ export const useTagSuggesion = (
 export const TagSuggestion = (p: TagSuggestionProps) => {
     return (
         <div hidden={p.windowHidden || p.itemProps.length == 0} className="tag-suggestion-window">
+        <div ref={p.listOuter} className="tag-suggestion-window-list-outer">
         {
             p.itemProps.map((item,index) => (
                 <ListItem
                     key={index}
+                    ref={p.itemDivs.current[index]}
                     {...item}
                     isFocus={p.focusIndex !== null && p.focusIndex === index}
                 ></ListItem>
             ))        
         }
         </div>
-    )
-}
-
-const ListItem = (p: ItemProps & {isFocus: boolean}) => {
-    return (
-        <div>
-              {p.tagData.value} {p.isFocus ? "focused!" : ""}
         </div>
     )
 }
+
+const ListItem = forwardRef((p: ItemProps & {isFocus: boolean},ref) => {
+    const div = ref as React.MutableRefObject<HTMLDivElement>
+    return (
+        <div ref={div}>
+              {p.tagData.value} {p.isFocus ? "focused!" : ""}
+        </div>
+    )
+})

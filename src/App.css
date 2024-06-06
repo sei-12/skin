@@ -8,10 +8,18 @@ body {
 	border: solid 1px var(--color2);
 	width: 30vw;
 	height: 10vh;
-	overflow: scroll;
+    position: relative;
+    overflow: hidden;
 }
 
-.tag-suggestion-window::-webkit-scrollbar {
+
+.tag-suggestion-window-list-outer {
+    position: relative;
+    height: 100%;
+    overflow: scroll;
+}
+
+.tag-suggestion-window-list-outer::-webkit-scrollbar {
 	display: none;
 }
 
