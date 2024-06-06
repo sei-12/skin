@@ -1,4 +1,27 @@
 body {
-  margin: 0;
-  background-color: var(--base-bg);
+	margin: 0;
+	background-color: var(--base-bg);
+}
+
+.tag-suggestion-window {
+	background-color: var(--color1);
+	border: solid 1px var(--color2);
+	width: 30vw;
+	height: 10vh;
+	overflow: scroll;
+}
+
+.tag-suggestion-window::-webkit-scrollbar {
+	display: none;
+}
+
+:root {
+    --color1: #455765;
+    --color2: #c1e4e9;
+    --color3: #393f4c;
+    --color4: #20242f;
+    --create-new-tag-window-bg: var(--color3);    
+    --create-new-tag-bg: rgba(10,10,10,0.5);
+    --base-bg: var(--color4);
+    --defalut-input-box: var(--color2);
 }
