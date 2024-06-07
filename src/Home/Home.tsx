@@ -1,13 +1,10 @@
-import { useRef } from "react"
-import { TagSuggestion, useTagSuggesion } from "../TagSuggestion/TagSuggestion"
 import { CreateNewTag, useCreateNewTag } from "./CreateNewTag"
+import { InputTags, useInputTags } from "../CreateNewBkmk/InputTags"
 
 export const HomeScreen = () => {
     const createNewTag = useCreateNewTag()
-    const tagSuggestionHook = useTagSuggesion(
-        (tag) => console.log(tag)
-    )
-    const inputElm = useRef<HTMLInputElement>(null)
+    
+    const inputTagsHook = useInputTags()
 
     return (
         <div>
@@ -15,15 +12,7 @@ export const HomeScreen = () => {
             <button onClick={createNewTag.open}>
                 新規タグ作成
             </button>
-            <input ref={inputElm} type="text" onChange={(e) => {
-                tagSuggestionHook.open()
-                tagSuggestionHook.rePosition({
-                    top: e.target.offsetTop + e.target.offsetHeight + "px",
-                    left: e.target.offsetLeft + "px"
-                })
-                tagSuggestionHook.setinput(e.target.value)
-            }} />
-            <TagSuggestion {...tagSuggestionHook.props}></TagSuggestion>
+            <InputTags {...inputTagsHook.props}></InputTags>
             <CreateNewTag {...createNewTag.props}></CreateNewTag>
         </div>
     )

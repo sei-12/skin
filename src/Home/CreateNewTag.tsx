@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import "./CreateNewTag.css"
 import { DbAPI } from "../ts/db";
-import { checkNewTag } from "./checkNewTag";
+import { checkNewTag } from "../ts/checkNewTag";
 import { useHotkeys } from "react-hotkeys-hook";
 
 type CreateNewTagProps = {
@@ -11,7 +11,7 @@ type CreateNewTagProps = {
     canCreate: boolean
     onClickDone: () => void,
     onClickCancel: () => void,
-    onChangeInputBox:(e: React.ChangeEvent<HTMLInputElement>) => void,
+    onChangeInputBox: (e: React.ChangeEvent<HTMLInputElement>) => void,
     errmsg: string
 }
 
@@ -19,15 +19,15 @@ export const useCreateNewTag = () => {
     const [hidden, sethidden] = useState(true);
     const [canCreate, setcanCreate] = useState(false);
     const [errmsg, seterrmsg] = useState("");
-    
+
     const inputBox = useRef<HTMLInputElement>(null)
 
     const open = () => {
         sethidden(false)
     }
-    
+
     const close = () => {
-        if ( inputBox.current !== null ){
+        if (inputBox.current !== null) {
             inputBox.current.value = ""
         }
         sethidden(true)
@@ -35,57 +35,57 @@ export const useCreateNewTag = () => {
 
     const onClickOuter = () => close()
     const onClickCancel = () => close()
-    
+
     const onClickDone = async () => {
         console.log("call onClickDone")
-        if ( inputBox.current === null ){ return }
-        if ( canCreate === false ) { throw Error() }
-        await DbAPI.insertNewTag(inputBox.current.value).catch( err => console.error(err) )
+        if (inputBox.current === null) { return }
+        if (canCreate === false) { throw Error() }
+        await DbAPI.insertNewTag(inputBox.current.value).catch(err => console.error(err))
         close()
     }
 
     useEffect(() => {
-        if ( inputBox.current === null ){
+        if (inputBox.current === null) {
             setcanCreate(false)
             seterrmsg("")
             return
         }
-        
+
         updateCanCreate(inputBox.current.value)
     });
-    
+
     const updateCanCreate = async (tag: string) => {
         let result = await checkNewTag(tag)
 
-        if ( result.isErr === false ){
+        if (result.isErr === false) {
             setcanCreate(true)
             seterrmsg("")
             return
         }
-        
+
         setcanCreate(false)
 
-        if (result.errMessages.length === 1 && result.errMessages[0] === "空文字です" ){
+        if (result.errMessages.length === 1 && result.errMessages[0] === "空文字です") {
             return
         }
-        
+
         seterrmsg(result.errMessages.join("\n"))
     }
 
     const onChangeInputBox = (e: React.ChangeEvent<HTMLInputElement>) => {
         updateCanCreate(e.target.value)
     }
-    
-    useHotkeys("Enter",() => {
-        if ( !canCreate ) {
+
+    useHotkeys("Enter", () => {
+        if (!canCreate) {
             return
-        } 
+        }
         onClickDone()
-    },[hidden,canCreate],{enableOnFormTags:["INPUT"],enabled: !hidden})
-    
-    useHotkeys("esc",() => {
+    }, [hidden, canCreate], { enableOnFormTags: ["INPUT"], enabled: !hidden })
+
+    useHotkeys("esc", () => {
         close()
-    },[hidden],{enableOnFormTags:["INPUT"],enabled: !hidden})
+    }, [hidden], { enableOnFormTags: ["INPUT"], enabled: !hidden })
 
     const props: CreateNewTagProps = {
         canCreate,
@@ -104,12 +104,12 @@ export const useCreateNewTag = () => {
     }
 }
 
-export const CreateNewTag = (p:CreateNewTagProps) => {
+export const CreateNewTag = (p: CreateNewTagProps) => {
     return (
         <div onClick={p.onClickOuter} hidden={p.hidden} className="create-new-tag-outer">
             <div className="create-new-tag-inner" onClick={e => e.stopPropagation()}>
                 <div>新規タグ作成</div>
-                <input ref={p.inputBox} type="text" className="create-new-tag-input-box" onChange={p.onChangeInputBox}/>
+                <input ref={p.inputBox} type="text" className="create-new-tag-input-box" onChange={p.onChangeInputBox} />
                 <button onClick={p.onClickCancel}>キャンセル</button>
                 <DoneButton onClick={p.onClickDone} canCreate={p.canCreate} ></DoneButton>
                 <div>{p.errmsg}</div>
@@ -123,13 +123,13 @@ const DoneButton = (p: {
     onClick: () => void
 }) => {
 
-    if ( p.canCreate ){
+    if (p.canCreate) {
         return (
             <button onClick={p.onClick}>
                 作成
             </button>
         )
-    }else{
+    } else {
         return (
             <button>作成不可</button>
         )

@@ -1,15 +1,15 @@
-import { checkNewTag } from "./checkNewTag"
+import { checkNewTag } from "../ts/checkNewTag"
 
-jest.mock("../ts/db",() => ({
-    DbAPI:{
+jest.mock("../ts/db", () => ({
+    DbAPI: {
         existsTag: (tag: string) => {
-            const db = ["hello","aaaa"]
+            const db = ["hello", "aaaa"]
             return db.indexOf(tag) != -1
         }
     }
 }))
 
-test("checkNewTag",async () => {
+test("checkNewTag", async () => {
     let res
 
     res = await checkNewTag("hello")
@@ -34,5 +34,5 @@ test("checkNewTag",async () => {
     res = await checkNewTag("あ".repeat(33))
     expect(res.isErr).toBe(true)
     expect(res.errMessages.length).toBe(2)
- 
+
 })

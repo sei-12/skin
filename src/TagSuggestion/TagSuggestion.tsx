@@ -3,7 +3,7 @@ import { useHotkeys } from "react-hotkeys-hook"
 import { DbAPI } from "../ts/db"
 import { scroll_to_focus_elm } from "../ts/utils"
 
-type TagSuggestionProps = {
+export type TagSuggestionProps = {
     windowElm: React.RefObject<HTMLDivElement>
     windowHidden: boolean
     itemProps: ItemProps[]
@@ -17,8 +17,6 @@ type ItemProps = {
     input: string
     a: string
     b: string
-
-    // 増える予定（絶対。多分とかではない
 }
 
 function itemPropsFromRecord(input: string,data: DbAPI.TagsRecord): ItemProps {
