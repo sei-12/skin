@@ -1,5 +1,4 @@
 import { DbAPI } from "./db"
-import { isHankaku } from "./utils"
 
 const MAX_TAG_CHARS = 32
 
@@ -17,9 +16,9 @@ export async function checkNewTag(tag: string) {
         errMessages.push(`タグは${MAX_TAG_CHARS}文字以下である必要があります`)
     }
 
-    if (tag !== "" && !isHankaku(tag)) {
+    if (tag !== "" && !/^[a-z]*$/.test(tag)) {
         isErr = true
-        errMessages.push("半角文字のみが有効です")
+        errMessages.push("無効な文字が含まれています")
     }
 
     // エラーの場合はexistsTagを実行しない

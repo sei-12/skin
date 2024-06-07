@@ -35,4 +35,19 @@ test("checkNewTag", async () => {
     expect(res.isErr).toBe(true)
     expect(res.errMessages.length).toBe(2)
 
+    res = await checkNewTag("A")
+    expect(res.isErr).toBe(true)
+    expect(res.errMessages.length).toBe(1)
+
+    res = await checkNewTag("a-a")
+    expect(res.isErr).toBe(true)
+    expect(res.errMessages.length).toBe(1)
+
+    res = await checkNewTag("a a")
+    expect(res.isErr).toBe(true)
+    expect(res.errMessages.length).toBe(1)
+
+    res = await checkNewTag("a@a")
+    expect(res.isErr).toBe(true)
+    expect(res.errMessages.length).toBe(1)
 })
