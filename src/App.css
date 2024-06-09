@@ -4,6 +4,27 @@ body {
     font-family: Hack Nerd Font Bold;
 }
 
+.create-new-bkmk-outer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: var(--create-new-tag-bg);
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
+}
+.create-new-bkmk-inner {
+    position: relative;    
+    top: 10vh;
+    left: 15vw;
+    width: 70vw;
+    height: 80vh;
+    padding: 10%;
+    box-sizing: border-box;
+    background-color: var(--create-new-tag-window-bg);
+}
+
 .tag-suggestion-window {
 	background-color: var(--color7);
 	width: 30vw;

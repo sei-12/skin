@@ -131,7 +131,7 @@ export const useInputTags = () => {
 }
 
 
-type InputTagsProps = {
+export type InputTagsProps = {
     tagItemProps: TagItemProps[]
     tagSuggestionProps: TagSuggestionProps
     inputElm: React.RefObject<HTMLInputElement>
