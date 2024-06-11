@@ -1,5 +1,4 @@
 import { CreateNewTag, useCreateNewTag } from "./CreateNewTag"
-import { InputTags, useInputTags } from "../CreateNewBkmk/InputTags"
 import { CreateNewBkmk, useCreateNewBkmk } from "../CreateNewBkmk/CreateNewBkmk"
 
 export const HomeScreen = () => {

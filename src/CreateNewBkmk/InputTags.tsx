@@ -44,22 +44,24 @@ export const useInputTags = () => {
             return
         }
 
-        let exists = await DbAPI.existsTag(inputElm.current.value)
+        let inputedTag = inputElm.current.value
+        inputElm.current.value = ""
+        let exists = await DbAPI.existsTag(inputedTag)
 
         if ( exists ){
             settagItemProps(
-                [...tagItemProps,{exists: true, value: inputElm.current.value }]
+                [...tagItemProps,{exists: true, value: inputedTag }]
             )
             return
         }
 
-        let checkResult = await checkNewTag(inputElm.current.value)
+        let checkResult = await checkNewTag(inputedTag)
         if ( checkResult.isErr ){
             return
         }
         
         settagItemProps(
-            [...tagItemProps,{exists: false, value: inputElm.current.value }]
+            [...tagItemProps,{exists: false, value: inputedTag }]
         )
     }
     
@@ -117,6 +119,13 @@ export const useInputTags = () => {
         [inputElm,tagItemProps]
     )
     
+    const clearInput = () => {
+        settagItemProps([])
+        tagSuggestionHook.setinput("")
+        if ( inputElm.current === null )return;
+        inputElm.current.value = ""
+    }
+
     const props: InputTagsProps = {
         tagItemProps,
         tagSuggestionProps: tagSuggestionHook.props,
@@ -126,7 +135,8 @@ export const useInputTags = () => {
 
     return {
         props,
-        getInputedTags
+        getInputedTags,
+        clearInput
     }
 }
 
