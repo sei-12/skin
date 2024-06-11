@@ -96,7 +96,7 @@ export function useCreateNewBkmk() {
         }
 
         if ( parsed !== null && descBox.current.value === "" ){
-            titleBox.current.value = parsed.getDesc()
+            descBox.current.value = parsed.getDesc()
         }
     }
     
