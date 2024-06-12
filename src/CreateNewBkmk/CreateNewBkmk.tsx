@@ -132,6 +132,11 @@ export function useCreateNewBkmk() {
         clearInput()
     }
     
+    const onClickOuter = () => {
+        setwindowHidden(true)
+        clearInput()
+    }
+    
     const props: CreateNewBkmkProps = {
         hidden: windowHidden,
         inputTagsProps: inputTagsHook.props,
@@ -140,7 +145,8 @@ export function useCreateNewBkmk() {
         urlBox,
         titleBox,
         descBox,
-        onClickDone
+        onClickDone,
+        onClickOuter
     }
 
     return {
@@ -158,12 +164,13 @@ type CreateNewBkmkProps = {
     onClickCancel: () => void
     onChangeURL: (e: React.ChangeEvent<HTMLInputElement>) => void
     onClickDone: () => void
+    onClickOuter: () => void
 }
 
 export const CreateNewBkmk = (p: CreateNewBkmkProps) => {
     return (
-        <div className="create-new-bkmk-outer" hidden={p.hidden}>
-            <div className="create-new-bkmk-inner">
+        <div className="create-new-bkmk-outer" hidden={p.hidden} onClick={p.onClickOuter}>
+            <div className="create-new-bkmk-inner" onClick={e => e.stopPropagation()}>
 
                 <input ref={p.urlBox} type="text" placeholder="url" onChange={p.onChangeURL} />
                 <input ref={p.titleBox} type="text" placeholder="title" />
