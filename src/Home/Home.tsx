@@ -8,7 +8,6 @@ export const HomeScreen = () => {
 
     return (
         <div>
-            Home
             <button onClick={createNewTag.open}>
                 新規タグ作成
             </button>
