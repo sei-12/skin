@@ -6,6 +6,25 @@ on:
       - master
 
 jobs:
+  prepare:
+  runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+
+      - name: install Rust stable
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          # Those targets are only used on macos runners so it's in an `if` to slightly speed up windows and linux builds.
+          targets: macos-latest
+
+      - name: install frontend dependencies
+        run: yarn install # change this to npm, pnpm or bun depending on which one you use. 
+
   build-macos:
     needs: prepare
     strategy:
