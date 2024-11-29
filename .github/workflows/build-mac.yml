@@ -35,6 +35,8 @@ jobs:
           - args: '--target x86_64-apple-darwin'
             arch: 'intel'
     runs-on: macos-latest
+    environment: 
+      name: BUILD
     env:
       APPLE_ID: ${{ secrets.APPLE_ID }}
       APPLE_ID_PASSWORD: ${{ secrets.APPLE_ID_PASSWORD }}
