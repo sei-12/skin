@@ -1,69 +1,99 @@
 import { h } from "../../common/dom"
 import styles from "./style.module.css"
 
-export interface TagSuggestionWindowItemData {
-    text(): string    
-}
-
-export interface TagSuggestionWindowSettings {
-    readonly maxWidthPx: number
-    readonly maxHeightPx: number
-}
-
-
-class DefaultWindowSettings implements TagSuggestionWindowSettings {
-    maxWidthPx: number = 100;
-    maxHeightPx: number = 100;
-}
-
-export class TagSuggestionWindow {
+export namespace TagSuggestionWindow {
     
+    export class TextBlock {
+        constructor(
+            public readonly text: string,
+            public readonly match: boolean
+        ){ }
+    }
 
-    private settings: TagSuggestionWindowSettings
-    private elm = h(`div.${styles.root}`,[
-        
-    ])
+    export interface ItemData {
+        textBlocks():TextBlock[]
+    }
+
+    export interface Setting {
+        readonly width: number
+        readonly maxHeightPx: number
+        readonly backgroundColor: string
+        readonly matchTextColor: string
+        readonly unmatchTextColor: string
+    }
+
+    class DefaultSettings implements Setting {
+        matchTextColor: string = "white"
+        unmatchTextColor: string = "gray"
+        width: number = 200;
+        maxHeightPx: number = 150;
+        backgroundColor: string = "rgb(20,20,20)"
+    }
     
-    private items: ReturnType<TagSuggestionWindow["generateItemElm"]>[] = []
-
-    private generateItemElm(item: TagSuggestionWindowItemData){
-        const elm = h(`div.${styles.itemelm}`,[
+    export class Element {
+        private settings: TagSuggestionWindow.Setting
+        private elm = h(`div.${styles.root}`,[
             
         ])
         
-        elm.root.innerText = item.text()
-        
-        return elm
-    }
+        private items: ReturnType<TagSuggestionWindow.Element["generateItemElm"]>[] = []
 
-    constructor(settings?: TagSuggestionWindowSettings){
-        if ( settings ){
-            this.settings = settings
-        }else{
-            this.settings = new DefaultWindowSettings()
+        private generateTextBlock(text: TextBlock){
+            const elm = h("span")
+            elm.root.innerText = text.text
+            if ( text.match ){
+                elm.root.style.color = this.settings.matchTextColor
+            }else{
+                elm.root.style.color = this.settings.unmatchTextColor
+            }
+            return elm
         }
-        
 
-        this.elm.root.style.maxWidth = `${this.settings.maxWidthPx}px`
-        this.elm.root.style.maxHeight = `${this.settings.maxHeightPx}px`
-    }
+        private generateItemElm(item: TagSuggestionWindow.ItemData){
+            const elm = h(`div.${styles.itemelm}`,[
+                
+            ])
+            
+            let textBlockElms = item.textBlocks().map( t => this.generateTextBlock(t) )
+            
+            textBlockElms.forEach( e => {
+                elm.root.appendChild(e.root)
+            })
+            
+            return elm
+        }
 
-    root: HTMLElement = this.elm.root
+        constructor(settings?: TagSuggestionWindow.Setting){
+            if ( settings ){
+                this.settings = settings
+            }else{
+                this.settings = new DefaultSettings()
+            }
+            
 
-    updateItems(itemDatas: TagSuggestionWindowItemData[]){
-        this.items = itemDatas.map( data => this.generateItemElm(data) )
-        this.elm.root.innerHTML = ""
-        this.items.forEach( item => {
-            this.elm.root.appendChild(item.root)
-        })
-    }
-    getNumItems(){
-        return this.items.length
-    }
-    focusUp(){
-        
-    }
-    focusDown(){
-        
+            this.elm.root.style.width = `${this.settings.width}px`
+            this.elm.root.style.maxHeight = `${this.settings.maxHeightPx}px`
+            this.elm.root.style.backgroundColor = this.settings.backgroundColor
+        }
+
+        root: HTMLElement = this.elm.root
+
+        updateItems(itemDatas: TagSuggestionWindow.ItemData[]){
+            this.items = itemDatas.map( data => this.generateItemElm(data) )
+            this.elm.root.innerHTML = ""
+            this.items.forEach( item => {
+                this.elm.root.appendChild(item.root)
+            })
+        }
+        getNumItems(){
+            return this.items.length
+        }
+        focusUp(){
+            
+        }
+        focusDown(){
+            
+        }
+       
     }
 }

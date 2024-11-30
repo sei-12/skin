@@ -1,4 +1,12 @@
 .root {
     position: absolute;
-    overflow: hidden;
+    overflow: scroll;
+    padding: 6px;
+    box-sizing: border-box;
+    font-family: Hack Nerd Font;
+    font-weight: bold;
+}
+
+.root::-webkit-scrollbar {
+    display: none;
 }
