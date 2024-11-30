@@ -1,26 +1,17 @@
-import { invoke } from "@tauri-apps/api/core";
-import { sub } from "./sub";
+import { TagSuggestionWindow, TagSuggestionWindowItemData } from "./Elements/TagSuggestionWindow/TagSuggestionWindow"
 
-let greetInputEl: HTMLInputElement | null;
-let greetMsgEl: HTMLElement | null;
 
-async function greet() {
-  if (greetMsgEl && greetInputEl) {
-    // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
-    greetMsgEl.textContent = await invoke("greet", {
-      name: greetInputEl.value,
-    });
-  }
+class DecoyItemData implements TagSuggestionWindowItemData {
+    text(): string {
+        return "hello"
+    }    
 }
 
-window.addEventListener("DOMContentLoaded", () => {
-  greetInputEl = document.querySelector("#greet-input");
-  greetMsgEl = document.querySelector("#greet-msg");
-  document.querySelector("#greet-form")?.addEventListener("submit", (e) => {
-    e.preventDefault();
-    greet();
-  });
-});
+const elm = new TagSuggestionWindow()
+
+let numDatas = 100
+let datas = Array(numDatas).fill( new DecoyItemData() )
+elm.updateItems(datas)
 
 
-console.log(sub(1,3))
+document.body.appendChild(elm.root)
