@@ -1,5 +1,5 @@
 export namespace Assert {
-    export class AsseertionError extends Error {
+    export class AssertionError extends Error {
         
         /**
          * 方法がないからpublic
@@ -13,19 +13,19 @@ export namespace Assert {
 
     export function isNotNull<T>(v: T | null): asserts v is T {
         if ( v === null ){
-            throw new AsseertionError("isNotNull")
+            throw new AssertionError("isNotNull")
         }
     }
     
     export function isNotUndefined<T>(v: T | undefined): asserts v is T {
         if ( v === undefined ){
-            throw new AsseertionError("isNotUndefined")
+            throw new AssertionError("isNotUndefined")
         }
     }
     
     export function isTrue(v: boolean){
         if ( !v ){
-            throw new AsseertionError("isTrue")
+            throw new AssertionError("isTrue")
         }
     }
 }

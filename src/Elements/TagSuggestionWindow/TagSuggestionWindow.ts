@@ -1,4 +1,4 @@
-import { Assert } from "../../Assert"
+import { Assert } from "../../common/Assert"
 import { h } from "../../common/dom"
 import styles from "./style.module.css"
 
