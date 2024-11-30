@@ -1,7 +1,7 @@
 .root {
     position: absolute;
-    overflow: scroll;
-    padding: 6px;
+    overflow-y: scroll;
+    overflow-x: hidden;
     box-sizing: border-box;
     font-family: Hack Nerd Font;
     font-weight: bold;
@@ -9,4 +9,9 @@
 
 .root::-webkit-scrollbar {
     display: none;
+}
+
+.itemelm {
+    padding: 2px;
+    text-wrap: nowrap;
 }

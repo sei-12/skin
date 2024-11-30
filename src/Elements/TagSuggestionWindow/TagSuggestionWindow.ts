@@ -39,7 +39,7 @@ export namespace TagSuggestionWindow {
         matchTextColor: string = "white"
         unmatchTextColor: string = "gray"
         width: number = 200;
-        maxHeightPx: number = 150;
+        maxHeightPx: number = 350;
         backgroundColor: string = "rgb(20,20,20)"
         focusBackgroundColor: string = "rgb(40,40,40)"
     }
@@ -48,6 +48,8 @@ export namespace TagSuggestionWindow {
      * TODO: 複数のクラスに分けたい
      */
     export class Element {
+        static readonly NUM_MAX_ITEMS = 100
+
         private focusIndex: number | null = null
         private settings: TagSuggestionWindow.Setting
         private elm = h(`div.${styles.root}`,[
@@ -140,6 +142,8 @@ export namespace TagSuggestionWindow {
         root: HTMLElement = this.elm.root
 
         updateItems(itemDatas: TagSuggestionWindow.ItemData[]){
+            Assert.isTrue(itemDatas.length <= Element.NUM_MAX_ITEMS)
+
             this.items = itemDatas.map( data => {
                 return {
                     elm: this.generateItemElm(data),
@@ -161,15 +165,12 @@ export namespace TagSuggestionWindow {
             }
             Assert.isNotNull(this.focusIndex)
 
-            let moveIndex  = to === "up" ? -1 : 1
-            let rangeCheck = to === "up" ? this.focusIndex < 0 : this.focusIndex >= this.items.length
-            let fixIndex   = to === "up" ? this.items.length -1 : 0
-
             this.clearFocusFromHtml()
 
-            this.focusIndex += moveIndex
-            if ( rangeCheck ){
-                this.focusIndex = fixIndex
+            this.focusIndex += to === "up" ? -1 : 1
+
+            if (to === "up" ? this.focusIndex < 0 : this.focusIndex >= this.items.length){
+                this.focusIndex = to === "up" ? this.items.length -1 : 0
             }
 
             this.focusHtml()
