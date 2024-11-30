@@ -1,8 +1,20 @@
+import { Assert } from "../../Assert"
 import { h } from "../../common/dom"
 import styles from "./style.module.css"
 
 export namespace TagSuggestionWindow {
     
+    /**
+     * static関数にするべきかもしれないが
+     * namespaceの外から参照して欲しくないから
+     * functionで書く
+     */
+    function joinTextBlocks(blocks: TextBlock[]){
+        let text = ""
+        blocks.forEach( b => { text += b.text })
+        return text
+    }
+
     export class TextBlock {
         constructor(
             public readonly text: string,
@@ -18,6 +30,7 @@ export namespace TagSuggestionWindow {
         readonly width: number
         readonly maxHeightPx: number
         readonly backgroundColor: string
+        readonly focusBackgroundColor: string
         readonly matchTextColor: string
         readonly unmatchTextColor: string
     }
@@ -28,15 +41,23 @@ export namespace TagSuggestionWindow {
         width: number = 200;
         maxHeightPx: number = 150;
         backgroundColor: string = "rgb(20,20,20)"
+        focusBackgroundColor: string = "rgb(40,40,40)"
     }
     
+    /**
+     * TODO: 複数のクラスに分けたい
+     */
     export class Element {
+        private focusIndex: number | null = null
         private settings: TagSuggestionWindow.Setting
         private elm = h(`div.${styles.root}`,[
             
         ])
         
-        private items: ReturnType<TagSuggestionWindow.Element["generateItemElm"]>[] = []
+        private items: {
+            data: TagSuggestionWindow.ItemData
+            elm:ReturnType<TagSuggestionWindow.Element["generateItemElm"]>
+        }[] = []
 
         private generateTextBlock(text: TextBlock){
             const elm = h("span")
@@ -62,7 +83,47 @@ export namespace TagSuggestionWindow {
             
             return elm
         }
+        private updateFocusIndex(){
+            if ( this.items.length <= 0 ){
+                this.focusIndex = null
+                return
+            }
 
+            if ( this.focusIndex === null ){
+                this.focusIndex = 0
+                return
+            }
+            
+            if ( this.items.length <= this.focusIndex ){
+                this.focusIndex = this.items.length - 1
+                return
+            }
+        }
+        
+        private clearFocusFromHtml(){
+            if ( this.items.length === 0 ){
+                return
+            }
+            
+            Assert.isNotNull(this.focusIndex)
+
+            this.items[this.focusIndex].elm.root.style.backgroundColor = ""
+        }
+        private focusHtml(){
+            if ( this.items.length === 0 ){
+                return
+            }
+            
+            Assert.isNotNull(this.focusIndex)
+
+            this.items[this.focusIndex].elm.root.style.backgroundColor = this.settings.focusBackgroundColor
+        }
+        
+        
+        //
+        // public
+        //
+        
         constructor(settings?: TagSuggestionWindow.Setting){
             if ( settings ){
                 this.settings = settings
@@ -79,21 +140,54 @@ export namespace TagSuggestionWindow {
         root: HTMLElement = this.elm.root
 
         updateItems(itemDatas: TagSuggestionWindow.ItemData[]){
-            this.items = itemDatas.map( data => this.generateItemElm(data) )
+            this.items = itemDatas.map( data => {
+                return {
+                    elm: this.generateItemElm(data),
+                    data
+                }
+            })
             this.elm.root.innerHTML = ""
             this.items.forEach( item => {
-                this.elm.root.appendChild(item.root)
+                this.elm.root.appendChild(item.elm.root)
             })
-        }
-        getNumItems(){
-            return this.items.length
-        }
-        focusUp(){
             
+            this.updateFocusIndex()
+            this.focusHtml()
+        }
+
+        private moveFocus(to: "up" | "down"){
+            if ( this.items.length === 0 ){
+                return
+            }
+            Assert.isNotNull(this.focusIndex)
+
+            let moveIndex  = to === "up" ? -1 : 1
+            let rangeCheck = to === "up" ? this.focusIndex < 0 : this.focusIndex >= this.items.length
+            let fixIndex   = to === "up" ? this.items.length -1 : 0
+
+            this.clearFocusFromHtml()
+
+            this.focusIndex += moveIndex
+            if ( rangeCheck ){
+                this.focusIndex = fixIndex
+            }
+
+            this.focusHtml()
+        }
+
+        focusUp(){
+            this.moveFocus("up")
         }
         focusDown(){
-            
+            this.moveFocus("down")
         }
-       
+
+        getFocused(){
+            if ( this.items.length === 0 ){
+                return
+            }
+            Assert.isNotNull(this.focusIndex)
+            return joinTextBlocks(this.items[this.focusIndex].data.textBlocks())
+        }
     }
 }

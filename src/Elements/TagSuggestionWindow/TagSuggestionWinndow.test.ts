@@ -20,6 +20,7 @@ it("TagSuggestionWindow:whitebox",() => {
     
     expect(elm.root.style.maxHeight).toBe("150px")
     expect(elm.root.style.width).toBe("200px")
+    expect(((elm as any).elm.root as HTMLElement).childNodes.length).toBe(numDatas)
 })
 
 it("TagSuggestionWindow:blackbox",() => {
@@ -29,5 +30,5 @@ it("TagSuggestionWindow:blackbox",() => {
     let datas = Array(numDatas).fill( new DecoyItemData() )
     elm.updateItems(datas)
     
-    expect(elm.getNumItems()).toBe(numDatas)
+    expect(elm.getFocused()).toBe("hello")
 })

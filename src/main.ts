@@ -15,3 +15,7 @@ let datas = Array(numDatas).fill( new DecoyItemData() )
 elm.updateItems(datas)
 
 document.body.appendChild(elm.root)
+
+setInterval(() => {
+    elm.focusDown()
+},3000)
