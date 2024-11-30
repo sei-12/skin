@@ -1,4 +1,5 @@
 import { invoke } from "@tauri-apps/api/core";
+import { sub } from "./sub";
 
 let greetInputEl: HTMLInputElement | null;
 let greetMsgEl: HTMLElement | null;
@@ -20,3 +21,6 @@ window.addEventListener("DOMContentLoaded", () => {
     greet();
   });
 });
+
+
+console.log(sub(1,3))
