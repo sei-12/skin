@@ -1,4 +1,3 @@
-# ==== Commit Messages ====
 
 # ==== Prefix ====
 # :fix: バグ修正
