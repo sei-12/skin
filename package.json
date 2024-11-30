@@ -16,7 +16,9 @@
   },
   "devDependencies": {
     "@tauri-apps/cli": "^2",
-    "vite": "^5.3.1",
-    "typescript": "^5.2.2"
+    "typedoc": "^0.27.2",
+    "typedoc-plugin-markdown": "^4.3.0",
+    "typescript": "^5.2.2",
+    "vite": "^5.3.1"
   }
 }
