@@ -1,28 +1,19 @@
-import { TagSuggestionWindow } from "./Elements/TagSuggestionWindow/TagSuggestionWindow"
+import { TagElement } from "./Elements/Tag/Tag";
 
-class DecoyItemData implements TagSuggestionWindow.ItemData {
-    private randomTextBlock(match: boolean){
-        let len = Math.floor(Math.random() * 20)
-        let uuid = crypto.randomUUID().replace("-","")
-        return new TagSuggestionWindow.TextBlock(uuid.substring(1,len),match)
-    }
+const elms: TagElement[] = [
+    new TagElement("HelloWorld",true),
+    new TagElement("TS",true),
+    new TagElement("TypeScript",true),
+    new TagElement("JavaScript",true),
+    new TagElement("Git",true),
+    new TagElement(crypto.randomUUID(),false),
+    new TagElement(crypto.randomUUID(),false),
+    new TagElement(crypto.randomUUID(),false),
+    new TagElement(crypto.randomUUID(),true),
+    new TagElement(crypto.randomUUID(),true),
+    new TagElement("hello",true),
+]
 
-    textBlocks(): TagSuggestionWindow.TextBlock[] {
-        return [
-            this.randomTextBlock(true),
-            this.randomTextBlock(false),
-        ]
-    }    
-}
-const elm = new TagSuggestionWindow.Element()
-
-let numDatas = 21
-let datas = Array(numDatas).fill( new DecoyItemData() )
-elm.updateItems(datas)
-
-document.body.appendChild(elm.root)
-
-setInterval(() => {
-    // elm.focusDown()
-    // elm.focusUp()
-},100)
+elms.forEach( elm => {
+    document.body.appendChild(elm.root)
+})
