@@ -16,15 +16,13 @@ class DecoyItemData implements TagSuggestionWindow.ItemData {
 }
 const elm = new TagSuggestionWindow.Element()
 
-let numDatas = 4
+let numDatas = 21
 let datas = Array(numDatas).fill( new DecoyItemData() )
 elm.updateItems(datas)
 
 document.body.appendChild(elm.root)
 
 setInterval(() => {
-    console.log("hello")
-    let numDatas = 100
-    let datas = Array(numDatas).fill( new DecoyItemData() )
-    elm.updateItems(datas)
-},10000)
+    // elm.focusDown()
+    // elm.focusUp()
+},100)

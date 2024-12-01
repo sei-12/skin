@@ -1,19 +1,22 @@
 import { Assert } from "../../common/Assert"
 import { h } from "../../common/dom"
+import { scroll_to_focus_elm } from "../../common/scroll"
 import styles from "./style.module.css"
+
+
+/**
+ * static関数にするべきかもしれないが
+ * namespaceの外から参照して欲しくないから
+ * functionで書く
+ */
+function joinTextBlocks(blocks: TagSuggestionWindow.TextBlock[]){
+    let text = ""
+    blocks.forEach( b => { text += b.text })
+    return text
+}
 
 export namespace TagSuggestionWindow {
     
-    /**
-     * static関数にするべきかもしれないが
-     * namespaceの外から参照して欲しくないから
-     * functionで書く
-     */
-    function joinTextBlocks(blocks: TextBlock[]){
-        let text = ""
-        blocks.forEach( b => { text += b.text })
-        return text
-    }
 
     export class TextBlock {
         constructor(
@@ -174,6 +177,11 @@ export namespace TagSuggestionWindow {
             }
 
             this.focusHtml()
+            
+            scroll_to_focus_elm(
+                this.items[this.focusIndex].elm.root,
+                this.elm.root
+            )
         }
 
         focusUp(){
