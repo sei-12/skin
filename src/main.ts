@@ -1,17 +1,28 @@
-import { TagSuggestionWindow, TagSuggestionWindowItemData } from "./Elements/TagSuggestionWindow/TagSuggestionWindow"
+import { TagSuggestionWindow } from "./Elements/TagSuggestionWindow/TagSuggestionWindow"
 
+class DecoyItemData implements TagSuggestionWindow.ItemData {
+    private randomTextBlock(match: boolean){
+        let len = Math.floor(Math.random() * 20)
+        let uuid = crypto.randomUUID().replace("-","")
+        return new TagSuggestionWindow.TextBlock(uuid.substring(1,len),match)
+    }
 
-class DecoyItemData implements TagSuggestionWindowItemData {
-    text(): string {
-        return "hello"
+    textBlocks(): TagSuggestionWindow.TextBlock[] {
+        return [
+            this.randomTextBlock(true),
+            this.randomTextBlock(false),
+        ]
     }    
 }
+const elm = new TagSuggestionWindow.Element()
 
-const elm = new TagSuggestionWindow()
-
-let numDatas = 100
+let numDatas = 21
 let datas = Array(numDatas).fill( new DecoyItemData() )
 elm.updateItems(datas)
 
-
 document.body.appendChild(elm.root)
+
+setInterval(() => {
+    // elm.focusDown()
+    // elm.focusUp()
+},100)
