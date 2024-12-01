@@ -1,5 +1,3 @@
-import { Assert } from "./Assert"
-
 /**
  * 子要素と親要素のスクロール位置の関係性
  */
@@ -26,12 +24,6 @@ export function scroll_to_focus_elm(focus_elm: HTMLElement, container_elm: HTMLE
 
     // console.log("f.offsetTop", focus_elm.offsetTop)
     // console.log(child_elm_pos(container_elm, focus_elm))
-
-    Assert.isTrue(
-        container_elm.style.position === "absolute" ||
-        container_elm.style.position === "relative" ||
-        container_elm.style.position === "fixed"
-    )
 
     let pos = child_elm_pos(container_elm, focus_elm)
     if (pos === "<=>") {
