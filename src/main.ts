@@ -1,4 +1,4 @@
-import { TagElement } from "./Elements/Tag/Tag";
+import { TagElement } from "./Elements/TagElement/Tag";
 
 const elms: TagElement[] = [
     new TagElement("HelloWorld",true),
