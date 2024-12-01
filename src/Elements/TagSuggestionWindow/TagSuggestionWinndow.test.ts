@@ -1,5 +1,6 @@
 import { expect, it } from "vitest";
 import { TagSuggestionWindow } from "./TagSuggestionWindow";
+import { Assert } from "../../common/Assert";
 
 class DecoyItemData implements TagSuggestionWindow.ItemData {
     textBlocks(): TagSuggestionWindow.TextBlock[] {
@@ -51,6 +52,11 @@ it("TagSuggestionWindow:whitebox",() => {
         Array(5).fill(0).forEach(() => elm.focusUp())
         expect(elm.getFocused()).toBe("94")
         
+        Array(6).fill(0).forEach(() => elm.focusDown())
+        expect(elm.getFocused()).toBe("0")
+
+        Array(6).fill(0).forEach(() => elm.focusDown())
+        expect(elm.getFocused()).toBe("6")
     }
 })
 
@@ -62,4 +68,10 @@ it("TagSuggestionWindow:blackbox",() => {
     elm.updateItems(datas)
     
     expect(elm.getFocused()).toBe("hello")
+
+    {
+        let numDatas = TagSuggestionWindow.Element.NUM_MAX_ITEMS + 1
+        let datas = Array(numDatas).fill( new DecoyItemData() )
+        expect(() => elm.updateItems(datas)).toThrow(Assert.AssertionError)
+    }
 })
