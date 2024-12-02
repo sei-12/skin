@@ -1,77 +1,135 @@
 import { expect, it } from "vitest";
 import { TagSuggestionWindow } from "./TagSuggestionWindow";
-import { Assert } from "../../common/Assert";
+// import { TagSuggestionWindow } from "./TagSuggestionWindow";
 
-class DecoyItemData implements TagSuggestionWindow.ItemData {
-    textBlocks(): TagSuggestionWindow.TextBlock[] {
-        return [
-            new TagSuggestionWindow.TextBlock("hel",true),
-            new TagSuggestionWindow.TextBlock("l",true),
-            new TagSuggestionWindow.TextBlock("o",true),
-        ]
-    }    
-}
-class ItemData2 implements TagSuggestionWindow.ItemData {
-    private blocks: TagSuggestionWindow.TextBlock[]
-    constructor(num: number){
-        this.blocks = [
-            new TagSuggestionWindow.TextBlock(""+num,true),
-        ]
-    }
-    textBlocks(): TagSuggestionWindow.TextBlock[] {
-        return this.blocks
-    }    
-}
 
-it("TagSuggestionWindow:whitebox",() => {
-    const elm = new TagSuggestionWindow.Element()
-    
-    let numDatas = 100
-    let datas = Array(numDatas).fill( new DecoyItemData() )
-    elm.updateItems(datas)
-    
-    expect(elm.root.style.maxHeight).toBe("350px")
-    expect(elm.root.style.width).toBe("200px")
-    expect(((elm as any).elm.root as HTMLElement).childNodes.length).toBe(numDatas)
-    
+/**
+ * TagFinderインターフェースを実装したクラス
+ */
+class SampleTagFinder implements TagSuggestionWindow.TagFinder {
+    private taglist: string[] = [
+        "typescript", "javascript", "python", "java", "csharp", "ruby", "php", "swift", "kotlin", "golang",
+        "rust", "scala", "haskell", "perl", "sql", "html", "css", "sass", "less", "json",
+        "xml", "yaml", "docker", "kubernetes", "aws", "azure", "gcp", "firebase", "react", "vue",
+        "angular", "svelte", "jquery", "nodejs", "express", "nestjs", "deno", "nextjs", "nuxtjs", "remix",
+        "webpack", "rollup", "vite", "babel", "eslint", "prettier", "jest", "mocha", "chai", "vitest",
+        "playwright", "puppeteer", "selenium", "cypress", "git", "github", "gitlab", "bitbucket", "ci/cd", "jenkins",
+        "travis", "circleci", "databases", "mongodb", "postgresql", "mysql", "sqlite", "redis", "cassandra", "oracle",
+        "machinelearning", "ai", "deeplearning", "nlp", "opencv", "tensorflow", "pytorch", "keras", "scikit-learn", "pandas",
+        "numpy", "matplotlib", "seaborn", "debugging", "logging", "profiling", "performance", "optimizations", "http", "api",
+        "rest", "graphql", "websocket", "oauth", "jwt", "jsonwebtokens", "auth0", "passportjs", "security", "encryption"
+    ];
 
-    {
-        const elm = new TagSuggestionWindow.Element()
-        
-        let numDatas = 100
-        let datas: TagSuggestionWindow.ItemData[] = []
-        for (let i = 0; i < numDatas; i++) {
-            datas.push(new ItemData2(i))
+    async find(predicate: string): Promise<string[]> {
+        if ( predicate === "" ){
+            return []
         }
 
-        elm.updateItems(datas)
-        
-        elm.moveFocus("up")
-        expect(elm.getFocused()).toBe("99")
-        
-        Array(5).fill(0).forEach(() => elm.moveFocus("up"))
-        expect(elm.getFocused()).toBe("94")
-        
-        Array(6).fill(0).forEach(() => elm.moveFocus("down"))
-        expect(elm.getFocused()).toBe("0")
+        return this.taglist
+            .filter(tag => tag.includes(predicate))
+            .sort((a, b) => {
+                const aStartsWith = a.startsWith(predicate) ? 0 : 1;
+                const bStartsWith = b.startsWith(predicate) ? 0 : 1;
 
-        Array(6).fill(0).forEach(() => elm.moveFocus("down"))
-        expect(elm.getFocused()).toBe("6")
+                if (aStartsWith !== bStartsWith) {
+                    return aStartsWith - bStartsWith; // 先頭一致優先
+                }
+
+                return a.localeCompare(b); // アルファベット順
+            });
     }
-})
+}
 
-it("TagSuggestionWindow:blackbox",() => {
-    const elm = new TagSuggestionWindow.Element()
-    
-    let numDatas = 100
-    let datas = Array(numDatas).fill( new DecoyItemData() )
-    elm.updateItems(datas)
-    
-    expect(elm.getFocused()).toBe("hello")
+it("TagSuggestionWindow",async () => {
+    {
+        const elm = new TagSuggestionWindow.Element(
+            new SampleTagFinder()
+        )
+        
+        await elm.update("a")
+        expect(elm.getFocused()).toBe("ai")
+        elm.moveFocus("down")
+        expect(elm.getFocused()).toBe("angulr")
+        elm.moveFocus("down")
+        expect(elm.getFocused()).toBe("api")
+        elm.moveFocus("down")
+        expect(elm.getFocused()).toBe("auth0")
+    }
 
     {
-        let numDatas = TagSuggestionWindow.Element.NUM_MAX_ITEMS + 1
-        let datas = Array(numDatas).fill( new DecoyItemData() )
-        expect(() => elm.updateItems(datas)).toThrow(Assert.AssertionError)
+        const elm = new TagSuggestionWindow.Element(
+            new SampleTagFinder()
+        )
+        
+        expect(elm.getFocused()).toBe(null)
+        await elm.update("")
+        expect(elm.getFocused()).toBe(null)
+        await elm.update("hellloooooo")
+        expect(elm.getFocused()).toBe(null)
+        await elm.update("a")
+        expect(elm.getFocused()).toBe("ai")
+        await elm.update("hellloooooo")
+        expect(elm.getFocused()).toBe(null)
+        await elm.update("a")
+        elm.moveFocus("up")
+        expect(elm.getFocused()).toBe("yaml")
+    }
+    
+    {
+        async function snapshottest(predicate: string){
+            await elm.update(predicate)
+            expect(elm.getFocused()).toMatchSnapshot()
+        }
+
+        const elm = new TagSuggestionWindow.Element(
+            new SampleTagFinder()
+        )
+        
+        await snapshottest("hello")
+        await snapshottest("aaa")
+        await snapshottest("g")
+        await snapshottest("main")
+    }
+
+    {
+        async function snapshottest(predicate: string, n: number){
+            await elm.update(predicate)
+            Array(n).fill(0).forEach(_ => {
+                elm.moveFocus("up")
+            })
+            expect(elm.getFocused()).toMatchSnapshot()
+        }
+
+        const elm = new TagSuggestionWindow.Element(
+            new SampleTagFinder()
+        )
+        
+        await snapshottest("hello",100)
+        await snapshottest("aaa",10)
+        await snapshottest("g",2)
+        await snapshottest("main",40)
+    }
+
+    {
+        async function snapshottest(predicate: string, n: number){
+            await elm.update(predicate)
+            Array(n).fill(0).forEach(_ => {
+                elm.moveFocus("down")
+            })
+            expect(elm.getFocused()).toMatchSnapshot()
+        }
+
+        const elm = new TagSuggestionWindow.Element(
+            new SampleTagFinder()
+        )
+        
+        await snapshottest("hello",100)
+        await snapshottest("aaa",10)
+        await snapshottest("g",2)
+        await snapshottest("main",40)
+        await snapshottest("a",100)
+        await snapshottest("b",10)
+        await snapshottest("c",2)
+        await snapshottest("d",403)
     }
 })

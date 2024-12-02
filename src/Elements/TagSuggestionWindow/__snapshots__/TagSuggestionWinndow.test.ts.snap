@@ -1,0 +1,33 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`TagSuggestionWindow 1`] = `null`;
+
+exports[`TagSuggestionWindow 2`] = `null`;
+
+exports[`TagSuggestionWindow 3`] = `"gcp"`;
+
+exports[`TagSuggestionWindow 4`] = `null`;
+
+exports[`TagSuggestionWindow 5`] = `null`;
+
+exports[`TagSuggestionWindow 6`] = `null`;
+
+exports[`TagSuggestionWindow 7`] = `"postgresql"`;
+
+exports[`TagSuggestionWindow 8`] = `null`;
+
+exports[`TagSuggestionWindow 9`] = `null`;
+
+exports[`TagSuggestionWindow 10`] = `null`;
+
+exports[`TagSuggestionWindow 11`] = `"github"`;
+
+exports[`TagSuggestionWindow 12`] = `null`;
+
+exports[`TagSuggestionWindow 13`] = `"optimizations"`;
+
+exports[`TagSuggestionWindow 14`] = `"matplotlib"`;
+
+exports[`TagSuggestionWindow 15`] = `"javascript"`;
+
+exports[`TagSuggestionWindow 16`] = `"ci/cd"`;

@@ -9,13 +9,13 @@ import styles from "./style.module.css"
  * namespaceの外から参照して欲しくないから
  * functionで書く
  */
-function joinTextBlocks(blocks: TagSuggestionWindow.TextBlock[]){
+function joinTextBlocks(blocks: TextBlock[]){
     let text = ""
     blocks.forEach( b => { text += b.text })
     return text
 }
 
-function generateTextBlockElm(text: TagSuggestionWindow.TextBlock, settings: TagSuggestionWindow.Setting){
+function generateTextBlockElm(text: TextBlock, settings: TagSuggestionWindow.Setting){
     const elm = h("span")
     elm.root.innerText = text.text
     if ( text.match ){
@@ -26,7 +26,7 @@ function generateTextBlockElm(text: TagSuggestionWindow.TextBlock, settings: Tag
     return elm
 }
 
-function generateItemElm(item: TagSuggestionWindow.ItemData,settings: TagSuggestionWindow.Setting){
+function generateItemElm(item: ItemData,settings: TagSuggestionWindow.Setting){
     const elm = h(`div.${styles.itemelm}`,[
         
     ])
@@ -85,21 +85,65 @@ class FocusIndex {
         Assert.isNotNull(this.value)
         return this.value
     }
+    
+    get(): number | null {
+        return this.value
+    }
 }
 
-export namespace TagSuggestionWindow {
+class TextBlock {
+    constructor(
+        public readonly text: string,
+        public readonly match: boolean
+    ){ }
+}
+
+class ItemData {
+    constructor(
+        private predicate: string, 
+        private tagText: string
+    ){ }
+
+    textBlocks(): TextBlock[] {
+        let splited = this.tagText.split(this.predicate)
+        if ( splited.length === 1 ){
+            splited.unshift(this.predicate)
+        }else{
+            splited.splice(1,0,this.predicate)
+        }
+        return splited.map( text => new TextBlock(text, text === this.predicate))
+    }
+}
+
+class TagFinderWraper {
+    constructor(
+        private readonly finder: TagSuggestionWindow.TagFinder
+    ){}
     
-
-    export class TextBlock {
-        constructor(
-            public readonly text: string,
-            public readonly match: boolean
-        ){ }
+    async find(predicate: string){
+        let result = await this.finder.find(predicate)
+        let itemDatas = result.map( res => new ItemData(predicate, res) )
+        return itemDatas
     }
+}
 
-    export interface ItemData {
-        textBlocks():TextBlock[]
-    }
+class DefaultSettings implements TagSuggestionWindow.Setting {
+    matchTextColor: string = "white"
+    unmatchTextColor: string = "gray"
+    width: number = 200;
+    maxHeightPx: number = 350;
+    backgroundColor: string = "rgb(20,20,20)"
+    focusBackgroundColor: string = "rgb(40,40,40)"
+}
+
+
+//----------------------------------------------------------------------------------------------------//
+//                                                                                                    //
+//                                               PUBLIC                                               //
+//                                                                                                    //
+//----------------------------------------------------------------------------------------------------//
+
+export namespace TagSuggestionWindow {
 
     export interface Setting {
         readonly width: number
@@ -110,30 +154,23 @@ export namespace TagSuggestionWindow {
         readonly unmatchTextColor: string
     }
 
-    class DefaultSettings implements Setting {
-        matchTextColor: string = "white"
-        unmatchTextColor: string = "gray"
-        width: number = 200;
-        maxHeightPx: number = 350;
-        backgroundColor: string = "rgb(20,20,20)"
-        focusBackgroundColor: string = "rgb(40,40,40)"
+    /**
+     * DBのラッパーがこのインターフェースを満たしたクラスのインスタンスを生成する予定
+     */
+    export interface TagFinder {
+        find(predicate: string): Promise<string[]>
     }
     
-
-    /**
-     * TODO: 複数のクラスに分けたい
-     */
     export class Element {
-        static readonly NUM_MAX_ITEMS = 100
-
         private focusIndex = new FocusIndex()
         private settings: TagSuggestionWindow.Setting
+        private tagFinderWraper: TagFinderWraper
         private elm = h(`div.${styles.root}`,[
             
         ])
         
         private items: {
-            data: TagSuggestionWindow.ItemData
+            data: ItemData
             elm:ReturnType<typeof generateItemElm>
         }[] = []
 
@@ -144,13 +181,50 @@ export namespace TagSuggestionWindow {
         private focusHtml(){
             this.items[this.focusIndex.getOrThrow()].elm.root.style.backgroundColor = this.settings.focusBackgroundColor
         }
+        private updateItems(itemDatas: ItemData[]){
+            this.items = itemDatas.map( data => {
+                return {
+                    elm: generateItemElm(data,this.settings),
+                    data
+                }
+            })
+            
+
+            this.elm.root.innerHTML = ""
+
+            this.focusIndex.updateTargetAry(this.items)
+
+            if ( this.items.length === 0 ){
+                this.hide()
+                return
+            }else{
+                this.show()
+            }
+
+            this.items.forEach( item => {
+                this.elm.root.appendChild(item.elm.root)
+            })
+            
+            this.focusHtml()
+        }
         
+        private hide(){
+            this.elm.root.style.display = "none"
+        }
+        private show(){
+            this.elm.root.style.display = "block"
+        }
         
         //
         // public
         //
         
-        constructor(settings?: TagSuggestionWindow.Setting){
+        constructor(
+            tagFinder: TagFinder,
+            settings?: TagSuggestionWindow.Setting
+        ){
+            this.tagFinderWraper = new TagFinderWraper(tagFinder)
+
             if ( settings ){
                 this.settings = settings
             }else{
@@ -161,29 +235,24 @@ export namespace TagSuggestionWindow {
             this.elm.root.style.width = `${this.settings.width}px`
             this.elm.root.style.maxHeight = `${this.settings.maxHeightPx}px`
             this.elm.root.style.backgroundColor = this.settings.backgroundColor
+            
+
+            this.hide()
         }
 
         root: HTMLElement = this.elm.root
 
-        updateItems(itemDatas: TagSuggestionWindow.ItemData[]){
-            Assert.isTrue(itemDatas.length <= Element.NUM_MAX_ITEMS)
 
-            this.items = itemDatas.map( data => {
-                return {
-                    elm: generateItemElm(data,this.settings),
-                    data
-                }
-            })
-            this.elm.root.innerHTML = ""
-            this.items.forEach( item => {
-                this.elm.root.appendChild(item.elm.root)
-            })
-            
-            this.focusIndex.updateTargetAry(this.items)
-            this.focusHtml()
+        async update(predicate: string){
+            let itemDatas = await this.tagFinderWraper.find(predicate)
+            this.updateItems(itemDatas)
         }
 
         moveFocus(to: "up" | "down"){
+            if ( this.focusIndex.get() === null ){
+                return
+            }
+
             this.clearFocusFromHtml()
             this.focusIndex.moveFocus(to)
             this.focusHtml()
@@ -193,8 +262,12 @@ export namespace TagSuggestionWindow {
             )
         }
 
-        getFocused(){
-            return joinTextBlocks(this.items[this.focusIndex.getOrThrow()].data.textBlocks())
+        getFocused(): string | null{
+            let index = this.focusIndex.get()
+            if ( index === null ){
+                return null
+            }
+            return joinTextBlocks(this.items[index].data.textBlocks())
         }
     }
 }
