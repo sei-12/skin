@@ -15,6 +15,78 @@ function joinTextBlocks(blocks: TagSuggestionWindow.TextBlock[]){
     return text
 }
 
+function generateTextBlockElm(text: TagSuggestionWindow.TextBlock, settings: TagSuggestionWindow.Setting){
+    const elm = h("span")
+    elm.root.innerText = text.text
+    if ( text.match ){
+        elm.root.style.color = settings.matchTextColor
+    }else{
+        elm.root.style.color = settings.unmatchTextColor
+    }
+    return elm
+}
+
+function generateItemElm(item: TagSuggestionWindow.ItemData,settings: TagSuggestionWindow.Setting){
+    const elm = h(`div.${styles.itemelm}`,[
+        
+    ])
+    
+    let textBlockElms = item.textBlocks().map( t => generateTextBlockElm(t,settings) )
+    
+    textBlockElms.forEach( e => {
+        elm.root.appendChild(e.root)
+    })
+    
+    return elm
+}
+
+class FocusIndex {
+
+    private value: number | null = null
+    private targetAryLength: number | null = null
+    
+    moveFocus(to: "up" | "down"){
+        if ( this.targetAryLength === 0 ){
+            return
+        }
+        Assert.isNotNull(this.value)
+        Assert.isNotNull(this.targetAryLength)
+
+        this.value += to === "up" ? -1 : 1
+
+        if (to === "up" ? this.value < 0 : this.value >= this.targetAryLength){
+            this.value = to === "up" ? this.targetAryLength -1 : 0
+        }
+    }
+
+    /**
+     * 要素の型は問わない
+     */
+    updateTargetAry(ary: Array<unknown>){
+        this.targetAryLength = ary.length
+
+        if ( ary.length == 0 ){
+            this.value = null
+            return
+        }
+
+        if ( this.value === null ){
+            this.value = 0
+            return
+        }
+        
+        if ( ary.length <= this.value ){
+            this.value = ary.length - 1
+            return
+        }
+    }
+    
+    getOrThrow(): number {
+        Assert.isNotNull(this.value)
+        return this.value
+    }
+}
+
 export namespace TagSuggestionWindow {
     
 
@@ -47,13 +119,14 @@ export namespace TagSuggestionWindow {
         focusBackgroundColor: string = "rgb(40,40,40)"
     }
     
+
     /**
      * TODO: 複数のクラスに分けたい
      */
     export class Element {
         static readonly NUM_MAX_ITEMS = 100
 
-        private focusIndex: number | null = null
+        private focusIndex = new FocusIndex()
         private settings: TagSuggestionWindow.Setting
         private elm = h(`div.${styles.root}`,[
             
@@ -61,67 +134,15 @@ export namespace TagSuggestionWindow {
         
         private items: {
             data: TagSuggestionWindow.ItemData
-            elm:ReturnType<TagSuggestionWindow.Element["generateItemElm"]>
+            elm:ReturnType<typeof generateItemElm>
         }[] = []
 
-        private generateTextBlock(text: TextBlock){
-            const elm = h("span")
-            elm.root.innerText = text.text
-            if ( text.match ){
-                elm.root.style.color = this.settings.matchTextColor
-            }else{
-                elm.root.style.color = this.settings.unmatchTextColor
-            }
-            return elm
-        }
 
-        private generateItemElm(item: TagSuggestionWindow.ItemData){
-            const elm = h(`div.${styles.itemelm}`,[
-                
-            ])
-            
-            let textBlockElms = item.textBlocks().map( t => this.generateTextBlock(t) )
-            
-            textBlockElms.forEach( e => {
-                elm.root.appendChild(e.root)
-            })
-            
-            return elm
-        }
-        private updateFocusIndex(){
-            if ( this.items.length <= 0 ){
-                this.focusIndex = null
-                return
-            }
-
-            if ( this.focusIndex === null ){
-                this.focusIndex = 0
-                return
-            }
-            
-            if ( this.items.length <= this.focusIndex ){
-                this.focusIndex = this.items.length - 1
-                return
-            }
-        }
-        
         private clearFocusFromHtml(){
-            if ( this.items.length === 0 ){
-                return
-            }
-            
-            Assert.isNotNull(this.focusIndex)
-
-            this.items[this.focusIndex].elm.root.style.backgroundColor = ""
+            this.items[this.focusIndex.getOrThrow()].elm.root.style.backgroundColor = ""
         }
         private focusHtml(){
-            if ( this.items.length === 0 ){
-                return
-            }
-            
-            Assert.isNotNull(this.focusIndex)
-
-            this.items[this.focusIndex].elm.root.style.backgroundColor = this.settings.focusBackgroundColor
+            this.items[this.focusIndex.getOrThrow()].elm.root.style.backgroundColor = this.settings.focusBackgroundColor
         }
         
         
@@ -149,7 +170,7 @@ export namespace TagSuggestionWindow {
 
             this.items = itemDatas.map( data => {
                 return {
-                    elm: this.generateItemElm(data),
+                    elm: generateItemElm(data,this.settings),
                     data
                 }
             })
@@ -158,45 +179,22 @@ export namespace TagSuggestionWindow {
                 this.elm.root.appendChild(item.elm.root)
             })
             
-            this.updateFocusIndex()
+            this.focusIndex.updateTargetAry(this.items)
             this.focusHtml()
         }
 
-        private moveFocus(to: "up" | "down"){
-            if ( this.items.length === 0 ){
-                return
-            }
-            Assert.isNotNull(this.focusIndex)
-
+        moveFocus(to: "up" | "down"){
             this.clearFocusFromHtml()
-
-            this.focusIndex += to === "up" ? -1 : 1
-
-            if (to === "up" ? this.focusIndex < 0 : this.focusIndex >= this.items.length){
-                this.focusIndex = to === "up" ? this.items.length -1 : 0
-            }
-
+            this.focusIndex.moveFocus(to)
             this.focusHtml()
-            
             scroll_to_focus_elm(
-                this.items[this.focusIndex].elm.root,
+                this.items[this.focusIndex.getOrThrow()].elm.root,
                 this.elm.root
             )
         }
 
-        focusUp(){
-            this.moveFocus("up")
-        }
-        focusDown(){
-            this.moveFocus("down")
-        }
-
         getFocused(){
-            if ( this.items.length === 0 ){
-                return
-            }
-            Assert.isNotNull(this.focusIndex)
-            return joinTextBlocks(this.items[this.focusIndex].data.textBlocks())
+            return joinTextBlocks(this.items[this.focusIndex.getOrThrow()].data.textBlocks())
         }
     }
 }

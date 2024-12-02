@@ -46,16 +46,16 @@ it("TagSuggestionWindow:whitebox",() => {
 
         elm.updateItems(datas)
         
-        elm.focusUp()
+        elm.moveFocus("up")
         expect(elm.getFocused()).toBe("99")
         
-        Array(5).fill(0).forEach(() => elm.focusUp())
+        Array(5).fill(0).forEach(() => elm.moveFocus("up"))
         expect(elm.getFocused()).toBe("94")
         
-        Array(6).fill(0).forEach(() => elm.focusDown())
+        Array(6).fill(0).forEach(() => elm.moveFocus("down"))
         expect(elm.getFocused()).toBe("0")
 
-        Array(6).fill(0).forEach(() => elm.focusDown())
+        Array(6).fill(0).forEach(() => elm.moveFocus("down"))
         expect(elm.getFocused()).toBe("6")
     }
 })
