@@ -1,28 +1,53 @@
-import { TagSuggestionWindow } from "./Elements/TagSuggestionWindow/TagSuggestionWindow"
+import { h } from "./common/dom";
+import { TagSuggestionWindow } from "./Elements/TagSuggestionWindow/TagSuggestionWindow";
 
-class DecoyItemData implements TagSuggestionWindow.ItemData {
-    private randomTextBlock(match: boolean){
-        let len = Math.floor(Math.random() * 20)
-        let uuid = crypto.randomUUID().replace("-","")
-        return new TagSuggestionWindow.TextBlock(uuid.substring(1,len),match)
+/**
+ * TagFinderインターフェースを実装したクラス
+ */
+class SimpleTagFinder implements TagSuggestionWindow.TagFinder {
+    private taglist: string[] = [
+        "typescript", "javascript", "python", "java", "csharp", "ruby", "php", "swift", "kotlin", "golang",
+        "rust", "scala", "haskell", "perl", "sql", "html", "css", "sass", "less", "json",
+        "xml", "yaml", "docker", "kubernetes", "aws", "azure", "gcp", "firebase", "react", "vue",
+        "angular", "svelte", "jquery", "nodejs", "express", "nestjs", "deno", "nextjs", "nuxtjs", "remix",
+        "webpack", "rollup", "vite", "babel", "eslint", "prettier", "jest", "mocha", "chai", "vitest",
+        "playwright", "puppeteer", "selenium", "cypress", "git", "github", "gitlab", "bitbucket", "ci/cd", "jenkins",
+        "travis", "circleci", "databases", "mongodb", "postgresql", "mysql", "sqlite", "redis", "cassandra", "oracle",
+        "machinelearning", "ai", "deeplearning", "nlp", "opencv", "tensorflow", "pytorch", "keras", "scikit-learn", "pandas",
+        "numpy", "matplotlib", "seaborn", "debugging", "logging", "profiling", "performance", "optimizations", "http", "api",
+        "rest", "graphql", "websocket", "oauth", "jwt", "jsonwebtokens", "auth0", "passportjs", "security", "encryption"
+    ];
+
+    async find(predicate: string): Promise<string[]> {
+        if ( predicate === "" ){
+            return []
+        }
+
+        return this.taglist
+            .filter(tag => tag.includes(predicate))
+            .sort((a, b) => {
+                const aStartsWith = a.startsWith(predicate) ? 0 : 1;
+                const bStartsWith = b.startsWith(predicate) ? 0 : 1;
+
+                if (aStartsWith !== bStartsWith) {
+                    return aStartsWith - bStartsWith; // 先頭一致優先
+                }
+
+                return a.localeCompare(b); // アルファベット順
+            });
     }
-
-    textBlocks(): TagSuggestionWindow.TextBlock[] {
-        return [
-            this.randomTextBlock(true),
-            this.randomTextBlock(false),
-        ]
-    }    
 }
-const elm = new TagSuggestionWindow.Element()
 
-let numDatas = 21
-let datas = Array(numDatas).fill( new DecoyItemData() )
-elm.updateItems(datas)
+let elm = new TagSuggestionWindow.Element(
+    new SimpleTagFinder()
+)
+let inputbox = h("input")
 
+inputbox.root.addEventListener("input",() => {
+    elm.update(inputbox.root.value)
+    elm.moveFocus("up")
+})
+
+document.body.appendChild(inputbox.root)
 document.body.appendChild(elm.root)
 
-setInterval(() => {
-    // elm.focusDown()
-    // elm.focusUp()
-},100)
