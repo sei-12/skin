@@ -1,4 +1,4 @@
-import { EmiterLisntener } from "./EmiterCore";
+import { CommandEmiterLisntener } from "./EmiterCore";
 
 const CommandIds = [
     "tagSuggestionWindow.focusDown",
@@ -9,5 +9,5 @@ const CommandIds = [
 export type CommandId = typeof CommandIds[number]
 
 export interface I_CommandEmmiter {
-    addWeakRefListener(listener: EmiterLisntener<CommandId>): void
+    addWeakRefListener(listener: CommandEmiterLisntener<CommandId>): void
 }

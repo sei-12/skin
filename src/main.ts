@@ -1,7 +1,6 @@
 import { h } from "./common/dom";
 import { TagSuggestionWindow } from "./Elements/TagSuggestionWindow/TagSuggestionWindow";
-import { CommandId, I_CommandEmmiter } from "./lib/CommandEmmiter";
-import { EmiterCore, EmiterLisntener } from "./lib/EmiterCore";
+import { CommandEmiterCore } from "./lib/EmiterCore";
 
 /**
  * TagFinderインターフェースを実装したクラス
@@ -40,17 +39,8 @@ class SimpleTagFinder implements TagSuggestionWindow.TagFinder {
     }
 }
 
-class SampleCommandEmiter implements I_CommandEmmiter {
-    addWeakRefListener(listener: EmiterLisntener<CommandId>): void {
-        this.core.addWeakRefLisntener(listener)
-    }
-    emit(commandId: CommandId){
-        this.core.emit(commandId)
-    }
-    private core = new EmiterCore<CommandId>()
-}
 
-const emiter = new SampleCommandEmiter()
+const emiter = new CommandEmiterCore()
 let elm = new TagSuggestionWindow.Element(
     new SimpleTagFinder(),
     emiter

@@ -1,8 +1,6 @@
 import { expect, it } from "vitest";
 import { TagSuggestionWindow } from "./TagSuggestionWindow";
-import { CommandId, I_CommandEmmiter } from "../../lib/CommandEmmiter";
-import { EmiterCore, EmiterLisntener } from "../../lib/EmiterCore";
-// import { TagSuggestionWindow } from "./TagSuggestionWindow";
+import { CommandEmiterCore } from "../../lib/EmiterCore";
 
 
 /**
@@ -42,18 +40,8 @@ class SampleTagFinder implements TagSuggestionWindow.TagFinder {
     }
 }
 
-class SampleCommandEmiter implements I_CommandEmmiter {
-    addWeakRefListener(listener: EmiterLisntener<CommandId>): void {
-        this.core.addWeakRefLisntener(listener)
-    }
-    emit(commandId: CommandId){
-        this.core.emit(commandId)
-    }
-    private core = new EmiterCore<CommandId>()
-}
-
 it("TagSuggestionWindow",async () => {
-    const emiter = new SampleCommandEmiter()
+    const emiter = new CommandEmiterCore()
     {
         const elm = new TagSuggestionWindow.Element(
             new SampleTagFinder(),

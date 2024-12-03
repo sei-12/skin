@@ -1,7 +1,9 @@
-export class EmiterCore <T> {
-    private handlers = new Map<T, WeakRef<() => void>[]>()
+import { CommandId, I_CommandEmmiter } from "./CommandEmmiter"
 
-    emit(type: T){
+export class CommandEmiterCore implements I_CommandEmmiter{
+    private handlers = new Map<CommandId, WeakRef<() => void>[]>()
+
+    emit(type: CommandId){
         let handlers = this.handlers.get(type)
 
         if ( handlers === undefined ){
@@ -23,7 +25,7 @@ export class EmiterCore <T> {
         this.handlers.set(type,newHanders)
     }
 
-    private addHandler(type: T, handler: () => void){
+    private addHandler(type: CommandId, handler: () => void){
         if ( !this.handlers.has(type) ){
             this.handlers.set(type,[])
         }
@@ -33,7 +35,7 @@ export class EmiterCore <T> {
     }
     
 
-    addWeakRefLisntener(listener: EmiterLisntener<T>){
+    addWeakRefListener(listener: CommandEmiterLisntener<CommandId>){
         listener.handlers.forEach( (e) => {
             const [type,h] = e
             this.addHandler(type,h)
@@ -45,12 +47,12 @@ export class EmiterCore <T> {
  * リスナーの寿命がハンドラの寿命
  * リスナーの参照を保持しないとリスナーがGCされてハンドラもGCされることに注意
  */
-export class EmiterLisntener<T> {
+export class CommandEmiterLisntener<CommandId> {
     readonly instanceId = crypto.randomUUID()
-    readonly handlers: [T,() => void][]
+    readonly handlers: [CommandId,() => void][]
 
     constructor(
-        ...handlers: [T,() => void][]
+        ...handlers: [CommandId,() => void][]
     ){
         this.handlers = handlers
     }

@@ -2,7 +2,7 @@ import { Assert } from "../../common/Assert"
 import { h } from "../../common/dom"
 import { scroll_to_focus_elm } from "../../common/scroll"
 import { CommandId, I_CommandEmmiter } from "../../lib/CommandEmmiter"
-import { EmiterLisntener } from "../../lib/EmiterCore"
+import { CommandEmiterLisntener } from "../../lib/EmiterCore"
 import styles from "./style.module.css"
 
 
@@ -217,7 +217,7 @@ export namespace TagSuggestionWindow {
             this.elm.root.style.display = "block"
         }
         
-        private listener: EmiterLisntener<CommandId>
+        private listener: CommandEmiterLisntener<CommandId>
 
         //
         // public
@@ -228,7 +228,7 @@ export namespace TagSuggestionWindow {
             settings?: TagSuggestionWindow.Setting
         ){
             
-            this.listener = new EmiterLisntener(
+            this.listener = new CommandEmiterLisntener(
                 ["tagSuggestionWindow.focusDown",() => { this.moveFocus("down") }],
                 ["tagSuggestionWindow.focusUp",() => { this.moveFocus("up") }],
             )
