@@ -1,6 +1,8 @@
 import { Assert } from "../../common/Assert"
 import { h } from "../../common/dom"
 import { scroll_to_focus_elm } from "../../common/scroll"
+import { CommandId, I_CommandEmmiter } from "../../lib/CommandEmmiter"
+import { EmiterLisntener } from "../../lib/EmiterCore"
 import styles from "./style.module.css"
 
 
@@ -215,14 +217,24 @@ export namespace TagSuggestionWindow {
             this.elm.root.style.display = "block"
         }
         
+        private listener: EmiterLisntener<CommandId>
+
         //
         // public
         //
-        
         constructor(
             tagFinder: TagFinder,
+            commandEmmiter: I_CommandEmmiter,
             settings?: TagSuggestionWindow.Setting
         ){
+            
+            this.listener = new EmiterLisntener(
+                ["tagSuggestionWindow.focusDown",() => { this.moveFocus("down") }],
+                ["tagSuggestionWindow.focusUp",() => { this.moveFocus("up") }],
+            )
+
+            commandEmmiter.addWeakRefListener(this.listener)
+
             this.tagFinderWraper = new TagFinderWraper(tagFinder)
 
             if ( settings ){
@@ -248,7 +260,7 @@ export namespace TagSuggestionWindow {
             this.updateItems(itemDatas)
         }
 
-        moveFocus(to: "up" | "down"){
+        private moveFocus(to: "up" | "down"){
             if ( this.focusIndex.get() === null ){
                 return
             }

@@ -1,5 +1,7 @@
 import { h } from "./common/dom";
 import { TagSuggestionWindow } from "./Elements/TagSuggestionWindow/TagSuggestionWindow";
+import { CommandId, I_CommandEmmiter } from "./lib/CommandEmmiter";
+import { EmiterCore, EmiterLisntener } from "./lib/EmiterCore";
 
 /**
  * TagFinderインターフェースを実装したクラス
@@ -38,14 +40,40 @@ class SimpleTagFinder implements TagSuggestionWindow.TagFinder {
     }
 }
 
+class SampleCommandEmiter implements I_CommandEmmiter {
+    addWeakRefListener(listener: EmiterLisntener<CommandId>): void {
+        this.core.addWeakRefLisntener(listener)
+    }
+    emit(commandId: CommandId){
+        this.core.emit(commandId)
+    }
+    private core = new EmiterCore<CommandId>()
+}
+
+const emiter = new SampleCommandEmiter()
 let elm = new TagSuggestionWindow.Element(
-    new SimpleTagFinder()
+    new SimpleTagFinder(),
+    emiter
 )
 let inputbox = h("input")
 
+window.addEventListener("keydown",(e) => {
+    if ( e.ctrlKey === false ){
+        return
+    }    
+    
+    if ( e.key === "n" ){
+        console.log("hello")
+        emiter.emit("tagSuggestionWindow.focusDown")
+    }
+    if ( e.key === "p" ){
+        console.log("hello")
+        emiter.emit("tagSuggestionWindow.focusUp")
+    }
+})
+
 inputbox.root.addEventListener("input",() => {
     elm.update(inputbox.root.value)
-    elm.moveFocus("up")
 })
 
 document.body.appendChild(inputbox.root)

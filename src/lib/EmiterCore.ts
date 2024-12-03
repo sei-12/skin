@@ -23,12 +23,35 @@ export class EmiterCore <T> {
         this.handlers.set(type,newHanders)
     }
 
-    addListener(type: T, handler: () => void){
+    private addHandler(type: T, handler: () => void){
         if ( !this.handlers.has(type) ){
             this.handlers.set(type,[])
         }
 
         const weakRefHander = new WeakRef(handler)
         this.handlers.get(type)!.push(weakRefHander)
+    }
+    
+
+    addWeakRefLisntener(listener: EmiterLisntener<T>){
+        listener.handlers.forEach( (e) => {
+            const [type,h] = e
+            this.addHandler(type,h)
+        })
+    }
+}
+
+/**
+ * リスナーの寿命がハンドラの寿命
+ * リスナーの参照を保持しないとリスナーがGCされてハンドラもGCされることに注意
+ */
+export class EmiterLisntener<T> {
+    readonly instanceId = crypto.randomUUID()
+    readonly handlers: [T,() => void][]
+
+    constructor(
+        ...handlers: [T,() => void][]
+    ){
+        this.handlers = handlers
     }
 }

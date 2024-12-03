@@ -1,5 +1,7 @@
 import { expect, it } from "vitest";
 import { TagSuggestionWindow } from "./TagSuggestionWindow";
+import { CommandId, I_CommandEmmiter } from "../../lib/CommandEmmiter";
+import { EmiterCore, EmiterLisntener } from "../../lib/EmiterCore";
 // import { TagSuggestionWindow } from "./TagSuggestionWindow";
 
 
@@ -40,25 +42,38 @@ class SampleTagFinder implements TagSuggestionWindow.TagFinder {
     }
 }
 
+class SampleCommandEmiter implements I_CommandEmmiter {
+    addWeakRefListener(listener: EmiterLisntener<CommandId>): void {
+        this.core.addWeakRefLisntener(listener)
+    }
+    emit(commandId: CommandId){
+        this.core.emit(commandId)
+    }
+    private core = new EmiterCore<CommandId>()
+}
+
 it("TagSuggestionWindow",async () => {
+    const emiter = new SampleCommandEmiter()
     {
         const elm = new TagSuggestionWindow.Element(
-            new SampleTagFinder()
+            new SampleTagFinder(),
+            emiter
         )
         
         await elm.update("a")
         expect(elm.getFocused()).toBe("ai")
-        elm.moveFocus("down")
+        emiter.emit("tagSuggestionWindow.focusDown")
         expect(elm.getFocused()).toBe("angulr")
-        elm.moveFocus("down")
+        emiter.emit("tagSuggestionWindow.focusDown")
         expect(elm.getFocused()).toBe("api")
-        elm.moveFocus("down")
+        emiter.emit("tagSuggestionWindow.focusDown")
         expect(elm.getFocused()).toBe("auth0")
     }
 
     {
         const elm = new TagSuggestionWindow.Element(
-            new SampleTagFinder()
+            new SampleTagFinder(),
+            emiter
         )
         
         expect(elm.getFocused()).toBe(null)
@@ -71,7 +86,7 @@ it("TagSuggestionWindow",async () => {
         await elm.update("hellloooooo")
         expect(elm.getFocused()).toBe(null)
         await elm.update("a")
-        elm.moveFocus("up")
+        emiter.emit("tagSuggestionWindow.focusUp")
         expect(elm.getFocused()).toBe("yaml")
     }
     
@@ -82,7 +97,8 @@ it("TagSuggestionWindow",async () => {
         }
 
         const elm = new TagSuggestionWindow.Element(
-            new SampleTagFinder()
+            new SampleTagFinder(),
+            emiter
         )
         
         await snapshottest("hello")
@@ -95,13 +111,14 @@ it("TagSuggestionWindow",async () => {
         async function snapshottest(predicate: string, n: number){
             await elm.update(predicate)
             Array(n).fill(0).forEach(_ => {
-                elm.moveFocus("up")
+                emiter.emit("tagSuggestionWindow.focusUp")
             })
             expect(elm.getFocused()).toMatchSnapshot()
         }
 
         const elm = new TagSuggestionWindow.Element(
-            new SampleTagFinder()
+            new SampleTagFinder(),
+            emiter
         )
         
         await snapshottest("hello",100)
@@ -114,13 +131,14 @@ it("TagSuggestionWindow",async () => {
         async function snapshottest(predicate: string, n: number){
             await elm.update(predicate)
             Array(n).fill(0).forEach(_ => {
-                elm.moveFocus("down")
+                emiter.emit("tagSuggestionWindow.focusDown")
             })
             expect(elm.getFocused()).toMatchSnapshot()
         }
 
         const elm = new TagSuggestionWindow.Element(
-            new SampleTagFinder()
+            new SampleTagFinder(),
+            emiter
         )
         
         await snapshottest("hello",100)
