@@ -1,8 +1,8 @@
 import { Assert } from "../../common/Assert"
 import { h } from "../../common/dom"
 import { scroll_to_focus_elm } from "../../common/scroll"
-import { CommandId, I_CommandEmmiter } from "../../lib/CommandEmmiter"
-import { CommandEmiterLisntener } from "../../lib/EmiterCore"
+import {  I_CommandEmmiter } from "../../lib/CommandEmmiter"
+import { CommandEmiterListener } from "../../lib/EmiterCore"
 import styles from "./style.module.css"
 
 
@@ -182,6 +182,10 @@ export namespace TagSuggestionWindow {
         }
         private focusHtml(){
             this.items[this.focusIndex.getOrThrow()].elm.root.style.backgroundColor = this.settings.focusBackgroundColor
+            scroll_to_focus_elm(
+                this.items[this.focusIndex.getOrThrow()].elm.root,
+                this.elm.root
+            )
         }
         private updateItems(itemDatas: ItemData[]){
             this.items = itemDatas.map( data => {
@@ -217,7 +221,7 @@ export namespace TagSuggestionWindow {
             this.elm.root.style.display = "block"
         }
         
-        private listener: CommandEmiterLisntener<CommandId>
+        private listener: CommandEmiterListener
 
         //
         // public
@@ -228,7 +232,7 @@ export namespace TagSuggestionWindow {
             settings?: TagSuggestionWindow.Setting
         ){
             
-            this.listener = new CommandEmiterLisntener(
+            this.listener = new CommandEmiterListener(
                 ["tagSuggestionWindow.focusDown",() => { this.moveFocus("down") }],
                 ["tagSuggestionWindow.focusUp",() => { this.moveFocus("up") }],
             )
@@ -268,10 +272,11 @@ export namespace TagSuggestionWindow {
             this.clearFocusFromHtml()
             this.focusIndex.moveFocus(to)
             this.focusHtml()
-            scroll_to_focus_elm(
-                this.items[this.focusIndex.getOrThrow()].elm.root,
-                this.elm.root
-            )
+        }
+
+        setWindowPos(topPx:number, leftPx: number){
+            this.elm.root.style.left = leftPx + "px"
+            this.elm.root.style.top  = topPx + "px"
         }
 
         getFocused(): string | null{
