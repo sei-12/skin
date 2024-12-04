@@ -35,7 +35,7 @@ export class CommandEmiterCore implements I_CommandEmmiter{
     }
     
 
-    addWeakRefListener(listener: CommandEmiterLisntener<CommandId>){
+    addWeakRefListener(listener: CommandEmiterListener){
         listener.handlers.forEach( (e) => {
             const [type,h] = e
             this.addHandler(type,h)
@@ -47,7 +47,7 @@ export class CommandEmiterCore implements I_CommandEmmiter{
  * リスナーの寿命がハンドラの寿命
  * リスナーの参照を保持しないとリスナーがGCされてハンドラもGCされることに注意
  */
-export class CommandEmiterLisntener<CommandId> {
+export class CommandEmiterListener {
     readonly instanceId = crypto.randomUUID()
     readonly handlers: [CommandId,() => void][]
 

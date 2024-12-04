@@ -1,4 +1,4 @@
-import { h } from "./common/dom";
+import { BkmkPredicateInputBox } from "./Elements/BkmkPredicateInputBox/BkmkPredicateInputBox";
 import { TagSuggestionWindow } from "./Elements/TagSuggestionWindow/TagSuggestionWindow";
 import { CommandEmiterCore } from "./lib/EmiterCore";
 
@@ -16,7 +16,7 @@ class SimpleTagFinder implements TagSuggestionWindow.TagFinder {
         "travis", "circleci", "databases", "mongodb", "postgresql", "mysql", "sqlite", "redis", "cassandra", "oracle",
         "machinelearning", "ai", "deeplearning", "nlp", "opencv", "tensorflow", "pytorch", "keras", "scikit-learn", "pandas",
         "numpy", "matplotlib", "seaborn", "debugging", "logging", "profiling", "performance", "optimizations", "http", "api",
-        "rest", "graphql", "websocket", "oauth", "jwt", "jsonwebtokens", "auth0", "passportjs", "security", "encryption"
+        "rest", "graphql", "websocket", "oauth", "jwt", "jsonwebtokens", "auth0", "passportjs", "security", "encryption","hello","main"
     ];
 
     async find(predicate: string): Promise<string[]> {
@@ -41,13 +41,26 @@ class SimpleTagFinder implements TagSuggestionWindow.TagFinder {
 
 
 const emiter = new CommandEmiterCore()
-let elm = new TagSuggestionWindow.Element(
+
+const bkmkPredicateInputBox = new BkmkPredicateInputBox(
     new SimpleTagFinder(),
     emiter
 )
-let inputbox = h("input")
+
+bkmkPredicateInputBox.setHandleOnChange(() => {
+    console.log(bkmkPredicateInputBox.getPredicate().tags())
+})
+
+document.body.appendChild(bkmkPredicateInputBox.root)
+
+window.addEventListener("keyup",(e) => {
+    if ( e.key === "/" ){
+        emiter.emit("focusBkmkPredicateInputbox")
+    }
+})
 
 window.addEventListener("keydown",(e) => {
+
     if ( e.ctrlKey === false ){
         return
     }    
@@ -60,12 +73,7 @@ window.addEventListener("keydown",(e) => {
         console.log("hello")
         emiter.emit("tagSuggestionWindow.focusUp")
     }
+    if ( e.key === "Enter"){
+        emiter.emit("tagSuggestionWindow.Done")
+    }
 })
-
-inputbox.root.addEventListener("input",() => {
-    elm.update(inputbox.root.value)
-})
-
-document.body.appendChild(inputbox.root)
-document.body.appendChild(elm.root)
-
