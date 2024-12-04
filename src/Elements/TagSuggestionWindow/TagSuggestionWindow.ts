@@ -6,16 +6,16 @@ import { CommandEmiterListener } from "../../lib/EmiterCore"
 import styles from "./style.module.css"
 
 
-/**
- * static関数にするべきかもしれないが
- * namespaceの外から参照して欲しくないから
- * functionで書く
- */
-function joinTextBlocks(blocks: TextBlock[]){
-    let text = ""
-    blocks.forEach( b => { text += b.text })
-    return text
-}
+// /**
+//  * static関数にするべきかもしれないが
+//  * namespaceの外から参照して欲しくないから
+//  * functionで書く
+//  */
+// function joinTextBlocks(blocks: TextBlock[]){
+//     let text = ""
+//     blocks.forEach( b => { text += b.text })
+//     return text
+// }
 
 function generateTextBlockElm(text: TextBlock, settings: TagSuggestionWindow.Setting){
     const elm = h("span")
@@ -105,6 +105,10 @@ class ItemData {
         private predicate: string, 
         private tagText: string
     ){ }
+
+    getText(){
+        return this.tagText
+    }
 
     textBlocks(): TextBlock[] {
         let splited = this.tagText.split(this.predicate)
@@ -290,7 +294,7 @@ export namespace TagSuggestionWindow {
             if ( index === null ){
                 return null
             }
-            return joinTextBlocks(this.items[index].data.textBlocks())
+            return this.items[index].data.getText()
         }
     }
 }
