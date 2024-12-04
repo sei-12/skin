@@ -16,7 +16,8 @@
       {
         "title": "skin",
         "decorations": false,
-        "transparent": true
+        "transparent": true,
+        "shadow": false
       }
     ],
     "security": {
