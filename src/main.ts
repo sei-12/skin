@@ -1,3 +1,4 @@
+import { Assert } from "./common/Assert";
 import { BkmkPredicateInputBox } from "./Elements/BkmkPredicateInputBox/BkmkPredicateInputBox";
 import { TagSuggestionWindow } from "./Elements/TagSuggestionWindow/TagSuggestionWindow";
 import { CommandEmiterCore } from "./lib/EmiterCore";
@@ -41,6 +42,9 @@ class SimpleTagFinder implements TagSuggestionWindow.TagFinder {
 
 
 const emiter = new CommandEmiterCore()
+const container = document.getElementById("container")
+
+Assert.isNotNull(container)
 
 const bkmkPredicateInputBox = new BkmkPredicateInputBox(
     new SimpleTagFinder(),
@@ -51,7 +55,7 @@ bkmkPredicateInputBox.setHandleOnChange(() => {
     console.log(bkmkPredicateInputBox.getPredicate().tags())
 })
 
-document.body.appendChild(bkmkPredicateInputBox.root)
+container.appendChild(bkmkPredicateInputBox.root)
 
 window.addEventListener("keyup",(e) => {
     if ( e.key === "/" ){

@@ -114,3 +114,33 @@ button {
     background-color: #0f0f0f69;
   }
 }
+
+:root {
+  background-color: rgba(0, 0, 0, 0);
+  border: none;
+}
+body {
+  overflow: hidden;
+}
+
+#container {
+  border-radius: 10px;
+  position: absolute;
+  padding: 10px;
+  box-sizing: border-box;
+  overflow: hidden;
+  top: 0;
+  left: 0;
+  
+  margin: 20px;
+  width: calc(100vw - 40px);
+  height: calc(100vh - 40px);
+
+  box-shadow: 1px 1px 10px 1px rgba(0, 0, 0, 0.5);
+  background-color: rgb(30, 30, 32);
+
+  /* なんかバグるので一旦なし */
+  /* background-color: rgba(10, 10, 10, 0.5);
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px); */
+}

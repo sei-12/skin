@@ -11,11 +11,12 @@
   },
   "app": {
     "withGlobalTauri": true,
+    "macOSPrivateApi": true,
     "windows": [
       {
         "title": "skin",
-        "width": 800,
-        "height": 600
+        "decorations": false,
+        "transparent": true
       }
     ],
     "security": {
