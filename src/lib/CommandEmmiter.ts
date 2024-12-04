@@ -1,22 +1,14 @@
+import { CommandEmiterListener as CommandEmiterListener } from "./EmiterCore";
 
 const CommandIds = [
     "tagSuggestionWindow.focusDown",
     "tagSuggestionWindow.focusUp",
     "tagSuggestionWindow.Done",
+    "focusBkmkPredicateInputbox"
 ] as const;
 
 export type CommandId = typeof CommandIds[number]
 
 export interface I_CommandEmmiter {
-    addListener(commandId: CommandId, handlerId: string, handler: () => void): void
-    removeListener(handlerId: string): void
+    addWeakRefListener(listener: CommandEmiterListener): void
 }
-
-// export class CommandEmmiter implements I_CommandEmmiter {
-//     addListener(commandId: CommandId, handlerId: string, handler: () => void){
-
-//     }    
-//     removeListener(handlerId: string){
-        
-//     }
-// }

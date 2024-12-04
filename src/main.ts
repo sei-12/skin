@@ -1,5 +1,6 @@
-import { h } from "./common/dom";
+import { BkmkPredicateInputBox } from "./Elements/BkmkPredicateInputBox/BkmkPredicateInputBox";
 import { TagSuggestionWindow } from "./Elements/TagSuggestionWindow/TagSuggestionWindow";
+import { CommandEmiterCore } from "./lib/EmiterCore";
 
 /**
  * TagFinderインターフェースを実装したクラス
@@ -15,7 +16,7 @@ class SimpleTagFinder implements TagSuggestionWindow.TagFinder {
         "travis", "circleci", "databases", "mongodb", "postgresql", "mysql", "sqlite", "redis", "cassandra", "oracle",
         "machinelearning", "ai", "deeplearning", "nlp", "opencv", "tensorflow", "pytorch", "keras", "scikit-learn", "pandas",
         "numpy", "matplotlib", "seaborn", "debugging", "logging", "profiling", "performance", "optimizations", "http", "api",
-        "rest", "graphql", "websocket", "oauth", "jwt", "jsonwebtokens", "auth0", "passportjs", "security", "encryption"
+        "rest", "graphql", "websocket", "oauth", "jwt", "jsonwebtokens", "auth0", "passportjs", "security", "encryption","hello","main"
     ];
 
     async find(predicate: string): Promise<string[]> {
@@ -38,16 +39,41 @@ class SimpleTagFinder implements TagSuggestionWindow.TagFinder {
     }
 }
 
-let elm = new TagSuggestionWindow.Element(
-    new SimpleTagFinder()
-)
-let inputbox = h("input")
 
-inputbox.root.addEventListener("input",() => {
-    elm.update(inputbox.root.value)
-    elm.moveFocus("up")
+const emiter = new CommandEmiterCore()
+
+const bkmkPredicateInputBox = new BkmkPredicateInputBox(
+    new SimpleTagFinder(),
+    emiter
+)
+
+bkmkPredicateInputBox.setHandleOnChange(() => {
+    console.log(bkmkPredicateInputBox.getPredicate().tags())
 })
 
-document.body.appendChild(inputbox.root)
-document.body.appendChild(elm.root)
+document.body.appendChild(bkmkPredicateInputBox.root)
 
+window.addEventListener("keyup",(e) => {
+    if ( e.key === "/" ){
+        emiter.emit("focusBkmkPredicateInputbox")
+    }
+})
+
+window.addEventListener("keydown",(e) => {
+
+    if ( e.ctrlKey === false ){
+        return
+    }    
+    
+    if ( e.key === "n" ){
+        console.log("hello")
+        emiter.emit("tagSuggestionWindow.focusDown")
+    }
+    if ( e.key === "p" ){
+        console.log("hello")
+        emiter.emit("tagSuggestionWindow.focusUp")
+    }
+    if ( e.key === "Enter"){
+        emiter.emit("tagSuggestionWindow.Done")
+    }
+})
