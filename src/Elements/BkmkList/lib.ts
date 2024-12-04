@@ -90,9 +90,6 @@ export namespace BkmkList {
             let prevFocusedItem = this.focus.getFocusedItem()
             if ( prevFocusedItem === null ){ return }
             prevFocusedItem.elm.root.classList.remove(style.focus)
-
-            console.log("aaao")
-
             if ( to === "down" ){
                 this.focus.focusDown()
             }else{
