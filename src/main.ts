@@ -4,6 +4,8 @@ import { BkmkPredicateInputBox } from "./Elements/BkmkPredicateInputBox/BkmkPred
 import { TagSuggestionWindow } from "./Elements/TagSuggestionWindow/TagSuggestionWindow";
 import { CommandEmiterCore } from "./lib/EmiterCore";
 
+import { confirm } from '@tauri-apps/plugin-dialog';
+
 /**
  * TagFinderインターフェースを実装したクラス
  */
@@ -164,5 +166,23 @@ window.addEventListener("keydown", (e) => {
     }
     if (e.key === "Enter") {
         emiter.emit("tagSuggestionWindow.Done")
+    }
+})
+
+
+async function main() {
+
+}
+
+
+main().catch( async err => {
+    console.error(err)
+    
+    let res = await confirm("予期しないエラーが発生しました。ウィンドウを再読み込みしますか？",{
+        kind: "error"
+    })
+    
+    if ( res ){
+        window.location.reload()
     }
 })
