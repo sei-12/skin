@@ -51,7 +51,7 @@ it("TagSuggestionWindow",async () => {
         await elm.update("a")
         expect(elm.getFocused()).toBe("ai")
         emiter.emit("tagSuggestionWindow.focusDown")
-        expect(elm.getFocused()).toBe("angulr")
+        expect(elm.getFocused()).toBe("angular")
         emiter.emit("tagSuggestionWindow.focusDown")
         expect(elm.getFocused()).toBe("api")
         emiter.emit("tagSuggestionWindow.focusDown")

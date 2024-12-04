@@ -110,8 +110,14 @@ class ItemData {
         let splited = this.tagText.split(this.predicate)
         if ( splited.length === 1 ){
             splited.unshift(this.predicate)
+        }else if ( splited.length > 1 ){
+            let newSplited = []
+            newSplited.push(splited.shift()!)
+            newSplited.push(this.predicate)
+            newSplited.push(splited.join(this.predicate))
+            splited = newSplited
         }else{
-            splited.splice(1,0,this.predicate)
+            throw new Error("?")
         }
         return splited.map( text => new TextBlock(text, text === this.predicate))
     }
