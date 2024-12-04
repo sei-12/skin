@@ -28,6 +28,7 @@
 
 .textbox.exists {
     color: lightgreen;
+    text-shadow: rgba(144, 238, 144, 0.5) 0px 0 5px;
 }
 .textbox.notexists {
     color: rgb(255, 255, 122);

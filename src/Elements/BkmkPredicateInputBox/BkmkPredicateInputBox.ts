@@ -12,7 +12,8 @@ export class BkmkPredicate {
         
     }
     tags(): Set<string> {
-        return this.inputedTags
+        // 参照を渡すな
+        return new Set(this.inputedTags)
     }
 }
 
@@ -22,7 +23,8 @@ class TagFinderFiltDuplicate implements TagSuggestionWindow.TagFinder {
 
     async find(predicate: string): Promise<string[]> {
         let result = await  this.core.find(predicate)
-        return result.filter( tag => !this.inputed.has(tag) )
+        let filted = result.filter( tag => !this.inputed.has(tag) )
+        return filted
     }
 
     addInputedTag(tag: string){
@@ -51,7 +53,7 @@ export class BkmkPredicateInputBox {
         let tagElm = new TagElement(tag, true)
 
         if (this.inputedTagSet.has(tag)) {
-            throw new Error("duplicate tag")
+            throw new Error(`duplicate tag: \"${tag}\".`)
         }
 
         this.inputedTagSet.add(tag)
@@ -116,7 +118,6 @@ export class BkmkPredicateInputBox {
         this.elm.inputbox.addEventListener("keydown", (e) => {
             if (e.key === "Enter") {
                 let tag = this.tagSuggestionWindow.getFocused()
-                // console.log(tag)
                 if (tag === null) { return }
                 this.addExistsTag(tag)
 

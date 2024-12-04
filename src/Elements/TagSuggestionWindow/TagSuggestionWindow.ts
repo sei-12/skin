@@ -6,16 +6,16 @@ import { CommandEmiterListener } from "../../lib/EmiterCore"
 import styles from "./style.module.css"
 
 
-/**
- * static関数にするべきかもしれないが
- * namespaceの外から参照して欲しくないから
- * functionで書く
- */
-function joinTextBlocks(blocks: TextBlock[]){
-    let text = ""
-    blocks.forEach( b => { text += b.text })
-    return text
-}
+// /**
+//  * static関数にするべきかもしれないが
+//  * namespaceの外から参照して欲しくないから
+//  * functionで書く
+//  */
+// function joinTextBlocks(blocks: TextBlock[]){
+//     let text = ""
+//     blocks.forEach( b => { text += b.text })
+//     return text
+// }
 
 function generateTextBlockElm(text: TextBlock, settings: TagSuggestionWindow.Setting){
     const elm = h("span")
@@ -106,12 +106,22 @@ class ItemData {
         private tagText: string
     ){ }
 
+    getText(){
+        return this.tagText
+    }
+
     textBlocks(): TextBlock[] {
         let splited = this.tagText.split(this.predicate)
         if ( splited.length === 1 ){
             splited.unshift(this.predicate)
+        }else if ( splited.length > 1 ){
+            let newSplited = []
+            newSplited.push(splited.shift()!)
+            newSplited.push(this.predicate)
+            newSplited.push(splited.join(this.predicate))
+            splited = newSplited
         }else{
-            splited.splice(1,0,this.predicate)
+            throw new Error("?")
         }
         return splited.map( text => new TextBlock(text, text === this.predicate))
     }
@@ -284,7 +294,7 @@ export namespace TagSuggestionWindow {
             if ( index === null ){
                 return null
             }
-            return joinTextBlocks(this.items[index].data.textBlocks())
+            return this.items[index].data.getText()
         }
     }
 }

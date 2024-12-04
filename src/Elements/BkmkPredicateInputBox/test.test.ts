@@ -64,12 +64,18 @@ it("BkmkPredicateInputBox",async () => {
         ;(elm as any).elm.inputbox.dispatchEvent(new Event("input"))
         await lag(10)
         ;(elm as any).elm.inputbox.dispatchEvent(new KeyboardEvent("keydown",{ key: "Enter"} ))
-        expect(Array.from(elm.getPredicate().tags())).toEqual(["ai","angulr"])
+        expect(Array.from(elm.getPredicate().tags())).toEqual(["ai","angular"])
+
+        ;(elm as any).elm.inputbox.value = "a"
+        ;(elm as any).elm.inputbox.dispatchEvent(new Event("input"))
+        await lag(10)
+        ;(elm as any).elm.inputbox.dispatchEvent(new KeyboardEvent("keydown",{ key: "Enter"} ))
+        expect(Array.from(elm.getPredicate().tags())).toEqual(["ai","angular","api"])
         
 
         ;(elm as any).elm.inputbox.dispatchEvent(new Event("input"))
         await lag(10)
         ;(elm as any).elm.inputbox.dispatchEvent(new KeyboardEvent("keydown",{ key: "Enter"} ))
-        expect(Array.from(elm.getPredicate().tags())).toEqual(["ai","angulr"])
+        expect(Array.from(elm.getPredicate().tags())).toEqual(["ai","angular","api"])
     }
 })
