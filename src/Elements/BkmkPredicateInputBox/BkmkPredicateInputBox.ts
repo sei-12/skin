@@ -15,6 +15,13 @@ export class BkmkPredicate {
         // 参照を渡すな
         return new Set(this.inputedTags)
     }
+
+    /**
+     * 何も絞り込まない状態
+     */
+    isEmpty(){
+        return this.inputedTags.size === 0
+    }
 }
 
 class TagFinderFiltDuplicate implements TagSuggestionWindow.TagFinder {
