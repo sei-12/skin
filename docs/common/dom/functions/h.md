@@ -39,7 +39,7 @@ const editor = createEditor(elements.editor);
 
 ### Defined in
 
-[common/dom.ts:72](https://github.com/sei-12/skin/blob/71b214be76b363d9a6ca32cbed9404c037be92a0/src/common/dom.ts#L72)
+[src/common/dom.ts:72](https://github.com/sei-12/skin/blob/81c96f7bf20bc69580a253172a69c2bb254ec862/src/common/dom.ts#L72)
 
 ## Call Signature
 
@@ -80,7 +80,7 @@ const editor = createEditor(elements.editor);
 
 ### Defined in
 
-[common/dom.ts:76](https://github.com/sei-12/skin/blob/71b214be76b363d9a6ca32cbed9404c037be92a0/src/common/dom.ts#L76)
+[src/common/dom.ts:76](https://github.com/sei-12/skin/blob/81c96f7bf20bc69580a253172a69c2bb254ec862/src/common/dom.ts#L76)
 
 ## Call Signature
 
@@ -119,7 +119,7 @@ const editor = createEditor(elements.editor);
 
 ### Defined in
 
-[common/dom.ts:80](https://github.com/sei-12/skin/blob/71b214be76b363d9a6ca32cbed9404c037be92a0/src/common/dom.ts#L80)
+[src/common/dom.ts:80](https://github.com/sei-12/skin/blob/81c96f7bf20bc69580a253172a69c2bb254ec862/src/common/dom.ts#L80)
 
 ## Call Signature
 
@@ -164,4 +164,4 @@ const editor = createEditor(elements.editor);
 
 ### Defined in
 
-[common/dom.ts:84](https://github.com/sei-12/skin/blob/71b214be76b363d9a6ca32cbed9404c037be92a0/src/common/dom.ts#L84)
+[src/common/dom.ts:84](https://github.com/sei-12/skin/blob/81c96f7bf20bc69580a253172a69c2bb254ec862/src/common/dom.ts#L84)

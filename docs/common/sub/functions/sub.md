@@ -32,4 +32,4 @@ console.log(sub(1,2)) // 3
 
 ## Defined in
 
-[common/sub.ts:11](https://github.com/sei-12/skin/blob/71b214be76b363d9a6ca32cbed9404c037be92a0/src/common/sub.ts#L11)
+[src/common/sub.ts:11](https://github.com/sei-12/skin/blob/81c96f7bf20bc69580a253172a69c2bb254ec862/src/common/sub.ts#L11)

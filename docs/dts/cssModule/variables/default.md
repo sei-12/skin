@@ -14,4 +14,4 @@
 
 ## Defined in
 
-[dts/cssModule.d.ts:2](https://github.com/sei-12/skin/blob/71b214be76b363d9a6ca32cbed9404c037be92a0/src/dts/cssModule.d.ts#L2)
+[src/dts/cssModule.d.ts:2](https://github.com/sei-12/skin/blob/81c96f7bf20bc69580a253172a69c2bb254ec862/src/dts/cssModule.d.ts#L2)

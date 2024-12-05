@@ -8,11 +8,6 @@
 
 ## Index
 
-### Classes
+### Namespaces
 
-- [TagSuggestionWindow](classes/TagSuggestionWindow.md)
-
-### Interfaces
-
-- [TagSuggestionWindowItemData](interfaces/TagSuggestionWindowItemData.md)
-- [TagSuggestionWindowSettings](interfaces/TagSuggestionWindowSettings.md)
+- [TagSuggestionWindow](namespaces/TagSuggestionWindow/README.md)
