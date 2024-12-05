@@ -1,7 +1,7 @@
 import { BkmkList } from "./Elements/BkmkList/lib";
 import { BkmkPredicate } from "./Elements/BkmkPredicateInputBox/BkmkPredicateInputBox";
 import { BkmkFinder, ScreenRootElement } from "./Elements/ScreenRoot/lib";
-import { TagSuggestionWindow } from "./Elements/TagSuggestionWindow/TagSuggestionWindow";
+import { DbConnection } from "./lib/DataBase";
 import { CommandEmiterCore } from "./lib/EmiterCore";
 
 import { confirm } from '@tauri-apps/plugin-dialog';
@@ -9,7 +9,7 @@ import { confirm } from '@tauri-apps/plugin-dialog';
 
 const TAG_LIST = [
     "typescript", "javascript", "python", "java", "csharp", "ruby", "php", "swift", "kotlin", "golang",
-    "rust", "scala", "haskell", "perl", "sql", "html", "css", "sass", "less", "json",
+    "rust", "scala", "haskell", "perl", "sql", "html", "css", "sass", "less", "json","gist","clang","cpp",
     "xml", "yaml", "docker", "kubernetes", "aws", "azure", "gcp", "firebase", "react", "vue",
     "angular", "svelte", "jquery", "nodejs", "express", "nestjs", "deno", "nextjs", "nuxtjs", "remix",
     "webpack", "rollup", "vite", "babel", "eslint", "prettier", "jest", "mocha", "chai", "vitest",
@@ -19,30 +19,6 @@ const TAG_LIST = [
     "numpy", "matplotlib", "seaborn", "debugging", "logging", "profiling", "performance", "optimizations", "http", "api",
     "rest", "graphql", "websocket", "oauth", "jwt", "jsonwebtokens", "auth0", "passportjs", "security", "encryption", "hello", "main"
 ] as const;
-
-/**
- * TagFinderインターフェースを実装したクラス
- */
-class SampleTagFinder implements TagSuggestionWindow.TagFinder {
-    async find(predicate: string): Promise<string[]> {
-        if (predicate === "") {
-            return []
-        }
-
-        return TAG_LIST
-            .filter(tag => tag.includes(predicate))
-            .sort((a, b) => {
-                const aStartsWith = a.startsWith(predicate) ? 0 : 1;
-                const bStartsWith = b.startsWith(predicate) ? 0 : 1;
-
-                if (aStartsWith !== bStartsWith) {
-                    return aStartsWith - bStartsWith; // 先頭一致優先
-                }
-
-                return a.localeCompare(b); // アルファベット順
-            });
-    }
-}
 
 class DebugBkmkData implements BkmkList.ItemData {
      private getRandomString(maxlength: number): string {
@@ -149,11 +125,21 @@ class BkmkFinderImplement implements BkmkFinder {
 }
 
 async function main() {
+    const dbConnection = await DbConnection.connect()
+    
+    // デバッグ時のみ
+    {
+        const db = dbConnection.debbugging()
+        for (let i = 0; i < TAG_LIST.length; i++) {
+            await db.ifNotEixstsThenInsertTag(TAG_LIST[i])
+        }
+    }
+
     const emiter = new CommandEmiterCore()
     setHotkey(emiter)
     
     const screenRoot = new ScreenRootElement(
-        new SampleTagFinder(),
+        dbConnection.tagFinder(),
         new BkmkFinderImplement(),
         emiter
     )

@@ -447,6 +447,13 @@
   dependencies:
     "@tauri-apps/api" "^2.0.0"
 
+"@tauri-apps/plugin-sql@~2":
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/@tauri-apps/plugin-sql/-/plugin-sql-2.0.2.tgz#c5e26af388e9eb75f409fa98ae365e80e25f9ad7"
+  integrity sha512-qrSY8hLfqHlnO3nH6DR2h6zEVT5sSeB5HHymvT40/FKwv8unewwRiPq4xV+qQZXN1a58ZtSDqVOCBnLHxGPczQ==
+  dependencies:
+    "@tauri-apps/api" "^2.0.0"
+
 "@types/estree@1.0.6", "@types/estree@^1.0.0":
   version "1.0.6"
   resolved "https://registry.yarnpkg.com/@types/estree/-/estree-1.0.6.tgz#628effeeae2064a1b4e79f78e81d87b7e5fc7b50"
