@@ -270,6 +270,10 @@ export namespace TagSuggestionWindow {
 
 
         async update(predicate: string){
+            if ( predicate === "" ){
+                this.updateItems([])
+                return
+            }
             let itemDatas = await this.tagFinderWraper.find(predicate)
             this.updateItems(itemDatas)
         }
