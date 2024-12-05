@@ -44,6 +44,17 @@ it("BkmkList",() => {
         emiter.emit("bkmkList.focusDown")
         emiter.emit("bkmkList.focusDown")
         expect(elm.getFocusedItem()?.getTitle()).toBe("hello3")
+        expect(((elm as any).elm.root as HTMLElement).childNodes.length).toBe(3)
+
+        elm.update([
+            new BkmkItemData("hello"),
+            new BkmkItemData("hello2"),
+            new BkmkItemData("hello3"),
+            new BkmkItemData("hello4"),
+        ])
+        expect(((elm as any).elm.root as HTMLElement).childNodes.length).toBe(4)
+        emiter.emit("bkmkList.focusUp")
+        expect(elm.getFocusedItem()?.getTitle()).toBe("hello4")
     }
 
     {

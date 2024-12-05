@@ -109,6 +109,7 @@ export namespace BkmkList {
         update(datas: ItemData[]){
             let elms = datas.map(d => new ItemDataElm(d))
             this.focus = new FocusCycler(elms)
+            this.elm.root.innerHTML = ""
             elms.forEach( elm => {
                 this.elm.root.appendChild(elm.elm.root)
             })
