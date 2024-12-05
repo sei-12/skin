@@ -8,6 +8,7 @@
     padding-inline: 10px;
     border-radius: 7px;
     margin: 5px;
+    margin-block: 0;
     box-shadow: 0px 0px 3px 1px rgba(0, 0, 0, 0.3);
     background-color: rgb(30, 30, 30);
     box-sizing: border-box;

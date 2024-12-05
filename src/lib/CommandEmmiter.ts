@@ -4,7 +4,9 @@ const CommandIds = [
     "tagSuggestionWindow.focusDown",
     "tagSuggestionWindow.focusUp",
     "tagSuggestionWindow.Done",
-    "focusBkmkPredicateInputbox"
+    "focusBkmkPredicateInputbox",
+    "bkmkList.focusDown",
+    "bkmkList.focusUp",
 ] as const;
 
 export type CommandId = typeof CommandIds[number]
