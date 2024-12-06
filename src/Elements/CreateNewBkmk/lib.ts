@@ -222,24 +222,17 @@ export class CreateNewBkmkForm {
             return
         }
 
-        if ( !this.valiCheck() ){
-            console.log("can not done!")
+        if ( !this.canDone ){
             return
         }
 
-        let result = await this.creatar.create(
+        await this.creatar.create(
             this.elm.titleInputBox.value,
             this.elm.urlInputBox.value,
             this.elm.descInputBox.value,
             this.inputTags.getTags()
         )
-        
-        if ( result ){
-            console.log("ok")
-        }else{
-            console.error("fault")
-        }
-        
+
         this.close()
     }
     
