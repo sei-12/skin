@@ -16,6 +16,9 @@
       {
         "title": "skin",
         "decorations": false,
+        "resizable": false,
+        "width": 800,
+        "height": 600,
         "transparent": true,
         "shadow": false
       }

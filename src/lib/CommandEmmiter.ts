@@ -7,6 +7,9 @@ const CommandIds = [
     "focusBkmkPredicateInputbox",
     "bkmkList.focusDown",
     "bkmkList.focusUp",
+    "createNewBkmk.start",
+    "createNewBkmk.done",
+    "createNewBkmk.cancel",
 ] as const;
 
 export type CommandId = typeof CommandIds[number]

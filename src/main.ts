@@ -97,11 +97,7 @@ function setHotkey(emiter: CommandEmiterCore){
         }
         
         if ( e.key === "n" && e.metaKey ){
-            emiter.emit("bkmkList.focusDown")
-        }
-        
-        if ( e.key === "p" && e.metaKey ){
-            emiter.emit("bkmkList.focusUp")
+            emiter.emit("createNewBkmk.start")
         }
     })
 }
@@ -141,14 +137,26 @@ async function main() {
     const screenRoot = new ScreenRootElement(
         dbConnection.tagFinder(),
         new BkmkFinderImplement(),
-        emiter
+        emiter,
+        dbConnection.bkmkCreater()
     )
     
     document.body.appendChild(screenRoot.root)
+    
+    
+    {// debug
+
+        emiter.emit("createNewBkmk.start")
+    }
+    
+
+    // もっといい方法があると思われる
+    return new Promise( _resolve => {})
 }
 
 
-main().catch( async err => {
+main()
+.catch( async err => {
     console.error(err)
     
     let res = await confirm("予期しないエラーが発生しました。ウィンドウを再読み込みしますか？",{
@@ -158,4 +166,7 @@ main().catch( async err => {
     if ( res ){
         window.location.reload()
     }
+})
+.then(() => {
+    console.error("mainから出て欲しくない")
 })
