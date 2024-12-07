@@ -1,9 +1,9 @@
 import { h } from "../../common/dom"
 import styles from "./style.module.css"
-import { I_CommandEmmiter } from "../../lib/CommandEmmiter"
-import { CommandEmiterListener } from "../../lib/EmiterCore"
+import { CommandEmiterListener, I_CommandEmiter } from "../../lib/CommandEmmiter"
 import { TagElement } from "../TagElement/Tag"
 import { TagSuggestionWindow } from "../TagSuggestionWindow/TagSuggestionWindow"
+import { ShourtcutScopeManager } from "../../lib/ShourtcutScopeManager"
 
 export class BkmkPredicate {
     constructor(
@@ -97,13 +97,15 @@ export class BkmkPredicateInputBox {
 
     constructor(
         tagFinder: TagSuggestionWindow.TagFinder,
-        commandEmiter: I_CommandEmmiter,
+        commandEmiter: I_CommandEmiter,
+        shoutcutScopeManager: ShourtcutScopeManager,
     ) {
         this.tagFinderFiltDuplicate = new TagFinderFiltDuplicate(tagFinder)
 
         this.tagSuggestionWindow = new TagSuggestionWindow.Element(
             this.tagFinderFiltDuplicate,
-            commandEmiter
+            commandEmiter,
+            shoutcutScopeManager
         )
 
         this.elm.inputbox.placeholder = "/"

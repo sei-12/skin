@@ -1,21 +1,10 @@
 import { Assert } from "../../common/Assert"
 import { h } from "../../common/dom"
 import { scroll_to_focus_elm } from "../../common/scroll"
-import {  I_CommandEmmiter } from "../../lib/CommandEmmiter"
-import { CommandEmiterListener } from "../../lib/EmiterCore"
+import {  CommandEmiterListener, I_CommandEmiter } from "../../lib/CommandEmmiter"
+import { ShourtcutScopeManager } from "../../lib/ShourtcutScopeManager"
 import styles from "./style.module.css"
 
-
-// /**
-//  * static関数にするべきかもしれないが
-//  * namespaceの外から参照して欲しくないから
-//  * functionで書く
-//  */
-// function joinTextBlocks(blocks: TextBlock[]){
-//     let text = ""
-//     blocks.forEach( b => { text += b.text })
-//     return text
-// }
 
 function generateTextBlockElm(text: TextBlock, settings: TagSuggestionWindow.Setting){
     const elm = h("span")
@@ -226,19 +215,28 @@ export namespace TagSuggestionWindow {
         
         private hide(){
             this.elm.root.style.display = "none"
+            if ( this.opened === true ){
+                this.shoutcutScopeManager.tagSuggestionWindow("close")
+                this.opened = false
+            }
         }
         private show(){
             this.elm.root.style.display = "block"
+            if ( this.opened === false ){
+                this.shoutcutScopeManager.tagSuggestionWindow("open")
+                this.opened = true
+            }
         }
         
         private listener: CommandEmiterListener
-
+        private opened = false
         //
         // public
         //
         constructor(
             tagFinder: TagFinder,
-            commandEmmiter: I_CommandEmmiter,
+            commandEmmiter: I_CommandEmiter,
+            private shoutcutScopeManager: ShourtcutScopeManager,
             settings?: TagSuggestionWindow.Setting
         ){
             
@@ -263,7 +261,7 @@ export namespace TagSuggestionWindow {
             this.elm.root.style.backgroundColor = this.settings.backgroundColor
             
 
-            this.hide()
+            this.elm.root.style.display = "none"
         }
 
         root: HTMLElement = this.elm.root

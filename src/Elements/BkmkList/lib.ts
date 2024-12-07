@@ -1,7 +1,6 @@
 import { h } from "../../common/dom"
 import style from "./style.module.css"
-import { I_CommandEmmiter } from "../../lib/CommandEmmiter"
-import { CommandEmiterListener } from "../../lib/EmiterCore"
+import { CommandEmiterListener, I_CommandEmiter } from "../../lib/CommandEmmiter"
 import { scroll_to_focus_elm } from "../../common/scroll"
 
 
@@ -72,13 +71,13 @@ export namespace BkmkList {
         root = this.elm.root
 
         constructor(
-            commandEmiter: I_CommandEmmiter
+            commandEmiter: I_CommandEmiter
         ){
             this.setListener(commandEmiter)
         }
 
         private lis: CommandEmiterListener | null = null
-        private setListener(commandEmiter: I_CommandEmmiter){
+        private setListener(commandEmiter: I_CommandEmiter){
             this.lis = new CommandEmiterListener(
                 ["bkmkList.focusUp",  () => { this.moveFocus("up") }],
                 ["bkmkList.focusDown",() => { this.moveFocus("down") }],

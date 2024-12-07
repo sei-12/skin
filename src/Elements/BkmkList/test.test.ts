@@ -1,6 +1,6 @@
 import { expect, it } from "vitest";
 import { BkmkList } from "./lib";
-import { CommandEmiterCore } from "../../lib/EmiterCore";
+import { CommandEmiterCore } from "../../lib/CommandEmmiter";
 
 class BkmkItemData implements BkmkList.ItemData {
 

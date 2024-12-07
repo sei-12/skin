@@ -1,10 +1,11 @@
 import { h } from "../../common/dom";
 import style from "./style.module.css"
-import { I_CommandEmmiter } from "../../lib/CommandEmmiter";
+import { I_CommandEmiter } from "../../lib/CommandEmmiter";
 import { BkmkList } from "../BkmkList/lib";
 import { BkmkPredicate, BkmkPredicateInputBox } from "../BkmkPredicateInputBox/BkmkPredicateInputBox";
 import { TagSuggestionWindow } from "../TagSuggestionWindow/TagSuggestionWindow";
 import { BkmkCreater, CreateNewBkmkForm } from "../CreateNewBkmk/lib";
+import { ShourtcutScopeManager } from "../../lib/ShourtcutScopeManager";
 
 
 
@@ -30,8 +31,9 @@ export class ScreenRootElement {
     constructor(
         tagFinder: TagSuggestionWindow.TagFinder,
         bkmkFinder: BkmkFinder,
-        commandEmiter: I_CommandEmmiter,
-        bkmkCreater: BkmkCreater
+        commandEmiter: I_CommandEmiter,
+        bkmkCreater: BkmkCreater,
+        shoutcutScopeManager: ShourtcutScopeManager,
     ){
         this.bkmkFinder = bkmkFinder
         this.bkmkList = new BkmkList.Element(
@@ -40,7 +42,8 @@ export class ScreenRootElement {
 
         this.predicateInputBox = new BkmkPredicateInputBox(
             tagFinder,
-            commandEmiter
+            commandEmiter,
+            shoutcutScopeManager
         )
 
         
@@ -57,7 +60,8 @@ export class ScreenRootElement {
         this.createNewBkmkForm = new CreateNewBkmkForm(
             commandEmiter,
             tagFinder,
-            bkmkCreater
+            shoutcutScopeManager,
+            bkmkCreater,
         )
         
         this.elm.root.appendChild(this.predicateInputBox.root)

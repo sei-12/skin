@@ -1,6 +1,7 @@
 import { expect, it } from "vitest";
 import { TagSuggestionWindow } from "./TagSuggestionWindow";
-import { CommandEmiterCore } from "../../lib/EmiterCore";
+import { ShourtcutScopeManager } from "../../lib/ShourtcutScopeManager";
+import { CommandEmiterCore } from "../../lib/CommandEmmiter";
 
 
 /**
@@ -42,12 +43,17 @@ class SampleTagFinder implements TagSuggestionWindow.TagFinder {
 
 it("TagSuggestionWindow",async () => {
     const emiter = new CommandEmiterCore()
+    // const hotkeyManager = new HotkeyManager()
+
     {
+        const shourtcutScopeManager = new ShourtcutScopeManager()
         const elm = new TagSuggestionWindow.Element(
             new SampleTagFinder(),
-            emiter
+            emiter,
+            shourtcutScopeManager
         )
         
+        expect(shourtcutScopeManager.getCurrentStatus()).toBe("base")
         await elm.update("a")
         expect(elm.getFocused()).toBe("ai")
         emiter.emit("tagSuggestionWindow.focusDown")
@@ -56,14 +62,18 @@ it("TagSuggestionWindow",async () => {
         expect(elm.getFocused()).toBe("api")
         emiter.emit("tagSuggestionWindow.focusDown")
         expect(elm.getFocused()).toBe("auth0")
+        expect(shourtcutScopeManager.getCurrentStatus()).toBe("tagSuggestionWindow")
     }
 
     {
+        const shourtcutScopeManager = new ShourtcutScopeManager()
         const elm = new TagSuggestionWindow.Element(
             new SampleTagFinder(),
-            emiter
+            emiter,
+            shourtcutScopeManager
         )
         
+        expect(shourtcutScopeManager.getCurrentStatus()).toBe("base")
         expect(elm.getFocused()).toBe(null)
         await elm.update("")
         expect(elm.getFocused()).toBe(null)
@@ -73,9 +83,11 @@ it("TagSuggestionWindow",async () => {
         expect(elm.getFocused()).toBe("ai")
         await elm.update("hellloooooo")
         expect(elm.getFocused()).toBe(null)
+        expect(shourtcutScopeManager.getCurrentStatus()).toBe("base")
         await elm.update("a")
         emiter.emit("tagSuggestionWindow.focusUp")
         expect(elm.getFocused()).toBe("yaml")
+        expect(shourtcutScopeManager.getCurrentStatus()).toBe("tagSuggestionWindow")
     }
     
     {
@@ -84,9 +96,11 @@ it("TagSuggestionWindow",async () => {
             expect(elm.getFocused()).toMatchSnapshot()
         }
 
+        const shourtcutScopeManager = new ShourtcutScopeManager()
         const elm = new TagSuggestionWindow.Element(
             new SampleTagFinder(),
-            emiter
+            emiter,
+            shourtcutScopeManager
         )
         
         await snapshottest("hello")
@@ -103,10 +117,11 @@ it("TagSuggestionWindow",async () => {
             })
             expect(elm.getFocused()).toMatchSnapshot()
         }
-
+        const shourtcutScopeManager = new ShourtcutScopeManager()
         const elm = new TagSuggestionWindow.Element(
             new SampleTagFinder(),
-            emiter
+            emiter,
+            shourtcutScopeManager
         )
         
         await snapshottest("hello",100)
@@ -124,9 +139,11 @@ it("TagSuggestionWindow",async () => {
             expect(elm.getFocused()).toMatchSnapshot()
         }
 
+        const shourtcutScopeManager = new ShourtcutScopeManager()
         const elm = new TagSuggestionWindow.Element(
             new SampleTagFinder(),
-            emiter
+            emiter,
+            shourtcutScopeManager
         )
         
         await snapshottest("hello",100)

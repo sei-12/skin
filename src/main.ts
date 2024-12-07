@@ -1,10 +1,12 @@
 import { BkmkList } from "./Elements/BkmkList/lib";
 import { BkmkPredicate } from "./Elements/BkmkPredicateInputBox/BkmkPredicateInputBox";
 import { BkmkFinder, ScreenRootElement } from "./Elements/ScreenRoot/lib";
+import { CommandEmiterCore } from "./lib/CommandEmmiter";
 import { DbConnection } from "./lib/DataBase";
-import { CommandEmiterCore } from "./lib/EmiterCore";
 
-import { confirm } from '@tauri-apps/plugin-dialog';
+import { ShourtcutScopeManager } from "./lib/ShourtcutScopeManager";
+import { HotkeyManager } from "./lib/HotkeyManager";
+import { h } from "./common/dom";
 
 
 const TAG_LIST = [
@@ -77,30 +79,30 @@ class DebugBkmkData implements BkmkList.ItemData {
     }
 }
 
-function setHotkey(emiter: CommandEmiterCore){
-    window.addEventListener("keyup", (e) => {
-        if (e.key === "/") {
-            emiter.emit("focusBkmkPredicateInputbox")
-        }
-    })
+// function setHotkey(emiter: CommandEmiterCore){
+//     window.addEventListener("keyup", (e) => {
+//         if (e.key === "/") {
+//             emiter.emit("focusBkmkPredicateInputbox")
+//         }
+//     })
 
-    window.addEventListener("keydown", (e) => {
+//     window.addEventListener("keydown", (e) => {
 
-        if (e.key === "n" && e.ctrlKey) {
-            emiter.emit("tagSuggestionWindow.focusDown")
-        }
-        if (e.key === "p" && e.ctrlKey) {
-            emiter.emit("tagSuggestionWindow.focusUp")
-        }
-        if (e.key === "Enter") {
-            emiter.emit("tagSuggestionWindow.Done")
-        }
+//         if (e.key === "n" && e.ctrlKey) {
+//             emiter.emit("tagSuggestionWindow.focusDown")
+//         }
+//         if (e.key === "p" && e.ctrlKey) {
+//             emiter.emit("tagSuggestionWindow.focusUp")
+//         }
+//         if (e.key === "Enter") {
+//             emiter.emit("tagSuggestionWindow.Done")
+//         }
         
-        if ( e.key === "n" && e.metaKey ){
-            emiter.emit("createNewBkmk.start")
-        }
-    })
-}
+//         if ( e.key === "n" && e.metaKey ){
+//             emiter.emit("createNewBkmk.start")
+//         }
+//     })
+// }
 
 class BkmkFinderImplement implements BkmkFinder {
     
@@ -132,22 +134,22 @@ async function main() {
     }
 
     const emiter = new CommandEmiterCore()
-    setHotkey(emiter)
+    const shourtcutScopeManager = new ShourtcutScopeManager()
+    const hotkeyManager = new HotkeyManager()
+    
+    hotkeyManager.startListen(window,shourtcutScopeManager,emiter)
+
     
     const screenRoot = new ScreenRootElement(
         dbConnection.tagFinder(),
         new BkmkFinderImplement(),
         emiter,
-        dbConnection.bkmkCreater()
+        dbConnection.bkmkCreater(),
+        shourtcutScopeManager
     )
     
     document.body.appendChild(screenRoot.root)
     
-    
-    {// debug
-
-        emiter.emit("createNewBkmk.start")
-    }
     
 
     // もっといい方法があると思われる
@@ -159,13 +161,15 @@ main()
 .catch( async err => {
     console.error(err)
     
-    let res = await confirm("予期しないエラーが発生しました。ウィンドウを再読み込みしますか？",{
-        kind: "error"
-    })
+    let errElm = h("div")
     
-    if ( res ){
-        window.location.reload()
-    }
+    errElm.root.innerText = "エラーが発生"
+    errElm.root.style.backgroundColor = "rgb(100,10,10)"
+    errElm.root.style.height = "100vh"
+    errElm.root.style.width = "100vw"
+    errElm.root.style.position = "absolute"
+
+    document.body.appendChild(errElm.root)
 })
 .then(() => {
     console.error("mainから出て欲しくない")

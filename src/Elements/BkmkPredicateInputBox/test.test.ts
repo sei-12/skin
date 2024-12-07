@@ -1,7 +1,8 @@
 import { expect, it } from "vitest";
 import { TagSuggestionWindow } from "../TagSuggestionWindow/TagSuggestionWindow";
 import { BkmkPredicateInputBox } from "./BkmkPredicateInputBox";
-import { CommandEmiterCore } from "../../lib/EmiterCore";
+import { CommandEmiterCore } from "../../lib/CommandEmmiter";
+import { ShourtcutScopeManager } from "../../lib/ShourtcutScopeManager";
 
 class SampleTagFinder implements TagSuggestionWindow.TagFinder {
     private taglist: string[] = [
@@ -45,11 +46,15 @@ async function lag(ms: number){
 
 it("BkmkPredicateInputBox",async () => {
     const commandEmiter = new CommandEmiterCore()
+    const shourtcutScopeManager = new ShourtcutScopeManager()
+
+
 
     {
         let elm = new BkmkPredicateInputBox(
             new SampleTagFinder(),
-            commandEmiter
+            commandEmiter,
+            shourtcutScopeManager
         )
         
         expect(Array.from(elm.getPredicate().tags())).toEqual([])

@@ -1,7 +1,7 @@
 import { Assert } from "../../common/Assert";
 import { h } from "../../common/dom";
-import { I_CommandEmmiter } from "../../lib/CommandEmmiter";
-import { CommandEmiterListener } from "../../lib/EmiterCore";
+import { CommandEmiterListener, I_CommandEmiter } from "../../lib/CommandEmmiter";
+import { ShourtcutScopeManager } from "../../lib/ShourtcutScopeManager";
 import { TagElement } from "../TagElement/Tag";
 import { TagSuggestionWindow } from "../TagSuggestionWindow/TagSuggestionWindow";
 import style from "./style.module.css"
@@ -98,13 +98,15 @@ class InputTags {
     }
     constructor(
         tagFinder: TagSuggestionWindow.TagFinder,
-        emiter: I_CommandEmmiter
+        emiter: I_CommandEmiter,
+        shoutcutScopeManager: ShourtcutScopeManager,
     ){
         this.tagFinderFiltDuplicate = new TagFinderFiltDuplicate(tagFinder)
 
         this.tagSuggestionWindow = new TagSuggestionWindow.Element(
             this.tagFinderFiltDuplicate,
-            emiter
+            emiter,
+            shoutcutScopeManager
         )
 
         this.elm.inputbox.addEventListener("input", () => {
@@ -193,17 +195,21 @@ export class CreateNewBkmkForm {
         return true
     }
     constructor(
-        emiter: I_CommandEmmiter,
+        emiter: I_CommandEmiter,
         tagFinder: TagSuggestionWindow.TagFinder,
+        private shoutcutScopeManager: ShourtcutScopeManager,
         private creatar: BkmkCreater
     ){
         emiter.addWeakRefListener(this.listener)
         this.inputTags = new InputTags(
             tagFinder,
-            emiter
+            emiter,
+            shoutcutScopeManager
         )
         this.elm.tagsInputBox.appendChild(this.inputTags.root)
-        this.close()
+
+        this.opened = false
+        this.elm.root.style.display = "none"
         
         this.elm.doneButton.addEventListener("click",() => {
             this.done()
@@ -239,9 +245,11 @@ export class CreateNewBkmkForm {
     private open(){
         this.opened = true
         this.elm.root.style.display = "flex"
+        this.shoutcutScopeManager.createNewBkmk("open")
     }
     private close(){
         this.opened = false
         this.elm.root.style.display = "none"
+        this.shoutcutScopeManager.createNewBkmk("close")
     }
 }
