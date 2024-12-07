@@ -77,9 +77,7 @@ function makeTriggerHash(t: Trigger){
 type TriggerHash = ReturnType<typeof makeTriggerHash>
 
 export class HotkeyManager {
-    
-    // TODO: [] ではなく Set にする
-    private hotkeyMap = new Map<TriggerHash, CommandId[]>()
+    private hotkeyMap = new Map<TriggerHash, Set<CommandId>>()
 
     constructor(userSettigs?: HotkeySetting[]){
         defaultSettings.forEach( setting => { this.applySetting(setting) })
@@ -90,9 +88,9 @@ export class HotkeyManager {
         const triggerHash = makeTriggerHash(setting.trigger)
         let ary = this.hotkeyMap.get(triggerHash)
         if ( ary === undefined ){
-            this.hotkeyMap.set(triggerHash,[setting.commandId])
+            this.hotkeyMap.set(triggerHash,new Set([setting.commandId]))
         }else{
-            ary.push(setting.commandId)
+            ary.add(setting.commandId)
         }
     }
 
