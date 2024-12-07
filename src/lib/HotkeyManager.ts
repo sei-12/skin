@@ -100,7 +100,6 @@ export class HotkeyManager {
 
 
         let commands = this.hotkeyMap.get(keyhash)
-        console.log(keyhash,commands)
         if ( commands === undefined ){ return }
         commands.forEach( c => emiter.emit(c) )
     }

@@ -1,6 +1,4 @@
-import { BkmkList } from "./Elements/BkmkList/lib";
-import { BkmkPredicate } from "./Elements/BkmkPredicateInputBox/BkmkPredicateInputBox";
-import { BkmkFinder, ScreenRootElement } from "./Elements/ScreenRoot/lib";
+import { ScreenRootElement } from "./Elements/ScreenRoot/lib";
 import { CommandEmiterCore } from "./lib/CommandEmmiter";
 import { DbConnection } from "./lib/DataBase";
 
@@ -22,62 +20,62 @@ const TAG_LIST = [
     "rest", "graphql", "websocket", "oauth", "jwt", "jsonwebtokens", "auth0", "passportjs", "security", "encryption", "hello", "main"
 ] as const;
 
-class DebugBkmkData implements BkmkList.ItemData {
-     private getRandomString(maxlength: number): string {
-        const chars = '        ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-        const randomLength = Math.floor(Math.random() * maxlength) + 1; // 1からmaxlengthまでのランダムな長さ
-        let result = '';
-        for (let i = 0; i < randomLength; i++) {
-            const randomIndex = Math.floor(Math.random() * chars.length);
-            result += chars[randomIndex];
-        }
-        return result;
-    }
-    private getRandomTagList(maxlength: number) {
-        const randomLength = Math.floor(Math.random() * maxlength) + 1; // 1からmaxlengthまでのランダムな長さ
-        let result:string[] = [];
-        for (let i = 0; i < randomLength; i++) {
-            const randomIndex = Math.floor(Math.random() * TAG_LIST.length);
-            result.push( TAG_LIST[randomIndex] )
-        }
-        return result;
-    }
+// class DebugBkmkData implements BkmkList.ItemData {
+//      private getRandomString(maxlength: number): string {
+//         const chars = '        ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+//         const randomLength = Math.floor(Math.random() * maxlength) + 1; // 1からmaxlengthまでのランダムな長さ
+//         let result = '';
+//         for (let i = 0; i < randomLength; i++) {
+//             const randomIndex = Math.floor(Math.random() * chars.length);
+//             result += chars[randomIndex];
+//         }
+//         return result;
+//     }
+//     private getRandomTagList(maxlength: number) {
+//         const randomLength = Math.floor(Math.random() * maxlength) + 1; // 1からmaxlengthまでのランダムな長さ
+//         let result:string[] = [];
+//         for (let i = 0; i < randomLength; i++) {
+//             const randomIndex = Math.floor(Math.random() * TAG_LIST.length);
+//             result.push( TAG_LIST[randomIndex] )
+//         }
+//         return result;
+//     }
 
-    private url = "decoy://" + this.getRandomString(100)
-    private desc = this.getRandomString(1000)
-    private tags = this.getRandomTagList(10)
-    private title = this.getRandomString(20)
+//     private url = "decoy://" + this.getRandomString(100)
+//     private desc = this.getRandomString(1000)
+//     private tags = this.getRandomTagList(10)
+//     private title = this.getRandomString(20)
 
-    constructor(
-        title?: string
-    ) {
-        if ( title ){
-            this.title = title
-        }
+//     constructor(
+//         title?: string
+//     ) {
+//         if ( title ){
+//             this.title = title
+//         }
         
-        this.tags.forEach( t => this.tagSet.add(t) )
-    }
+//         this.tags.forEach( t => this.tagSet.add(t) )
+//     }
 
-    getUrl(): string {
-        return this.url
-    }
-    getTags(): string[] {
-        return this.tags
-    }
-    getDesc(): string {
-        return this.desc
-    }
+//     getUrl(): string {
+//         return this.url
+//     }
+//     getTags(): string[] {
+//         return this.tags
+//     }
+//     getDesc(): string {
+//         return this.desc
+//     }
 
-    getTitle(): string {
-        return this.title
-    }
+//     getTitle(): string {
+//         return this.title
+//     }
    
     
-    private tagSet = new Set<string>
-    has(tag: string){
-        return this.tagSet.has(tag)
-    }
-}
+//     private tagSet = new Set<string>
+//     has(tag: string){
+//         return this.tagSet.has(tag)
+//     }
+// }
 
 // function setHotkey(emiter: CommandEmiterCore){
 //     window.addEventListener("keyup", (e) => {
@@ -104,23 +102,23 @@ class DebugBkmkData implements BkmkList.ItemData {
 //     })
 // }
 
-class BkmkFinderImplement implements BkmkFinder {
+// class BkmkFinderImplement implements BkmkFinder {
     
-    private tags = Array(10000).fill(null).map( _ => {
-        return new DebugBkmkData()
-    })
+//     private tags = Array(10000).fill(null).map( _ => {
+//         return new DebugBkmkData()
+//     })
 
-    async find(predicate: BkmkPredicate): Promise<BkmkList.ItemData[]> {
-        let filted = this.tags
-        let predicateTags = predicate.tags()
+//     async find(predicate: BkmkPredicate): Promise<BkmkList.ItemData[]> {
+//         let filted = this.tags
+//         let predicateTags = predicate.tags()
 
-        predicateTags.forEach( t => {
-            filted = filted.filter( bkmkdata => bkmkdata.has(t) )
-        })
+//         predicateTags.forEach( t => {
+//             filted = filted.filter( bkmkdata => bkmkdata.has(t) )
+//         })
         
-        return filted
-    }
-}
+//         return filted
+//     }
+// }
 
 async function main() {
     const dbConnection = await DbConnection.connect()
@@ -142,7 +140,7 @@ async function main() {
     
     const screenRoot = new ScreenRootElement(
         dbConnection.tagFinder(),
-        new BkmkFinderImplement(),
+        dbConnection.bkmkFinder(),
         emiter,
         dbConnection.bkmkCreater(),
         shourtcutScopeManager

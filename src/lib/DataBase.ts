@@ -4,6 +4,9 @@ import Database from '@tauri-apps/plugin-sql';
 import { TagSuggestionWindow } from "../Elements/TagSuggestionWindow/TagSuggestionWindow";
 import { BkmkCreater } from '../Elements/CreateNewBkmk/lib';
 import { Assert } from '../common/Assert';
+import { BkmkFinder } from '../Elements/ScreenRoot/lib';
+import { BkmkList } from '../Elements/BkmkList/lib';
+import { BkmkPredicate } from '../Elements/BkmkPredicateInputBox/BkmkPredicateInputBox';
 
 /**
  * 使う時は寿命について意識してくれ
@@ -33,6 +36,93 @@ export class DbConnection {
     
     bkmkCreater(): BkmkCreater {
         return new InsertBkmkIntoDb(this.db)
+    }
+    
+    bkmkFinder(): BkmkFinder {
+        return new FindBkmkFromDb(this.db)
+    }
+}
+
+class BkmkData implements BkmkList.ItemData {
+    record: BkmkRecord
+    tags: string[]
+    constructor(arg: {
+        record: BkmkRecord,
+        tags: string[]
+    }){
+        this.record = arg.record
+        this.tags = arg.tags
+    }
+
+    getTitle(): string {
+        return this.record.title
+    }
+    getUrl(): string {
+        return this.record.url
+    }
+    getTags(): string[] {
+        return [...this.tags]
+    }
+    getDesc(): string {
+        return this.record.description
+    }
+}
+
+type BkmkRecord = {
+    id: number
+    title: string
+    url: string
+    description: string
+    tag_count: number
+}
+
+class FindBkmkFromDb implements BkmkFinder {
+    constructor(
+        private db: Database
+    ){}
+
+    async find(predicate: BkmkPredicate): Promise<BkmkList.ItemData[]> {
+        if ( predicate.isEmpty() ){
+            return []
+        }
+
+        const tags = predicate.tags()
+        let stmt = Array(tags.size).fill(0).map((_,i) => `$${i + 1}`).join(",")
+
+        const query = `
+        SELECT b.*
+        FROM bookmarks b
+        JOIN tag_map tm ON b.id = tm.bkmk_id
+        JOIN tags t ON tm.tag_id = t.id
+        WHERE t.name IN (${stmt})
+        GROUP BY b.id
+        HAVING COUNT(DISTINCT t.name) = ${tags.size}
+        ORDER BY b.tag_count ASC
+        ;`
+        
+        let result = await this.db.select(query,Array.from(tags)) as BkmkRecord[]
+        let result2 = await Promise.all(result.map( async record => {
+            let tags = await this.tags(record.id)
+            return {
+                record,
+                tags
+            }
+        }))
+        return result2.map( r => new BkmkData(r) )
+    }
+    
+
+    private async tags(bkmkid: number): Promise<string[]>{
+        const query = `
+            SELECT tags.name
+            FROM tags
+            JOIN tag_map ON tags.id = tag_map.tag_id
+            WHERE tag_map.bkmk_id = $1;`
+        
+        let result = await this.db.select(query,[bkmkid])
+    
+        // @ts-ignore
+        return result.map( r => r.name)
     }
 }
 
