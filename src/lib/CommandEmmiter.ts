@@ -5,6 +5,7 @@ const CommandIds = [
     "focusBkmkPredicateInputbox",
     "bkmkList.focusDown",
     "bkmkList.focusUp",
+    "openBookmark",
     "createNewBkmk.start",
     "createNewBkmk.done",
     "createNewBkmk.cancel",

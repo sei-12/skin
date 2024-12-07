@@ -47,6 +47,10 @@ const defaultSettings: HotkeySetting[] = [
         key: { metaKey: false, shiftKey: false, ctrlKey: true, altKey: false , key: "Enter" },
         when:"createNewBookmark",
     }},
+    {commandId: "openBookmark",trigger:{
+        key: { metaKey: false, shiftKey: false, ctrlKey: true, altKey: false , key: "Enter" },
+        when:"base",
+    }},
     {commandId:"createNewBkmk.start",trigger:{
         key: { metaKey: true, shiftKey: false, ctrlKey: false, altKey: false , key: "n" },
         when:"base",
@@ -74,6 +78,7 @@ type TriggerHash = ReturnType<typeof makeTriggerHash>
 
 export class HotkeyManager {
     
+    // TODO: [] ではなく Set にする
     private hotkeyMap = new Map<TriggerHash, CommandId[]>()
 
     constructor(userSettigs?: HotkeySetting[]){

@@ -1,11 +1,12 @@
 import { h } from "../../common/dom";
 import style from "./style.module.css"
-import { I_CommandEmiter } from "../../lib/CommandEmmiter";
+import { CommandEmiterListener, I_CommandEmiter } from "../../lib/CommandEmmiter";
 import { BkmkList } from "../BkmkList/lib";
 import { BkmkPredicate, BkmkPredicateInputBox } from "../BkmkPredicateInputBox/BkmkPredicateInputBox";
 import { TagSuggestionWindow } from "../TagSuggestionWindow/TagSuggestionWindow";
 import { BkmkCreater, CreateNewBkmkForm } from "../CreateNewBkmk/lib";
 import { ShourtcutScopeManager } from "../../lib/ShourtcutScopeManager";
+import { invoke } from "@tauri-apps/api/core";
 
 
 
@@ -28,6 +29,19 @@ export class ScreenRootElement {
 
     public root = this.elm.root
 
+    private listener = new CommandEmiterListener(
+        ["openBookmark",() => { this.openBookmark() }]
+    )
+    
+    private openBookmark(){
+        let item = this.bkmkList.getFocusedItem()
+        if ( item === null ){
+            return
+        }
+
+        invoke("open_url",{url: item.getUrl()})
+    }
+
     constructor(
         tagFinder: TagSuggestionWindow.TagFinder,
         bkmkFinder: BkmkFinder,
@@ -45,7 +59,8 @@ export class ScreenRootElement {
             commandEmiter,
             shoutcutScopeManager
         )
-
+        
+        commandEmiter.addWeakRefListener(this.listener)
         
         this.predicateInputBox.setHandleOnChange(async () => {
             let p = this.predicateInputBox.getPredicate()
