@@ -3,7 +3,6 @@ import style from "./style.module.css"
 import { CommandEmiterListener, I_CommandEmiter } from "../../lib/CommandEmmiter"
 import { scroll_to_focus_elm } from "../../common/scroll"
 
-
 class FocusCycler<T> {
     private index: number | null
 
@@ -48,10 +47,13 @@ class ItemDataElm {
         h(`div.${style.title}@title`),
         h(`div.${style.tags}@tags`),
         h(`div.${style.desc}@desc`),
+        h(`button.${style.itemRemoveButton}@removebtn`),
     ])
+    
 
     constructor(
-        public readonly data: Readonly<BkmkList.ItemData>
+        public readonly data: Readonly<BkmkList.ItemData>,
+        onclickRemove: (id: number) => void
     ){
         this.elm.title.innerText = data.getTitle()
         this.elm.desc.innerText = data.getDesc()
@@ -60,6 +62,10 @@ class ItemDataElm {
             let elm = h(`span.${style.tag}`)
             elm.root.innerText = "#" + tag
             this.elm.tags.appendChild(elm.root)
+        })
+        
+        this.elm.removebtn.addEventListener("click",() => {
+            onclickRemove(this.data.getId())
         })
     }
 }
@@ -71,7 +77,8 @@ export namespace BkmkList {
         root = this.elm.root
 
         constructor(
-            commandEmiter: I_CommandEmiter
+            commandEmiter: I_CommandEmiter,
+            private handleOnclickRemove: (id: number) => void
         ){
             this.setListener(commandEmiter)
         }
@@ -106,7 +113,7 @@ export namespace BkmkList {
         }
 
         update(datas: ItemData[]){
-            let elms = datas.map(d => new ItemDataElm(d))
+            let elms = datas.map(d => new ItemDataElm(d,(id) => { this.handleOnclickRemove(id) }))
             this.focus = new FocusCycler(elms)
             this.elm.root.innerHTML = ""
             elms.forEach( elm => {
@@ -127,5 +134,6 @@ export namespace BkmkList {
         getUrl(): string
         getTags(): string[]
         getDesc(): string
+        getId(): number
     }
 }

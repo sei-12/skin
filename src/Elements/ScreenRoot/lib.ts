@@ -7,11 +7,15 @@ import { TagSuggestionWindow } from "../TagSuggestionWindow/TagSuggestionWindow"
 import { BkmkCreater, CreateNewBkmkForm } from "../CreateNewBkmk/lib";
 import { ShourtcutScopeManager } from "../../lib/ShourtcutScopeManager";
 import { invoke } from "@tauri-apps/api/core";
+import { confirm } from "@tauri-apps/plugin-dialog";
 
 
 
 export interface BkmkFinder {
     find(predicate: BkmkPredicate):  Promise<BkmkList.ItemData[]> 
+}
+export interface BookmarkRemover {
+    remove(bkmkid: number): Promise<void>
 }
 
 export class ScreenRootElement {
@@ -42,16 +46,37 @@ export class ScreenRootElement {
         invoke("open_url",{url: item.getUrl()})
     }
 
+    private async handleOnclickRemove(id: number){
+        if (!( await confirm("ブックマークを削除します") )){
+            return
+        }
+        
+        await this.bkmkRemover.remove(id)
+        this.updateBkmklist()
+    }
+
+    private async updateBkmklist(){
+        let p = this.predicateInputBox.getPredicate()
+        if ( p.isEmpty() ){
+            this.bkmkList.update([])
+            return
+        }
+        let bkmks = await this.bkmkFinder.find(p)
+        this.bkmkList.update(bkmks)
+    }
+
     constructor(
         tagFinder: TagSuggestionWindow.TagFinder,
         bkmkFinder: BkmkFinder,
         commandEmiter: I_CommandEmiter,
         bkmkCreater: BkmkCreater,
         shoutcutScopeManager: ShourtcutScopeManager,
+        private bkmkRemover: BookmarkRemover
     ){
         this.bkmkFinder = bkmkFinder
         this.bkmkList = new BkmkList.Element(
-            commandEmiter
+            commandEmiter,
+            id => this.handleOnclickRemove(id)
         )
 
         this.predicateInputBox = new BkmkPredicateInputBox(
@@ -63,13 +88,7 @@ export class ScreenRootElement {
         commandEmiter.addWeakRefListener(this.listener)
         
         this.predicateInputBox.setHandleOnChange(async () => {
-            let p = this.predicateInputBox.getPredicate()
-            if ( p.isEmpty() ){
-                this.bkmkList.update([])
-                return
-            }
-            let bkmks = await this.bkmkFinder.find(p)
-            this.bkmkList.update(bkmks)
+            this.updateBkmklist()
         })
 
         this.createNewBkmkForm = new CreateNewBkmkForm(

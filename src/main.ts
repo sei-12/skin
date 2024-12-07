@@ -44,7 +44,8 @@ async function main() {
         dbConnection.bkmkFinder(),
         emiter,
         dbConnection.bkmkCreater(),
-        shourtcutScopeManager
+        shourtcutScopeManager,
+        dbConnection.bkmkRemover()
     )
     
     document.body.appendChild(screenRoot.root)

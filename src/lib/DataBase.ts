@@ -4,7 +4,7 @@ import Database from '@tauri-apps/plugin-sql';
 import { TagSuggestionWindow } from "../Elements/TagSuggestionWindow/TagSuggestionWindow";
 import { BkmkCreater } from '../Elements/CreateNewBkmk/lib';
 import { Assert } from '../common/Assert';
-import { BkmkFinder } from '../Elements/ScreenRoot/lib';
+import { BkmkFinder, BookmarkRemover } from '../Elements/ScreenRoot/lib';
 import { BkmkList } from '../Elements/BkmkList/lib';
 import { BkmkPredicate } from '../Elements/BkmkPredicateInputBox/BkmkPredicateInputBox';
 
@@ -41,6 +41,10 @@ export class DbConnection {
     bkmkFinder(): BkmkFinder {
         return new FindBkmkFromDb(this.db)
     }
+    
+    bkmkRemover(): BookmarkRemover {
+        return new BookmarkRemoverImplement(this.db)
+    }
 }
 
 class BkmkData implements BkmkList.ItemData {
@@ -65,6 +69,9 @@ class BkmkData implements BkmkList.ItemData {
     }
     getDesc(): string {
         return this.record.description
+    }
+    getId(): number {
+        return this.record.id
     }
 }
 
@@ -218,5 +225,17 @@ class DebuggingDb {
         }
         
         await this.db.execute("insert into tags values (null,$1)",[tag])
+    }
+}
+
+
+class BookmarkRemoverImplement implements BookmarkRemover {
+    constructor(
+        private db: Database
+    ){}
+
+    async remove(bkmkid: number): Promise<void> {
+        await this.db.execute("delete from tag_map where bkmk_id = $1",[bkmkid])
+        await this.db.execute("delete from bookmarks where id = $1",[bkmkid])
     }
 }
