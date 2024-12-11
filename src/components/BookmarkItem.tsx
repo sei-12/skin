@@ -1,7 +1,11 @@
 import { forwardRef } from "react"
 import { IData } from "../data"
-import { Card, CardContent, Stack, Typography } from "@mui/material"
+import { Box, Button, Card, CardContent, Stack, Typography } from "@mui/material"
 import { globalColorTheme as GCT } from "../theme"
+
+import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
+
 
 export type BookmarkItemProps = {
     data: IData.Bookmark
@@ -19,7 +23,7 @@ export const BookmarkItem = forwardRef<HTMLDivElement, BookmarkItemProps>(
                     bgcolor: props.focus ? GCT.bookmarkItem.focusBg : GCT.bookmarkItem.bg,
                     borderRadius: 2.5,
                 }}>
-                    <CardContent>
+                    <CardContent sx={{position: "relative"}}>
                         <Typography variant="h5" sx={{
                             overflow: "hidden",
                             textOverflow: "ellipsis",
@@ -42,6 +46,38 @@ export const BookmarkItem = forwardRef<HTMLDivElement, BookmarkItemProps>(
                                 WebkitBoxOrient: "vertical",
                             }}
                         >{props.data.desc}</Typography>
+
+                        <Box 
+                            sx={{
+                                position: "absolute",
+                                // opacity: props.focus ? 1 : 0,
+                                opacity: 0,
+                                ":hover":{
+                                    opacity: 1
+                                },
+                                transition: "opacity 0.5s",
+                                top: 0,
+                                left: 0,
+                                width: "100%",
+                                height: "100%",
+                            }}
+                        >
+                            <Stack direction={"row"} spacing={1} 
+                                sx={{
+                                    position: "absolute",
+                                    bottom: 10,
+                                    right: 10
+                                }}
+                            >
+                                <Button variant="contained" onClick={() => props.onClickRemove(props.data.key)}>
+                                    <DeleteIcon></DeleteIcon>
+                                </Button>
+                                <Button variant="contained" onClick={() => props.onClickEdit(props.data.key)}>
+                                    <EditIcon></EditIcon>
+                                </Button>
+                            </Stack>
+                        </Box>
+
                     </CardContent>
                 </Card>
             </div>
@@ -53,10 +89,7 @@ function TagItem(props: {text: string}){
     return (
         <Typography
             sx={{
-                color: GCT.bookmarkItem.tag,
-                ":hover":{
-                    color: GCT.bookmarkItem.tagHover
-                }
+                color: GCT.bookmarkItem.tag
             }}
         >#{props.text}</Typography>
     )

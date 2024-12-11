@@ -68,7 +68,6 @@ export const tokyonight = createTheme({
 export const globalColorTheme = {
     bookmarkItem: {
         tag: palette.orange1,
-        tagHover: palette.purple1,
         title: palette.blue5,
         desc: palette.blue3,
         bg: palette.dark1,
