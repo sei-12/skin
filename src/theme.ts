@@ -71,6 +71,14 @@ export const globalColorTheme = {
         title: palette.blue5,
         desc: palette.blue3,
         bg: palette.dark1,
-        focusBg: palette.dark3
+        focusBg: palette.dark3,
     },
+    suggestionWindow: {
+        bg: palette.dark1,
+        focusBg: palette.dark3,
+        borderColor: "black",
+        // match: "white",
+        match: "rgb(200,230,255)",
+        unmatch: palette.dark6,
+    }
 }
