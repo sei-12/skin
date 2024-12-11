@@ -128,3 +128,10 @@ function highlightMatchedBlocks(predicate: string, item: string):{isMatch: boole
     
     return blocks
 }
+
+
+export const __suggestion_window_test__ = {
+    highlightMatchedBlocks,
+    TextBlock,
+    Item
+}
