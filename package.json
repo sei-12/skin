@@ -8,9 +8,14 @@
     "build": "tsc && vite build",
     "preview": "vite preview",
     "tauri": "tauri",
-    "test":"npx vitest --run"
+    "test": "npx vitest --run"
   },
   "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
+    "@fontsource/roboto": "^5.1.0",
+    "@mui/icons-material": "^6.2.0",
+    "@mui/material": "^6.2.0",
     "@tauri-apps/api": "^2",
     "@tauri-apps/plugin-shell": "^2",
     "react": "^18.2.0",

@@ -1,51 +1,75 @@
-import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import { invoke } from "@tauri-apps/api/core";
-import "./App.css";
+import { Stack } from "@mui/material";
+import { BookmarkItem } from "./components/BookmarkItem";
 
 function App() {
-  const [greetMsg, setGreetMsg] = useState("");
-  const [name, setName] = useState("");
 
-  async function greet() {
-    // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
-    setGreetMsg(await invoke("greet", { name }));
-  }
+    return (
+        <div>
+            <Stack spacing={1} margin={2}>
+                <BookmarkItem
+                    data={{
+                        title: "hello1",
+                        key: "aac",
+                        tags: ["tag1", "tag2", "tag3"],
+                        desc: "this is description",
+                        url: "decoy://aaa.www.ccc"
+                    }}
+                    focus={true}
+                    onClickEdit={(key) => console.log("edit:", key)}
+                    onClickRemove={(key) => console.log("remove:", key)}
+                ></BookmarkItem>
+                <BookmarkItem
+                    data={{
+                        title: "hello",
+                        key: "aaa",
+                        tags: ["tag1", "tag2", "tag3"],
+                        desc: "this is description",
+                        url: "decoy://aaa.www.ccc"
+                    }}
+                    focus={false}
+                    onClickEdit={(key) => console.log("edit:", key)}
+                    onClickRemove={(key) => console.log("remove:", key)}
+                ></BookmarkItem>
+                <BookmarkItem
+                    data={{
+                        title: "hello",
+                        key: "caaa",
+                        tags: ["tag1", "tag2", "tag3"],
+                        desc: "this is description".repeat(100),
+                        url: "decoy://aaa.www.ccc"
+                    }}
+                    focus={false}
+                    onClickEdit={(key) => console.log("edit:", key)}
+                    onClickRemove={(key) => console.log("remove:", key)}
+                ></BookmarkItem>
+                <BookmarkItem
+                    data={{
+                        title: "hello".repeat(20),
+                        key: "caaa",
+                        tags: ["tag1", "tag2", "tag3"],
+                        desc: "this is description".repeat(100),
+                        url: "decoy://aaa.www.ccc"
+                    }}
+                    focus={false}
+                    onClickEdit={(key) => console.log("edit:", key)}
+                    onClickRemove={(key) => console.log("remove:", key)}
+                ></BookmarkItem>
+                <BookmarkItem
+                    data={{
+                        title: "hello".repeat(20),
+                        key: "caaa",
+                        tags: Array(25).fill("tag"),
+                        desc: "this is description".repeat(100),
+                        url: "decoy://aaa.www.ccc"
+                    }}
+                    focus={false}
+                    onClickEdit={(key) => console.log("edit:", key)}
+                    onClickRemove={(key) => console.log("remove:", key)}
+                ></BookmarkItem>
 
-  return (
-    <main className="container">
-      <h1>Welcome to Tauri + React</h1>
-
-      <div className="row">
-        <a href="https://vitejs.dev" target="_blank">
-          <img src="/vite.svg" className="logo vite" alt="Vite logo" />
-        </a>
-        <a href="https://tauri.app" target="_blank">
-          <img src="/tauri.svg" className="logo tauri" alt="Tauri logo" />
-        </a>
-        <a href="https://reactjs.org" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <p>Click on the Tauri, Vite, and React logos to learn more.</p>
-
-      <form
-        className="row"
-        onSubmit={(e) => {
-          e.preventDefault();
-          greet();
-        }}
-      >
-        <input
-          id="greet-input"
-          onChange={(e) => setName(e.currentTarget.value)}
-          placeholder="Enter a name..."
-        />
-        <button type="submit">Greet</button>
-      </form>
-      <p>{greetMsg}</p>
-    </main>
-  );
+            </Stack>
+        </div>
+    );
 }
 
 export default App;
