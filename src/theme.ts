@@ -1,6 +1,9 @@
 import { createTheme } from "@mui/material";
 
 const palette = { 
+    verydark: "#1a1b25",
+    // darkyellow: "#36311F",
+
     dark1: "#1f2335", // Very dark blue-gray
     dark2: "#24283b", // Dark blue-gray
     dark3: "#292e42", // Medium dark blue-gray
@@ -9,6 +12,7 @@ const palette = {
     dark6: "#545c7e", // Muted blue-gray
     dark7: "#565f89", // Slightly brighter blue-gray
     dark8: "#737aa2", // Dull lavender
+
     blue1: "#a9b1d6", // Pale blue-gray
     blue2: "#c0caf5", // Light blue-gray
     blue3: "#394b70", // Muted navy blue
@@ -27,6 +31,32 @@ const palette = {
     red1: "#c53b53", // Soft red
     magenta1: "#ff007c", // Bright magenta
 };
+
+export const globalColorTheme = {
+    bookmarkItem: {
+        tag: palette.purple1,
+        title: palette.blue5,
+        desc: palette.blue3,
+        bg: palette.dark1,
+        focusBg: palette.dark3,
+    },
+    suggestionWindow: {
+        bg: palette.dark1,
+        focusBg: palette.dark3,
+        borderColor: palette.verydark,
+        match: "rgb(200,230,255)",
+        unmatch: palette.dark6,
+    },
+    predicateInputBox: {
+        bg: palette.verydark,
+    },
+    tagItem: {
+        bg: palette.dark1,
+        bordercolor: palette.blue3,
+        exists: palette.purple1,
+        notExists: palette.yellow1,
+    },
+}
 
 export const tokyonight = createTheme({
     palette: {
@@ -64,21 +94,3 @@ export const tokyonight = createTheme({
         },
     },
 })
-
-export const globalColorTheme = {
-    bookmarkItem: {
-        tag: palette.orange1,
-        title: palette.blue5,
-        desc: palette.blue3,
-        bg: palette.dark1,
-        focusBg: palette.dark3,
-    },
-    suggestionWindow: {
-        bg: palette.dark1,
-        focusBg: palette.dark3,
-        borderColor: "black",
-        // match: "white",
-        match: "rgb(200,230,255)",
-        unmatch: palette.dark6,
-    }
-}

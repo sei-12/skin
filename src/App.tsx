@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { IData } from "./data";
 import { BookmarkList } from "./components/BookmarkList";
 import { SuggestionWindow } from "./components/SuggestionWindow";
+import { PredicateInputBox, usePredicateInputBox } from "./components/PredicateInputBox";
 
 async function decoyDb_fetchBookmarks(predicateTags: string[]): Promise<IData.Bookmark[]> {
 	let bkmks = [
@@ -68,16 +69,29 @@ function App() {
 
     const [items, setItems] = useState<IData.Bookmark[]>([])
     useEffect(() => { decoyDb_fetchBookmarks([]).then(data => setItems(data))},[])
-
-	let inputBoxRef = useRef<HTMLInputElement>(null)
     const [focusIndex, setFocusIndex] = useState(0)
-	const [predicate,setPredicate] = useState("j")
-	const [suggestionItems,setSuggestionItems] = useState<string[]>([])
-	const [sfocusIndex,setSFocusIndex] = useState(0)
 
-	useEffect(() => {
-		setSuggestionItems(filterTags(predicate))
-	},[predicate])
+
+    const predicateInputBoxHook = usePredicateInputBox()
+
+    const onChangePredicateInputBox = async () => {
+        let inputBox = predicateInputBoxHook.inputBoxRef.current
+        if ( inputBox === null ){ return }
+
+
+        let suggestionItems = filterTags(inputBox.value)
+        predicateInputBoxHook.setSuggestionItems(suggestionItems)
+        predicateInputBoxHook.setSuggestionWindowPredicate(inputBox.value)
+    }
+
+    useEffect(() => {
+        predicateInputBoxHook.setInputedTags([
+            {text: "t",exists: true},
+            {text: "tag1",exists: true},
+            {text: "tag3",exists: true},
+            {text: "tag3",exists: true},
+        ])  
+    },[])
 
     return (
         <Box
@@ -87,7 +101,8 @@ function App() {
                 top:0,
                 left: 0,
                 overflow: "hidden",
-                padding: 3,
+                padding: 2,
+                paddingTop: 1,
                 flexGrow: 1,
             }}
         >
@@ -98,13 +113,15 @@ function App() {
                 height={1}
                 width={1}
             >
-                <Grid2 size="auto" spacing={0}>
-                    <Input ref={inputBoxRef} onChange={(e) => setPredicate(e.target.value)}></Input>
-                    <SuggestionWindow
-                        focusIndex={sfocusIndex}
-                        predicate={predicate}
-                        items={suggestionItems}
-                    ></SuggestionWindow>
+                <Grid2 size="auto">
+                    <PredicateInputBox
+                        onChangeInputBox={onChangePredicateInputBox}
+                        ref={predicateInputBoxHook.inputBoxRef}
+                        inputedTags={predicateInputBoxHook.inputedTags}
+                        suggestionItems={predicateInputBoxHook.suggestionItems}
+                        suggestionWindowFocusIndex={predicateInputBoxHook.suggestionWindowFocusIndex}
+                        suggestionWindowPredicate={predicateInputBoxHook.suggestionWindowPredicate}
+                    ></PredicateInputBox>
                 </Grid2> 
 
                 <Grid2 

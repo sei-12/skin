@@ -28,6 +28,12 @@ export function SuggestionWindow(p: SuggestionWindowProps){
                 display: p.items.length > 0 ? "block" : "none",
                 bgcolor: GCT.suggestionWindow.bg,
                 position: "absolute",
+
+                // 結構難しそうなので簡単な代替案にする
+                // top: p.pos.top,
+                // left: p.pos.left,
+                top: "100%",
+
                 boxSizing: "border-box",
                 zIndex: ZINDEX.popup,
                 maxHeight: 400,
