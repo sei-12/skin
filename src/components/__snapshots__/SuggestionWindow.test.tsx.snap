@@ -1,0 +1,48 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`SuggestionWindow > items 1`] = `
+<div>
+  <div
+    class="MuiBox-root css-1wyizo9"
+  >
+    <div
+      class="MuiBox-root css-1hfa24n"
+    >
+      <p
+        class="MuiTypography-root MuiTypography-body1 css-1bfdmob-MuiTypography-root"
+      >
+        h
+      </p>
+      <p
+        class="MuiTypography-root MuiTypography-body1 css-w44nn4-MuiTypography-root"
+      >
+        ello
+      </p>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`SuggestionWindow > items 2`] = `
+<p
+  class="MuiTypography-root MuiTypography-body1 css-1bfdmob-MuiTypography-root"
+>
+  h
+</p>
+`;
+
+exports[`SuggestionWindow > items 3`] = `
+<p
+  class="MuiTypography-root MuiTypography-body1 css-w44nn4-MuiTypography-root"
+>
+  ello
+</p>
+`;
+
+exports[`SuggestionWindow > useSuggestionWindow 1`] = `
+<div>
+  <div
+    class="MuiBox-root css-971pk6"
+  />
+</div>
+`;
