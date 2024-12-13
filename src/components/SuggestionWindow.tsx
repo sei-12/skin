@@ -13,6 +13,11 @@ export function useSuggestionWindow() {
     const getFocusedItem = () => {
         return items.at(focusIndex)
     }
+    const close = () => {
+        setItems([])
+        setPredicate("")
+        setFocusIndex(0)
+    }
 
 
 	useEffect(() => {
@@ -31,6 +36,7 @@ export function useSuggestionWindow() {
             itemRefs,
         },
 
+        close,
         getFocusedItem,
         items,
         setItems,
