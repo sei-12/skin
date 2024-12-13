@@ -58,6 +58,43 @@ describe("SuggestionWindow",() => {
             hook.result.current.setPredicate("h")
         })
     })
+    
+
+    test("getFocusedItem",() => {
+        const hook = renderHook(() => {
+            return useSuggestionWindow()
+        })
+
+        expect(hook.result.current.getFocusedItem()).toBe(undefined)
+        
+        act(() => {
+            hook.result.current.setFocusIndex(1)
+            hook.result.current.setItems([
+                "hello",
+                "aaa"
+            ])
+        })
+        
+        expect(hook.result.current.getFocusedItem()).toBe("aaa")
+
+        act(() => {
+            hook.result.current.setFocusIndex(2)
+            hook.result.current.setItems([
+                "hello",
+                "aaa",
+                "hey",
+                "foo",
+            ])
+        })
+
+        expect(hook.result.current.getFocusedItem()).toBe("hey")
+
+        act(() => {
+            hook.result.current.setItems([])
+        })
+
+        expect(hook.result.current.getFocusedItem()).toBe(undefined)
+    })
 })
 
 describe("highlightMatchedBlocks", () => {

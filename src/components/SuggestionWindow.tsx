@@ -9,6 +9,10 @@ export function useSuggestionWindow() {
     const [focusIndex,setFocusIndex] = useState(0)
 
 	const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
+    
+    const getFocusedItem = () => {
+        return items.at(focusIndex)
+    }
 
 
 	useEffect(() => {
@@ -27,6 +31,7 @@ export function useSuggestionWindow() {
             itemRefs,
         },
 
+        getFocusedItem,
         items,
         setItems,
         predicate,
