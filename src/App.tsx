@@ -1,7 +1,7 @@
 import { Box, Grid2 } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { IData } from "./data";
-import { BookmarkList } from "./components/BookmarkList";
+import { BookmarkList, useBookmarkList } from "./components/BookmarkList";
 import { TagInputBox, useTagInputBox } from "./components/TagInputBox";
 
 async function decoyDb_fetchBookmarks(predicateTags: string[]): Promise<IData.Bookmark[]> {
@@ -66,9 +66,15 @@ function filterTags(predicate: string) {
 
 function App() {
 
-    const [items, setItems] = useState<IData.Bookmark[]>([])
-    useEffect(() => { decoyDb_fetchBookmarks([]).then(data => setItems(data)) }, [])
-    const [focusIndex, setFocusIndex] = useState(0)
+    // const [items, setItems] = useState<IData.Bookmark[]>([])
+    
+    const bkmkListHook = useBookmarkList(
+        () => console.log("onclick remove!!"),
+        () => console.log("onclick edit!!")
+    )
+
+    useEffect(() => { decoyDb_fetchBookmarks([]).then(data => bkmkListHook.setItems(data)) }, [])
+    // const [focusIndex, setFocusIndex] = useState(0)
 
 
     const onChangePredicateInputBox = async () => {
@@ -124,12 +130,7 @@ function App() {
                     size="grow"
                     sx={{ overflow: "hidden", display: "flex" }}
                 >
-                    <BookmarkList
-                        focusIndex={focusIndex}
-                        onClickEdit={() => { }}
-                        onClickRemove={() => { }}
-                        items={items}
-                    ></BookmarkList>
+                    <BookmarkList {...bkmkListHook.props}></BookmarkList>
                 </Grid2>
             </Grid2>
         </Box>
