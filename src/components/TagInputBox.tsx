@@ -66,6 +66,7 @@ export const TagInputBox = (p: ReturnType<typeof useTagInputBox>["props"]) => {
                 <TextField
                     onInput={() => { p.onChangeInputBox() }}
                     inputRef={p.inputBoxRef}
+                    autoComplete="off"
                     variant="outlined"
                     size="medium"
                     sx={{

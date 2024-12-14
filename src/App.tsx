@@ -3,32 +3,34 @@ import { useEffect } from "react";
 import { IData } from "./data";
 import { BookmarkList, useBookmarkList } from "./components/BookmarkList";
 import { TagInputBox, useTagInputBox } from "./components/TagInputBox";
+import { useHotkeys } from "react-hotkeys-hook";
+import { HOTKEY_SCOPES, useAppHotkey } from "./hotkey";
 
 async function decoyDb_fetchBookmarks(predicateTags: string[]): Promise<IData.Bookmark[]> {
     let bkmks = [
-        { key: crypto.randomUUID(), title: "hello1", desc: "this is description", tags: ["hello", "aaa", "hey"] },
-        { key: crypto.randomUUID(), title: crypto.randomUUID(), desc: "this is description", tags: ["uuu", "uid", "hey"] },
-        { key: crypto.randomUUID(), title: crypto.randomUUID(), desc: "this is description", tags: ["uuu", "uid", "hey"] },
-        { key: crypto.randomUUID(), title: crypto.randomUUID(), desc: "this is description", tags: ["uuu", "uid", "hey"] },
-        { key: crypto.randomUUID(), title: "hello8", desc: "this is description", tags: ["hello", "aaa", "gummy"] },
-        { key: crypto.randomUUID(), title: "hello1", desc: "this is description", tags: ["abc", "aaa", "hey"] },
-        { key: crypto.randomUUID(), title: "hello6", desc: "this is description", tags: ["todo", "typescript", "hey"] },
-        { key: crypto.randomUUID(), title: "hello2", desc: "this is description", tags: ["todo", "ass", "hey"] },
-        { key: crypto.randomUUID(), title: "hello3", desc: "this is description", tags: ["abcde", "uuid", "hey"] },
-        { key: crypto.randomUUID(), title: "hello5", desc: "this is description", tags: ["uuu", "uid", "hey"] },
-        { key: crypto.randomUUID(), title: "hello9", desc: "this is description", tags: ["uuu", "uid", "hey"] },
-        { key: crypto.randomUUID(), title: "hello6", desc: "this is description", tags: ["todo", "typescript", "hey"] },
-        { key: crypto.randomUUID(), title: "hello6", desc: "this is description", tags: ["todo", "typescript", "hey"] },
-        { key: crypto.randomUUID(), title: "hello6", desc: "this is description".repeat(10), tags: ["todo", "typescript", "hey"] },
-        { key: crypto.randomUUID(), title: "hello6", desc: "this is description", tags: ["todo", "typescript", "hey"] },
-        { key: crypto.randomUUID(), title: "aa", desc: "this is description", tags: ["uuu", "uid", "hey"] },
-        { key: crypto.randomUUID(), title: "hhh", desc: "this is description", tags: ["uuu", "uid", "hey"] },
-        { key: crypto.randomUUID(), title: crypto.randomUUID(), desc: "this is description", tags: ["uuu", "uid", "hey"] },
-        { key: crypto.randomUUID(), title: crypto.randomUUID(), desc: "this is description", tags: ["uuu", "uid", "hey"] },
-        { key: crypto.randomUUID(), title: crypto.randomUUID(), desc: "this is description", tags: ["uuu", "uid", "hey"] },
-        { key: crypto.randomUUID(), title: crypto.randomUUID(), desc: "this is description", tags: ["uuu", "uid", "hey"] },
-        { key: crypto.randomUUID(), title: crypto.randomUUID(), desc: "this is description", tags: ["uuu", "uid", "hey"] },
-        { key: crypto.randomUUID(), title: crypto.randomUUID(), desc: "this is description", tags: ["uuu", "uid", "hey"] },
+        { key: "1hello123", title: "hello1", desc: "this is description", tags: ["hello", "aaa", "hey"] },
+        { key: "2hello123", title: "hello1", desc: "this is description", tags: ["uuu", "uid", "hey"] },
+        { key: "3hello3", title: "hello1", desc: "this is description", tags: ["uuu", "uid", "hey"] },
+        { key: "4haaello6", title: "hello1", desc: "this is description", tags: ["uuu", "uid", "hey"] },
+        { key: "5heibbllo5", title: "hello8", desc: "this is description", tags: ["hello", "aaa", "gummy"] },
+        { key: "6jhaaelibblo4", title: "hello1", desc: "this is description", tags: ["abc", "aaa", "hey"] },
+        { key: "7hello1aaibb", title: "hello6", desc: "this is description", tags: ["todo", "typescript", "hey"] },
+        { key: "8haaelloibb1v", title: "hello2", desc: "this is description", tags: ["todo", "ass", "hey"] },
+        { key: "9hello1b", title: "hello3", desc: "this is description", tags: ["abcde", "uuid", "hey"] },
+        { key: "190hellols1asad", title: "hello5", desc: "this is description", tags: ["uuu", "uid", "hey"] },
+        { key: "11hellaaols1", title: "hello9", desc: "this is description", tags: ["uuu", "uid", "hey"] },
+        { key: "h12aaelalslo1", title: "hello6", desc: "this is description", tags: ["todo", "typescript", "hey"] },
+        { key: "he23lalo1", title: "hello6", desc: "this is description", tags: ["todo", "typescript", "hey"] },
+        { key: "haa14elalo1", title: "hello6", desc: "this is description".repeat(10), tags: ["todo", "typescript", "hey"] },
+        { key: "hela15lo1", title: "hello6", desc: "this is description", tags: ["todo", "typescript", "hey"] },
+        { key: "haela16lo1", title: "aa", desc: "this is description", tags: ["uuu", "uid", "hey"] },
+        { key: "haaela17lo1", title: "hhh", desc: "this is description", tags: ["uuu", "uid", "hey"] },
+        { key: "haelai18lo1", title: "hello1", desc: "this is description", tags: ["uuu", "uid", "hey"] },
+        { key: "haaela19lo1", title: "hello1", desc: "this is description", tags: ["uuu", "uid", "hey"] },
+        { key: "helal29o1", title: "hello1", desc: "this is description", tags: ["uuu", "uid", "hey"] },
+        { key: "helaaalo1", title: "hello1", desc: "this is description", tags: ["uuu", "uid", "hey"] },
+        { key: "haa22elalo1", title: "hello1", desc: "this is description", tags: ["uuu", "uid", "hey"] },
+        { key: "hael123lo1", title: "hello1", desc: "this is description", tags: ["uuu", "uid", "hey"] },
     ]
 
     let filted = bkmks.map(b => {
@@ -66,17 +68,13 @@ function filterTags(predicate: string) {
 
 function App() {
 
-    // const [items, setItems] = useState<IData.Bookmark[]>([])
-    
+
     const bkmkListHook = useBookmarkList(
         () => console.log("onclick remove!!"),
         () => console.log("onclick edit!!")
     )
 
-    useEffect(() => { decoyDb_fetchBookmarks([]).then(data => bkmkListHook.setItems(data)) }, [])
-    // const [focusIndex, setFocusIndex] = useState(0)
-
-
+    // TOOD: この処理はフックの中でいい気がする。
     const onChangePredicateInputBox = async () => {
         let inputBox = tagInputBoxHook.inputBoxRef.current
         if (inputBox === null) { return }
@@ -91,7 +89,22 @@ function App() {
     const tagInputBoxHook = useTagInputBox(
         onChangePredicateInputBox
     )
+    
+    const appHotkeyHook = useAppHotkey()
 
+    //
+    //
+    // EFFECTS
+    //
+    //
+
+    useEffect(() => {
+        if ( tagInputBoxHook.suggestionWindowHook.items.length === 0){
+            appHotkeyHook.switchScope(HOTKEY_SCOPES.SEARCH_BOOKMARK)
+        }else{
+            appHotkeyHook.switchScope(HOTKEY_SCOPES.SUGGESTION_WINDOW)
+        }
+    },[tagInputBoxHook.suggestionWindowHook.items])
 
     useEffect(() => {
         tagInputBoxHook.setInputedTags([
@@ -101,6 +114,137 @@ function App() {
             { text: "tag3", exists: true },
         ])
     }, [])
+    useEffect(() => { decoyDb_fetchBookmarks([]).then(data => bkmkListHook.setItems(data)) }, [])
+
+
+    //
+    //
+    // HOTKEYS
+    //
+    //
+    
+    // TODO: フォーカスの移動の処理をまとめたい。useFocusIndexとか作りたい。
+    // けど、ホットキーの設定をするときに依存関係を配列で渡さないといけなくて、それをどうやって対処するかで悩んでいる。
+    // 配列もまとめて定義したらいいけど、中身を意識しないと使えない抽象化とかいういい加減な状態になる気がしている。
+    //
+    // TODO: というか、関数定義とホットキーの情報を分けて、動作とトリガーを分離したい。これはできる気がする。
+    // 追記：本当にそれをすべきかなやんでいる。
+    
+    useHotkeys(
+        "ctrl+n",
+        () => {
+            bkmkListHook.setFocusIndex( cur => {
+                let newIndex = cur + 1
+                if ( newIndex >= bkmkListHook.items.length ){
+                    newIndex = 0
+                }
+                return newIndex
+            })
+        },
+        {scopes: [HOTKEY_SCOPES.SEARCH_BOOKMARK],preventDefault: true,enableOnFormTags: true},
+        [bkmkListHook.items]
+    )
+
+    useHotkeys(
+        "ctrl+p",
+        () => {
+            bkmkListHook.setFocusIndex( cur => {
+                let newIndex = cur - 1
+                if (newIndex < 0){
+                    newIndex = bkmkListHook.items.length - 1
+                }
+                return newIndex
+            })
+        },
+        {scopes: [HOTKEY_SCOPES.SEARCH_BOOKMARK],preventDefault: true,enableOnFormTags: true},
+        [bkmkListHook.items]
+    )
+
+    useHotkeys(
+        "ctrl+n",
+        () => {
+            tagInputBoxHook.suggestionWindowHook.setFocusIndex( cur => {
+                let newIndex = cur + 1
+                if ( newIndex >= tagInputBoxHook.suggestionWindowHook.items.length ){
+                    newIndex = 0
+                }
+                return newIndex
+            })
+        },
+        {scopes: [HOTKEY_SCOPES.SUGGESTION_WINDOW],preventDefault: true,enableOnFormTags: true},
+        [tagInputBoxHook.suggestionWindowHook.items]
+    )
+
+    useHotkeys(
+        "ctrl+p",
+        () => {
+            tagInputBoxHook.suggestionWindowHook.setFocusIndex( cur => {
+                let newIndex = cur - 1
+                if (newIndex < 0){
+                    newIndex = tagInputBoxHook.suggestionWindowHook.items.length - 1
+                }
+                return newIndex
+            })
+        },
+        {scopes: [HOTKEY_SCOPES.SUGGESTION_WINDOW],preventDefault: true,enableOnFormTags: true},
+        [tagInputBoxHook.suggestionWindowHook.items]
+    )
+
+    useHotkeys(
+        "/",
+        () => {
+            tagInputBoxHook.inputBoxRef.current?.focus()
+        },
+        {keydown: false, keyup: true, scopes: [HOTKEY_SCOPES.SEARCH_BOOKMARK] },
+        []
+    )
+    
+    useHotkeys(
+        "Enter",
+        () => {
+            let item = tagInputBoxHook.suggestionWindowHook.getFocusedItem()
+            let inputBox = tagInputBoxHook.inputBoxRef.current
+
+            if ( inputBox === null ){ return }
+            if ( item === undefined ){ return }
+
+            inputBox.value = ""
+            tagInputBoxHook.setInputedTags(ary => { return [...ary, { text: item, exists: true }]})
+            tagInputBoxHook.suggestionWindowHook.close()
+        },
+        {scopes: [HOTKEY_SCOPES.SUGGESTION_WINDOW],preventDefault: true,enableOnFormTags: true},
+        [tagInputBoxHook]
+    )
+    
+    useHotkeys(
+        "Backspace",
+        () => {
+            let inputBox = tagInputBoxHook.inputBoxRef.current
+
+            if ( inputBox === null ){ return }
+            if ( inputBox.value !== "" ){ return }
+
+            inputBox.value = ""
+            tagInputBoxHook.setInputedTags(ary => {
+                ary.pop()
+                return [...ary]
+            })
+        },
+        {scopes: [HOTKEY_SCOPES.SEARCH_BOOKMARK],enableOnFormTags: true},
+        []
+    )
+    
+    useHotkeys(
+        "Escape",
+        () => {
+            let inputBox = tagInputBoxHook.inputBoxRef.current
+            if ( inputBox === null ){ return }
+            tagInputBoxHook.suggestionWindowHook.close()
+        },
+        {scopes: [HOTKEY_SCOPES.SUGGESTION_WINDOW],preventDefault: true,enableOnFormTags: true},
+        []
+    )
+    
 
     return (
         <Box
