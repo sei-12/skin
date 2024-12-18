@@ -1,7 +1,7 @@
 
 export namespace IData {
     export interface Bookmark {
-        key: string
+        id: number
         title: string
         tags: string[]
         desc: string

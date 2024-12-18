@@ -69,10 +69,10 @@ export const BookmarkItem = forwardRef<HTMLDivElement, BookmarkItemProps>(
                                     right: 10
                                 }}
                             >
-                                <Button variant="contained" onClick={() => props.onClickRemove(props.data.key)}>
+                                <Button variant="contained" onClick={() => props.onClickRemove(props.data.id)}>
                                     <DeleteIcon></DeleteIcon>
                                 </Button>
-                                <Button variant="contained" onClick={() => props.onClickEdit(props.data.key)}>
+                                <Button variant="contained" onClick={() => props.onClickEdit(props.data.id)}>
                                     <EditIcon></EditIcon>
                                 </Button>
                             </Stack>

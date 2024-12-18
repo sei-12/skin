@@ -1,81 +1,17 @@
 import { Box } from "@mui/material";
 import { useEffect, useState } from "react";
-import { IData } from "./data";
 import { useBookmarkList } from "./components/BookmarkList";
 import { useTagInputBox } from "./components/TagInputBox";
 import { useHotkeys } from "react-hotkeys-hook";
 import { HOTKEY_SCOPES, useAppHotkey } from "./hotkey";
 import { SearchBookmark } from "./views/SearchBookmark";
 import { CreateNewBookmark, useCreateNewBookmark } from "./views/CreateNewBookmark";
+import { dbConnection } from "./database";
 
-async function decoyDb_fetchBookmarks(predicateTags: string[]): Promise<IData.Bookmark[]> {
-    let bkmks = [
-        { key: "1hello123", title: "hello1", desc: "this is description", tags: ["hello", "aaa", "hey"] },
-        { key: "2hello123", title: "hello1", desc: "this is description", tags: ["uuu", "uid", "hey"] },
-        { key: "3hello3", title: "hello1", desc: "this is description", tags: ["uuu", "uid", "hey"] },
-        { key: "4haaello6", title: "hello1", desc: "this is description", tags: ["uuu", "uid", "hey"] },
-        { key: "5heibbllo5", title: "hello8", desc: "this is description", tags: ["hello", "aaa", "gummy"] },
-        { key: "6jhaaelibblo4", title: "hello1", desc: "this is description", tags: ["abc", "aaa", "hey"] },
-        { key: "7hello1aaibb", title: "hello6", desc: "this is description", tags: ["todo", "typescript", "hey"] },
-        { key: "8haaelloibb1v", title: "hello2", desc: "this is description", tags: ["todo", "ass", "hey"] },
-        { key: "9hello1b", title: "hello3", desc: "this is description", tags: ["abcde", "uuid", "hey"] },
-        { key: "190hellols1asad", title: "hello5", desc: "this is description", tags: ["uuu", "uid", "hey"] },
-        { key: "11hellaaols1", title: "hello9", desc: "this is description", tags: ["uuu", "uid", "hey"] },
-        { key: "h12aaelalslo1", title: "hello6", desc: "this is description", tags: ["todo", "typescript", "hey"] },
-        { key: "he23lalo1", title: "hello6", desc: "this is description", tags: ["todo", "typescript", "hey"] },
-        { key: "haa14elalo1", title: "hello6", desc: "this is description".repeat(10), tags: ["todo", "typescript", "hey"] },
-        { key: "hela15lo1", title: "hello6", desc: "this is description", tags: ["todo", "typescript", "hey"] },
-        { key: "haela16lo1", title: "aa", desc: "this is description", tags: ["uuu", "uid", "hey"] },
-        { key: "haaela17lo1", title: "hhh", desc: "this is description", tags: ["uuu", "uid", "hey"] },
-        { key: "haelai18lo1", title: "hello1", desc: "this is description", tags: ["uuu", "uid", "hey"] },
-        { key: "haaela19lo1", title: "hello1", desc: "this is description", tags: ["uuu", "uid", "hey"] },
-        { key: "helal29o1", title: "hello1", desc: "this is description", tags: ["uuu", "uid", "hey"] },
-        { key: "helaaalo1", title: "hello1", desc: "this is description", tags: ["uuu", "uid", "hey"] },
-        { key: "haa22elalo1", title: "hello1", desc: "this is description", tags: ["uuu", "uid", "hey"] },
-        { key: "hael123lo1", title: "hello1", desc: "this is description", tags: ["uuu", "uid", "hey"] },
-    ]
-
-    let filted = bkmks.map(b => {
-        return { ...b, url: "url://url" }
-    })
-
-    predicateTags.forEach(ptag => {
-        filted = filted.filter(t => t.tags.includes(ptag))
-    })
-
-    return filted
-}
-
-function filterTags(predicate: string) {
-    const TAG_LIST = [
-        "typescript", "javascript", "python", "java", "csharp", "ruby", "php", "swift", "kotlin", "golang",
-        "rust", "scala", "haskell", "perl", "sql", "html", "css", "sass", "less", "json", "gist", "clang", "cpp",
-        "xml", "yaml", "docker", "kubernetes", "aws", "azure", "gcp", "firebase", "react", "vue",
-        "angular", "svelte", "jquery", "nodejs", "express", "nestjs", "deno", "nextjs", "nuxtjs", "remix",
-        "webpack", "rollup", "vite", "babel", "eslint", "prettier", "jest", "mocha", "chai", "vitest",
-        "playwright", "puppeteer", "selenium", "cypress", "git", "github", "gitlab", "bitbucket", "ci/cd", "jenkins",
-        "travis", "circleci", "databases", "mongodb", "postgresql", "mysql", "sqlite", "redis", "cassandra", "oracle",
-        "machinelearning", "ai", "deeplearning", "nlp", "opencv", "tensorflow", "pytorch", "keras", "scikit-learn", "pandas",
-        "numpy", "matplotlib", "seaborn", "debugging", "logging", "profiling", "performance", "optimizations", "http", "api",
-        "rest", "graphql", "websocket", "oauth", "jwt", "jsonwebtokens", "auth0", "passportjs", "security", "encryption", "hello", "main"
-    ] as const;
-
-    if (predicate === "") {
-        return []
-    }
-
-
-    return TAG_LIST.filter(tag => tag.includes(predicate))
-}
 
 function App() {
 
-
 	const [showView,setShowView] = useState<"SEARCH_BOOKMARK"|"CREATE_NEW_BOOKMARK">("SEARCH_BOOKMARK")
-	useEffect(() => {
-		// debug
-		setShowView("CREATE_NEW_BOOKMARK")
-	},[])
 
 	const onClickAddButton = () => { 
 		setShowView("CREATE_NEW_BOOKMARK")
@@ -92,7 +28,7 @@ function App() {
         if (inputBox === null) { return }
 
 
-        let suggestionItems = filterTags(inputBox.value)
+        let suggestionItems = await dbConnection.findTag(inputBox.value)
         tagInputBoxHook.suggestionWindowHook.setItems(suggestionItems)
         tagInputBoxHook.suggestionWindowHook.setPredicate(inputBox.value)
         tagInputBoxHook.suggestionWindowHook.setFocusIndex(0)
@@ -120,15 +56,15 @@ function App() {
     },[tagInputBoxHook.suggestionWindowHook.items])
 
     useEffect(() => {
-        tagInputBoxHook.setInputedTags([
-            { text: "t", exists: true },
-            { text: "tag1", exists: true },
-            { text: "tag3", exists: true },
-            { text: "tag3", exists: true },
-        ])
+        tagInputBoxHook.setInputedTags([])
     }, [])
-    useEffect(() => { decoyDb_fetchBookmarks([]).then(data => bkmkListHook.setItems(data)) }, [])
-
+    
+    useEffect(() => {
+        let tags = tagInputBoxHook.inputedTags.map( e => { return e.text })
+        dbConnection.findBookmark(tags).then( data => {
+            bkmkListHook.setItems(data)
+        })
+    },[tagInputBoxHook.inputedTags])
 
     //
     //
