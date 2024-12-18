@@ -1,10 +1,12 @@
-import { Box, Grid2 } from "@mui/material";
-import { useEffect } from "react";
+import { Box } from "@mui/material";
+import { useEffect, useState } from "react";
 import { IData } from "./data";
-import { BookmarkList, useBookmarkList } from "./components/BookmarkList";
-import { TagInputBox, useTagInputBox } from "./components/TagInputBox";
+import { useBookmarkList } from "./components/BookmarkList";
+import { useTagInputBox } from "./components/TagInputBox";
 import { useHotkeys } from "react-hotkeys-hook";
 import { HOTKEY_SCOPES, useAppHotkey } from "./hotkey";
+import { SearchBookmark } from "./views/SearchBookmark";
+import { CreateNewBookmark, useCreateNewBookmark } from "./views/CreateNewBookmark";
 
 async function decoyDb_fetchBookmarks(predicateTags: string[]): Promise<IData.Bookmark[]> {
     let bkmks = [
@@ -69,6 +71,16 @@ function filterTags(predicate: string) {
 function App() {
 
 
+	const [showView,setShowView] = useState<"SEARCH_BOOKMARK"|"CREATE_NEW_BOOKMARK">("SEARCH_BOOKMARK")
+	useEffect(() => {
+		// debug
+		setShowView("CREATE_NEW_BOOKMARK")
+	},[])
+
+	const onClickAddButton = () => { 
+		setShowView("CREATE_NEW_BOOKMARK")
+	}
+
     const bkmkListHook = useBookmarkList(
         () => console.log("onclick remove!!"),
         () => console.log("onclick edit!!")
@@ -91,6 +103,7 @@ function App() {
     )
     
     const appHotkeyHook = useAppHotkey()
+	const createNewBookmarkHook = useCreateNewBookmark()
 
     //
     //
@@ -259,27 +272,19 @@ function App() {
                 flexGrow: 1,
             }}
         >
-            <Grid2
-                container
-                spacing={1}
-                flexDirection={"column"}
-                height={1}
-                width={1}
-            >
-                <Grid2 size="auto">
-                    <TagInputBox {...tagInputBoxHook.props} ></TagInputBox>
-                </Grid2>
-
-                <Grid2
-                    size="grow"
-                    sx={{ overflow: "hidden", display: "flex" }}
-                >
-                    <BookmarkList {...bkmkListHook.props}></BookmarkList>
-                </Grid2>
-            </Grid2>
-        </Box>
+		{
+			(() => {
+				if( showView === "SEARCH_BOOKMARK" ){
+					return (<SearchBookmark onClickAdd={onClickAddButton} tagInputBoxHook={tagInputBoxHook.props} bkmkListHook={bkmkListHook.props}/>)
+				}
+				if(showView === "CREATE_NEW_BOOKMARK"){
+					return (<CreateNewBookmark {...createNewBookmarkHook.props}/>)
+				}
+			})()
+		}
+		</Box>
 
     );
 }
-
+        
 export default App;
