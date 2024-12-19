@@ -9,6 +9,26 @@ import { CreateNewBookmark, useCreateNewBookmark } from "./views/CreateNewBookma
 import { dbConnection } from "./database";
 import { invoke } from "@tauri-apps/api/core";
 
+import { register } from '@tauri-apps/plugin-global-shortcut';
+// when using `"withGlobalTauri": true`, you may use
+// const { register } = window.__TAURI__.globalShortcut;
+
+import { getCurrentWindow } from "@tauri-apps/api/window";
+
+// ウィンドウを表示/非表示
+register("Alt+X",async (event) => {
+    if ( event.state === "Released" ) {
+        return
+    }
+
+    let curWindow = getCurrentWindow();
+    let curVisibility = await curWindow.isVisible();
+    if (curVisibility) {
+        curWindow.hide()
+    }else{
+        curWindow.show()
+    }
+})
 
 function App() {
 
@@ -90,6 +110,7 @@ function App() {
     // EFFECTS
     //
     //
+    
 
     useEffect(() => {
         if ( showView != "SEARCH_BOOKMARK") {
@@ -138,6 +159,14 @@ function App() {
     // 追記：本当にそれをすべきかなやんでいる。
 
 
+    useHotkeys(
+        "Escape",
+        () => {
+            getCurrentWindow().hide()
+        },
+        { scopes: [HOTKEY_SCOPES.SEARCH_BOOKMARK], preventDefault: true, enableOnFormTags: true },
+        []
+    )
     useHotkeys(
         "ctrl+a",
         () => {
@@ -364,8 +393,10 @@ function App() {
     useHotkeys(
         "ctrl+Enter",
         () => {
+            if (bkmkListHook.items.length === 0) { return }
             let focusedItem = bkmkListHook.items[bkmkListHook.focusIndex]
             let url = focusedItem.url
+            getCurrentWindow().hide()
             invoke("open_url",{url}) 
             tagInputBoxHook.setInputedTags([])
         },
