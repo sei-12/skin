@@ -6,7 +6,7 @@ import { BookmarkItem, BookmarkItemProps } from "./BookmarkItem";
 import { IData } from "../dts/data";
 
 // Mock globalColorTheme
-vi.mock("../theme", () => ({
+vi.mock("../lib/theme", () => ({
     globalColorTheme: {
         bookmarkItem: {
             focusBg: "#f0f0f0",
