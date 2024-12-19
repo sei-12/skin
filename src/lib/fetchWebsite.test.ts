@@ -1,5 +1,7 @@
 import { describe, it, expect } from "vitest";
-import { parseHTMLMetaData } from "./fetchWebsiteContent";
+import { __test__export_fetchWebsiteContent } from "./fetchWebsiteContent";
+
+const { parseHTMLMetaData } = __test__export_fetchWebsiteContent;
 
 describe("parseHTMLMetaData", () => {
     it("正しいタイトルと説明を取得できる", () => {

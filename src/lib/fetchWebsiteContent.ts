@@ -5,16 +5,10 @@ import { JSDOM } from "jsdom";
  * @param url 取得するURL
  * @returns HTML文字列
  */
-export async function fetchWebsiteContent(url: string): Promise<string> {
-    try {
-        const response = await fetch(url, { method: "GET" });
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        return await response.text();
-    } catch (error) {
-        throw new Error(`Failed to fetch content from URL: ${error}`);
-    }
+export async function fetchWebsiteContent(url: string) {
+    let html = await fetch(url, { method: "GET" }).then((response) => response.text());
+    let result = parseHTMLMetaData(html);
+    return result
 }
 
 /**
@@ -22,7 +16,7 @@ export async function fetchWebsiteContent(url: string): Promise<string> {
  * @param html HTML文字列
  * @returns タイトルと説明
  */
-export function parseHTMLMetaData(html: string) {
+function parseHTMLMetaData(html: string) {
     const dom = new JSDOM(html);
     const document = dom.window.document;
 
@@ -31,4 +25,9 @@ export function parseHTMLMetaData(html: string) {
         document.querySelector('meta[name="description"]')?.getAttribute("content") || null;
 
     return { title, description };
+}
+
+
+export const __test__export_fetchWebsiteContent = {
+    parseHTMLMetaData,
 }
