@@ -62,12 +62,16 @@ class DataBaseConnection implements IDataBase {
     }
 	
 	async insertBookmark(title: string, url: string, desc: string , tags: string[]): Promise<void> {
+        console.log(title,url,desc,tags)
+
         let result = await this.db.execute("insert into bookmarks values(null,$1,$2,$3,$4)",[
             title,
             url,
             desc,
             tags.length
         ])
+        
+        console.log(result)
 		
 		let bkmk_id = result.lastInsertId
 

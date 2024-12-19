@@ -10,8 +10,8 @@ import EditIcon from '@mui/icons-material/Edit';
 export type BookmarkItemProps = {
     data: IData.Bookmark
 
-    onClickRemove: (key:string) => void
-    onClickEdit: (key:string) => void
+    onClickRemove: (key:number) => void
+    onClickEdit: (key:number) => void
     focus: boolean
 }
 

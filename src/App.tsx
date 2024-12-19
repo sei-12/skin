@@ -7,18 +7,30 @@ import { HOTKEY_SCOPES, useAppHotkey } from "./hotkey";
 import { SearchBookmark } from "./views/SearchBookmark";
 import { CreateNewBookmark, useCreateNewBookmark } from "./views/CreateNewBookmark";
 import { dbConnection } from "./database";
+import { invoke } from "@tauri-apps/api/core";
 
 
 function App() {
 
     const [showView, setShowView] = useState<"SEARCH_BOOKMARK" | "CREATE_NEW_BOOKMARK">("SEARCH_BOOKMARK")
 
-    const onClickAddButton = () => {
+    const changeViewToCreateNewBookmark = () => {
         setShowView("CREATE_NEW_BOOKMARK")
+        appHotkeyHook.switchScope(HOTKEY_SCOPES.CREATE_NEW_BOOKMARK)
+    }
+
+    const onClickAddButton = () => {
+        changeViewToCreateNewBookmark()
     }
 
     const bkmkListHook = useBookmarkList(
-        () => console.log("onclick remove!!"),
+        (id) => {
+            dbConnection.deleteBookmark(id).then(() => {
+                dbConnection.findBookmark(tagInputBoxHook.inputedTags.map( i => i.text)).then(data => {
+                    bkmkListHook.setItems(data)
+                })
+            })
+        },
         () => console.log("onclick edit!!")
     )
 
@@ -40,8 +52,6 @@ function App() {
 
     const appHotkeyHook = useAppHotkey()
     const onClickCreateDone = () => {
-        console.log("done")
-
         const inputData = createNewBookmarkHook.getInputData()
         if (inputData === undefined) { return }
 
@@ -53,6 +63,7 @@ function App() {
         ).then(() => {
             createNewBookmarkHook.clearData()
             setShowView("SEARCH_BOOKMARK")
+            appHotkeyHook.switchScope(HOTKEY_SCOPES.SEARCH_BOOKMARK)
         })
     }
 
@@ -124,7 +135,7 @@ function App() {
     useHotkeys(
         "ctrl+a",
         () => {
-            setShowView("CREATE_NEW_BOOKMARK")
+            changeViewToCreateNewBookmark()
         },
         { scopes: [HOTKEY_SCOPES.SEARCH_BOOKMARK], preventDefault: false, enableOnFormTags: true },
         []
@@ -339,8 +350,21 @@ function App() {
             createNewBookmarkHook.tagInputBoxHook.suggestionWindowHook.close()
             inputBox.value = ""
         },
-        { scopes: [HOTKEY_SCOPES.CREATE_NEW_BOOKMARK_SUGGESTION_WINDOW], enableOnFormTags: true },
+        { scopes: [HOTKEY_SCOPES.CREATE_NEW_BOOKMARK, HOTKEY_SCOPES.CREATE_NEW_BOOKMARK_SUGGESTION_WINDOW], enableOnFormTags: true },
         []
+    )
+    
+
+    useHotkeys(
+        "ctrl+Enter",
+        () => {
+            let focusedItem = bkmkListHook.items[bkmkListHook.focusIndex]
+            let url = focusedItem.url
+            invoke("open_url",{url}) 
+            tagInputBoxHook.setInputedTags([])
+        },
+        {scopes: [HOTKEY_SCOPES.SEARCH_BOOKMARK], preventDefault: true, enableOnFormTags: true},
+        [tagInputBoxHook,bkmkListHook]
     )
 
 

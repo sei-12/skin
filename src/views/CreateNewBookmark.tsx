@@ -50,6 +50,8 @@ export function useCreateNewBookmark(
         titleRef.current.value = ""
         descRef .current.value = ""
         urlRef  .current.value = ""
+        
+        tagInputBoxHook.setInputedTags([])
     };
 
     return {
@@ -71,14 +73,14 @@ export function useCreateNewBookmark(
 export function CreateNewBookmark(p: ReturnType<typeof useCreateNewBookmark>["props"]){
     return (
         <div>
-			<TextField sx={{
+			<TextField inputRef={p.titleRef} sx={{
 				width: 0.8
 			}}placeholder={"title"} />
-			<TextField sx={{
+			<TextField inputRef={p.urlRef} sx={{
 				width: 0.8
 			}}placeholder={"url"} />
 			<TagInputBox {...p.tagInputBox}/>
-			<TextField sx={{
+			<TextField inputRef={p.descRef} sx={{
 				width: 1
 			}}placeholder={"desc"} />
 			<Button onClick={p.onClickCancel}>Cancel</Button>
