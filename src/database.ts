@@ -61,12 +61,12 @@ class DataBaseConnection implements IDataBase {
         await this.db.execute("insert into tags values (null,$1)",[tag])
     }
 	
-	async insertBookmark(data: IData.Bookmark): Promise<void> {
+	async insertBookmark(title: string, url: string, desc: string , tags: string[]): Promise<void> {
         let result = await this.db.execute("insert into bookmarks values(null,$1,$2,$3,$4)",[
-            data.title,
-            data.url,
-            data.desc,
-            data.tags.length
+            title,
+            url,
+            desc,
+            tags.length
         ])
 		
 		let bkmk_id = result.lastInsertId
@@ -80,7 +80,7 @@ class DataBaseConnection implements IDataBase {
 
         let bkmkId = result.lastInsertId
         
-		let tagsSet = new Set(data.tags)
+		let tagsSet = new Set(tags)
         await this.addTags(tagsSet)
         let tagIds = await this.tagIds(tagsSet)
         
@@ -191,7 +191,8 @@ type BkmkRecord = {
  * テストなどで使う
  */
 export interface IDataBase {
-	insertBookmark(data: IData.Bookmark): Promise<void>
+    insertBookmark(title: string, url: string, desc: string , tags: string[]): Promise<void>
+
 	deleteBookmark(id: number): Promise<void>
 	insertTag(tag:string):Promise<void>
 
