@@ -6,19 +6,18 @@ fn greet(name: &str) -> String {
 }
 
 #[tauri::command]
-fn open_url(url: &str) -> bool{
+fn open_url(url: &str) -> bool {
     match opener::open(url) {
         Ok(()) => true,
-        Err(_) => false
+        Err(_) => false,
     }
 }
 
 fn migrations() -> Vec<Migration> {
-    vec![
-        Migration {
-            version: 1,
-            description: "create initial tables",
-            sql: "
+    vec![Migration {
+        version: 1,
+        description: "create initial tables",
+        sql: "
             create table if not exists bookmarks (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 title text,
@@ -40,22 +39,22 @@ fn migrations() -> Vec<Migration> {
                 FOREIGN KEY (tag_id) REFERENCES tags (id)
             );
             ",
-            kind: MigrationKind::Up
-        }
-    ]
+        kind: MigrationKind::Up,
+    }]
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
+        .plugin(tauri_plugin_global_shortcut::Builder::new().build())
         //.plugin(tauri_plugin_sql::Builder::new().build())
         .plugin(
             tauri_plugin_sql::Builder::default()
-            .add_migrations("sqlite:skin.db", migrations())
-            .build()
+                .add_migrations("sqlite:skin.db", migrations())
+                .build(),
         )
         .plugin(tauri_plugin_shell::init())
-        .invoke_handler(tauri::generate_handler![greet,open_url])
+        .invoke_handler(tauri::generate_handler![greet, open_url])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

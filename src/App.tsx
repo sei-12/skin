@@ -9,6 +9,13 @@ import { CreateNewBookmark, useCreateNewBookmark } from "./views/CreateNewBookma
 import { dbConnection } from "./database";
 import { invoke } from "@tauri-apps/api/core";
 
+import { register } from '@tauri-apps/plugin-global-shortcut';
+import { getCurrentWindow } from "@tauri-apps/api/window";
+import { listen } from "@tauri-apps/api/event";
+import { globalColorTheme } from "./theme";
+
+
+getCurrentWindow().setVisibleOnAllWorkspaces(true)
 
 function App() {
 
@@ -22,6 +29,30 @@ function App() {
     const onClickAddButton = () => {
         changeViewToCreateNewBookmark()
     }
+    
+    useEffect(() => {
+        // ウィンドウを表示/非表示
+        register("Alt+Z",async (event) => {
+            if ( event.state === "Released" ) {
+                return
+            }
+
+            let curWindow = getCurrentWindow();
+
+            let curVisibility = await curWindow.isVisible();
+            if (curVisibility) {
+                curWindow.hide()
+            }else{
+                curWindow.show()
+                curWindow.setFocus()
+                tagInputBoxHook.inputBoxRef.current?.focus()
+            }
+        })
+
+        listen("tauri://blur",async () => {
+            getCurrentWindow().hide()
+        })
+    },[])
 
     const bkmkListHook = useBookmarkList(
         (id) => {
@@ -90,6 +121,7 @@ function App() {
     // EFFECTS
     //
     //
+    
 
     useEffect(() => {
         if ( showView != "SEARCH_BOOKMARK") {
@@ -138,6 +170,14 @@ function App() {
     // 追記：本当にそれをすべきかなやんでいる。
 
 
+    useHotkeys(
+        "Escape",
+        () => {
+            getCurrentWindow().hide()
+        },
+        { scopes: [HOTKEY_SCOPES.SEARCH_BOOKMARK], preventDefault: true, enableOnFormTags: true },
+        []
+    )
     useHotkeys(
         "ctrl+a",
         () => {
@@ -362,10 +402,12 @@ function App() {
     
 
     useHotkeys(
-        "ctrl+Enter",
+        "Enter",
         () => {
+            if (bkmkListHook.items.length === 0) { return }
             let focusedItem = bkmkListHook.items[bkmkListHook.focusIndex]
             let url = focusedItem.url
+            getCurrentWindow().hide()
             invoke("open_url",{url}) 
             tagInputBoxHook.setInputedTags([])
         },
@@ -377,14 +419,16 @@ function App() {
     return (
         <Box
             sx={{
-                width: "100vw",
-                height: "100vh",
-                top: 0,
-                left: 0,
+                margin: "15px",
+                bgcolor: globalColorTheme.bg,
+                width: "calc(100vw - 30px)",
+                height: "calc(100vh - 30px)",
+                boxShadow: "0px 0px 20px 0px rgba(0,0,0,0.3)",
+                borderRadius: "15px",
+                border: "none",
                 overflow: "hidden",
                 padding: 2,
-                paddingTop: 1,
-                flexGrow: 1,
+                paddingTop: 2,
             }}
         >
             {

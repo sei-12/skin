@@ -56,6 +56,7 @@ export const globalColorTheme = {
         exists: palette.purple1,
         notExists: palette.yellow1,
     },
+    bg: palette.dark2,
 }
 
 export const tokyonight = createTheme({
@@ -85,7 +86,7 @@ export const tokyonight = createTheme({
             contrastText: palette.dark1
         },
         background:{
-            default: palette.dark2,
+            default: "rgba(0,0,0,0)",
         },
         text: {
             secondary: palette.blue1,
