@@ -1,76 +1,36 @@
-import { Box, Grid2 } from "@mui/material";
-import { useEffect } from "react";
-import { IData } from "./data";
-import { BookmarkList, useBookmarkList } from "./components/BookmarkList";
-import { TagInputBox, useTagInputBox } from "./components/TagInputBox";
+import { Box } from "@mui/material";
+import { useEffect, useState } from "react";
+import { useBookmarkList } from "./components/BookmarkList";
+import { useTagInputBox } from "./components/TagInputBox";
 import { useHotkeys } from "react-hotkeys-hook";
 import { HOTKEY_SCOPES, useAppHotkey } from "./hotkey";
+import { SearchBookmark } from "./views/SearchBookmark";
+import { CreateNewBookmark, useCreateNewBookmark } from "./views/CreateNewBookmark";
+import { dbConnection } from "./database";
+import { invoke } from "@tauri-apps/api/core";
 
-async function decoyDb_fetchBookmarks(predicateTags: string[]): Promise<IData.Bookmark[]> {
-    let bkmks = [
-        { key: "1hello123", title: "hello1", desc: "this is description", tags: ["hello", "aaa", "hey"] },
-        { key: "2hello123", title: "hello1", desc: "this is description", tags: ["uuu", "uid", "hey"] },
-        { key: "3hello3", title: "hello1", desc: "this is description", tags: ["uuu", "uid", "hey"] },
-        { key: "4haaello6", title: "hello1", desc: "this is description", tags: ["uuu", "uid", "hey"] },
-        { key: "5heibbllo5", title: "hello8", desc: "this is description", tags: ["hello", "aaa", "gummy"] },
-        { key: "6jhaaelibblo4", title: "hello1", desc: "this is description", tags: ["abc", "aaa", "hey"] },
-        { key: "7hello1aaibb", title: "hello6", desc: "this is description", tags: ["todo", "typescript", "hey"] },
-        { key: "8haaelloibb1v", title: "hello2", desc: "this is description", tags: ["todo", "ass", "hey"] },
-        { key: "9hello1b", title: "hello3", desc: "this is description", tags: ["abcde", "uuid", "hey"] },
-        { key: "190hellols1asad", title: "hello5", desc: "this is description", tags: ["uuu", "uid", "hey"] },
-        { key: "11hellaaols1", title: "hello9", desc: "this is description", tags: ["uuu", "uid", "hey"] },
-        { key: "h12aaelalslo1", title: "hello6", desc: "this is description", tags: ["todo", "typescript", "hey"] },
-        { key: "he23lalo1", title: "hello6", desc: "this is description", tags: ["todo", "typescript", "hey"] },
-        { key: "haa14elalo1", title: "hello6", desc: "this is description".repeat(10), tags: ["todo", "typescript", "hey"] },
-        { key: "hela15lo1", title: "hello6", desc: "this is description", tags: ["todo", "typescript", "hey"] },
-        { key: "haela16lo1", title: "aa", desc: "this is description", tags: ["uuu", "uid", "hey"] },
-        { key: "haaela17lo1", title: "hhh", desc: "this is description", tags: ["uuu", "uid", "hey"] },
-        { key: "haelai18lo1", title: "hello1", desc: "this is description", tags: ["uuu", "uid", "hey"] },
-        { key: "haaela19lo1", title: "hello1", desc: "this is description", tags: ["uuu", "uid", "hey"] },
-        { key: "helal29o1", title: "hello1", desc: "this is description", tags: ["uuu", "uid", "hey"] },
-        { key: "helaaalo1", title: "hello1", desc: "this is description", tags: ["uuu", "uid", "hey"] },
-        { key: "haa22elalo1", title: "hello1", desc: "this is description", tags: ["uuu", "uid", "hey"] },
-        { key: "hael123lo1", title: "hello1", desc: "this is description", tags: ["uuu", "uid", "hey"] },
-    ]
-
-    let filted = bkmks.map(b => {
-        return { ...b, url: "url://url" }
-    })
-
-    predicateTags.forEach(ptag => {
-        filted = filted.filter(t => t.tags.includes(ptag))
-    })
-
-    return filted
-}
-
-function filterTags(predicate: string) {
-    const TAG_LIST = [
-        "typescript", "javascript", "python", "java", "csharp", "ruby", "php", "swift", "kotlin", "golang",
-        "rust", "scala", "haskell", "perl", "sql", "html", "css", "sass", "less", "json", "gist", "clang", "cpp",
-        "xml", "yaml", "docker", "kubernetes", "aws", "azure", "gcp", "firebase", "react", "vue",
-        "angular", "svelte", "jquery", "nodejs", "express", "nestjs", "deno", "nextjs", "nuxtjs", "remix",
-        "webpack", "rollup", "vite", "babel", "eslint", "prettier", "jest", "mocha", "chai", "vitest",
-        "playwright", "puppeteer", "selenium", "cypress", "git", "github", "gitlab", "bitbucket", "ci/cd", "jenkins",
-        "travis", "circleci", "databases", "mongodb", "postgresql", "mysql", "sqlite", "redis", "cassandra", "oracle",
-        "machinelearning", "ai", "deeplearning", "nlp", "opencv", "tensorflow", "pytorch", "keras", "scikit-learn", "pandas",
-        "numpy", "matplotlib", "seaborn", "debugging", "logging", "profiling", "performance", "optimizations", "http", "api",
-        "rest", "graphql", "websocket", "oauth", "jwt", "jsonwebtokens", "auth0", "passportjs", "security", "encryption", "hello", "main"
-    ] as const;
-
-    if (predicate === "") {
-        return []
-    }
-
-
-    return TAG_LIST.filter(tag => tag.includes(predicate))
-}
 
 function App() {
 
+    const [showView, setShowView] = useState<"SEARCH_BOOKMARK" | "CREATE_NEW_BOOKMARK">("SEARCH_BOOKMARK")
+
+    const changeViewToCreateNewBookmark = () => {
+        setShowView("CREATE_NEW_BOOKMARK")
+        appHotkeyHook.switchScope(HOTKEY_SCOPES.CREATE_NEW_BOOKMARK)
+    }
+
+    const onClickAddButton = () => {
+        changeViewToCreateNewBookmark()
+    }
 
     const bkmkListHook = useBookmarkList(
-        () => console.log("onclick remove!!"),
+        (id) => {
+            dbConnection.deleteBookmark(id).then(() => {
+                dbConnection.findBookmark(tagInputBoxHook.inputedTags.map( i => i.text)).then(data => {
+                    bkmkListHook.setItems(data)
+                })
+            })
+        },
         () => console.log("onclick edit!!")
     )
 
@@ -80,7 +40,7 @@ function App() {
         if (inputBox === null) { return }
 
 
-        let suggestionItems = filterTags(inputBox.value)
+        let suggestionItems = await dbConnection.findTag(inputBox.value)
         tagInputBoxHook.suggestionWindowHook.setItems(suggestionItems)
         tagInputBoxHook.suggestionWindowHook.setPredicate(inputBox.value)
         tagInputBoxHook.suggestionWindowHook.setFocusIndex(0)
@@ -89,8 +49,41 @@ function App() {
     const tagInputBoxHook = useTagInputBox(
         onChangePredicateInputBox
     )
-    
+
     const appHotkeyHook = useAppHotkey()
+    const onClickCreateDone = () => {
+        const inputData = createNewBookmarkHook.getInputData()
+        if (inputData === undefined) { return }
+
+        dbConnection.insertBookmark(
+            inputData.title,
+            inputData.url,
+            inputData.desc,
+            inputData.tags
+        ).then(() => {
+            createNewBookmarkHook.clearData()
+            setShowView("SEARCH_BOOKMARK")
+            appHotkeyHook.switchScope(HOTKEY_SCOPES.SEARCH_BOOKMARK)
+        })
+    }
+
+    const onChangeCreateNewBookmarkInputBox = async () => {
+        let inputBox = createNewBookmarkHook.tagInputBoxHook.inputBoxRef.current
+        if (inputBox === null) { return }
+        let suggestionItems = await dbConnection.findTag(inputBox.value)
+        createNewBookmarkHook.tagInputBoxHook.suggestionWindowHook.setItems(suggestionItems)
+        createNewBookmarkHook.tagInputBoxHook.suggestionWindowHook.setPredicate(inputBox.value)
+        createNewBookmarkHook.tagInputBoxHook.suggestionWindowHook.setFocusIndex(0)
+    }
+
+    const onClickCreateCancel = () => {
+        console.log("cancel")
+    }
+    const createNewBookmarkHook = useCreateNewBookmark(
+        onClickCreateDone,
+        onClickCreateCancel,
+        onChangeCreateNewBookmarkInputBox,
+    )
 
     //
     //
@@ -99,94 +92,118 @@ function App() {
     //
 
     useEffect(() => {
-        if ( tagInputBoxHook.suggestionWindowHook.items.length === 0){
-            appHotkeyHook.switchScope(HOTKEY_SCOPES.SEARCH_BOOKMARK)
-        }else{
-            appHotkeyHook.switchScope(HOTKEY_SCOPES.SUGGESTION_WINDOW)
+        if ( showView != "SEARCH_BOOKMARK") {
+            return
         }
-    },[tagInputBoxHook.suggestionWindowHook.items])
+        if (tagInputBoxHook.suggestionWindowHook.items.length === 0) {
+            appHotkeyHook.switchScope(HOTKEY_SCOPES.SEARCH_BOOKMARK)
+        } else {
+            appHotkeyHook.switchScope(HOTKEY_SCOPES.SEARCH_BOOKMARK_SUGGESTION_WINDOW)
+        }
+    }, [tagInputBoxHook.suggestionWindowHook.items])
 
     useEffect(() => {
-        tagInputBoxHook.setInputedTags([
-            { text: "t", exists: true },
-            { text: "tag1", exists: true },
-            { text: "tag3", exists: true },
-            { text: "tag3", exists: true },
-        ])
-    }, [])
-    useEffect(() => { decoyDb_fetchBookmarks([]).then(data => bkmkListHook.setItems(data)) }, [])
+        if ( showView != "CREATE_NEW_BOOKMARK") {
+            return
+        }
+        if (createNewBookmarkHook.tagInputBoxHook.suggestionWindowHook.items.length === 0) {
+            appHotkeyHook.switchScope(HOTKEY_SCOPES.CREATE_NEW_BOOKMARK)
+        } else {
+            appHotkeyHook.switchScope(HOTKEY_SCOPES.CREATE_NEW_BOOKMARK_SUGGESTION_WINDOW)
+        }
+    }, [createNewBookmarkHook.tagInputBoxHook.suggestionWindowHook.items])
 
+    useEffect(() => {
+        tagInputBoxHook.setInputedTags([])
+    }, [])
+
+    useEffect(() => {
+        let tags = tagInputBoxHook.inputedTags.map(e => { return e.text })
+        dbConnection.findBookmark(tags).then(data => {
+            bkmkListHook.setItems(data)
+        })
+    }, [tagInputBoxHook.inputedTags])
 
     //
     //
     // HOTKEYS
     //
     //
-    
+
     // TODO: フォーカスの移動の処理をまとめたい。useFocusIndexとか作りたい。
     // けど、ホットキーの設定をするときに依存関係を配列で渡さないといけなくて、それをどうやって対処するかで悩んでいる。
     // 配列もまとめて定義したらいいけど、中身を意識しないと使えない抽象化とかいういい加減な状態になる気がしている。
     //
     // TODO: というか、関数定義とホットキーの情報を分けて、動作とトリガーを分離したい。これはできる気がする。
     // 追記：本当にそれをすべきかなやんでいる。
-    
+
+
+    useHotkeys(
+        "ctrl+a",
+        () => {
+            changeViewToCreateNewBookmark()
+        },
+        { scopes: [HOTKEY_SCOPES.SEARCH_BOOKMARK], preventDefault: false, enableOnFormTags: true },
+        []
+    )
+
     useHotkeys(
         "ctrl+n",
         () => {
-            bkmkListHook.setFocusIndex( cur => {
+            bkmkListHook.setFocusIndex(cur => {
                 let newIndex = cur + 1
-                if ( newIndex >= bkmkListHook.items.length ){
+                if (newIndex >= bkmkListHook.items.length) {
                     newIndex = 0
                 }
                 return newIndex
             })
         },
-        {scopes: [HOTKEY_SCOPES.SEARCH_BOOKMARK],preventDefault: true,enableOnFormTags: true},
+        { scopes: [HOTKEY_SCOPES.SEARCH_BOOKMARK], preventDefault: true, enableOnFormTags: true },
         [bkmkListHook.items]
     )
 
     useHotkeys(
         "ctrl+p",
         () => {
-            bkmkListHook.setFocusIndex( cur => {
+            bkmkListHook.setFocusIndex(cur => {
                 let newIndex = cur - 1
-                if (newIndex < 0){
+                if (newIndex < 0) {
                     newIndex = bkmkListHook.items.length - 1
                 }
                 return newIndex
             })
         },
-        {scopes: [HOTKEY_SCOPES.SEARCH_BOOKMARK],preventDefault: true,enableOnFormTags: true},
+        { scopes: [HOTKEY_SCOPES.SEARCH_BOOKMARK], preventDefault: true, enableOnFormTags: true },
         [bkmkListHook.items]
     )
 
     useHotkeys(
         "ctrl+n",
         () => {
-            tagInputBoxHook.suggestionWindowHook.setFocusIndex( cur => {
+            tagInputBoxHook.suggestionWindowHook.setFocusIndex(cur => {
                 let newIndex = cur + 1
-                if ( newIndex >= tagInputBoxHook.suggestionWindowHook.items.length ){
+                if (newIndex >= tagInputBoxHook.suggestionWindowHook.items.length) {
                     newIndex = 0
                 }
                 return newIndex
             })
         },
-        {scopes: [HOTKEY_SCOPES.SUGGESTION_WINDOW],preventDefault: true,enableOnFormTags: true},
+        { scopes: [HOTKEY_SCOPES.SEARCH_BOOKMARK_SUGGESTION_WINDOW], preventDefault: true, enableOnFormTags: true },
         [tagInputBoxHook.suggestionWindowHook.items]
     )
 
     useHotkeys(
         "ctrl+p",
         () => {
-            tagInputBoxHook.suggestionWindowHook.setFocusIndex( cur => {
+            tagInputBoxHook.suggestionWindowHook.setFocusIndex(cur => {
                 let newIndex = cur - 1
-                if (newIndex < 0){
+                if (newIndex < 0) {
                     newIndex = tagInputBoxHook.suggestionWindowHook.items.length - 1
                 }
                 return newIndex
             })
         },
-        {scopes: [HOTKEY_SCOPES.SUGGESTION_WINDOW],preventDefault: true,enableOnFormTags: true},
+        { scopes: [HOTKEY_SCOPES.SEARCH_BOOKMARK_SUGGESTION_WINDOW], preventDefault: true, enableOnFormTags: true },
         [tagInputBoxHook.suggestionWindowHook.items]
     )
 
@@ -195,34 +212,34 @@ function App() {
         () => {
             tagInputBoxHook.inputBoxRef.current?.focus()
         },
-        {keydown: false, keyup: true, scopes: [HOTKEY_SCOPES.SEARCH_BOOKMARK] },
+        { keydown: false, keyup: true, scopes: [HOTKEY_SCOPES.SEARCH_BOOKMARK] },
         []
     )
-    
+
     useHotkeys(
         "Enter",
         () => {
             let item = tagInputBoxHook.suggestionWindowHook.getFocusedItem()
             let inputBox = tagInputBoxHook.inputBoxRef.current
 
-            if ( inputBox === null ){ return }
-            if ( item === undefined ){ return }
+            if (inputBox === null) { return }
+            if (item === undefined) { return }
 
             inputBox.value = ""
-            tagInputBoxHook.setInputedTags(ary => { return [...ary, { text: item, exists: true }]})
+            tagInputBoxHook.setInputedTags(ary => { return [...ary, { text: item, exists: true }] })
             tagInputBoxHook.suggestionWindowHook.close()
         },
-        {scopes: [HOTKEY_SCOPES.SUGGESTION_WINDOW],preventDefault: true,enableOnFormTags: true},
+        { scopes: [HOTKEY_SCOPES.SEARCH_BOOKMARK_SUGGESTION_WINDOW], preventDefault: true, enableOnFormTags: true },
         [tagInputBoxHook]
     )
-    
+
     useHotkeys(
         "Backspace",
         () => {
             let inputBox = tagInputBoxHook.inputBoxRef.current
 
-            if ( inputBox === null ){ return }
-            if ( inputBox.value !== "" ){ return }
+            if (inputBox === null) { return }
+            if (inputBox.value !== "") { return }
 
             inputBox.value = ""
             tagInputBoxHook.setInputedTags(ary => {
@@ -230,21 +247,132 @@ function App() {
                 return [...ary]
             })
         },
-        {scopes: [HOTKEY_SCOPES.SEARCH_BOOKMARK],enableOnFormTags: true},
+        { scopes: [HOTKEY_SCOPES.SEARCH_BOOKMARK], enableOnFormTags: true },
         []
     )
-    
+
     useHotkeys(
         "Escape",
         () => {
             let inputBox = tagInputBoxHook.inputBoxRef.current
-            if ( inputBox === null ){ return }
+            if (inputBox === null) { return }
             tagInputBoxHook.suggestionWindowHook.close()
         },
-        {scopes: [HOTKEY_SCOPES.SUGGESTION_WINDOW],preventDefault: true,enableOnFormTags: true},
+        { scopes: [HOTKEY_SCOPES.SEARCH_BOOKMARK_SUGGESTION_WINDOW], preventDefault: true, enableOnFormTags: true },
+        []
+    )
+
+
+    useHotkeys(
+        "Escape",
+        () => {
+            setShowView("SEARCH_BOOKMARK")
+        },
+        { scopes: [HOTKEY_SCOPES.CREATE_NEW_BOOKMARK], preventDefault: true, enableOnFormTags: true },
+        []
+    )
+
+    useHotkeys(
+        "ctrl+Enter",
+        () => {
+            onClickCreateDone()
+        },
+        { scopes: [HOTKEY_SCOPES.CREATE_NEW_BOOKMARK], preventDefault: true, enableOnFormTags: true },
+        []
+    )
+
+    useHotkeys(
+        "Enter",
+        async () => {
+            let inputBox = createNewBookmarkHook.tagInputBoxHook.inputBoxRef.current
+            let item = createNewBookmarkHook.tagInputBoxHook.suggestionWindowHook.getFocusedItem()
+            if (item === undefined) { return }
+            if (inputBox === null) { return }
+            inputBox.value = ""
+            let exists = await dbConnection.isExistsTag(item)
+            createNewBookmarkHook.tagInputBoxHook.setInputedTags(ary => { return [...ary, { text: item, exists: exists }] })
+            createNewBookmarkHook.tagInputBoxHook.suggestionWindowHook.close()
+        },
+        { scopes: [HOTKEY_SCOPES.CREATE_NEW_BOOKMARK_SUGGESTION_WINDOW], preventDefault: true, enableOnFormTags: true },
+        [createNewBookmarkHook.tagInputBoxHook]
+    )
+
+    useHotkeys(
+        "ctrl+n",
+        () => {
+            createNewBookmarkHook.tagInputBoxHook.suggestionWindowHook.setFocusIndex(cur => {
+                let newIndex = cur + 1
+                if (newIndex >= createNewBookmarkHook.tagInputBoxHook.suggestionWindowHook.items.length) {
+                    newIndex = 0
+                }
+                return newIndex
+            })
+        },
+        { scopes: [HOTKEY_SCOPES.CREATE_NEW_BOOKMARK_SUGGESTION_WINDOW], preventDefault: true, enableOnFormTags: true },
+        [createNewBookmarkHook.tagInputBoxHook.suggestionWindowHook.items]
+    )
+
+    useHotkeys(
+        "ctrl+p",
+        () => {
+            createNewBookmarkHook.tagInputBoxHook.suggestionWindowHook.setFocusIndex(cur => {
+                let newIndex = cur - 1
+                if (newIndex < 0) {
+                    newIndex = createNewBookmarkHook.tagInputBoxHook.suggestionWindowHook.items.length - 1
+                }
+                return newIndex
+            }
+            )
+        },
+        { scopes: [HOTKEY_SCOPES.CREATE_NEW_BOOKMARK_SUGGESTION_WINDOW], preventDefault: true, enableOnFormTags: true },
+        [createNewBookmarkHook.tagInputBoxHook.suggestionWindowHook.items]
+    )
+
+    useHotkeys(
+        "Backspace",
+        () => {
+            let inputBox = createNewBookmarkHook.tagInputBoxHook.inputBoxRef.current
+            if (inputBox === null) { return }
+            if (inputBox.value !== "") { return }
+            createNewBookmarkHook.tagInputBoxHook.setInputedTags(ary => {
+                ary.pop()
+                return [...ary]
+            })
+        },
+        { scopes: [HOTKEY_SCOPES.CREATE_NEW_BOOKMARK], enableOnFormTags: true },
+        []
+    )
+
+
+    useHotkeys(
+        "Space",
+        async () => {
+            let inputBox = createNewBookmarkHook.tagInputBoxHook.inputBoxRef.current
+            if (inputBox === null) { return }
+            if (inputBox.value === "") { return }
+            let item = inputBox.value
+            let exists = await dbConnection.isExistsTag(item)
+            createNewBookmarkHook.tagInputBoxHook.setInputedTags(ary => { return [...ary, { text: item, exists }] })
+            createNewBookmarkHook.tagInputBoxHook.suggestionWindowHook.close()
+            inputBox.value = ""
+        },
+        { scopes: [HOTKEY_SCOPES.CREATE_NEW_BOOKMARK, HOTKEY_SCOPES.CREATE_NEW_BOOKMARK_SUGGESTION_WINDOW], enableOnFormTags: true },
         []
     )
     
+
+    useHotkeys(
+        "ctrl+Enter",
+        () => {
+            let focusedItem = bkmkListHook.items[bkmkListHook.focusIndex]
+            let url = focusedItem.url
+            invoke("open_url",{url}) 
+            tagInputBoxHook.setInputedTags([])
+        },
+        {scopes: [HOTKEY_SCOPES.SEARCH_BOOKMARK], preventDefault: true, enableOnFormTags: true},
+        [tagInputBoxHook,bkmkListHook]
+    )
+
 
     return (
         <Box
@@ -259,24 +387,16 @@ function App() {
                 flexGrow: 1,
             }}
         >
-            <Grid2
-                container
-                spacing={1}
-                flexDirection={"column"}
-                height={1}
-                width={1}
-            >
-                <Grid2 size="auto">
-                    <TagInputBox {...tagInputBoxHook.props} ></TagInputBox>
-                </Grid2>
-
-                <Grid2
-                    size="grow"
-                    sx={{ overflow: "hidden", display: "flex" }}
-                >
-                    <BookmarkList {...bkmkListHook.props}></BookmarkList>
-                </Grid2>
-            </Grid2>
+            {
+                (() => {
+                    if (showView === "SEARCH_BOOKMARK") {
+                        return (<SearchBookmark onClickAdd={onClickAddButton} tagInputBoxHook={tagInputBoxHook.props} bkmkListHook={bkmkListHook.props} />)
+                    }
+                    if (showView === "CREATE_NEW_BOOKMARK") {
+                        return (<CreateNewBookmark {...createNewBookmarkHook.props} />)
+                    }
+                })()
+            }
         </Box>
 
     );

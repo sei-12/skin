@@ -4,8 +4,8 @@ import { useEffect, useRef, useState } from "react"
 import { BookmarkItem } from "./BookmarkItem"
 
 export function useBookmarkList(
-	onClickRemove: (key: string) => void,
-	onClickEdit: (key: string) => void,
+	onClickRemove: (key: number) => void,
+	onClickEdit: (key: number) => void,
 ){
     const [items, setItems] = useState<IData.Bookmark[]>([])
     const [focusIndex, setFocusIndex] = useState(0)
@@ -54,7 +54,7 @@ export function BookmarkList(props: ReturnType<typeof useBookmarkList>["props"])
 						ref={(el) => (props.itemRefs.current[i] = el)}
                         data={item}
                         focus={props.focusIndex === i}                        
-                        key={item.key}
+                        key={item.id}
                         onClickEdit={props.onClickEdit}
                         onClickRemove={props.onClickRemove}
                     ></BookmarkItem>
