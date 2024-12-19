@@ -92,6 +92,9 @@ function App() {
     //
 
     useEffect(() => {
+        if ( showView != "SEARCH_BOOKMARK") {
+            return
+        }
         if (tagInputBoxHook.suggestionWindowHook.items.length === 0) {
             appHotkeyHook.switchScope(HOTKEY_SCOPES.SEARCH_BOOKMARK)
         } else {
@@ -100,6 +103,9 @@ function App() {
     }, [tagInputBoxHook.suggestionWindowHook.items])
 
     useEffect(() => {
+        if ( showView != "CREATE_NEW_BOOKMARK") {
+            return
+        }
         if (createNewBookmarkHook.tagInputBoxHook.suggestionWindowHook.items.length === 0) {
             appHotkeyHook.switchScope(HOTKEY_SCOPES.CREATE_NEW_BOOKMARK)
         } else {

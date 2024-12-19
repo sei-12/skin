@@ -9,7 +9,7 @@ import { IDataBase } from "./database";
 import { IData } from "./data";
 
 const dbConnection:IDataBase = vi.hoisted(() => ({
-    async insertBookmark(_data: IData.Bookmark): Promise<void> { },
+    async insertBookmark(_title: string, _url: string, _desc: string , _tags: string[]): Promise<void> { },
     async deleteBookmark(_id: number): Promise<void> { },
     async insertTag(_tag: string): Promise<void> { },
     async isExistsTag(_tag: string): Promise<boolean> {
