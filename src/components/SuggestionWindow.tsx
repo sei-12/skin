@@ -1,7 +1,7 @@
 import { Box, Typography } from "@mui/material";
 import { forwardRef, useEffect, useRef, useState } from "react";
-import { globalColorTheme as GCT } from "../theme";
-import { ZINDEX } from "../zindex";
+import { globalColorTheme as GCT } from "../lib/theme";
+import { ZINDEX } from "../lib/zindex";
 
 export function useSuggestionWindow() {
     const [items,setItems] = useState<string[]>([])

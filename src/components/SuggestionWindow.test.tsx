@@ -3,7 +3,7 @@ import { act, render, renderHook, screen } from "@testing-library/react";
 import "@testing-library/jest-dom/vitest";
 import { describe, expect, test } from "vitest";
 import { useRef } from "react";
-import { globalColorTheme } from "../theme";
+import { globalColorTheme } from "../lib/theme";
 
 const { highlightMatchedBlocks, TextBlock, Item } = testHelpers;
 

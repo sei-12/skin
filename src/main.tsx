@@ -2,9 +2,9 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App";
 import { CssBaseline, ThemeProvider } from "@mui/material";
-import { tokyonight } from "./theme";
+import { tokyonight } from "./lib/theme";
 import { HotkeysProvider } from "react-hotkeys-hook";
-import { HOTKEY_SCOPES } from "./hotkey";
+import { HOTKEY_SCOPES } from "./lib/hotkey";
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
