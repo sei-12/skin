@@ -11,6 +11,8 @@
     "sql:default",
     "sql:allow-execute",
     "core:window:allow-hide",
-    "core:window:allow-show"
+    "core:window:allow-show",
+    "core:window:allow-set-focus",
+    "core:window:allow-set-visible-on-all-workspaces"
   ]
 }
