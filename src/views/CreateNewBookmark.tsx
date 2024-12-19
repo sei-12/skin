@@ -7,6 +7,7 @@ export function useCreateNewBookmark(
     onClickDone: () => void,
     onClickCancel: () => void,
     onChangeInputBox: () => void,
+    onChangeUrl: (url: string) => void,
 ) {
     
     const titleRef = useRef<HTMLInputElement>(null)
@@ -15,7 +16,16 @@ export function useCreateNewBookmark(
 
 	const tagInputBoxHook = useTagInputBox(onChangeInputBox)
 
-    const setInputData = () => { };
+    const setContent = (title: string, desc: string) => {
+        if ( titleRef.current === null ){
+            return
+        }
+        if ( descRef.current === null ){
+            return
+        }
+        titleRef.current.value = title
+        descRef .current.value = desc
+    };
 
     const getInputData = () => {
         if ( titleRef.current === null ){
@@ -61,10 +71,11 @@ export function useCreateNewBookmark(
             urlRef,
 			tagInputBox: tagInputBoxHook.props,
             onClickCancel,
-            onClickDone
+            onClickDone,
+            onChangeUrl,
         },
 		tagInputBoxHook,
-        setInputData,
+        setContent,
         getInputData,
         clearData,
     };
@@ -78,7 +89,7 @@ export function CreateNewBookmark(p: ReturnType<typeof useCreateNewBookmark>["pr
 			}}placeholder={"title"} />
 			<TextField inputRef={p.urlRef} sx={{
 				width: 0.8
-			}}placeholder={"url"} />
+			}}placeholder={"url"} onChange={(e) => {p.onChangeUrl(e.target.value)}} />
 			<TagInputBox {...p.tagInputBox}/>
 			<TextField inputRef={p.descRef} sx={{
 				width: 1

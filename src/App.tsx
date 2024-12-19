@@ -3,16 +3,16 @@ import { useEffect, useState } from "react";
 import { useBookmarkList } from "./components/BookmarkList";
 import { useTagInputBox } from "./components/TagInputBox";
 import { useHotkeys } from "react-hotkeys-hook";
-import { HOTKEY_SCOPES, useAppHotkey } from "./hotkey";
+import { HOTKEY_SCOPES, useAppHotkey } from "./lib/hotkey";
 import { SearchBookmark } from "./views/SearchBookmark";
 import { CreateNewBookmark, useCreateNewBookmark } from "./views/CreateNewBookmark";
-import { dbConnection } from "./database";
+import { dbConnection } from "./lib/database";
 import { invoke } from "@tauri-apps/api/core";
 
 import { register } from '@tauri-apps/plugin-global-shortcut';
 import { getCurrentWindow } from "@tauri-apps/api/window";
 import { listen } from "@tauri-apps/api/event";
-import { globalColorTheme } from "./theme";
+import { globalColorTheme } from "./lib/theme";
 
 
 getCurrentWindow().setVisibleOnAllWorkspaces(true)
@@ -98,6 +98,7 @@ function App() {
         })
     }
 
+    // TODO: 名前が処理を表していない。変えたい。
     const onChangeCreateNewBookmarkInputBox = async () => {
         let inputBox = createNewBookmarkHook.tagInputBoxHook.inputBoxRef.current
         if (inputBox === null) { return }
@@ -107,13 +108,38 @@ function App() {
         createNewBookmarkHook.tagInputBoxHook.suggestionWindowHook.setFocusIndex(0)
     }
 
+    // TODO
     const onClickCreateCancel = () => {
         console.log("cancel")
     }
+    
+    // // TODO: 別のファイルに切り出してテストも書く
+    const onChangeUrlInputBox = async  (url: string) => {
+        let content = await invoke("fetch_website_content",{url}) as {title: string, desc: string}
+        let currentContent = createNewBookmarkHook.getInputData()
+
+        let setData = (cur: string | undefined, newContent: string | null) => {
+            if ( cur !== undefined && cur !== "" ) {
+                return cur
+            }
+            
+            if ( newContent !== null ) {
+                return newContent
+            }
+            
+            return ""
+        }
+
+        let title = setData(currentContent?.title, content.title)
+        let desc = setData(currentContent?.desc, content.desc)
+        createNewBookmarkHook.setContent(title, desc)
+    }
+
     const createNewBookmarkHook = useCreateNewBookmark(
         onClickCreateDone,
         onClickCreateCancel,
         onChangeCreateNewBookmarkInputBox,
+        onChangeUrlInputBox,
     )
 
     //

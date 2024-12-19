@@ -1,5 +1,5 @@
 import { Stack } from "@mui/material"
-import { IData } from "../data"
+import { IData } from "../dts/data"
 import { useEffect, useRef, useState } from "react"
 import { BookmarkItem } from "./BookmarkItem"
 
