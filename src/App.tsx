@@ -3,16 +3,16 @@ import { useEffect, useState } from "react";
 import { useBookmarkList } from "./components/BookmarkList";
 import { useTagInputBox } from "./components/TagInputBox";
 import { useHotkeys } from "react-hotkeys-hook";
-import { HOTKEY_SCOPES, useAppHotkey } from "./hotkey";
+import { HOTKEY_SCOPES, useAppHotkey } from "./lib/hotkey";
 import { SearchBookmark } from "./views/SearchBookmark";
 import { CreateNewBookmark, useCreateNewBookmark } from "./views/CreateNewBookmark";
-import { dbConnection } from "./database";
+import { dbConnection } from "./lib/database";
 import { invoke } from "@tauri-apps/api/core";
 
 import { register } from '@tauri-apps/plugin-global-shortcut';
 import { getCurrentWindow } from "@tauri-apps/api/window";
 import { listen } from "@tauri-apps/api/event";
-import { globalColorTheme } from "./theme";
+import { globalColorTheme } from "./lib/theme";
 
 
 getCurrentWindow().setVisibleOnAllWorkspaces(true)

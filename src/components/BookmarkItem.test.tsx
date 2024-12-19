@@ -3,7 +3,7 @@ import userEvent from "@testing-library/user-event";
 import "@testing-library/jest-dom/vitest";
 import { describe, it, expect, vi } from "vitest";
 import { BookmarkItem, BookmarkItemProps } from "./BookmarkItem";
-import { IData } from "../data";
+import { IData } from "../dts/data";
 
 // Mock globalColorTheme
 vi.mock("../theme", () => ({

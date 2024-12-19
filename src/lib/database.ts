@@ -1,5 +1,5 @@
 import Database from "@tauri-apps/plugin-sql";
-import { IData } from "./data";
+import { IData } from "../dts/data";
 
 class DbInner {
 	private db: Promise<Database>

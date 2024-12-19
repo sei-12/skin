@@ -1,7 +1,7 @@
 import { Box, TextField, Typography } from "@mui/material";
 import { useRef, useState } from "react";
 import { SuggestionWindow, useSuggestionWindow } from "./SuggestionWindow";
-import { globalColorTheme as GCT } from "../theme";
+import { globalColorTheme as GCT } from "../lib/theme";
 
 export function useTagInputBox(
     onChangeInputBox: () => void

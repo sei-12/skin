@@ -1,7 +1,7 @@
 import { forwardRef } from "react"
-import { IData } from "../data"
+import { IData } from "../dts/data"
 import { Box, Button, Card, CardContent, Stack, Typography } from "@mui/material"
-import { globalColorTheme as GCT } from "../theme"
+import { globalColorTheme as GCT } from "../lib/theme"
 
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
