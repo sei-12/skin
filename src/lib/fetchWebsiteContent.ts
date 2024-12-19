@@ -1,3 +1,5 @@
+import { JSDOM } from "jsdom";
+
 /**
  * URLの内容を取得する関数
  * @param url 取得するURL
@@ -20,14 +22,13 @@ export async function fetchWebsiteContent(url: string): Promise<string> {
  * @param html HTML文字列
  * @returns タイトルと説明
  */
-export function parseHTMLMetaData(html: string)  {
-    const titleMatch = html.match(/<title>(.*?)<\/title>/i);
-    const title = titleMatch ? titleMatch[1].trim() : null;
+export function parseHTMLMetaData(html: string) {
+    const dom = new JSDOM(html);
+    const document = dom.window.document;
 
-    const descriptionMatch = html.match(/<meta\s+name="description"\s+content="(.*?)"\s*\/?>/i);
-    const description = descriptionMatch ? descriptionMatch[1].trim() : null;
+    const title = document.querySelector("title")?.textContent || null;
+    const description =
+        document.querySelector('meta[name="description"]')?.getAttribute("content") || null;
 
     return { title, description };
 }
-
-
