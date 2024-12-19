@@ -328,15 +328,16 @@ function App() {
 
 
     useHotkeys(
-        "space",
+        "Space",
         async () => {
             let inputBox = createNewBookmarkHook.tagInputBoxHook.inputBoxRef.current
             if (inputBox === null) { return }
-            if (inputBox.value !== "") { return }
+            if (inputBox.value === "") { return }
             let item = inputBox.value
             let exists = await dbConnection.isExistsTag(item)
             createNewBookmarkHook.tagInputBoxHook.setInputedTags(ary => { return [...ary, { text: item, exists }] })
             createNewBookmarkHook.tagInputBoxHook.suggestionWindowHook.close()
+            inputBox.value = ""
         },
         { scopes: [HOTKEY_SCOPES.CREATE_NEW_BOOKMARK_SUGGESTION_WINDOW], enableOnFormTags: true },
         []
