@@ -1,5 +1,7 @@
+use tauri::Manager;
 use tauri_plugin_sql::{Migration, MigrationKind};
-// Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
+mod fetch_website_content;
+
 #[tauri::command]
 fn greet(name: &str) -> String {
     format!("Hello, {}! You've been greeted from Rust!", name)
@@ -12,6 +14,7 @@ fn open_url(url: &str) -> bool {
         Err(_) => false,
     }
 }
+
 
 fn migrations() -> Vec<Migration> {
     vec![Migration {
@@ -54,7 +57,14 @@ pub fn run() {
                 .build(),
         )
         .plugin(tauri_plugin_shell::init())
-        .invoke_handler(tauri::generate_handler![greet, open_url])
+        .invoke_handler(tauri::generate_handler![greet, open_url,fetch_website_content::fetch_website_content])
+        .setup(|app| {
+            // 開発時だけdevtoolsを表示する。
+            #[cfg(debug_assertions)]
+            app.get_webview_window("main").unwrap().open_devtools();
+      
+            Ok(())
+          })
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

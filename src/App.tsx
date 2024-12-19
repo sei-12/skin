@@ -98,6 +98,7 @@ function App() {
         })
     }
 
+    // TODO: 名前が処理を表していない。変えたい。
     const onChangeCreateNewBookmarkInputBox = async () => {
         let inputBox = createNewBookmarkHook.tagInputBoxHook.inputBoxRef.current
         if (inputBox === null) { return }
@@ -107,13 +108,38 @@ function App() {
         createNewBookmarkHook.tagInputBoxHook.suggestionWindowHook.setFocusIndex(0)
     }
 
+    // TODO
     const onClickCreateCancel = () => {
         console.log("cancel")
     }
+    
+    // // TODO: 別のファイルに切り出してテストも書く
+    const onChangeUrlInputBox = async  (url: string) => {
+        let content = await invoke("fetch_website_content",{url}) as {title: string, desc: string}
+        let currentContent = createNewBookmarkHook.getInputData()
+
+        let setData = (cur: string | undefined, newContent: string | null) => {
+            if ( cur !== undefined && cur !== "" ) {
+                return cur
+            }
+            
+            if ( newContent !== null ) {
+                return newContent
+            }
+            
+            return ""
+        }
+
+        let title = setData(currentContent?.title, content.title)
+        let desc = setData(currentContent?.desc, content.desc)
+        createNewBookmarkHook.setContent(title, desc)
+    }
+
     const createNewBookmarkHook = useCreateNewBookmark(
         onClickCreateDone,
         onClickCreateCancel,
         onChangeCreateNewBookmarkInputBox,
+        onChangeUrlInputBox,
     )
 
     //
