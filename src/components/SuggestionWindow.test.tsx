@@ -1,9 +1,101 @@
-import { __suggestion_window_test__ as testHelpers } from "./SuggestionWindow";
-import { render, screen } from "@testing-library/react";
+import { SuggestionWindow, __suggestion_window_test__ as testHelpers, useSuggestionWindow } from "./SuggestionWindow";
+import { act, render, renderHook, screen } from "@testing-library/react";
 import "@testing-library/jest-dom/vitest";
 import { describe, expect, test } from "vitest";
+import { useRef } from "react";
+import { globalColorTheme } from "../theme";
 
 const { highlightMatchedBlocks, TextBlock, Item } = testHelpers;
+
+describe("SuggestionWindow",() => {
+    test("items",() => {
+        const items = ["hello"]
+        const predicate = "h"
+        const focusIndex = 0
+        const refs = renderHook(() => {
+            return useRef<(HTMLDivElement|null)[]>([])
+        })
+
+        const {container} = render(
+            <SuggestionWindow
+               items={items}
+               predicate={predicate}
+               focusIndex={focusIndex}
+               itemRefs={refs.result.current}>
+            </SuggestionWindow>
+        )
+        
+        
+        expect(container).matchSnapshot()
+
+
+        let matchBlock = screen.getByText("h")
+        expect(matchBlock).toBeInTheDocument()
+        expect(matchBlock).toHaveStyle("color: " + globalColorTheme.suggestionWindow.match + ";")
+        expect(matchBlock).toMatchSnapshot()
+
+        let unmatchBlock = screen.getByText("ello")
+        expect(unmatchBlock).toBeInTheDocument()
+        expect(unmatchBlock).toHaveStyle("color: " + globalColorTheme.suggestionWindow.unmatch + ";")
+        expect(unmatchBlock).toMatchSnapshot()
+    })
+    
+    test("useSuggestionWindow",() => {
+        const hook = renderHook(() => {
+            return useSuggestionWindow()
+        })
+        let r = render(<SuggestionWindow {...hook.result.current.props}></SuggestionWindow>)
+
+        expect(r.container).matchSnapshot()
+
+        act(() => {
+            hook.result.current.setItems([
+                "hello",
+                "haaaaa",
+                "aaahh",
+                "bbbha"
+            ])
+            hook.result.current.setPredicate("h")
+        })
+    })
+    
+
+    test("getFocusedItem",() => {
+        const hook = renderHook(() => {
+            return useSuggestionWindow()
+        })
+
+        expect(hook.result.current.getFocusedItem()).toBe(undefined)
+        
+        act(() => {
+            hook.result.current.setFocusIndex(1)
+            hook.result.current.setItems([
+                "hello",
+                "aaa"
+            ])
+        })
+        
+        expect(hook.result.current.getFocusedItem()).toBe("aaa")
+
+        act(() => {
+            hook.result.current.setFocusIndex(2)
+            hook.result.current.setItems([
+                "hello",
+                "aaa",
+                "hey",
+                "foo",
+            ])
+        })
+
+        expect(hook.result.current.getFocusedItem()).toBe("hey")
+
+        act(() => {
+            hook.result.current.setItems([])
+        })
+
+        expect(hook.result.current.getFocusedItem()).toBe(undefined)
+    })
+})
 
 describe("highlightMatchedBlocks", () => {
     test("returns correctly highlighted blocks when all characters match in order", () => {

@@ -10,8 +10,8 @@ import EditIcon from '@mui/icons-material/Edit';
 export type BookmarkItemProps = {
     data: IData.Bookmark
 
-    onClickRemove: (key:string) => void
-    onClickEdit: (key:string) => void
+    onClickRemove: (key:number) => void
+    onClickEdit: (key:number) => void
     focus: boolean
 }
 
@@ -69,10 +69,10 @@ export const BookmarkItem = forwardRef<HTMLDivElement, BookmarkItemProps>(
                                     right: 10
                                 }}
                             >
-                                <Button variant="contained" onClick={() => props.onClickRemove(props.data.key)}>
+                                <Button variant="contained" onClick={() => props.onClickRemove(props.data.id)}>
                                     <DeleteIcon></DeleteIcon>
                                 </Button>
-                                <Button variant="contained" onClick={() => props.onClickEdit(props.data.key)}>
+                                <Button variant="contained" onClick={() => props.onClickEdit(props.data.id)}>
                                     <EditIcon></EditIcon>
                                 </Button>
                             </Stack>

@@ -1,28 +1,41 @@
 import { Stack } from "@mui/material"
 import { IData } from "../data"
-import { useEffect, useRef } from "react"
+import { useEffect, useRef, useState } from "react"
 import { BookmarkItem } from "./BookmarkItem"
 
-type BookmarkListProps = {
-	onClickRemove: (key: string) => void
-	onClickEdit: (key: string) => void
-	items: IData.Bookmark[]
-    focusIndex: number
-}
-
-
-export function BookmarkList(props: BookmarkListProps){
-
+export function useBookmarkList(
+	onClickRemove: (key: number) => void,
+	onClickEdit: (key: number) => void,
+){
+    const [items, setItems] = useState<IData.Bookmark[]>([])
+    const [focusIndex, setFocusIndex] = useState(0)
 	const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
-
+    
 	useEffect(() => {
 		// フォーカスが変更されたときにスクロールする
-		const focusedItem = itemRefs.current[props.focusIndex];
+		const focusedItem = itemRefs.current[focusIndex];
 		if (focusedItem) {
 			focusedItem.scrollIntoView({ block: "nearest"});
 		}
-	}, [props.focusIndex]);
+	}, [focusIndex]);
 
+    return {
+        items,
+        setItems,
+        focusIndex,
+        setFocusIndex,
+        
+        props: {
+            onClickEdit,
+            onClickRemove,
+            itemRefs,
+            focusIndex,
+            items,
+        }
+    }
+}
+
+export function BookmarkList(props: ReturnType<typeof useBookmarkList>["props"]){
     return (
         <Stack 
             spacing={1}
@@ -38,10 +51,10 @@ export function BookmarkList(props: BookmarkListProps){
             {
                 props.items.map( (item,i) => {
                     return <BookmarkItem 
-						ref={(el) => (itemRefs.current[i] = el)}
+						ref={(el) => (props.itemRefs.current[i] = el)}
                         data={item}
                         focus={props.focusIndex === i}                        
-                        key={item.key}
+                        key={item.id}
                         onClickEdit={props.onClickEdit}
                         onClickRemove={props.onClickRemove}
                     ></BookmarkItem>

@@ -1,39 +1,60 @@
 import { Box, Typography } from "@mui/material";
-import { forwardRef, useEffect, useRef } from "react";
+import { forwardRef, useEffect, useRef, useState } from "react";
 import { globalColorTheme as GCT } from "../theme";
 import { ZINDEX } from "../zindex";
 
-export type SuggestionWindowProps = {
-    predicate: string
-    items: string[]
-    focusIndex: number
-}
+export function useSuggestionWindow() {
+    const [items,setItems] = useState<string[]>([])
+    const [predicate,setPredicate] = useState("")
+    const [focusIndex,setFocusIndex] = useState(0)
 
-export function SuggestionWindow(p: SuggestionWindowProps){
-   
 	const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
+    
+    const getFocusedItem = () => {
+        return items.at(focusIndex)
+    }
+    const close = () => {
+        setItems([])
+        setPredicate("")
+        setFocusIndex(0)
+    }
 
 
 	useEffect(() => {
 		// フォーカスが変更されたときにスクロールする
-		const focusedItem = itemRefs.current[p.focusIndex];
+		const focusedItem = itemRefs.current[focusIndex];
 		if (focusedItem) {
 			focusedItem.scrollIntoView({ block: "nearest"});
 		}
-	}, [p.focusIndex]);
+	}, [focusIndex]);
+    
+    return {
+        props: {
+            items,
+            predicate,
+            focusIndex,
+            itemRefs,
+        },
 
+        close,
+        getFocusedItem,
+        items,
+        setItems,
+        predicate,
+        setPredicate,
+        focusIndex,
+        setFocusIndex,
+    }
+}
+
+export function SuggestionWindow(p: ReturnType<typeof useSuggestionWindow>["props"]){
     return (
         <Box
             sx={{
                 display: p.items.length > 0 ? "block" : "none",
                 bgcolor: GCT.suggestionWindow.bg,
                 position: "absolute",
-
-                // 結構難しそうなので簡単な代替案にする
-                // top: p.pos.top,
-                // left: p.pos.left,
                 top: "100%",
-
                 boxSizing: "border-box",
                 zIndex: ZINDEX.popup,
                 maxHeight: 400,
@@ -52,7 +73,7 @@ export function SuggestionWindow(p: SuggestionWindowProps){
                     focus={p.focusIndex === i}
                     item={item} 
                     key={i} 
-                    ref={(el) => (itemRefs.current[i] = el)}
+                    ref={(el) => (p.itemRefs.current[i] = el)}
                 ></Item>
             })}
         </Box>

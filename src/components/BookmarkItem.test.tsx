@@ -20,7 +20,7 @@ vi.mock("../theme", () => ({
 
 describe("BookmarkItem", () => {
     const mockData: IData.Bookmark = {
-        key: "hello",
+        id: 1,
         url: "aaa",
         title: "Sample Bookmark",
         desc: "This is a sample description for the bookmark item.",
@@ -93,7 +93,7 @@ describe("BookmarkItem", () => {
                 title: "hello".repeat(100),
                 url: "hello".repeat(2),
                 desc: "aaa".repeat(200),
-                key: "a",
+                id: 1,
                 tags: Array(100).fill("tag")
                }}
                onClickEdit={() => {}}
