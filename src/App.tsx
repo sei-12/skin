@@ -26,6 +26,11 @@ function App() {
         appHotkeyHook.switchScope(HOTKEY_SCOPES.CREATE_NEW_BOOKMARK)
     }
 
+    const changeViewToSearchBookmark = () => {
+        setShowView("SEARCH_BOOKMARK")
+        appHotkeyHook.switchScope(HOTKEY_SCOPES.SEARCH_BOOKMARK)
+    }
+
     const onClickAddButton = () => {
         changeViewToCreateNewBookmark()
     }
@@ -108,9 +113,9 @@ function App() {
         createNewBookmarkHook.tagInputBoxHook.suggestionWindowHook.setFocusIndex(0)
     }
 
-    // TODO
     const onClickCreateCancel = () => {
-        console.log("cancel")
+        createNewBookmarkHook.clearData()
+        changeViewToSearchBookmark()
     }
     
     // // TODO: 別のファイルに切り出してテストも書く
@@ -187,14 +192,6 @@ function App() {
     // HOTKEYS
     //
     //
-
-    // TODO: フォーカスの移動の処理をまとめたい。useFocusIndexとか作りたい。
-    // けど、ホットキーの設定をするときに依存関係を配列で渡さないといけなくて、それをどうやって対処するかで悩んでいる。
-    // 配列もまとめて定義したらいいけど、中身を意識しないと使えない抽象化とかいういい加減な状態になる気がしている。
-    //
-    // TODO: というか、関数定義とホットキーの情報を分けて、動作とトリガーを分離したい。これはできる気がする。
-    // 追記：本当にそれをすべきかなやんでいる。
-
 
     useHotkeys(
         "Escape",
@@ -332,7 +329,9 @@ function App() {
     useHotkeys(
         "Escape",
         () => {
-            setShowView("SEARCH_BOOKMARK")
+            changeViewToSearchBookmark()
+            // setShowView("SEARCH_BOOKMARK")
+            // //
         },
         { scopes: [HOTKEY_SCOPES.CREATE_NEW_BOOKMARK], preventDefault: true, enableOnFormTags: true },
         []
@@ -344,7 +343,7 @@ function App() {
             onClickCreateDone()
         },
         { scopes: [HOTKEY_SCOPES.CREATE_NEW_BOOKMARK], preventDefault: true, enableOnFormTags: true },
-        []
+        [createNewBookmarkHook]
     )
 
     useHotkeys(
