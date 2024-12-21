@@ -1,4 +1,3 @@
-
 #[derive(serde::Serialize)]
 pub struct WebSiteContent {
     title: Option<String>,
@@ -15,24 +14,21 @@ pub fn fetch_website_content(url: String) -> Result<WebSiteContent, String> {
 
 fn parse_html(html: &str) -> Result<WebSiteContent, Box<dyn std::error::Error>> {
     let document = scraper::Html::parse_document(html);
-    
-    let title_selector = scraper::Selector::parse("title")?; 
+
+    let title_selector = scraper::Selector::parse("title")?;
     let desc_selector = scraper::Selector::parse("meta[name='description']")?;
 
     let title = match document.select(&title_selector).next() {
         Some(element) => Some(element.inner_html()),
         None => None,
     };
-    
+
     let desc = match document.select(&desc_selector).next() {
         Some(element) => Some(element.value().attr("content").unwrap_or("").to_string()),
         None => None,
     };
-        
-    Ok(WebSiteContent {
-        title,
-        desc
-    })
+
+    Ok(WebSiteContent { title, desc })
 }
 
 #[cfg(test)]
@@ -71,7 +67,7 @@ mod tests {
         let result = parse_html(html).unwrap();
         assert_eq!(result.desc, Some("test description".to_string()));
         assert_eq!(result.title, Some("test title".to_string()));
-        
+
         let html = r#"
             <html>
                 <head>
@@ -82,11 +78,10 @@ mod tests {
                 </body>
             </html>
         "#;
-        
+
         let result = parse_html(html).unwrap();
         assert_eq!(result.desc, Some("test description".to_string()));
         assert_eq!(result.title, None);
-        
 
         let html = "not a valid html";
         let result = parse_html(html).unwrap();

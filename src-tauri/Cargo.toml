@@ -26,6 +26,7 @@ tauri-plugin-sql = { version = "2", features = ["sqlite"] }
 opener = "0.7.2"
 reqwest = { version = "0.12.9", features = ["blocking"] }
 scraper = "0.22.0"
+tauri-plugin-clipboard-manager = "2.2.0"
 
 [target.'cfg(not(any(target_os = "android", target_os = "ios")))'.dependencies]
 tauri-plugin-global-shortcut = "2"

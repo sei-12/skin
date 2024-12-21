@@ -13,7 +13,12 @@ import { register } from '@tauri-apps/plugin-global-shortcut';
 import { getCurrentWindow } from "@tauri-apps/api/window";
 import { listen } from "@tauri-apps/api/event";
 import { globalColorTheme } from "./lib/theme";
+import { readText } from '@tauri-apps/plugin-clipboard-manager';
 
+
+function isUrl(content: string){
+    return content.startsWith("http")
+}
 
 getCurrentWindow().setVisibleOnAllWorkspaces(true)
 
@@ -21,9 +26,14 @@ function App() {
 
     const [showView, setShowView] = useState<"SEARCH_BOOKMARK" | "CREATE_NEW_BOOKMARK">("SEARCH_BOOKMARK")
 
-    const changeViewToCreateNewBookmark = () => {
+    const changeViewToCreateNewBookmark = async () => {
         setShowView("CREATE_NEW_BOOKMARK")
         appHotkeyHook.switchScope(HOTKEY_SCOPES.CREATE_NEW_BOOKMARK)
+
+        const content = await readText();
+        if ( isUrl(content) ){
+            createNewBookmarkHook.setUrl(content)
+        }
     }
 
     const changeViewToSearchBookmark = () => {
@@ -120,6 +130,7 @@ function App() {
     
     // // TODO: 別のファイルに切り出してテストも書く
     const onChangeUrlInputBox = async  (url: string) => {
+        console.log("onChangeUrl!!")
         let content = await invoke("fetch_website_content",{url}) as {title: string, desc: string}
         let currentContent = createNewBookmarkHook.getInputData()
 
