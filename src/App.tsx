@@ -10,17 +10,16 @@ import { dbConnection } from "./lib/database";
 import { invoke } from "@tauri-apps/api/core";
 
 import { register } from '@tauri-apps/plugin-global-shortcut';
-import { getCurrentWindow } from "@tauri-apps/api/window";
 import { listen } from "@tauri-apps/api/event";
 import { globalColorTheme } from "./lib/theme";
 import { readText } from '@tauri-apps/plugin-clipboard-manager';
+import { WindowVisibleController } from "./lib/windowVisibleController";
 
 
 function isUrl(content: string){
     return content.startsWith("http")
 }
 
-getCurrentWindow().setVisibleOnAllWorkspaces(true)
 
 function App() {
 
@@ -52,20 +51,17 @@ function App() {
                 return
             }
 
-            let curWindow = getCurrentWindow();
-
-            let curVisibility = await curWindow.isVisible();
+            let curVisibility = await WindowVisibleController.currentVisible()
             if (curVisibility) {
-                curWindow.hide()
+                WindowVisibleController.hide()
             }else{
-                curWindow.show()
-                curWindow.setFocus()
+                WindowVisibleController.show()
                 tagInputBoxHook.inputBoxRef.current?.focus()
             }
         })
 
         listen("tauri://blur",async () => {
-            getCurrentWindow().hide()
+            WindowVisibleController.hide()
         })
     },[])
 
@@ -207,7 +203,7 @@ function App() {
     useHotkeys(
         "Escape",
         () => {
-            getCurrentWindow().hide()
+            WindowVisibleController.hide()
         },
         { scopes: [HOTKEY_SCOPES.SEARCH_BOOKMARK], preventDefault: true, enableOnFormTags: true },
         []
@@ -443,7 +439,7 @@ function App() {
             if (bkmkListHook.items.length === 0) { return }
             let focusedItem = bkmkListHook.items[bkmkListHook.focusIndex]
             let url = focusedItem.url
-            getCurrentWindow().hide()
+            WindowVisibleController.hide()
             invoke("open_url",{url}) 
             tagInputBoxHook.setInputedTags([])
         },
