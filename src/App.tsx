@@ -14,6 +14,7 @@ import { listen } from "@tauri-apps/api/event";
 import { globalColorTheme } from "./lib/theme";
 import { readText } from '@tauri-apps/plugin-clipboard-manager';
 import { WindowVisibleController } from "./lib/windowVisibleController";
+import { FindTagMethod } from "./components/SuggestionWindow";
 
 
 function isUrl(content: string){
@@ -22,6 +23,12 @@ function isUrl(content: string){
 
 
 function App() {
+
+    const findTagMethod: FindTagMethod = async (predicate) => {
+        let suggestionItems = await dbConnection.findTag(predicate)
+
+        return suggestionItems
+    }
 
     const [showView, setShowView] = useState<"SEARCH_BOOKMARK" | "CREATE_NEW_BOOKMARK">("SEARCH_BOOKMARK")
 
@@ -76,21 +83,7 @@ function App() {
         () => console.log("onclick edit!!")
     )
 
-    // TOOD: この処理はフックの中でいい気がする。
-    const onChangePredicateInputBox = async () => {
-        let inputBox = tagInputBoxHook.inputBoxRef.current
-        if (inputBox === null) { return }
-
-
-        let suggestionItems = await dbConnection.findTag(inputBox.value)
-        tagInputBoxHook.suggestionWindowHook.setItems(suggestionItems)
-        tagInputBoxHook.suggestionWindowHook.setPredicate(inputBox.value)
-        tagInputBoxHook.suggestionWindowHook.setFocusIndex(0)
-    }
-
-    const tagInputBoxHook = useTagInputBox(
-        onChangePredicateInputBox
-    )
+    const tagInputBoxHook = useTagInputBox( findTagMethod)
 
     const appHotkeyHook = useAppHotkey()
     const onClickCreateDone = () => {
@@ -107,16 +100,6 @@ function App() {
             setShowView("SEARCH_BOOKMARK")
             appHotkeyHook.switchScope(HOTKEY_SCOPES.SEARCH_BOOKMARK)
         })
-    }
-
-    // TODO: 名前が処理を表していない。変えたい。
-    const onChangeCreateNewBookmarkInputBox = async () => {
-        let inputBox = createNewBookmarkHook.tagInputBoxHook.inputBoxRef.current
-        if (inputBox === null) { return }
-        let suggestionItems = await dbConnection.findTag(inputBox.value)
-        createNewBookmarkHook.tagInputBoxHook.suggestionWindowHook.setItems(suggestionItems)
-        createNewBookmarkHook.tagInputBoxHook.suggestionWindowHook.setPredicate(inputBox.value)
-        createNewBookmarkHook.tagInputBoxHook.suggestionWindowHook.setFocusIndex(0)
     }
 
     const onClickCreateCancel = () => {
@@ -150,7 +133,7 @@ function App() {
     const createNewBookmarkHook = useCreateNewBookmark(
         onClickCreateDone,
         onClickCreateCancel,
-        onChangeCreateNewBookmarkInputBox,
+        findTagMethod,
         onChangeUrlInputBox,
     )
 

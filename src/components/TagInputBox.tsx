@@ -1,16 +1,16 @@
 import { Box, TextField, Typography } from "@mui/material";
 import { useRef, useState } from "react";
-import { SuggestionWindow, useSuggestionWindow } from "./SuggestionWindow";
+import { FindTagMethod, SuggestionWindow, useSuggestionWindow } from "./SuggestionWindow";
 import { globalColorTheme as GCT } from "../lib/theme";
 
 export function useTagInputBox(
-    onChangeInputBox: () => void
+    findTagMethod: FindTagMethod
 ) {
     const inputBoxRef = useRef<HTMLInputElement>(null)
     const [inputedTags, setInputedTags] = useState<{ text: string, exists: boolean }[]>([])
 
 
-    const suggestionWindowHook = useSuggestionWindow()
+    const suggestionWindowHook = useSuggestionWindow(findTagMethod)
 
     return {
         inputBoxRef,
@@ -23,7 +23,7 @@ export function useTagInputBox(
             swProps: suggestionWindowHook.props,
             inputBoxRef,
             inputedTags,
-            onChangeInputBox,
+            onChangePredicateInputBox: suggestionWindowHook.onChangePredicateInputBox
         }
     }
 }
@@ -64,7 +64,7 @@ export const TagInputBox = (p: ReturnType<typeof useTagInputBox>["props"]) => {
                 }}
             >
                 <TextField
-                    onInput={() => { p.onChangeInputBox() }}
+                    onChange={(e) => { p.onChangePredicateInputBox(e) }}
                     inputRef={p.inputBoxRef}
                     autoComplete="off"
                     variant="outlined"
