@@ -42,7 +42,7 @@ describe("SuggestionWindow",() => {
     
     test("useSuggestionWindow",() => {
         const hook = renderHook(() => {
-            return useSuggestionWindow()
+            return useSuggestionWindow(async () => [],() => [])
         })
         let r = render(<SuggestionWindow {...hook.result.current.props}></SuggestionWindow>)
 
@@ -62,7 +62,7 @@ describe("SuggestionWindow",() => {
 
     test("getFocusedItem",() => {
         const hook = renderHook(() => {
-            return useSuggestionWindow()
+            return useSuggestionWindow(async () => [],() => [])
         })
 
         expect(hook.result.current.getFocusedItem()).toBe(undefined)
