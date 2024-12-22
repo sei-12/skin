@@ -15,7 +15,6 @@ fn open_url(url: &str) -> bool {
     }
 }
 
-
 fn migrations() -> Vec<Migration> {
     vec![Migration {
         version: 1,
@@ -49,6 +48,7 @@ fn migrations() -> Vec<Migration> {
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
+        .plugin(tauri_plugin_clipboard_manager::init())
         .plugin(tauri_plugin_global_shortcut::Builder::new().build())
         //.plugin(tauri_plugin_sql::Builder::new().build())
         .plugin(
@@ -57,14 +57,18 @@ pub fn run() {
                 .build(),
         )
         .plugin(tauri_plugin_shell::init())
-        .invoke_handler(tauri::generate_handler![greet, open_url,fetch_website_content::fetch_website_content])
+        .invoke_handler(tauri::generate_handler![
+            greet,
+            open_url,
+            fetch_website_content::fetch_website_content
+        ])
         .setup(|app| {
             // 開発時だけdevtoolsを表示する。
             #[cfg(debug_assertions)]
             app.get_webview_window("main").unwrap().open_devtools();
-      
+
             Ok(())
-          })
+        })
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

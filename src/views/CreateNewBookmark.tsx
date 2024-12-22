@@ -26,6 +26,15 @@ export function useCreateNewBookmark(
         titleRef.current.value = title
         descRef .current.value = desc
     };
+    
+    const setUrl = (url: string) => {
+        if ( urlRef.current === null ){
+            return
+        }
+        urlRef.current.value = url
+        // イベントを発生させたかったけど、少し難しかった。
+        onChangeUrl(url)
+    }
 
     const getInputData = () => {
         if ( titleRef.current === null ){
@@ -78,18 +87,17 @@ export function useCreateNewBookmark(
         setContent,
         getInputData,
         clearData,
+        setUrl,
     };
 }
 
 export function CreateNewBookmark(p: ReturnType<typeof useCreateNewBookmark>["props"]){
     return (
         <div>
+			<TextField inputRef={p.urlRef} sx={{ width: 0.8 }} placeholder={"url"} onChange={(e) => {p.onChangeUrl(e.target.value)}} />
 			<TextField inputRef={p.titleRef} sx={{
 				width: 0.8
 			}}placeholder={"title"} />
-			<TextField inputRef={p.urlRef} sx={{
-				width: 0.8
-			}}placeholder={"url"} onChange={(e) => {p.onChangeUrl(e.target.value)}} />
 			<TagInputBox {...p.tagInputBox}/>
 			<TextField inputRef={p.descRef} sx={{
 				width: 1
