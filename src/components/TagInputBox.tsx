@@ -10,7 +10,10 @@ export function useTagInputBox(
     const [inputedTags, setInputedTags] = useState<{ text: string, exists: boolean }[]>([])
 
 
-    const suggestionWindowHook = useSuggestionWindow(findTagMethod)
+    const suggestionWindowHook = useSuggestionWindow(
+        findTagMethod,
+        () => { return inputedTags.map( t => t.text ) }
+    )
 
     return {
         inputBoxRef,

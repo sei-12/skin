@@ -22,13 +22,15 @@ function isUrl(content: string){
 }
 
 
+const findTagMethod: FindTagMethod = async (predicate,inputedTags) => {
+    let inputedTagsSet = new Set(inputedTags)
+    let dbResult = await dbConnection.findTag(predicate)
+    let filted = dbResult.filter( t => inputedTagsSet.has(t) === false )
+    return filted
+}
+
 function App() {
 
-    const findTagMethod: FindTagMethod = async (predicate) => {
-        let suggestionItems = await dbConnection.findTag(predicate)
-
-        return suggestionItems
-    }
 
     const [showView, setShowView] = useState<"SEARCH_BOOKMARK" | "CREATE_NEW_BOOKMARK">("SEARCH_BOOKMARK")
 
@@ -406,13 +408,18 @@ function App() {
             if (inputBox === null) { return }
             if (inputBox.value === "") { return }
             let item = inputBox.value
+
+            let inputedTags = createNewBookmarkHook.getInputData()?.tags || []
+            let has = inputedTags.find(t => t == item) !== undefined
+            if ( has ){ return }
+
             let exists = await dbConnection.isExistsTag(item)
             createNewBookmarkHook.tagInputBoxHook.setInputedTags(ary => { return [...ary, { text: item, exists }] })
             createNewBookmarkHook.tagInputBoxHook.suggestionWindowHook.close()
             inputBox.value = ""
         },
         { scopes: [HOTKEY_SCOPES.CREATE_NEW_BOOKMARK, HOTKEY_SCOPES.CREATE_NEW_BOOKMARK_SUGGESTION_WINDOW], enableOnFormTags: true },
-        []
+        [createNewBookmarkHook]
     )
     
 

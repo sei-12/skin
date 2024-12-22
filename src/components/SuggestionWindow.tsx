@@ -3,9 +3,10 @@ import { ChangeEvent, forwardRef, useEffect, useRef, useState } from "react";
 import { globalColorTheme as GCT } from "../lib/theme";
 import { ZINDEX } from "../lib/zindex";
 
-export type FindTagMethod = (predicate: string) => Promise<string[]>
+export type FindTagMethod = (predicate: string, inputedTags: string[]) => Promise<string[]>
 export function useSuggestionWindow(
-    findTagMethod: FindTagMethod
+    findTagMethod: FindTagMethod,
+    getInputedTags: () => string[]
 ) {
     const [items,setItems] = useState<string[]>([])
     const [predicate,setPredicate] = useState("")
@@ -23,7 +24,8 @@ export function useSuggestionWindow(
     }
 
     const onChangePredicateInputBox = async (e: ChangeEvent<HTMLTextAreaElement |HTMLInputElement>) => {
-        let suggestionItems = await findTagMethod(e.target.value)
+        // getInputedTags
+        let suggestionItems = await findTagMethod(e.target.value, getInputedTags())
         setItems(suggestionItems)
         setPredicate(e.target.value)
         setFocusIndex(0)
