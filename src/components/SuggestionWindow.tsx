@@ -24,7 +24,6 @@ export function useSuggestionWindow(
     }
 
     const onChangePredicateInputBox = async (e: ChangeEvent<HTMLTextAreaElement |HTMLInputElement>) => {
-        // getInputedTags
         let suggestionItems = await findTagMethod(e.target.value, getInputedTags())
         setItems(suggestionItems)
         setPredicate(e.target.value)
