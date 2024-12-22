@@ -1,9 +1,13 @@
 import { Box, Typography } from "@mui/material";
-import { forwardRef, useEffect, useRef, useState } from "react";
+import { ChangeEvent, forwardRef, useEffect, useRef, useState } from "react";
 import { globalColorTheme as GCT } from "../lib/theme";
 import { ZINDEX } from "../lib/zindex";
 
-export function useSuggestionWindow() {
+export type FindTagMethod = (predicate: string, inputedTags: string[]) => Promise<string[]>
+export function useSuggestionWindow(
+    findTagMethod: FindTagMethod,
+    getInputedTags: () => string[]
+) {
     const [items,setItems] = useState<string[]>([])
     const [predicate,setPredicate] = useState("")
     const [focusIndex,setFocusIndex] = useState(0)
@@ -19,6 +23,12 @@ export function useSuggestionWindow() {
         setFocusIndex(0)
     }
 
+    const onChangePredicateInputBox = async (e: ChangeEvent<HTMLTextAreaElement |HTMLInputElement>) => {
+        let suggestionItems = await findTagMethod(e.target.value, getInputedTags())
+        setItems(suggestionItems)
+        setPredicate(e.target.value)
+        setFocusIndex(0)
+    }
 
 	useEffect(() => {
 		// フォーカスが変更されたときにスクロールする
@@ -35,7 +45,7 @@ export function useSuggestionWindow() {
             focusIndex,
             itemRefs,
         },
-
+        onChangePredicateInputBox,
         close,
         getFocusedItem,
         items,

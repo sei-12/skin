@@ -1,12 +1,13 @@
 import { Button, TextField } from "@mui/material";
 import { useRef } from "react";
 import { TagInputBox, useTagInputBox } from "../components/TagInputBox";
+import { FindTagMethod } from "../components/SuggestionWindow";
 
 
 export function useCreateNewBookmark(
     onClickDone: () => void,
     onClickCancel: () => void,
-    onChangeInputBox: () => void,
+    findTagMethod: FindTagMethod,
     onChangeUrl: (url: string) => void,
 ) {
     
@@ -14,7 +15,7 @@ export function useCreateNewBookmark(
     const urlRef = useRef<HTMLInputElement>(null)
     const descRef = useRef<HTMLInputElement>(null)
 
-	const tagInputBoxHook = useTagInputBox(onChangeInputBox)
+	const tagInputBoxHook = useTagInputBox(findTagMethod)
 
     const setContent = (title: string, desc: string) => {
         if ( titleRef.current === null ){
