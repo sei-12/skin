@@ -70,7 +70,10 @@ function App() {
         })
 
         listen("tauri://blur",async () => {
+            // TODO: 重複した処理 CA2897EB
             WindowVisibleController.hide()
+            // 再度開いた時に前回の検索結果などが残らないようにする。
+            tagInputBoxHook.setInputedTags([])
         })
     },[])
 
@@ -176,6 +179,7 @@ function App() {
         let tags = tagInputBoxHook.inputedTags.map(e => { return e.text })
         dbConnection.findBookmark(tags).then(data => {
             bkmkListHook.setItems(data)
+            bkmkListHook.setFocusIndex(0)
         })
     }, [tagInputBoxHook.inputedTags])
 
@@ -188,7 +192,11 @@ function App() {
     useHotkeys(
         "Escape",
         () => {
+            // TODO: 重複した処理 CA2897EB
             WindowVisibleController.hide()
+
+            // 再度開いた時に前回の検索結果などが残らないようにする。
+            tagInputBoxHook.setInputedTags([])
         },
         { scopes: [HOTKEY_SCOPES.SEARCH_BOOKMARK], preventDefault: true, enableOnFormTags: true },
         []
