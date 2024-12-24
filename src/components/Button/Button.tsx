@@ -1,6 +1,3 @@
-
-export function MyButton(){
-    return (
-        <button>Hello Vitest!!!</button>
-    )
+export function MyButton() {
+    return <button>Hello Vitest!!!</button>;
 }

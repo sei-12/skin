@@ -1,6 +1,6 @@
 import { useHotkeysContext } from "react-hotkeys-hook";
 
-export const HOTKEY_SCOPES = { 
+export const HOTKEY_SCOPES = {
     SEARCH_BOOKMARK: "search_bookmark",
     SEARCH_BOOKMARK_SUGGESTION_WINDOW: "SEARCH_BOOKMARK_SUGGESTION_WINDOW",
 
@@ -13,16 +13,16 @@ export const HOTKEY_SCOPES = {
 type HOTKEY_SCOPES = (typeof HOTKEY_SCOPES)[keyof typeof HOTKEY_SCOPES]
 
 
-export function useAppHotkey(){
+export function useAppHotkey() {
     const hotkeysContext = useHotkeysContext()
 
     const switchScope = (to: HOTKEY_SCOPES) => {
-        hotkeysContext.enabledScopes.forEach( scope => {
+        hotkeysContext.enabledScopes.forEach(scope => {
             hotkeysContext.disableScope(scope)
         })
         hotkeysContext.enableScope(to)
     }
-    
+
     return {
         switchScope
     }

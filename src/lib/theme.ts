@@ -1,6 +1,6 @@
 import { createTheme } from "@mui/material";
 
-const palette = { 
+const palette = {
     verydark: "#1a1b25",
     // darkyellow: "#36311F",
 
@@ -65,7 +65,7 @@ export const tokyonight = createTheme({
             main: palette.blue3,
             contrastText: palette.teal1,
         },
-        secondary:{
+        secondary: {
             main: palette.dark1,
             contrastText: palette.purple1,
         },
@@ -85,7 +85,7 @@ export const tokyonight = createTheme({
             main: palette.blue6,
             contrastText: palette.dark1
         },
-        background:{
+        background: {
             default: "rgba(0,0,0,0)",
         },
         text: {

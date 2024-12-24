@@ -39,20 +39,30 @@ describe("BookmarkItem", () => {
 
         // expect(screen.getByText("Sample Bookmark")).toBeInTheDocument();
         expect(screen.getByText("Sample Bookmark")).toBeVisible();
-        expect(screen.getByText("This is a sample description for the bookmark item.")).toBeInTheDocument();
+        expect(
+            screen.getByText(
+                "This is a sample description for the bookmark item."
+            )
+        ).toBeInTheDocument();
         expect(screen.getByText("#tag1")).toBeInTheDocument();
         expect(screen.getByText("#tag2")).toBeInTheDocument();
         expect(screen.getByText("#tag3")).toBeInTheDocument();
     });
 
     it("applies the correct background color when focused", () => {
-        const { container, rerender } = render(<BookmarkItem {...defaultProps} focus={true} />);
+        const { container, rerender } = render(
+            <BookmarkItem {...defaultProps} focus={true} />
+        );
 
-        expect(container.querySelector(".MuiCard-root")).toHaveStyle("background-color: #f0f0f0");
+        expect(container.querySelector(".MuiCard-root")).toHaveStyle(
+            "background-color: #f0f0f0"
+        );
 
         rerender(<BookmarkItem {...defaultProps} focus={false} />);
 
-        expect(container.querySelector(".MuiCard-root")).toHaveStyle("background-color: #ffffff");
+        expect(container.querySelector(".MuiCard-root")).toHaveStyle(
+            "background-color: #ffffff"
+        );
     });
 
     it("calls the correct functions on click actions", async () => {
@@ -68,13 +78,11 @@ describe("BookmarkItem", () => {
             />
         );
 
-
         // Simulate clicks
         // Replace these with actual buttons or clickable elements if present in your BookmarkItem
-        
-        await user.click(screen.getAllByRole('button')[0]); // どう書いたらいいかわからんかった
-        await user.click(screen.getAllByRole('button')[1]);
 
+        await user.click(screen.getAllByRole("button")[0]); // どう書いたらいいかわからんかった
+        await user.click(screen.getAllByRole("button")[1]);
 
         // Uncomment and replace with appropriate selectors if implemented
         expect(handleClickRemove).toHaveBeenCalledOnce();
@@ -86,21 +94,23 @@ describe("BookmarkItem", () => {
         const tag = screen.getByText("#tag1");
         expect(tag).toHaveStyle("color: #888888");
     });
-    
-    it("snapshot",() => {
-        const { container } = render(<BookmarkItem
-               data={{
-                title: "hello".repeat(100),
-                url: "hello".repeat(2),
-                desc: "aaa".repeat(200),
-                id: 1,
-                tags: Array(100).fill("tag")
-               }}
-               onClickEdit={() => {}}
-               onClickRemove={() => {}}
-               focus={false}
-        ></BookmarkItem>)
-        
-        expect(container.querySelector(".MuiCard-root")).toMatchSnapshot()
-    })
+
+    it("snapshot", () => {
+        const { container } = render(
+            <BookmarkItem
+                data={{
+                    title: "hello".repeat(100),
+                    url: "hello".repeat(2),
+                    desc: "aaa".repeat(200),
+                    id: 1,
+                    tags: Array(100).fill("tag"),
+                }}
+                onClickEdit={() => {}}
+                onClickRemove={() => {}}
+                focus={false}
+            ></BookmarkItem>
+        );
+
+        expect(container.querySelector(".MuiCard-root")).toMatchSnapshot();
+    });
 });

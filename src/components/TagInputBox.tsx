@@ -1,23 +1,25 @@
 import { Box, TextField, Typography } from "@mui/material";
 import { useRef, useState } from "react";
-import { FindTagMethod, SuggestionWindow, useSuggestionWindow } from "./SuggestionWindow";
+import {
+    FindTagMethod,
+    SuggestionWindow,
+    useSuggestionWindow,
+} from "./SuggestionWindow";
 import { globalColorTheme as GCT } from "../lib/theme";
 
-export function useTagInputBox(
-    findTagMethod: FindTagMethod
-) {
-    const inputBoxRef = useRef<HTMLInputElement>(null)
-    const [inputedTags, setInputedTags] = useState<{ text: string, exists: boolean }[]>([])
+export function useTagInputBox(findTagMethod: FindTagMethod) {
+    const inputBoxRef = useRef<HTMLInputElement>(null);
+    const [inputedTags, setInputedTags] = useState<
+        { text: string; exists: boolean }[]
+    >([]);
 
-
-    const suggestionWindowHook = useSuggestionWindow(
-        findTagMethod,
-        () => { return inputedTags.map( t => t.text ) }
-    )
+    const suggestionWindowHook = useSuggestionWindow(findTagMethod, () => {
+        return inputedTags.map((t) => t.text);
+    });
 
     return {
         inputBoxRef,
-        
+
         inputedTags,
         setInputedTags,
         suggestionWindowHook,
@@ -26,13 +28,14 @@ export function useTagInputBox(
             swProps: suggestionWindowHook.props,
             inputBoxRef,
             inputedTags,
-            onChangePredicateInputBox: suggestionWindowHook.onChangePredicateInputBox
-        }
-    }
+            onChangePredicateInputBox:
+                suggestionWindowHook.onChangePredicateInputBox,
+        },
+    };
 }
 
-const ITEM_HEIGHT = 35
-const TEXT_FIELD_WIDTH = 200
+const ITEM_HEIGHT = 35;
+const TEXT_FIELD_WIDTH = 200;
 
 export const TagInputBox = (p: ReturnType<typeof useTagInputBox>["props"]) => {
     return (
@@ -46,19 +49,12 @@ export const TagInputBox = (p: ReturnType<typeof useTagInputBox>["props"]) => {
                 gap: 1,
                 borderRadius: 2,
                 bgcolor: GCT.predicateInputBox.bg,
-                boxShadow: "inset 0px 0px 5px 0px rgba(0,0,0,0.2)"
+                boxShadow: "inset 0px 0px 5px 0px rgba(0,0,0,0.2)",
             }}
         >
-            {
-                p.inputedTags.map((tag, i) => {
-                    return (
-                        <TagItem
-                            key={i}
-                            {...tag}
-                        ></TagItem>
-                    )
-                })
-            }
+            {p.inputedTags.map((tag, i) => {
+                return <TagItem key={i} {...tag}></TagItem>;
+            })}
             <Box
                 sx={{
                     height: ITEM_HEIGHT,
@@ -67,7 +63,9 @@ export const TagInputBox = (p: ReturnType<typeof useTagInputBox>["props"]) => {
                 }}
             >
                 <TextField
-                    onChange={(e) => { p.onChangePredicateInputBox(e) }}
+                    onChange={(e) => {
+                        p.onChangePredicateInputBox(e);
+                    }}
                     inputRef={p.inputBoxRef}
                     autoComplete="off"
                     variant="outlined"
@@ -79,19 +77,17 @@ export const TagInputBox = (p: ReturnType<typeof useTagInputBox>["props"]) => {
                         transform: "translate(-50%,-50%)",
                         position: "absolute",
                         // https://github.com/mui/material-ui/issues/30379
-                        '& fieldset': { border: "none" },
+                        "& fieldset": { border: "none" },
                     }}
                     placeholder="/"
                 ></TextField>
-                <SuggestionWindow
-                    {...p.swProps}
-                ></SuggestionWindow>
+                <SuggestionWindow {...p.swProps}></SuggestionWindow>
             </Box>
         </Box>
-    )
-}
+    );
+};
 
-function TagItem(p: { text: string, exists: boolean }) {
+function TagItem(p: { text: string; exists: boolean }) {
     return (
         <Box
             sx={{
@@ -116,7 +112,9 @@ function TagItem(p: { text: string, exists: boolean }) {
                     overflow: "hidden",
                     textOverflow: "ellipsis",
                 }}
-            >{p.text}</Typography>
+            >
+                {p.text}
+            </Typography>
         </Box>
-    )
+    );
 }
