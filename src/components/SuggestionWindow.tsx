@@ -38,13 +38,13 @@ export function SuggestionWindow(p: SuggestionWindowProps) {
         >
             {p.items.map((item, i) => {
                 return (
-                    <Item
+                    <SuggestionWindowItem
                         predicate={p.predicate}
                         focus={p.focusIndex === i}
                         item={item}
                         key={i}
                         ref={(el) => (p.itemRefs.current[i] = el)}
-                    ></Item>
+                    ></SuggestionWindowItem>
                 );
             })}
         </Box>
@@ -57,7 +57,7 @@ type ItemProps = {
     focus: boolean;
 };
 
-const Item = forwardRef<HTMLDivElement, ItemProps>((props, ref) => {
+export const SuggestionWindowItem = forwardRef<HTMLDivElement, ItemProps>((props, ref) => {
     const highlightBlocks = highlightMatchedBlocks(props.predicate, props.item);
     return (
         <Box
@@ -71,13 +71,13 @@ const Item = forwardRef<HTMLDivElement, ItemProps>((props, ref) => {
             }}
         >
             {highlightBlocks.map((b, i) => {
-                return <TextBlock key={i} {...b}></TextBlock>;
+                return <SuggestionWindowItemTextBlock key={i} {...b}></SuggestionWindowItemTextBlock>;
             })}
         </Box>
     );
 });
 
-const TextBlock = (p: { isMatch: boolean; text: string }) => {
+export const SuggestionWindowItemTextBlock = (p: { isMatch: boolean; text: string }) => {
     return (
         <Typography
             sx={{
@@ -124,9 +124,3 @@ function highlightMatchedBlocks(
 
     return blocks;
 }
-
-export const __suggestion_window_test__ = {
-    highlightMatchedBlocks,
-    TextBlock,
-    Item,
-};

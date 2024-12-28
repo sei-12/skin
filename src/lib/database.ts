@@ -26,8 +26,7 @@ class DataBaseConnection implements IDataBase {
     }
 
     private async findTagId(tag: string): Promise<number> {
-        const record = await this.db.select("select id from tags where name = $1", [tag])
-        // @ts-ignore
+        const record = await this.db.select<{id: number}[]>("select id from tags where name = $1", [tag])
         return record[0].id
     }
 
@@ -144,9 +143,7 @@ class DataBaseConnection implements IDataBase {
             JOIN tag_map ON tags.id = tag_map.tag_id
             WHERE tag_map.bkmk_id = $1;`
 
-        const result = await this.db.select(query, [bkmkid])
-
-        // @ts-ignore
+        const result = await this.db.select<{name: string}[]>(query, [bkmkid])
         return result.map(r => r.name)
     }
 
@@ -154,8 +151,8 @@ class DataBaseConnection implements IDataBase {
         if (predicate === "") {
             return []
         }
-        const result1 = await this.db.select("select name from tags where name like $1 order by length(name)", [`${predicate}%`]) as any[]
-        const result2 = await this.db.select("select name from tags where name like $1 and name not like $2 order by length(name)", [`%${predicate}%`, `${predicate}%`]) as any[]
+        const result1 = await this.db.select<{name: string}[]>("select name from tags where name like $1 order by length(name)", [`${predicate}%`])
+        const result2 = await this.db.select<{name: string}[]>("select name from tags where name like $1 and name not like $2 order by length(name)", [`%${predicate}%`, `${predicate}%`])
         const result = [...result1, ...result2]
         return result.map((record) => record.name)
     }

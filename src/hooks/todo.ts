@@ -182,7 +182,7 @@ export function useCreateNewBookmarkPage() {
                 HOTKEY_SCOPES.CREATE_NEW_BOOKMARK_SUGGESTION_WINDOW
             );
         }
-    }, [createNewBookmarkHook.tagInputBoxHook.suggestionWindowHook.items]);
+    }, [createNewBookmarkHook.tagInputBoxHook.suggestionWindowHook.items,appHotkeyHook]);
 
     useHotkeys(
         "Escape",
@@ -390,7 +390,7 @@ export function useSearchBookmarkPage() : SearchBookmarkProps {
             // 再度開いた時に前回の検索結果などが残らないようにする。
             tagInputBoxHook.setInputedTags([]);
         });
-    }, []);
+    });
 
     useEffect(() => {
         if (tagInputBoxHook.suggestionWindowHook.items.length === 0) {
@@ -400,7 +400,7 @@ export function useSearchBookmarkPage() : SearchBookmarkProps {
                 HOTKEY_SCOPES.SEARCH_BOOKMARK_SUGGESTION_WINDOW
             );
         }
-    }, [tagInputBoxHook.suggestionWindowHook.items]);
+    }, [tagInputBoxHook.suggestionWindowHook.items,appHotkeyHook]);
 
     useEffect(() => {
         const tags = tagInputBoxHook.inputedTags.map((e) => {
@@ -410,7 +410,7 @@ export function useSearchBookmarkPage() : SearchBookmarkProps {
             bkmkListHook.setItems(data);
             bkmkListHook.setFocusIndex(0);
         });
-    }, [tagInputBoxHook.inputedTags]);
+    }, [tagInputBoxHook.inputedTags,bkmkListHook]);
     
     const onClickAdd = () => {
         navigate("/create-new-bookmark")
