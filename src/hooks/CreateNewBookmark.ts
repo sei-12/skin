@@ -166,7 +166,7 @@ export function useCreateNewBookmarkPage() {
                 HOTKEY_SCOPES.CREATE_NEW_BOOKMARK_SUGGESTION_WINDOW
             );
         }
-    }, [createNewBookmarkHook.tagInputBoxHook.suggestionWindowHook.items,appHotkeyHook]);
+    }, [createNewBookmarkHook.tagInputBoxHook.suggestionWindowHook.items]);
 
     useHotkeys(
         "Escape",
@@ -279,50 +279,22 @@ export function useCreateNewBookmarkPage() {
     );
     useHotkeys(
         "ctrl+n",
-        () => {
-            createNewBookmarkHook.tagInputBoxHook.suggestionWindowHook.setFocusIndex(
-                (cur) => {
-                    let newIndex = cur + 1;
-                    if (
-                        newIndex >=
-                        createNewBookmarkHook.tagInputBoxHook
-                            .suggestionWindowHook.items.length
-                    ) {
-                        newIndex = 0;
-                    }
-                    return newIndex;
-                }
-            );
-        },
+        createNewBookmarkHook.tagInputBoxHook.suggestionWindowHook.focusDown,
         {
             scopes: [HOTKEY_SCOPES.CREATE_NEW_BOOKMARK_SUGGESTION_WINDOW],
             preventDefault: true,
             enableOnFormTags: true,
         },
-        [createNewBookmarkHook.tagInputBoxHook.suggestionWindowHook.items]
     );
 
     useHotkeys(
         "ctrl+p",
-        () => {
-            createNewBookmarkHook.tagInputBoxHook.suggestionWindowHook.setFocusIndex(
-                (cur) => {
-                    let newIndex = cur - 1;
-                    if (newIndex < 0) {
-                        newIndex =
-                            createNewBookmarkHook.tagInputBoxHook
-                                .suggestionWindowHook.items.length - 1;
-                    }
-                    return newIndex;
-                }
-            );
-        },
+        createNewBookmarkHook.tagInputBoxHook.suggestionWindowHook.focusUp,
         {
             scopes: [HOTKEY_SCOPES.CREATE_NEW_BOOKMARK_SUGGESTION_WINDOW],
             preventDefault: true,
             enableOnFormTags: true,
         },
-        [createNewBookmarkHook.tagInputBoxHook.suggestionWindowHook.items]
     );
 
     return {

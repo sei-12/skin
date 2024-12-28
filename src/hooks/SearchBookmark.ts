@@ -34,6 +34,7 @@ export function useSearchBookmarkPage() : SearchBookmarkProps {
 
     const appHotkeyHook = useAppHotkey();
 
+    // 外部にコールバック関数を渡すように変更する
     useEffect(() => {
         // ウィンドウを表示/非表示
         register("Alt+Z", async (event) => {
@@ -56,7 +57,7 @@ export function useSearchBookmarkPage() : SearchBookmarkProps {
             // 再度開いた時に前回の検索結果などが残らないようにする。
             tagInputBoxHook.setInputedTags([]);
         });
-    });
+    },[]);
 
     useEffect(() => {
         if (tagInputBoxHook.suggestionWindowHook.items.length === 0) {
@@ -66,7 +67,7 @@ export function useSearchBookmarkPage() : SearchBookmarkProps {
                 HOTKEY_SCOPES.SEARCH_BOOKMARK_SUGGESTION_WINDOW
             );
         }
-    }, [tagInputBoxHook.suggestionWindowHook.items,appHotkeyHook]);
+    }, [tagInputBoxHook.suggestionWindowHook.items]);
 
     useEffect(() => {
         const tags = tagInputBoxHook.inputedTags.map((e) => {
@@ -76,7 +77,7 @@ export function useSearchBookmarkPage() : SearchBookmarkProps {
             bkmkListHook.setItems(data);
             bkmkListHook.setFocusIndex(0);
         });
-    }, [tagInputBoxHook.inputedTags,bkmkListHook]);
+    }, [tagInputBoxHook.inputedTags]);
     
     const onClickAdd = () => {
         navigate("/create-new-bookmark")
@@ -140,44 +141,24 @@ export function useSearchBookmarkPage() : SearchBookmarkProps {
 
     useHotkeys(
         "ctrl+n",
-        () => {
-            tagInputBoxHook.suggestionWindowHook.setFocusIndex((cur) => {
-                let newIndex = cur + 1;
-                if (
-                    newIndex >=
-                    tagInputBoxHook.suggestionWindowHook.items.length
-                ) {
-                    newIndex = 0;
-                }
-                return newIndex;
-            });
-        },
+        tagInputBoxHook.suggestionWindowHook.focusDown,
         {
             scopes: [HOTKEY_SCOPES.SEARCH_BOOKMARK_SUGGESTION_WINDOW],
             preventDefault: true,
             enableOnFormTags: true,
         },
-        [tagInputBoxHook.suggestionWindowHook.items]
+        []
     );
 
     useHotkeys(
         "ctrl+p",
-        () => {
-            tagInputBoxHook.suggestionWindowHook.setFocusIndex((cur) => {
-                let newIndex = cur - 1;
-                if (newIndex < 0) {
-                    newIndex =
-                        tagInputBoxHook.suggestionWindowHook.items.length - 1;
-                }
-                return newIndex;
-            });
-        },
+        tagInputBoxHook.suggestionWindowHook.focusUp,
         {
             scopes: [HOTKEY_SCOPES.SEARCH_BOOKMARK_SUGGESTION_WINDOW],
             preventDefault: true,
             enableOnFormTags: true,
         },
-        [tagInputBoxHook.suggestionWindowHook.items]
+        []
     );
 
     useHotkeys(

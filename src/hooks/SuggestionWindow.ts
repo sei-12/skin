@@ -1,4 +1,4 @@
-import { ChangeEvent, useEffect, useRef, useState } from "react";
+import { ChangeEvent, useCallback, useEffect, useRef, useState } from "react";
 import { FindTagMethod, SuggestionWindowProps } from "../components/SuggestionWindow";
 
 export function useSuggestionWindow(
@@ -11,9 +11,10 @@ export function useSuggestionWindow(
 
     const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
 
-    const getFocusedItem = () => {
+    const getFocusedItem = useCallback(() => {
         return items.at(focusIndex);
-    };
+    },[items,focusIndex])
+
     const close = () => {
         setItems([]);
         setPredicate("");
@@ -40,6 +41,27 @@ export function useSuggestionWindow(
         }
     }, [focusIndex]);
 
+
+    const focusUp = useCallback(() => {
+        setFocusIndex((cur) => {
+            let newIndex = cur - 1;
+            if (newIndex < 0) {
+                newIndex = items.length - 1;
+            }
+            return newIndex;
+        })
+    }, [items])
+
+    const focusDown = useCallback(() => {
+        setFocusIndex((cur) => {
+            let newIndex = cur + 1;
+            if (newIndex >= items.length) {
+                newIndex = 0;
+            }
+            return newIndex;
+        })
+    }, [items])
+
     const props: SuggestionWindowProps = {
         items,
         predicate,
@@ -52,11 +74,13 @@ export function useSuggestionWindow(
         onChangePredicateInputBox,
         close,
         getFocusedItem,
+        focusDown,
+        focusUp,
+        
+
         items,
         setItems,
         predicate,
         setPredicate,
-        focusIndex,
-        setFocusIndex,
     };
 }
