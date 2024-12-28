@@ -1,5 +1,5 @@
 import { Button, TextField } from "@mui/material";
-import { TagInputBox, useTagInputBox } from "./TagInputBox";
+import { TagInputBox, TagInputBoxProps } from "./TagInputBox";
 
 export type CreateNewBookmarkProps = {
     titleRef: React.RefObject<HTMLInputElement>;
@@ -9,8 +9,7 @@ export type CreateNewBookmarkProps = {
     onClickDone: () => void;
     onChangeUrl: (url: string) => void;
 
-    // TODO
-    tagInputBox: ReturnType<typeof useTagInputBox>["props"];
+    tagInputBox: TagInputBoxProps
 };
 
 export function CreateNewBookmark(p: CreateNewBookmarkProps) {

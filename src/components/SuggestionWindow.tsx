@@ -1,73 +1,22 @@
 import { Box, Typography } from "@mui/material";
-import { ChangeEvent, forwardRef, useEffect, useRef, useState } from "react";
 import { globalColorTheme as GCT } from "../lib/theme";
 import { ZINDEX } from "../lib/zindex";
+import { forwardRef } from "react";
 
 export type FindTagMethod = (
     predicate: string,
     inputedTags: string[]
 ) => Promise<string[]>;
-export function useSuggestionWindow(
-    findTagMethod: FindTagMethod,
-    getInputedTags: () => string[]
-) {
-    const [items, setItems] = useState<string[]>([]);
-    const [predicate, setPredicate] = useState("");
-    const [focusIndex, setFocusIndex] = useState(0);
 
-    const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
 
-    const getFocusedItem = () => {
-        return items.at(focusIndex);
-    };
-    const close = () => {
-        setItems([]);
-        setPredicate("");
-        setFocusIndex(0);
-    };
+export type SuggestionWindowProps = {
+    items: string[];
+    predicate: string;
+    focusIndex: number;
+    itemRefs: React.MutableRefObject<(HTMLDivElement | null)[]>;
+};
 
-    const onChangePredicateInputBox = async (
-        e: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
-    ) => {
-        let suggestionItems = await findTagMethod(
-            e.target.value,
-            getInputedTags()
-        );
-        setItems(suggestionItems);
-        setPredicate(e.target.value);
-        setFocusIndex(0);
-    };
-
-    useEffect(() => {
-        // フォーカスが変更されたときにスクロールする
-        const focusedItem = itemRefs.current[focusIndex];
-        if (focusedItem) {
-            focusedItem.scrollIntoView({ block: "nearest" });
-        }
-    }, [focusIndex]);
-
-    return {
-        props: {
-            items,
-            predicate,
-            focusIndex,
-            itemRefs,
-        },
-        onChangePredicateInputBox,
-        close,
-        getFocusedItem,
-        items,
-        setItems,
-        predicate,
-        setPredicate,
-        focusIndex,
-        setFocusIndex,
-    };
-}
-
-export function SuggestionWindow(
-    p: ReturnType<typeof useSuggestionWindow>["props"]
-) {
+export function SuggestionWindow(p: SuggestionWindowProps) {
     return (
         <Box
             sx={{

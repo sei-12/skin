@@ -3,16 +3,18 @@
 
 import { useEffect, useRef } from "react";
 import { FindTagMethod } from "../components/SuggestionWindow";
-import { useTagInputBox } from "../components/TagInputBox";
 import { useNavigate } from "react-router-dom";
 import { dbConnection } from "../lib/database";
 import { invoke } from "@tauri-apps/api/core";
 import { HOTKEY_SCOPES, useAppHotkey } from "../lib/hotkey";
 import { useHotkeys } from "react-hotkeys-hook";
-import { useBookmarkList } from "../components/BookmarkList";
+// import { useBookmarkList } from "../components/BookmarkList";
 import { register } from "@tauri-apps/plugin-global-shortcut";
 import { WindowVisibleController } from "../lib/windowVisibleController";
 import { listen } from "@tauri-apps/api/event";
+import { SearchBookmarkProps } from "../components/SearchBookmark";
+import { useBookmarkList } from "./BookmarkList";
+import { useTagInputBox } from "./TagInputBox";
 
 const findTagMethod: FindTagMethod = async (predicate, inputedTags) => {
     let inputedTagsSet = new Set(inputedTags);
@@ -344,7 +346,7 @@ export function useCreateNewBookmarkPage() {
     };
 }
 
-export function useSearchBookmarkPage() {
+export function useSearchBookmarkPage() : SearchBookmarkProps {
     const navigate = useNavigate()
 
     const bkmkListHook = useBookmarkList(
@@ -605,8 +607,8 @@ export function useSearchBookmarkPage() {
 
 
     return {
-        bkmkListHook,
-        tagInputBoxHook,
+        bkmkListProps: bkmkListHook.props,
+        tagInputBoxProps: tagInputBoxHook.props,
         onClickAdd,
     };
 }

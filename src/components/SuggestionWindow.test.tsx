@@ -1,9 +1,8 @@
 import {
     SuggestionWindow,
     __suggestion_window_test__ as testHelpers,
-    useSuggestionWindow,
 } from "./SuggestionWindow";
-import { act, render, renderHook, screen } from "@testing-library/react";
+import { render, renderHook, screen } from "@testing-library/react";
 import "@testing-library/jest-dom/vitest";
 import { describe, expect, test } from "vitest";
 import { useRef } from "react";
@@ -46,55 +45,6 @@ describe("SuggestionWindow", () => {
         expect(unmatchBlock).toMatchSnapshot();
     });
 
-    test("useSuggestionWindow", () => {
-        const hook = renderHook(() => {
-            return useSuggestionWindow(
-                async () => [],
-                () => []
-            );
-        });
-        let r = render(
-            <SuggestionWindow {...hook.result.current.props}></SuggestionWindow>
-        );
-
-        expect(r.container).matchSnapshot();
-
-        act(() => {
-            hook.result.current.setItems(["hello", "haaaaa", "aaahh", "bbbha"]);
-            hook.result.current.setPredicate("h");
-        });
-    });
-
-    test("getFocusedItem", () => {
-        const hook = renderHook(() => {
-            return useSuggestionWindow(
-                async () => [],
-                () => []
-            );
-        });
-
-        expect(hook.result.current.getFocusedItem()).toBe(undefined);
-
-        act(() => {
-            hook.result.current.setFocusIndex(1);
-            hook.result.current.setItems(["hello", "aaa"]);
-        });
-
-        expect(hook.result.current.getFocusedItem()).toBe("aaa");
-
-        act(() => {
-            hook.result.current.setFocusIndex(2);
-            hook.result.current.setItems(["hello", "aaa", "hey", "foo"]);
-        });
-
-        expect(hook.result.current.getFocusedItem()).toBe("hey");
-
-        act(() => {
-            hook.result.current.setItems([]);
-        });
-
-        expect(hook.result.current.getFocusedItem()).toBe(undefined);
-    });
 });
 
 describe("highlightMatchedBlocks", () => {
