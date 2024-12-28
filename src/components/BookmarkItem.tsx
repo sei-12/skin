@@ -1,5 +1,5 @@
 import { forwardRef } from "react";
-import { IData } from "../dts/data";
+import type { IData } from "../dts/data";
 import {
     Box,
     Button,

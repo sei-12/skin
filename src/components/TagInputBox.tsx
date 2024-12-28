@@ -1,43 +1,24 @@
 import { Box, TextField, Typography } from "@mui/material";
-import { useRef, useState } from "react";
-import {
-    FindTagMethod,
-    SuggestionWindow,
-    useSuggestionWindow,
-} from "./SuggestionWindow";
+import type { SuggestionWindowProps } from "./SuggestionWindow";
+import { SuggestionWindow } from "./SuggestionWindow";
 import { globalColorTheme as GCT } from "../lib/theme";
-
-export function useTagInputBox(findTagMethod: FindTagMethod) {
-    const inputBoxRef = useRef<HTMLInputElement>(null);
-    const [inputedTags, setInputedTags] = useState<
-        { text: string; exists: boolean }[]
-    >([]);
-
-    const suggestionWindowHook = useSuggestionWindow(findTagMethod, () => {
-        return inputedTags.map((t) => t.text);
-    });
-
-    return {
-        inputBoxRef,
-
-        inputedTags,
-        setInputedTags,
-        suggestionWindowHook,
-
-        props: {
-            swProps: suggestionWindowHook.props,
-            inputBoxRef,
-            inputedTags,
-            onChangePredicateInputBox:
-                suggestionWindowHook.onChangePredicateInputBox,
-        },
-    };
-}
 
 const ITEM_HEIGHT = 35;
 const TEXT_FIELD_WIDTH = 200;
 
-export const TagInputBox = (p: ReturnType<typeof useTagInputBox>["props"]) => {
+export type TagInputBoxProps = {
+    swProps: SuggestionWindowProps;
+    inputBoxRef: React.RefObject<HTMLInputElement>;
+    inputedTags: {
+        text: string;
+        exists: boolean;
+    }[];
+    onChangePredicateInputBox: (
+        e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
+    ) => Promise<void>;
+};
+
+export const TagInputBox = (p: TagInputBoxProps) => {
     return (
         <Box
             sx={{

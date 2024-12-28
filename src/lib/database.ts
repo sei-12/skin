@@ -1,5 +1,5 @@
 import Database from "@tauri-apps/plugin-sql";
-import { IData } from "../dts/data";
+import type { IData } from "../dts/data";
 
 class DbInner {
     private db: Promise<Database>
@@ -8,12 +8,12 @@ class DbInner {
     }
 
     async select<T>(query: string, bindValues?: unknown[]): Promise<T> {
-        let db = await this.db
+        const db = await this.db
         return db.select(query, bindValues)
     }
 
     async execute(query: string, bindValues?: unknown[]) {
-        let db = await this.db
+        const db = await this.db
         return await db.execute(query, bindValues)
     }
 }
@@ -26,15 +26,14 @@ class DataBaseConnection implements IDataBase {
     }
 
     private async findTagId(tag: string): Promise<number> {
-        let record = await this.db.select("select id from tags where name = $1", [tag])
-        // @ts-ignore
+        const record = await this.db.select<{id: number}[]>("select id from tags where name = $1", [tag])
         return record[0].id
     }
 
     private async tagIds(tags: Set<string>) {
-        let tagsAry = Array.from(tags)
+        const tagsAry = Array.from(tags)
         // Assert.isTrue( tagsAry.length > 0)
-        let tagIds: number[] = []
+        const tagIds: number[] = []
         for (let i = 0; i < tagsAry.length; i++) {
             tagIds.push(await this.findTagId(tagsAry[i]))
         }
@@ -42,14 +41,14 @@ class DataBaseConnection implements IDataBase {
     }
 
     private async addTags(tags: Set<string>) {
-        let tagsAry = Array.from(tags)
+        const tagsAry = Array.from(tags)
         for (let i = 0; i < tagsAry.length; i++) {
             await this.ifNotEixstsThenInsertTag(tagsAry[i])
         }
     }
 
     async isExistsTag(tag: string) {
-        let result = await this.db.select("select * from tags where name = $1", [tag]) as any[]
+        const result = await this.db.select<{id: number}[]>("select * from tags where name = $1", [tag])
         return result.length >= 1
     }
 
@@ -64,7 +63,7 @@ class DataBaseConnection implements IDataBase {
     async insertBookmark(title: string, url: string, desc: string, tags: string[]): Promise<void> {
         console.log(title, url, desc, tags)
 
-        let result = await this.db.execute("insert into bookmarks values(null,$1,$2,$3,$4)", [
+        const result = await this.db.execute("insert into bookmarks values(null,$1,$2,$3,$4)", [
             title,
             url,
             desc,
@@ -73,7 +72,7 @@ class DataBaseConnection implements IDataBase {
 
         console.log(result)
 
-        let bkmk_id = result.lastInsertId
+        const bkmk_id = result.lastInsertId
 
         if (bkmk_id === undefined) {
             // TODO: もっといい書き方を考えた方がいいのではなかろうか
@@ -82,11 +81,11 @@ class DataBaseConnection implements IDataBase {
             return
         }
 
-        let bkmkId = result.lastInsertId
+        const bkmkId = result.lastInsertId
 
-        let tagsSet = new Set(tags)
+        const tagsSet = new Set(tags)
         await this.addTags(tagsSet)
-        let tagIds = await this.tagIds(tagsSet)
+        const tagIds = await this.tagIds(tagsSet)
 
         for (let i = 0; i < tagIds.length; i++) {
             await this.db.execute("insert into tag_map values (null,$1,$2)", [bkmkId, tagIds[i]])
@@ -113,7 +112,7 @@ class DataBaseConnection implements IDataBase {
         // 	return []
         // }
 
-        let stmt = Array(tags.length).fill(0).map((_, i) => `$${i + 1}`).join(",")
+        const stmt = Array(tags.length).fill(0).map((_, i) => `$${i + 1}`).join(",")
 
         const query = `
         SELECT b.*
@@ -126,9 +125,9 @@ class DataBaseConnection implements IDataBase {
         ORDER BY b.tag_count ASC
         ;`
 
-        let result = await this.db.select(query, Array.from(tags)) as BkmkRecord[]
-        let result2 = await Promise.all(result.map(async record => {
-            let tags = await this.selectTagsFromTagMap(record.id)
+        const result = await this.db.select(query, Array.from(tags)) as BkmkRecord[]
+        const result2 = await Promise.all(result.map(async record => {
+            const tags = await this.selectTagsFromTagMap(record.id)
             return {
                 record,
                 tags
@@ -144,9 +143,7 @@ class DataBaseConnection implements IDataBase {
             JOIN tag_map ON tags.id = tag_map.tag_id
             WHERE tag_map.bkmk_id = $1;`
 
-        let result = await this.db.select(query, [bkmkid])
-
-        // @ts-ignore
+        const result = await this.db.select<{name: string}[]>(query, [bkmkid])
         return result.map(r => r.name)
     }
 
@@ -154,9 +151,9 @@ class DataBaseConnection implements IDataBase {
         if (predicate === "") {
             return []
         }
-        let result1 = await this.db.select("select name from tags where name like $1 order by length(name)", [`${predicate}%`]) as any[]
-        let result2 = await this.db.select("select name from tags where name like $1 and name not like $2 order by length(name)", [`%${predicate}%`, `${predicate}%`]) as any[]
-        let result = [...result1, ...result2]
+        const result1 = await this.db.select<{name: string}[]>("select name from tags where name like $1 order by length(name)", [`${predicate}%`])
+        const result2 = await this.db.select<{name: string}[]>("select name from tags where name like $1 and name not like $2 order by length(name)", [`%${predicate}%`, `${predicate}%`])
+        const result = [...result1, ...result2]
         return result.map((record) => record.name)
     }
 }

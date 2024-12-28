@@ -1,73 +1,22 @@
 import { Box, Typography } from "@mui/material";
-import { ChangeEvent, forwardRef, useEffect, useRef, useState } from "react";
 import { globalColorTheme as GCT } from "../lib/theme";
 import { ZINDEX } from "../lib/zindex";
+import { forwardRef } from "react";
 
 export type FindTagMethod = (
     predicate: string,
     inputedTags: string[]
 ) => Promise<string[]>;
-export function useSuggestionWindow(
-    findTagMethod: FindTagMethod,
-    getInputedTags: () => string[]
-) {
-    const [items, setItems] = useState<string[]>([]);
-    const [predicate, setPredicate] = useState("");
-    const [focusIndex, setFocusIndex] = useState(0);
 
-    const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
 
-    const getFocusedItem = () => {
-        return items.at(focusIndex);
-    };
-    const close = () => {
-        setItems([]);
-        setPredicate("");
-        setFocusIndex(0);
-    };
+export type SuggestionWindowProps = {
+    items: string[];
+    predicate: string;
+    focusIndex: number;
+    itemRefs: React.MutableRefObject<(HTMLDivElement | null)[]>;
+};
 
-    const onChangePredicateInputBox = async (
-        e: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
-    ) => {
-        let suggestionItems = await findTagMethod(
-            e.target.value,
-            getInputedTags()
-        );
-        setItems(suggestionItems);
-        setPredicate(e.target.value);
-        setFocusIndex(0);
-    };
-
-    useEffect(() => {
-        // フォーカスが変更されたときにスクロールする
-        const focusedItem = itemRefs.current[focusIndex];
-        if (focusedItem) {
-            focusedItem.scrollIntoView({ block: "nearest" });
-        }
-    }, [focusIndex]);
-
-    return {
-        props: {
-            items,
-            predicate,
-            focusIndex,
-            itemRefs,
-        },
-        onChangePredicateInputBox,
-        close,
-        getFocusedItem,
-        items,
-        setItems,
-        predicate,
-        setPredicate,
-        focusIndex,
-        setFocusIndex,
-    };
-}
-
-export function SuggestionWindow(
-    p: ReturnType<typeof useSuggestionWindow>["props"]
-) {
+export function SuggestionWindow(p: SuggestionWindowProps) {
     return (
         <Box
             sx={{
@@ -89,13 +38,13 @@ export function SuggestionWindow(
         >
             {p.items.map((item, i) => {
                 return (
-                    <Item
+                    <SuggestionWindowItem
                         predicate={p.predicate}
                         focus={p.focusIndex === i}
                         item={item}
                         key={i}
                         ref={(el) => (p.itemRefs.current[i] = el)}
-                    ></Item>
+                    ></SuggestionWindowItem>
                 );
             })}
         </Box>
@@ -108,8 +57,8 @@ type ItemProps = {
     focus: boolean;
 };
 
-const Item = forwardRef<HTMLDivElement, ItemProps>((props, ref) => {
-    let highlightBlocks = highlightMatchedBlocks(props.predicate, props.item);
+export const SuggestionWindowItem = forwardRef<HTMLDivElement, ItemProps>((props, ref) => {
+    const highlightBlocks = highlightMatchedBlocks(props.predicate, props.item);
     return (
         <Box
             ref={ref}
@@ -122,13 +71,13 @@ const Item = forwardRef<HTMLDivElement, ItemProps>((props, ref) => {
             }}
         >
             {highlightBlocks.map((b, i) => {
-                return <TextBlock key={i} {...b}></TextBlock>;
+                return <SuggestionWindowItemTextBlock key={i} {...b}></SuggestionWindowItemTextBlock>;
             })}
         </Box>
     );
 });
 
-const TextBlock = (p: { isMatch: boolean; text: string }) => {
+export const SuggestionWindowItemTextBlock = (p: { isMatch: boolean; text: string }) => {
     return (
         <Typography
             sx={{
@@ -148,20 +97,20 @@ function highlightMatchedBlocks(
     predicate: string,
     item: string
 ): { isMatch: boolean; text: string }[] {
-    let blocks: ReturnType<typeof highlightMatchedBlocks> = [];
+    const blocks: ReturnType<typeof highlightMatchedBlocks> = [];
 
-    let splitedPredicate = [...predicate];
-    let splitedItem = [...item];
+    const splitedPredicate = [...predicate];
+    const splitedItem = [...item];
 
     while (splitedItem.length !== 0) {
-        let i = splitedItem.shift()!;
-        let p = splitedPredicate[0];
-        let match = i === p;
+        const i = splitedItem.shift()!;
+        const p = splitedPredicate[0];
+        const match = i === p;
 
         if (match) {
             splitedPredicate.shift();
         }
-        let lastBlock = blocks.at(-1);
+        const lastBlock = blocks.at(-1);
         if (lastBlock === undefined) {
             blocks.push({ isMatch: match, text: i });
         } else {
@@ -175,9 +124,3 @@ function highlightMatchedBlocks(
 
     return blocks;
 }
-
-export const __suggestion_window_test__ = {
-    highlightMatchedBlocks,
-    TextBlock,
-    Item,
-};
