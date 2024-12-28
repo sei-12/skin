@@ -1,11 +1,11 @@
 import {
     CreateNewBookmark,
     useCreateNewBookmark,
-} from "./views/CreateNewBookmark";
-import { dbConnection } from "./lib/database";
+} from "../views/CreateNewBookmark";
+import { dbConnection } from "../lib/database";
 import { invoke } from "@tauri-apps/api/core";
-import { FindTagMethod } from "./components/SuggestionWindow";
-import { HOTKEY_SCOPES, useAppHotkey } from "./lib/hotkey";
+import { FindTagMethod } from "../components/SuggestionWindow";
+import { HOTKEY_SCOPES, useAppHotkey } from "../lib/hotkey";
 import { useHotkeys } from "react-hotkeys-hook";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";

@@ -1,15 +1,15 @@
 import { useEffect } from "react";
-import { useBookmarkList } from "./components/BookmarkList";
-import { useTagInputBox } from "./components/TagInputBox";
+import { useBookmarkList } from "../components/BookmarkList";
+import { useTagInputBox } from "../components/TagInputBox";
 import { useHotkeys } from "react-hotkeys-hook";
-import { HOTKEY_SCOPES, useAppHotkey } from "./lib/hotkey";
-import { SearchBookmark } from "./views/SearchBookmark";
-import { dbConnection } from "./lib/database";
+import { HOTKEY_SCOPES, useAppHotkey } from "../lib/hotkey";
+import { SearchBookmark } from "../views/SearchBookmark";
+import { dbConnection } from "../lib/database";
 
 import { register } from "@tauri-apps/plugin-global-shortcut";
 import { listen } from "@tauri-apps/api/event";
-import { WindowVisibleController } from "./lib/windowVisibleController";
-import { FindTagMethod } from "./components/SuggestionWindow";
+import { WindowVisibleController } from "../lib/windowVisibleController";
+import { FindTagMethod } from "../components/SuggestionWindow";
 import { useNavigate } from "react-router-dom";
 
 const findTagMethod: FindTagMethod = async (predicate, inputedTags) => {
@@ -86,7 +86,7 @@ function useSearchBookmarkPage() {
     }, [tagInputBoxHook.inputedTags]);
     
     const onClickAdd = () => {
-        navigate("/c")
+        navigate("/create-new-bookmark")
     }
 
     useHotkeys(
@@ -251,7 +251,7 @@ function useSearchBookmarkPage() {
     useHotkeys(
         "ctrl+a",
         () => {
-            navigate("/c");
+            navigate("/create-new-bookmark");
         },
         {
             scopes: [HOTKEY_SCOPES.SEARCH_BOOKMARK],
