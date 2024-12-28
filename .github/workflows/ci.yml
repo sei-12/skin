@@ -46,21 +46,12 @@ jobs:
       - name: test
         run: yarn run test
 
+      - name: lint
+        run: yarn run lint
+
       # If tagName and releaseId are omitted tauri-action will only build the app and won't try to upload any assets.
       - uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           args: ${{ matrix.args }}
-  
-  auto-merge:
-    needs: test-tauri
-    if: ${{ success() && github.event.pull_request.head.repo.full_name == github.repository }}  # 同じリポジトリの場合のみ実行
-    runs-on: ubuntu-latest
-    steps:
-      # PRを自動マージ
-      - name: Auto-merge PR
-        run: |
-          gh pr merge ${{ github.event.pull_request.number }} --merge --repo ${{ github.repository }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
