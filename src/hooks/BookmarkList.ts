@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { IData } from "../dts/data";
 import { BookmarkListProps } from "../components/BookmarkList";
 
@@ -18,6 +18,27 @@ export function useBookmarkList(
         }
     }, [focusIndex]);
 
+    const focusUp = useCallback(() => {
+        setFocusIndex((cur) => {
+            let newIndex = cur - 1;
+            if (newIndex < 0) {
+                newIndex = items.length - 1;
+            }
+            return newIndex;
+        })
+    }, [items])
+
+    const focusDown = useCallback(() => {
+        setFocusIndex((cur) => {
+            let newIndex = cur + 1;
+            if (newIndex >= items.length) {
+                newIndex = 0;
+            }
+            return newIndex;
+        })
+    }, [items])
+
+
     const props: BookmarkListProps = {
         onClickEdit,
         onClickRemove,
@@ -29,8 +50,11 @@ export function useBookmarkList(
     return {
         items,
         setItems,
-        focusIndex,
+        // focusIndex,
         setFocusIndex,
+        
+        focusDown,
+        focusUp,
         props,
     };
 }

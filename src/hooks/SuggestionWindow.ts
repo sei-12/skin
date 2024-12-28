@@ -35,8 +35,8 @@ export function useSuggestionWindow(
 
     useEffect(() => {
         // フォーカスが変更されたときにスクロールする
-        const focusedItem = itemRefs.current[focusIndex];
-        if (focusedItem) {
+        const focusedItem = itemRefs.current.at( focusIndex );
+        if (focusedItem !== null && focusedItem !== undefined) {
             focusedItem.scrollIntoView({ block: "nearest" });
         }
     }, [focusIndex]);

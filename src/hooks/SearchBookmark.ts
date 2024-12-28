@@ -3,9 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { dbConnection } from "../lib/database";
 import { HOTKEY_SCOPES, useAppHotkey } from "../lib/hotkey";
 import { useHotkeys } from "react-hotkeys-hook";
-import { register } from "@tauri-apps/plugin-global-shortcut";
 import { WindowVisibleController } from "../lib/windowVisibleController";
-import { listen } from "@tauri-apps/api/event";
 import { SearchBookmarkProps } from "../components/SearchBookmark";
 import { useBookmarkList } from "./BookmarkList";
 import { useTagInputBox } from "./TagInputBox";
@@ -33,31 +31,6 @@ export function useSearchBookmarkPage() : SearchBookmarkProps {
     const tagInputBoxHook = useTagInputBox(findTagMethod);
 
     const appHotkeyHook = useAppHotkey();
-
-    // 外部にコールバック関数を渡すように変更する
-    useEffect(() => {
-        // ウィンドウを表示/非表示
-        register("Alt+Z", async (event) => {
-            if (event.state === "Released") {
-                return;
-            }
-
-            const curVisibility = await WindowVisibleController.currentVisible();
-            if (curVisibility) {
-                WindowVisibleController.hide();
-            } else {
-                WindowVisibleController.show();
-                tagInputBoxHook.inputBoxRef.current?.focus();
-            }
-        });
-
-        listen("tauri://blur", async () => {
-            // TODO: 重複した処理 CA2897EB
-            WindowVisibleController.hide();
-            // 再度開いた時に前回の検索結果などが残らないようにする。
-            tagInputBoxHook.setInputedTags([]);
-        });
-    },[]);
 
     useEffect(() => {
         if (tagInputBoxHook.suggestionWindowHook.items.length === 0) {
@@ -103,40 +76,22 @@ export function useSearchBookmarkPage() : SearchBookmarkProps {
     // おそらくuseCallbackを利用できる
     useHotkeys(
         "ctrl+n",
-        () => {
-            bkmkListHook.setFocusIndex((cur) => {
-                let newIndex = cur + 1;
-                if (newIndex >= bkmkListHook.items.length) {
-                    newIndex = 0;
-                }
-                return newIndex;
-            });
-        },
+        bkmkListHook.focusDown,
         {
             scopes: [HOTKEY_SCOPES.SEARCH_BOOKMARK],
             preventDefault: true,
             enableOnFormTags: true,
         },
-        [bkmkListHook.items]
     );
 
     useHotkeys(
         "ctrl+p",
-        () => {
-            bkmkListHook.setFocusIndex((cur) => {
-                let newIndex = cur - 1;
-                if (newIndex < 0) {
-                    newIndex = bkmkListHook.items.length - 1;
-                }
-                return newIndex;
-            });
-        },
+        bkmkListHook.focusUp,
         {
             scopes: [HOTKEY_SCOPES.SEARCH_BOOKMARK],
             preventDefault: true,
             enableOnFormTags: true,
         },
-        [bkmkListHook.items]
     );
 
     useHotkeys(
