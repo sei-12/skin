@@ -17,9 +17,9 @@ import { useBookmarkList } from "./BookmarkList";
 import { useTagInputBox } from "./TagInputBox";
 
 const findTagMethod: FindTagMethod = async (predicate, inputedTags) => {
-    let inputedTagsSet = new Set(inputedTags);
-    let dbResult = await dbConnection.findTag(predicate);
-    let filted = dbResult.filter((t) => inputedTagsSet.has(t) === false);
+    const inputedTagsSet = new Set(inputedTags);
+    const dbResult = await dbConnection.findTag(predicate);
+    const filted = dbResult.filter((t) => inputedTagsSet.has(t) === false);
     return filted;
 };
 
@@ -139,13 +139,13 @@ export function useCreateNewBookmarkPage() {
     // // TODO: 別のファイルに切り出してテストも書く
     const onChangeUrlInputBox = async (url: string) => {
         console.log("onChangeUrl!!");
-        let content = (await invoke("fetch_website_content", { url })) as {
+        const content = (await invoke("fetch_website_content", { url })) as {
             title: string;
             desc: string;
         };
-        let currentContent = createNewBookmarkHook.getInputData();
+        const currentContent = createNewBookmarkHook.getInputData();
 
-        let setData = (cur: string | undefined, newContent: string | null) => {
+        const setData = (cur: string | undefined, newContent: string | null) => {
             if (cur !== undefined && cur !== "") {
                 return cur;
             }
@@ -157,8 +157,8 @@ export function useCreateNewBookmarkPage() {
             return "";
         };
 
-        let title = setData(currentContent?.title, content.title);
-        let desc = setData(currentContent?.desc, content.desc);
+        const title = setData(currentContent?.title, content.title);
+        const desc = setData(currentContent?.desc, content.desc);
         createNewBookmarkHook.setContent(title, desc);
     };
 
@@ -213,9 +213,9 @@ export function useCreateNewBookmarkPage() {
     useHotkeys(
         "Enter",
         async () => {
-            let inputBox =
+            const inputBox =
                 createNewBookmarkHook.tagInputBoxHook.inputBoxRef.current;
-            let item =
+            const item =
                 createNewBookmarkHook.tagInputBoxHook.suggestionWindowHook.getFocusedItem();
             if (item === undefined) {
                 return;
@@ -224,7 +224,7 @@ export function useCreateNewBookmarkPage() {
                 return;
             }
             inputBox.value = "";
-            let exists = await dbConnection.isExistsTag(item);
+            const exists = await dbConnection.isExistsTag(item);
             createNewBookmarkHook.tagInputBoxHook.setInputedTags((ary) => {
                 return [...ary, { text: item, exists: exists }];
             });
@@ -241,7 +241,7 @@ export function useCreateNewBookmarkPage() {
     useHotkeys(
         "Backspace",
         () => {
-            let inputBox =
+            const inputBox =
                 createNewBookmarkHook.tagInputBoxHook.inputBoxRef.current;
             if (inputBox === null) {
                 return;
@@ -261,7 +261,7 @@ export function useCreateNewBookmarkPage() {
     useHotkeys(
         "Space",
         async () => {
-            let inputBox =
+            const inputBox =
                 createNewBookmarkHook.tagInputBoxHook.inputBoxRef.current;
             if (inputBox === null) {
                 return;
@@ -269,15 +269,15 @@ export function useCreateNewBookmarkPage() {
             if (inputBox.value === "") {
                 return;
             }
-            let item = inputBox.value;
+            const item = inputBox.value;
 
-            let inputedTags = createNewBookmarkHook.getInputData()?.tags || [];
-            let has = inputedTags.find((t) => t == item) !== undefined;
+            const inputedTags = createNewBookmarkHook.getInputData()?.tags || [];
+            const has = inputedTags.find((t) => t == item) !== undefined;
             if (has) {
                 return;
             }
 
-            let exists = await dbConnection.isExistsTag(item);
+            const exists = await dbConnection.isExistsTag(item);
             createNewBookmarkHook.tagInputBoxHook.setInputedTags((ary) => {
                 return [...ary, { text: item, exists }];
             });
@@ -375,7 +375,7 @@ export function useSearchBookmarkPage() : SearchBookmarkProps {
                 return;
             }
 
-            let curVisibility = await WindowVisibleController.currentVisible();
+            const curVisibility = await WindowVisibleController.currentVisible();
             if (curVisibility) {
                 WindowVisibleController.hide();
             } else {
@@ -403,7 +403,7 @@ export function useSearchBookmarkPage() : SearchBookmarkProps {
     }, [tagInputBoxHook.suggestionWindowHook.items]);
 
     useEffect(() => {
-        let tags = tagInputBoxHook.inputedTags.map((e) => {
+        const tags = tagInputBoxHook.inputedTags.map((e) => {
             return e.text;
         });
         dbConnection.findBookmark(tags).then((data) => {
@@ -529,8 +529,8 @@ export function useSearchBookmarkPage() : SearchBookmarkProps {
     useHotkeys(
         "Enter",
         () => {
-            let item = tagInputBoxHook.suggestionWindowHook.getFocusedItem();
-            let inputBox = tagInputBoxHook.inputBoxRef.current;
+            const item = tagInputBoxHook.suggestionWindowHook.getFocusedItem();
+            const inputBox = tagInputBoxHook.inputBoxRef.current;
 
             if (inputBox === null) {
                 return;
@@ -556,7 +556,7 @@ export function useSearchBookmarkPage() : SearchBookmarkProps {
     useHotkeys(
         "Backspace",
         () => {
-            let inputBox = tagInputBoxHook.inputBoxRef.current;
+            const inputBox = tagInputBoxHook.inputBoxRef.current;
 
             if (inputBox === null) {
                 return;
@@ -591,7 +591,7 @@ export function useSearchBookmarkPage() : SearchBookmarkProps {
     useHotkeys(
         "Escape",
         () => {
-            let inputBox = tagInputBoxHook.inputBoxRef.current;
+            const inputBox = tagInputBoxHook.inputBoxRef.current;
             if (inputBox === null) {
                 return;
             }

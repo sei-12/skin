@@ -8,7 +8,9 @@
     "build": "tsc && vite build",
     "preview": "vite preview",
     "tauri": "tauri",
-    "test": "npx vitest --run"
+    "test": "npx vitest --run",
+    "lint": "eslint .",
+    "lint:fix": "eslint --fix src"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
@@ -30,6 +32,7 @@
     "vitest": "^2.1.8"
   },
   "devDependencies": {
+    "@eslint/js": "^9.17.0",
     "@tauri-apps/cli": "^2",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/jest-dom": "^6.6.3",
@@ -39,8 +42,13 @@
     "@types/react-dom": "^18.2.7",
     "@types/testing-library__user-event": "^4.2.0",
     "@vitejs/plugin-react": "^4.2.1",
+    "eslint": "^9.17.0",
+    "eslint-plugin-react-hooks": "^5.0.0",
+    "eslint-plugin-react-refresh": "^0.4.16",
+    "globals": "^15.13.0",
     "jsdom": "^25.0.1",
     "typescript": "^5.2.2",
+    "typescript-eslint": "^8.18.2",
     "vite": "^5.3.1"
   }
 }

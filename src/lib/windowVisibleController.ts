@@ -11,13 +11,13 @@ getCurrentWindow().setVisibleOnAllWorkspaces(true)
 export namespace WindowVisibleController {
 
     export function show() {
-        let curWinodw = getCurrentWindow()
+        const curWinodw = getCurrentWindow()
         curWinodw.show()
         curWinodw.setFocus()
     }
 
     export function hide() {
-        let curWinodw = getCurrentWindow()
+        const curWinodw = getCurrentWindow()
         curWinodw.hide()
     }
 

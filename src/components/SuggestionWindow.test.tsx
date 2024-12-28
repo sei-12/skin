@@ -30,14 +30,14 @@ describe("SuggestionWindow", () => {
 
         expect(container).matchSnapshot();
 
-        let matchBlock = screen.getByText("h");
+        const matchBlock = screen.getByText("h");
         expect(matchBlock).toBeInTheDocument();
         expect(matchBlock).toHaveStyle(
             "color: " + globalColorTheme.suggestionWindow.match + ";"
         );
         expect(matchBlock).toMatchSnapshot();
 
-        let unmatchBlock = screen.getByText("ello");
+        const unmatchBlock = screen.getByText("ello");
         expect(unmatchBlock).toBeInTheDocument();
         expect(unmatchBlock).toHaveStyle(
             "color: " + globalColorTheme.suggestionWindow.unmatch + ";"

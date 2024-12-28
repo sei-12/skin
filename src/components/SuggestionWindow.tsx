@@ -58,7 +58,7 @@ type ItemProps = {
 };
 
 const Item = forwardRef<HTMLDivElement, ItemProps>((props, ref) => {
-    let highlightBlocks = highlightMatchedBlocks(props.predicate, props.item);
+    const highlightBlocks = highlightMatchedBlocks(props.predicate, props.item);
     return (
         <Box
             ref={ref}
@@ -97,20 +97,20 @@ function highlightMatchedBlocks(
     predicate: string,
     item: string
 ): { isMatch: boolean; text: string }[] {
-    let blocks: ReturnType<typeof highlightMatchedBlocks> = [];
+    const blocks: ReturnType<typeof highlightMatchedBlocks> = [];
 
-    let splitedPredicate = [...predicate];
-    let splitedItem = [...item];
+    const splitedPredicate = [...predicate];
+    const splitedItem = [...item];
 
     while (splitedItem.length !== 0) {
-        let i = splitedItem.shift()!;
-        let p = splitedPredicate[0];
-        let match = i === p;
+        const i = splitedItem.shift()!;
+        const p = splitedPredicate[0];
+        const match = i === p;
 
         if (match) {
             splitedPredicate.shift();
         }
-        let lastBlock = blocks.at(-1);
+        const lastBlock = blocks.at(-1);
         if (lastBlock === undefined) {
             blocks.push({ isMatch: match, text: i });
         } else {
