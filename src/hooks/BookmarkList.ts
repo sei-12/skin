@@ -12,8 +12,8 @@ export function useBookmarkList(
 
     useEffect(() => {
         // フォーカスが変更されたときにスクロールする
-        const focusedItem = itemRefs.current[focusIndex];
-        if (focusedItem) {
+        const focusedItem = itemRefs.current.at(focusIndex);
+        if (focusedItem !== undefined && focusedItem !== null) {
             focusedItem.scrollIntoView({ block: "nearest" });
         }
     }, [focusIndex]);
@@ -52,7 +52,7 @@ export function useBookmarkList(
         setItems,
         // focusIndex,
         setFocusIndex,
-        
+
         focusDown,
         focusUp,
         props,

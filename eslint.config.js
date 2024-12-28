@@ -8,10 +8,14 @@ export default tseslint.config(
     { ignores: ["dist"] },
     {
         extends: [js.configs.recommended, ...tseslint.configs.recommended],
-        files: ["**/*.{ts,tsx}"],
+        files: ["src/**/*.{ts,tsx}"],
         languageOptions: {
             ecmaVersion: 2020,
             globals: globals.browser,
+            parserOptions: {
+                tsconfigRootDir: ".",
+                project: "./tsconfig.json", // tsconfig.jsonのパス
+            },
         },
         plugins: {
             "react-hooks": reactHooks,
@@ -22,6 +26,14 @@ export default tseslint.config(
             "@typescript-eslint/no-namespace": "off",
             "react-hooks/exhaustive-deps": "off",
             "@typescript-eslint/consistent-type-imports": "warn",
+            "@typescript-eslint/strict-boolean-expressions": [
+                "error",
+                {
+                    allowString: false,
+                    allowNumber: false,
+                    allowNullableObject: false,
+                },
+            ],
             "react-refresh/only-export-components": [
                 "warn",
                 { allowConstantExport: true },

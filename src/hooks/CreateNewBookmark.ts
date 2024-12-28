@@ -41,20 +41,24 @@ function useCreateNewBookmark(
     };
 
     const getInputData = () => {
-        if (titleRef.current === null) {
-            return;
+        let title = ""
+        let url = ""
+        let desc = ""
+
+        if (titleRef.current !== null) {
+            title = titleRef.current.value
         }
-        if (urlRef.current === null) {
-            return;
+        if (urlRef.current !== null) {
+            url = urlRef.current.value
         }
-        if (descRef.current === null) {
-            return;
+        if (descRef.current !== null) {
+            desc = descRef.current.value
         }
 
         return {
-            title: titleRef.current.value,
-            desc: descRef.current.value,
-            url: urlRef.current.value,
+            title,
+            desc,
+            url,
             tags: tagInputBoxHook.inputedTags.map((e) => e.text),
         };
     };
@@ -255,7 +259,8 @@ export function useCreateNewBookmarkPage() {
             }
             const item = inputBox.value;
 
-            const inputedTags = createNewBookmarkHook.getInputData()?.tags || [];
+            const inputedTags = createNewBookmarkHook.getInputData().tags
+
             const has = inputedTags.find((t) => t == item) !== undefined;
             if (has) {
                 return;
