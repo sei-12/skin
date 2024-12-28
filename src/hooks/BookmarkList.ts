@@ -38,6 +38,9 @@ export function useBookmarkList(
         })
     }, [items])
 
+    const getFocusedItem = useCallback(() => {
+        return items.at(focusIndex)
+    },[focusIndex,items])
 
     const props: BookmarkListProps = {
         onClickEdit,
@@ -52,7 +55,7 @@ export function useBookmarkList(
         setItems,
         // focusIndex,
         setFocusIndex,
-
+        getFocusedItem,
         focusDown,
         focusUp,
         props,

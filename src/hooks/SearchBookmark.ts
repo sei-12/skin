@@ -8,9 +8,10 @@ import type { SearchBookmarkProps } from "../components/SearchBookmark";
 import { useBookmarkList } from "./BookmarkList";
 import { useTagInputBox } from "./TagInputBox";
 import { findTagMethod } from "../lib/findTagMethod";
+import { invoke } from "@tauri-apps/api/core";
 
 
-export function useSearchBookmarkPage() : SearchBookmarkProps {
+export function useSearchBookmarkPage(): SearchBookmarkProps {
     const navigate = useNavigate()
 
     const bkmkListHook = useBookmarkList(
@@ -51,7 +52,7 @@ export function useSearchBookmarkPage() : SearchBookmarkProps {
             bkmkListHook.setFocusIndex(0);
         });
     }, [tagInputBoxHook.inputedTags]);
-    
+
     const onClickAdd = () => {
         navigate("/create-new-bookmark")
     }
@@ -208,6 +209,22 @@ export function useSearchBookmarkPage() : SearchBookmarkProps {
         []
     );
 
+    useHotkeys(
+        "Enter",
+        () => {
+            if (bkmkListHook.items.length === 0) { return }
+            const focusedItem = bkmkListHook.getFocusedItem()
+            if (focusedItem === undefined) {
+                return
+            }
+            const url = focusedItem.url
+            WindowVisibleController.hide()
+            invoke("open_url", { url })
+            tagInputBoxHook.setInputedTags([])
+        },
+        { scopes: [HOTKEY_SCOPES.SEARCH_BOOKMARK], preventDefault: true, enableOnFormTags: true },
+        [tagInputBoxHook, bkmkListHook]
+    )
 
     return {
         bkmkListProps: bkmkListHook.props,
