@@ -1,5 +1,5 @@
 import { Stack } from "@mui/material";
-import { IData } from "../dts/data";
+import type { IData } from "../dts/data";
 import { BookmarkItem } from "./BookmarkItem";
 
 export type BookmarkListProps = {

@@ -21,6 +21,7 @@ export default tseslint.config(
             ...reactHooks.configs.recommended.rules,
             "@typescript-eslint/no-namespace": "off",
             "react-hooks/exhaustive-deps": "off",
+            "@typescript-eslint/consistent-type-imports": "warn",
             "react-refresh/only-export-components": [
                 "warn",
                 { allowConstantExport: true },

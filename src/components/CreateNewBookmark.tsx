@@ -1,5 +1,6 @@
 import { Button, TextField } from "@mui/material";
-import { TagInputBox, TagInputBoxProps } from "./TagInputBox";
+import type { TagInputBoxProps } from "./TagInputBox";
+import { TagInputBox } from "./TagInputBox";
 
 export type CreateNewBookmarkProps = {
     titleRef: React.RefObject<HTMLInputElement>;

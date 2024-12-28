@@ -4,7 +4,7 @@ import { dbConnection } from "../lib/database";
 import { HOTKEY_SCOPES, useAppHotkey } from "../lib/hotkey";
 import { useHotkeys } from "react-hotkeys-hook";
 import { WindowVisibleController } from "../lib/windowVisibleController";
-import { SearchBookmarkProps } from "../components/SearchBookmark";
+import type { SearchBookmarkProps } from "../components/SearchBookmark";
 import { useBookmarkList } from "./BookmarkList";
 import { useTagInputBox } from "./TagInputBox";
 import { findTagMethod } from "../lib/findTagMethod";

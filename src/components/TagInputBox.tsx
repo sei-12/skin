@@ -1,5 +1,6 @@
 import { Box, TextField, Typography } from "@mui/material";
-import { SuggestionWindow, SuggestionWindowProps } from "./SuggestionWindow";
+import type { SuggestionWindowProps } from "./SuggestionWindow";
+import { SuggestionWindow } from "./SuggestionWindow";
 import { globalColorTheme as GCT } from "../lib/theme";
 
 const ITEM_HEIGHT = 35;

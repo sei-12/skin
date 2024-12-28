@@ -1,5 +1,5 @@
-import { FindTagMethod } from "../components/SuggestionWindow";
-import { TagInputBoxProps } from "../components/TagInputBox";
+import type { FindTagMethod } from "../components/SuggestionWindow";
+import type { TagInputBoxProps } from "../components/TagInputBox";
 import { useSuggestionWindow } from "../hooks/SuggestionWindow";
 
 import { useRef, useState } from "react";

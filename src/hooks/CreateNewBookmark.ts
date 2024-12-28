@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { FindTagMethod } from "../components/SuggestionWindow";
+import type { FindTagMethod } from "../components/SuggestionWindow";
 import { useNavigate } from "react-router-dom";
 import { dbConnection } from "../lib/database";
 import { invoke } from "@tauri-apps/api/core";

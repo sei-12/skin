@@ -1,6 +1,8 @@
 import { Grid2 } from "@mui/material";
-import { TagInputBox, TagInputBoxProps } from "../components/TagInputBox";
-import { BookmarkList, BookmarkListProps } from "../components/BookmarkList";
+import type { TagInputBoxProps } from "../components/TagInputBox";
+import { TagInputBox } from "../components/TagInputBox";
+import type { BookmarkListProps } from "../components/BookmarkList";
+import { BookmarkList } from "../components/BookmarkList";
 
 export type SearchBookmarkProps = {
     tagInputBoxProps: TagInputBoxProps;

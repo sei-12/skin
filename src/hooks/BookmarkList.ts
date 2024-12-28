@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { IData } from "../dts/data";
-import { BookmarkListProps } from "../components/BookmarkList";
+import type { IData } from "../dts/data";
+import type { BookmarkListProps } from "../components/BookmarkList";
 
 export function useBookmarkList(
     onClickRemove: (key: number) => void,

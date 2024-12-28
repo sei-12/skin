@@ -2,8 +2,9 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import "@testing-library/jest-dom/vitest";
 import { describe, it, expect, vi } from "vitest";
-import { BookmarkItem, BookmarkItemProps } from "./BookmarkItem";
-import { IData } from "../dts/data";
+import type { BookmarkItemProps } from "./BookmarkItem";
+import { BookmarkItem } from "./BookmarkItem";
+import type { IData } from "../dts/data";
 
 // Mock globalColorTheme
 vi.mock("../lib/theme", () => ({

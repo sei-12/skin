@@ -1,5 +1,6 @@
-import { ChangeEvent, useCallback, useEffect, useRef, useState } from "react";
-import { FindTagMethod, SuggestionWindowProps } from "../components/SuggestionWindow";
+import type { ChangeEvent} from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import type { FindTagMethod, SuggestionWindowProps } from "../components/SuggestionWindow";
 
 export function useSuggestionWindow(
     findTagMethod: FindTagMethod,
@@ -15,11 +16,11 @@ export function useSuggestionWindow(
         return items.at(focusIndex);
     },[items,focusIndex])
 
-    const close = () => {
+    const close = useCallback(() => {
         setItems([]);
         setPredicate("");
         setFocusIndex(0);
-    };
+    },[])
 
     const onChangePredicateInputBox = async (
         e: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
