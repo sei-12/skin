@@ -1,6 +1,23 @@
+import { CreateNewBookmark } from "../components/CreateNewBookmark";
 import { Grid2 } from "@mui/material";
 import { TagInputBox, useTagInputBox } from "../components/TagInputBox";
 import { BookmarkList, useBookmarkList } from "../components/BookmarkList";
+import { useCreateNewBookmarkPage, useSearchBookmarkPage } from "../hooks/todo";
+
+export function CreateNewBookmarkPage() {
+    const hook = useCreateNewBookmarkPage();
+    return <CreateNewBookmark {...hook.props} />;
+}
+
+
+export function SearchBookmarkPage() {
+    const hook = useSearchBookmarkPage();
+    return <SearchBookmark
+        onClickAdd={hook.onClickAdd}
+        tagInputBoxHook={hook.tagInputBoxHook.props}
+        bkmkListHook={hook.bkmkListHook.props}
+    />;
+}
 
 export function SearchBookmark(p: {
     tagInputBoxHook: ReturnType<typeof useTagInputBox>["props"];
@@ -16,9 +33,6 @@ export function SearchBookmark(p: {
             width={1}
         >
             <Grid2 size="auto">
-                {/* <Button> 著しくデザインが崩れるので一旦コメントアウト
-					<AddBox onClick={p.onClickAdd}/>
-				</Button> */}
                 <TagInputBox {...p.tagInputBoxHook}></TagInputBox>
             </Grid2>
 

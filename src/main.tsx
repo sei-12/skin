@@ -6,8 +6,7 @@ import { HotkeysProvider } from "react-hotkeys-hook";
 import { HOTKEY_SCOPES } from "./lib/hotkey";
 import { CustomWindow } from "./components/CustomWindow";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import { SearchBookmarkPage } from "./pages/SearchBookmarkPage";
-import { CreateNewBookmarkPage } from "./pages/CreateNewBookmarkPage";
+import { CreateNewBookmarkPage, SearchBookmarkPage } from "./pages/pages";
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
     <React.StrictMode>
