@@ -38,11 +38,3 @@ exports[`SuggestionWindow > items 3`] = `
   ello
 </p>
 `;
-
-exports[`SuggestionWindow > useSuggestionWindow 1`] = `
-<div>
-  <div
-    class="MuiBox-root css-971pk6"
-  />
-</div>
-`;
