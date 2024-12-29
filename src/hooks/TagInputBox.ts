@@ -21,6 +21,8 @@ export function useTagInputBox(findTagMethod: FindTagMethod) {
             suggestionWindowHook.onChangePredicateInputBox,
     };
 
+    // 名前が相応しくない
+    // inputBoxの状態によって挙動が変わるのが良くない
     const popInputedTag = useCallback(
         () => {
             const inputBox = inputBoxRef.current;
@@ -40,6 +42,8 @@ export function useTagInputBox(findTagMethod: FindTagMethod) {
         }, []
     )
 
+    // 名前が相応しくない
+    // inputBoxの状態によって挙動が変わるのが良くない
     const addFocusedSuggestionItem = useCallback(() => {
         const item = suggestionWindowHook.getFocusedItem();
         const inputBox = inputBoxRef.current;
