@@ -13,9 +13,7 @@ export type TagInputBoxProps = {
         text: string;
         exists: boolean;
     }[];
-    onChangePredicateInputBox: (
-        e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
-    ) => Promise<void>;
+    onChangePredicateInputBox: ( targetVal: string) => Promise<void>;
 };
 
 export const TagInputBox = (p: TagInputBoxProps) => {
@@ -45,7 +43,7 @@ export const TagInputBox = (p: TagInputBoxProps) => {
             >
                 <TextField
                     onChange={(e) => {
-                        p.onChangePredicateInputBox(e);
+                        p.onChangePredicateInputBox(e.target.value);
                     }}
                     inputRef={p.inputBoxRef}
                     autoComplete="off"
