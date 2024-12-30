@@ -1,6 +1,5 @@
 import { useCallback, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { dbConnection } from "../lib/database";
 import { HOTKEY_SCOPES, useAppHotkey } from "../lib/hotkey";
 import { useHotkeys } from "react-hotkeys-hook";
 import { WindowVisibleController } from "../lib/windowVisibleController";
@@ -9,14 +8,15 @@ import { useBookmarkList } from "./BookmarkList";
 import { useTagInputBox } from "./TagInputBox";
 import { findTagMethod } from "../lib/findTagMethod";
 import { invoke } from "@tauri-apps/api/core";
+import { DB } from "../lib/database";
 
 
 export function useSearchBookmarkPage(): SearchBookmarkProps {
     const navigate = useNavigate()
 
     const onClickRemove = (id: number) => {
-        dbConnection.deleteBookmark(id).then(() => {
-            dbConnection
+        DB.deleteBookmark(id).then(() => {
+            DB
                 .findBookmark(
                     tagInputBoxHook.inputedTags.map((i) => i.text)
                 )
@@ -49,7 +49,7 @@ export function useSearchBookmarkPage(): SearchBookmarkProps {
         const tags = tagInputBoxHook.inputedTags.map((e) => {
             return e.text;
         });
-        dbConnection.findBookmark(tags).then((data) => {
+        DB.findBookmark(tags).then((data) => {
             bkmkListHook.setItems(data);
             bkmkListHook.resetFocusIndex();
         });
