@@ -24,7 +24,7 @@ export type BookmarkItemProps = {
 export const BookmarkItem = forwardRef<HTMLDivElement, BookmarkItemProps>(
     (props, ref) => {
         return (
-            <div ref={ref}>
+            <div ref={ref} data-testid="bkmkitem">
                 <Card
                     variant="elevation"
                     sx={{

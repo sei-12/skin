@@ -19,6 +19,7 @@ export type SuggestionWindowProps = {
 export function SuggestionWindow(p: SuggestionWindowProps) {
     return (
         <Box
+            data-testid="suggestion-window"
             sx={{
                 display: p.items.length > 0 ? "block" : "none",
                 bgcolor: GCT.suggestionWindow.bg,
@@ -61,6 +62,7 @@ export const SuggestionWindowItem = forwardRef<HTMLDivElement, ItemProps>((props
     const highlightBlocks = highlightMatchedBlocks(props.predicate, props.item);
     return (
         <Box
+            data-testid="suggestion-item"
             ref={ref}
             sx={{
                 bgcolor: props.focus
