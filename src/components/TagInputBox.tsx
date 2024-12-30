@@ -42,6 +42,7 @@ export const TagInputBox = (p: TagInputBoxProps) => {
                 }}
             >
                 <TextField
+                    data-testid="taginputbox-predicateinputbox"
                     onChange={(e) => {
                         p.onChangePredicateInputBox(e.target.value);
                     }}
