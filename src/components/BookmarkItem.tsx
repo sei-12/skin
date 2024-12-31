@@ -32,17 +32,23 @@ export const BookmarkItem = forwardRef<HTMLDivElement, BookmarkItemProps>(
                             ? GCT.bookmarkItem.focusBg
                             : GCT.bookmarkItem.bg,
                         borderRadius: 2.5,
+                        boxShadow: "1px 1px 5px 0 rgba(0,0,0,0.1)",
+                        height: 135, // このやり方は良くないかもだけど、一旦問題はないし、他の方法が見当たらなかった
                     }}
                 >
                     <CardContent sx={{ position: "relative" }}>
                         <Typography
                             variant="h5"
                             sx={{
-                                overflow: "hidden",
-                                textOverflow: "ellipsis",
-                                WebkitLineClamp: 1,
                                 color: GCT.bookmarkItem.title,
                                 fontWeight: "bold",
+
+                                overflow: "hidden",
+                                display: "-webkit-box",
+                                wordBreak: "break-all",
+                                lineClamp: 1,
+                                WebkitLineClamp: 1,
+                                WebkitBoxOrient: "vertical",
                             }}
                         >
                             {props.data.title}
@@ -60,11 +66,12 @@ export const BookmarkItem = forwardRef<HTMLDivElement, BookmarkItemProps>(
                             sx={{
                                 color: GCT.bookmarkItem.desc,
                                 fontWeight: 100,
+
                                 overflow: "hidden",
                                 display: "-webkit-box",
                                 wordBreak: "break-all",
-                                lineClamp: 3,
-                                WebkitLineClamp: 3,
+                                lineClamp: 2,
+                                WebkitLineClamp: 2,
                                 WebkitBoxOrient: "vertical",
                             }}
                         >
@@ -74,7 +81,6 @@ export const BookmarkItem = forwardRef<HTMLDivElement, BookmarkItemProps>(
                         <Box
                             sx={{
                                 position: "absolute",
-                                // opacity: props.focus ? 1 : 0,
                                 opacity: 0,
                                 ":hover": {
                                     opacity: 1,
@@ -125,6 +131,7 @@ function TagItem(props: { text: string }) {
         <Typography
             sx={{
                 color: GCT.bookmarkItem.tag,
+                textWrap: "nowrap",
             }}
         >
             #{props.text}
