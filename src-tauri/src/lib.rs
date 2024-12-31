@@ -62,10 +62,10 @@ pub fn run() {
             open_url,
             fetch_website_content::fetch_website_content
         ])
-        .setup(|app| {
+        .setup(|_app| {
             // 開発時だけdevtoolsを表示する。
             #[cfg(debug_assertions)]
-            app.get_webview_window("main").unwrap().open_devtools();
+            _app.get_webview_window("main").unwrap().open_devtools();
 
             Ok(())
         })

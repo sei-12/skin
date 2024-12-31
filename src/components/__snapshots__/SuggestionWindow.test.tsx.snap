@@ -4,9 +4,11 @@ exports[`SuggestionWindow > items 1`] = `
 <div>
   <div
     class="MuiBox-root css-1wyizo9"
+    data-testid="suggestion-window"
   >
     <div
       class="MuiBox-root css-1hfa24n"
+      data-testid="suggestion-item"
     >
       <p
         class="MuiTypography-root MuiTypography-body1 css-1bfdmob-MuiTypography-root"
@@ -37,12 +39,4 @@ exports[`SuggestionWindow > items 3`] = `
 >
   ello
 </p>
-`;
-
-exports[`SuggestionWindow > useSuggestionWindow 1`] = `
-<div>
-  <div
-    class="MuiBox-root css-971pk6"
-  />
-</div>
 `;

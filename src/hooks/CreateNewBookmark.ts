@@ -1,12 +1,12 @@
 import { useEffect, useRef } from "react";
 import type { FindTagMethod } from "../components/SuggestionWindow";
 import { useNavigate } from "react-router-dom";
-import { dbConnection } from "../lib/database";
 import { invoke } from "@tauri-apps/api/core";
 import { HOTKEY_SCOPES, useAppHotkey } from "../lib/hotkey";
 import { useHotkeys } from "react-hotkeys-hook";
 import { useTagInputBox } from "./TagInputBox";
 import { findTagMethod } from "../lib/findTagMethod";
+import { DB } from "../lib/database";
 
 function useCreateNewBookmark(
     onClickDone: () => void,
@@ -107,7 +107,7 @@ export function useCreateNewBookmarkPage() {
             return;
         }
 
-        dbConnection
+        DB
             .insertBookmark(
                 inputData.title,
                 inputData.url,
@@ -212,7 +212,7 @@ export function useCreateNewBookmarkPage() {
                 return;
             }
             inputBox.value = "";
-            const exists = await dbConnection.isExistsTag(item);
+            const exists = await DB.isExistsTag(item);
             createNewBookmarkHook.tagInputBoxHook.setInputedTags((ary) => {
                 return [...ary, { text: item, exists: exists }];
             });
@@ -266,7 +266,7 @@ export function useCreateNewBookmarkPage() {
                 return;
             }
 
-            const exists = await dbConnection.isExistsTag(item);
+            const exists = await DB.isExistsTag(item);
             createNewBookmarkHook.tagInputBoxHook.setInputedTags((ary) => {
                 return [...ary, { text: item, exists }];
             });

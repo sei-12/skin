@@ -22,7 +22,6 @@ register("Alt+Z", async (event) => {
 });
 
 listen("tauri://blur", async () => {
-    // TODO: 重複した処理 CA2897EB
     WindowVisibleController.hide();
     // 再度開いた時に前回の検索結果などが残らないようにする。
     // tagInputBoxHook.setInputedTags([]);

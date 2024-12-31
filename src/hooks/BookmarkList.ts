@@ -37,6 +37,10 @@ export function useBookmarkList(
             return newIndex;
         })
     }, [items])
+    
+    const resetFocusIndex = useCallback(() => {
+        setFocusIndex(0)
+    },[])
 
     const getFocusedItem = useCallback(() => {
         return items.at(focusIndex)
@@ -54,7 +58,7 @@ export function useBookmarkList(
         items,
         setItems,
         // focusIndex,
-        setFocusIndex,
+        resetFocusIndex,
         getFocusedItem,
         focusDown,
         focusUp,
