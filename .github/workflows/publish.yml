@@ -52,7 +52,10 @@ jobs:
       #
       - name: install frontend dependencies
         run: yarn --frozen-lockfile && yarn install --network-timeout 600000 # change this to npm or pnpm depending on which one you use
+        
+        
       - uses: tauri-apps/tauri-action@v0
+        id: tauri_build
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           APPLE_CERTIFICATE: ${{ secrets.APPLE_CERTIFICATE }}
