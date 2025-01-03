@@ -3,6 +3,7 @@ import type { TagInputBoxProps } from "../components/TagInputBox";
 import { useSuggestionWindow } from "../hooks/SuggestionWindow";
 
 import { useCallback, useRef, useState } from "react";
+import { DB } from "../lib/database";
 export function useTagInputBox(findTagMethod: FindTagMethod) {
     const inputBoxRef = useRef<HTMLInputElement>(null);
     const [inputedTags, setInputedTags] = useState<
@@ -44,7 +45,7 @@ export function useTagInputBox(findTagMethod: FindTagMethod) {
 
     // 名前が相応しくない
     // inputBoxの状態によって挙動が変わるのが良くない
-    const addFocusedSuggestionItem = useCallback(() => {
+    const addFocusedSuggestionItem = useCallback(async () => {
         const item = suggestionWindowHook.getFocusedItem();
         const inputBox = inputBoxRef.current;
 
@@ -57,8 +58,9 @@ export function useTagInputBox(findTagMethod: FindTagMethod) {
 
         inputBox.value = "";
 
+        const exists = await DB.isExistsTag(item);
         setInputedTags((ary) => {
-            return [...ary, { text: item, exists: true }];
+            return [...ary, { text: item, exists }];
         });
 
         suggestionWindowHook.close();
