@@ -1,7 +1,7 @@
 import { Box, Typography } from "@mui/material";
-import { globalColorTheme as GCT } from "../lib/theme";
 import { ZINDEX } from "../lib/zindex";
 import { forwardRef } from "react";
+import type { ColorTheme } from "../../src-tauri/bindings/export/ColorTheme";
 
 export type FindTagMethod = (
     predicate: string,
@@ -14,6 +14,7 @@ export type SuggestionWindowProps = {
     predicate: string;
     focusIndex: number;
     itemRefs: React.MutableRefObject<(HTMLDivElement | null)[]>;
+    colorTheme: ColorTheme
 };
 
 export function SuggestionWindow(p: SuggestionWindowProps) {
@@ -22,7 +23,7 @@ export function SuggestionWindow(p: SuggestionWindowProps) {
             data-testid="suggestion-window"
             sx={{
                 display: p.items.length > 0 ? "block" : "none",
-                bgcolor: GCT.suggestionWindow.bg,
+                bgcolor: p.colorTheme.suggestionWindow.bg,
                 position: "absolute",
                 top: "100%",
                 boxSizing: "border-box",
@@ -30,7 +31,7 @@ export function SuggestionWindow(p: SuggestionWindowProps) {
                 maxHeight: 400,
                 width: 300,
                 border: "solid 1px",
-                borderColor: GCT.suggestionWindow.borderColor,
+                borderColor: p.colorTheme.suggestionWindow.borderColor,
                 overflow: "scroll",
                 "&::-webkit-scrollbar": {
                     display: "none",
@@ -41,6 +42,7 @@ export function SuggestionWindow(p: SuggestionWindowProps) {
                 return (
                     <SuggestionWindowItem
                         predicate={p.predicate}
+                        colorTheme={p.colorTheme}
                         focus={p.focusIndex === i}
                         item={item}
                         key={i}
@@ -56,37 +58,38 @@ type ItemProps = {
     predicate: string;
     item: string;
     focus: boolean;
+    colorTheme: ColorTheme
 };
 
-export const SuggestionWindowItem = forwardRef<HTMLDivElement, ItemProps>((props, ref) => {
-    const highlightBlocks = highlightMatchedBlocks(props.predicate, props.item);
+export const SuggestionWindowItem = forwardRef<HTMLDivElement, ItemProps>((p, ref) => {
+    const highlightBlocks = highlightMatchedBlocks(p.predicate, p.item);
     return (
         <Box
             data-testid="suggestion-item"
             ref={ref}
             sx={{
-                bgcolor: props.focus
-                    ? GCT.suggestionWindow.focusBg
-                    : GCT.suggestionWindow.bg,
+                bgcolor: p.focus
+                    ? p.colorTheme.suggestionWindow.focusBg
+                    : p.colorTheme.suggestionWindow.bg,
                 padding: 0.2,
                 paddingLeft: 0.5,
             }}
         >
             {highlightBlocks.map((b, i) => {
-                return <SuggestionWindowItemTextBlock key={i} {...b}></SuggestionWindowItemTextBlock>;
+                return <SuggestionWindowItemTextBlock key={i} {...b} colorTheme={p.colorTheme}></SuggestionWindowItemTextBlock>;
             })}
         </Box>
     );
 });
 
-export const SuggestionWindowItemTextBlock = (p: { isMatch: boolean; text: string }) => {
+export const SuggestionWindowItemTextBlock = (p: { isMatch: boolean; text: string , colorTheme: ColorTheme}) => {
     return (
         <Typography
             sx={{
                 display: "inline",
                 color: p.isMatch
-                    ? GCT.suggestionWindow.match
-                    : GCT.suggestionWindow.unmatch,
+                    ? p.colorTheme.suggestionWindow.match
+                    : p.colorTheme.suggestionWindow.unmatch,
                 fontWeight: "bold",
             }}
         >

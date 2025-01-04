@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { IData } from "../dts/data";
 import type { BookmarkListProps } from "../components/BookmarkList";
+import { useConfig } from "../providers/configProvider";
 
 export function useBookmarkList(
     onClickRemove: (key: number) => void,
@@ -46,12 +47,15 @@ export function useBookmarkList(
         return items.at(focusIndex)
     },[focusIndex,items])
 
+    const { colorTheme } = useConfig();
+
     const props: BookmarkListProps = {
         onClickEdit,
         onClickRemove,
         itemRefs,
         focusIndex,
         items,
+        colorTheme
     };
 
     return {

@@ -5,19 +5,7 @@ import { describe, it, expect, vi } from "vitest";
 import type { BookmarkItemProps } from "./BookmarkItem";
 import { BookmarkItem } from "./BookmarkItem";
 import type { IData } from "../dts/data";
-
-// Mock globalColorTheme
-vi.mock("../lib/theme", () => ({
-    globalColorTheme: {
-        bookmarkItem: {
-            focusBg: "#f0f0f0",
-            bg: "#ffffff",
-            title: "#000000",
-            desc: "#666666",
-            tag: "#888888",
-        },
-    },
-}));
+import { DEFAULT_CONFIG } from "../providers/configProvider";
 
 describe("BookmarkItem", () => {
     const mockData: IData.Bookmark = {
@@ -33,6 +21,7 @@ describe("BookmarkItem", () => {
         onClickRemove: vi.fn(),
         onClickEdit: vi.fn(),
         focus: false,
+        colorTheme: DEFAULT_CONFIG.colorTheme
     };
 
     it("renders the title, description, and tags", () => {
@@ -56,13 +45,13 @@ describe("BookmarkItem", () => {
         );
 
         expect(container.querySelector(".MuiCard-root")).toHaveStyle(
-            "background-color: #f0f0f0"
+            `background-color: ${DEFAULT_CONFIG.colorTheme.bookmarkItem.focusBg}`
         );
 
         rerender(<BookmarkItem {...defaultProps} focus={false} />);
 
         expect(container.querySelector(".MuiCard-root")).toHaveStyle(
-            "background-color: #ffffff"
+            `background-color: ${DEFAULT_CONFIG.colorTheme.bookmarkItem.bg}`
         );
     });
 
@@ -93,7 +82,7 @@ describe("BookmarkItem", () => {
     it("tag style", async () => {
         render(<BookmarkItem {...defaultProps} />);
         const tag = screen.getByText("#tag1");
-        expect(tag).toHaveStyle("color: #888888");
+        expect(tag).toHaveStyle(`color: ${DEFAULT_CONFIG.colorTheme.bookmarkItem.tag}`);
     });
 
     it("snapshot", () => {
@@ -109,6 +98,7 @@ describe("BookmarkItem", () => {
                 onClickEdit={() => {}}
                 onClickRemove={() => {}}
                 focus={false}
+                colorTheme={DEFAULT_CONFIG.colorTheme}
             ></BookmarkItem>
         );
 

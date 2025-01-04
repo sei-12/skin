@@ -164,4 +164,33 @@ describe("SearchBookmark", () => {
         await user.type(inputBox, "{Backspace}");
         
     });
+
+    test("test6", async () => {
+        const user = userEvent.setup();
+        const inputBox = screen.getByPlaceholderText("/");
+
+        expect(DB.findBookmark).toBeCalledTimes(1);
+
+        await user.type(inputBox, "y");
+        expect(DB.findTag).toBeCalledTimes(1);
+        await user.type(inputBox, "{Enter}");
+        expect(screen.getAllByTestId("taginputbox-tagitem").length).toBe(1);
+
+        await user.type(inputBox, "y");
+        expect(DB.findTag).toBeCalledTimes(2);
+        await user.type(inputBox, "{Enter}");
+        expect(screen.getAllByTestId("taginputbox-tagitem").length).toBe(2);
+
+        await user.type(inputBox, "y");
+        expect(DB.findTag).toBeCalledTimes(3);
+        await user.type(inputBox, "{Enter}");
+        expect(screen.getAllByTestId("taginputbox-tagitem").length).toBe(3);
+
+        await user.type(inputBox, "{Backspace}");
+        expect(screen.getAllByTestId("taginputbox-tagitem").length).toBe(2);
+        await user.type(inputBox, "{Backspace}");
+        expect(screen.getAllByTestId("taginputbox-tagitem").length).toBe(1);
+        await user.type(inputBox, "{Backspace}");
+        expect(() => screen.getAllByTestId("taginputbox-tagitem")).toThrow();
+    });
 });

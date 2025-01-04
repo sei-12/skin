@@ -3,7 +3,7 @@ import { render, renderHook, screen } from "@testing-library/react";
 import "@testing-library/jest-dom/vitest";
 import { describe, expect, test } from "vitest";
 import { useRef } from "react";
-import { globalColorTheme } from "../lib/theme";
+import { DEFAULT_CONFIG } from "../providers/configProvider";
 
 
 describe("SuggestionWindow", () => {
@@ -11,6 +11,7 @@ describe("SuggestionWindow", () => {
         const items = ["hello"];
         const predicate = "h";
         const focusIndex = 0;
+        const colorTheme = DEFAULT_CONFIG.colorTheme;
         const refs = renderHook(() => {
             return useRef<(HTMLDivElement | null)[]>([]);
         });
@@ -21,6 +22,7 @@ describe("SuggestionWindow", () => {
                 predicate={predicate}
                 focusIndex={focusIndex}
                 itemRefs={refs.result.current}
+                colorTheme={colorTheme}
             ></SuggestionWindow>
         );
 
@@ -29,14 +31,14 @@ describe("SuggestionWindow", () => {
         const matchBlock = screen.getByText("h");
         expect(matchBlock).toBeInTheDocument();
         expect(matchBlock).toHaveStyle(
-            "color: " + globalColorTheme.suggestionWindow.match + ";"
+            "color: " + colorTheme.suggestionWindow.match + ";"
         );
         expect(matchBlock).toMatchSnapshot();
 
         const unmatchBlock = screen.getByText("ello");
         expect(unmatchBlock).toBeInTheDocument();
         expect(unmatchBlock).toHaveStyle(
-            "color: " + globalColorTheme.suggestionWindow.unmatch + ";"
+            "color: " + colorTheme.suggestionWindow.unmatch + ";"
         );
         expect(unmatchBlock).toMatchSnapshot();
     });
@@ -45,13 +47,13 @@ describe("SuggestionWindow", () => {
 
 describe("TextBlock", () => {
     test("renders with correct styles for matched text", () => {
-        render(<SuggestionWindowItemTextBlock isMatch={true} text="Match" />);
+        render(<SuggestionWindowItemTextBlock isMatch={true} text="Match" colorTheme={DEFAULT_CONFIG.colorTheme} />);
         const textElement = screen.getByText("Match");
         expect(textElement).toBeInTheDocument();
     });
 
     test("renders with correct styles for unmatched text", () => {
-        render(<SuggestionWindowItemTextBlock isMatch={false} text="Unmatch" />);
+        render(<SuggestionWindowItemTextBlock isMatch={false} text="Unmatch" colorTheme={DEFAULT_CONFIG.colorTheme} />);
         const textElement = screen.getByText("Unmatch");
         expect(textElement).toBeInTheDocument();
     });
@@ -62,7 +64,7 @@ describe("Item", () => {
         const predicate = "abc";
         const item = "aabbcc";
         render(
-            <SuggestionWindowItem predicate={predicate} item={item} focus={false} ref={null} />
+            <SuggestionWindowItem predicate={predicate} item={item} focus={false} ref={null} colorTheme={DEFAULT_CONFIG.colorTheme} />
         );
 
         // Verify blocks rendered correctly

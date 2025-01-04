@@ -3,20 +3,20 @@
 exports[`SuggestionWindow > items 1`] = `
 <div>
   <div
-    class="MuiBox-root css-1wyizo9"
+    class="MuiBox-root css-f6efok"
     data-testid="suggestion-window"
   >
     <div
-      class="MuiBox-root css-1hfa24n"
+      class="MuiBox-root css-5biidq"
       data-testid="suggestion-item"
     >
       <p
-        class="MuiTypography-root MuiTypography-body1 css-1bfdmob-MuiTypography-root"
+        class="MuiTypography-root MuiTypography-body1 css-1yek1z9-MuiTypography-root"
       >
         h
       </p>
       <p
-        class="MuiTypography-root MuiTypography-body1 css-w44nn4-MuiTypography-root"
+        class="MuiTypography-root MuiTypography-body1 css-unoo7q-MuiTypography-root"
       >
         ello
       </p>
@@ -27,7 +27,7 @@ exports[`SuggestionWindow > items 1`] = `
 
 exports[`SuggestionWindow > items 2`] = `
 <p
-  class="MuiTypography-root MuiTypography-body1 css-1bfdmob-MuiTypography-root"
+  class="MuiTypography-root MuiTypography-body1 css-1yek1z9-MuiTypography-root"
 >
   h
 </p>
@@ -35,7 +35,7 @@ exports[`SuggestionWindow > items 2`] = `
 
 exports[`SuggestionWindow > items 3`] = `
 <p
-  class="MuiTypography-root MuiTypography-body1 css-w44nn4-MuiTypography-root"
+  class="MuiTypography-root MuiTypography-body1 css-unoo7q-MuiTypography-root"
 >
   ello
 </p>

@@ -4,6 +4,8 @@ import { useSuggestionWindow } from "../hooks/SuggestionWindow";
 
 import { useCallback, useRef, useState } from "react";
 import { DB } from "../lib/database";
+import { useConfig } from "../providers/configProvider";
+
 export function useTagInputBox(findTagMethod: FindTagMethod) {
     const inputBoxRef = useRef<HTMLInputElement>(null);
     const [inputedTags, setInputedTags] = useState<
@@ -14,12 +16,15 @@ export function useTagInputBox(findTagMethod: FindTagMethod) {
         return inputedTags.map((t) => t.text);
     });
 
+    const { colorTheme } = useConfig() 
+
     const props: TagInputBoxProps = {
         swProps: suggestionWindowHook.props,
         inputBoxRef,
         inputedTags,
         onChangePredicateInputBox:
             suggestionWindowHook.onChangePredicateInputBox,
+        colorTheme
     };
 
     // 名前が相応しくない
