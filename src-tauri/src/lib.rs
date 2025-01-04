@@ -7,6 +7,7 @@ mod fetch_website_content;
 mod file_change_watcher;
 mod config_path;
 mod config;
+mod config_model;
 
 #[tauri::command]
 fn greet(name: &str) -> String {
@@ -22,7 +23,7 @@ fn open_url(url: &str) -> bool {
 }
 
 #[tauri::command]
-fn get_config() -> config::Config {
+fn get_config() -> config_model::Config {
     config::read_config()
 }
 

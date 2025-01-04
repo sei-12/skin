@@ -1,16 +1,4 @@
-use serde::{Deserialize, Serialize};
-
-use crate::config_path;
-
-#[derive(Serialize, Deserialize)]
-pub struct Config {
-    #[serde(default = "config_defalt_bg_color")]
-    bg_color: String,
-}
-
-fn config_defalt_bg_color() -> String {
-    "white".to_string()
-}
+use crate::{config_model::Config, config_path};
 
 fn default_config() -> Config {
     serde_json::from_str("{}").expect("Failed to parse default config")
@@ -30,22 +18,4 @@ pub fn read_config() -> Config {
     };
     
     config
-}
-
-
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_config_default_bg_color() {
-        assert_eq!(config_defalt_bg_color(), "white");
-    }
-
-    #[test]
-    fn test_default_config() {
-        let config = default_config();
-        assert_eq!(config.bg_color, "white");
-    }
 }
