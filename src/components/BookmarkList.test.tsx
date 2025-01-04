@@ -7,7 +7,7 @@ import { useBookmarkList } from "../hooks/BookmarkList";
 describe("BookmarkList.tsx", () => {
     it("case1", async () => {
         // https://stackoverflow.com/questions/53271193/typeerror-scrollintoview-is-not-a-function
-        window.HTMLElement.prototype.scrollIntoView = function() {};
+        window.HTMLElement.prototype.scrollIntoView = function () {};
 
         const onClickRemoveMock = vi.fn();
         const onClickCancelMock = vi.fn();
@@ -28,15 +28,76 @@ describe("BookmarkList.tsx", () => {
         expect(bkmkItems.length).toBe(items.length);
 
         expect(result.asFragment()).toMatchSnapshot();
-        
 
-        items.forEach(item => {
+        items.forEach((item) => {
             expect(screen.getByText(item.title)).toBeInTheDocument();
             expect(screen.getByText(item.desc)).toBeInTheDocument();
-            item.tags.forEach(tag => {
+            item.tags.forEach((tag) => {
                 expect(screen.getByText(`#${tag}`)).toBeInTheDocument();
             });
-        })
+        });
+    });
+
+    it("case2", async () => {
+        // https://stackoverflow.com/questions/53271193/typeerror-scrollintoview-is-not-a-function
+        window.HTMLElement.prototype.scrollIntoView = vi.fn();
+
+        const onClickRemoveMock = vi.fn();
+        const onClickCancelMock = vi.fn();
+
+        const hook = renderHook(() =>
+            useBookmarkList(onClickRemoveMock, onClickCancelMock)
+        );
+
+        act(() => {
+            hook.result.current.setItems(items);
+        });
+
+        render(<BookmarkList {...hook.result.current.props}></BookmarkList>);
+
+        act(() => hook.result.current.focusDown());
+        act(() => hook.result.current.focusDown());
+        act(() => hook.result.current.focusDown());
+        expect(
+            window.HTMLElement.prototype.scrollIntoView
+        ).toHaveBeenCalledTimes(3);
+
+        act(() => hook.result.current.focusUp());
+        act(() => hook.result.current.focusUp());
+        act(() => hook.result.current.focusUp());
+        expect(
+            window.HTMLElement.prototype.scrollIntoView
+        ).toHaveBeenCalledTimes(6);
+    });
+
+    it("case3 itemsが空の場合はscrollIntoViewが呼ばれない", async () => {
+        // https://stackoverflow.com/questions/53271193/typeerror-scrollintoview-is-not-a-function
+        window.HTMLElement.prototype.scrollIntoView = vi.fn();
+
+        const onClickRemoveMock = vi.fn();
+        const onClickCancelMock = vi.fn();
+
+        const hook = renderHook(() =>
+            useBookmarkList(onClickRemoveMock, onClickCancelMock)
+        );
+
+        render(<BookmarkList {...hook.result.current.props}></BookmarkList>);
+
+        act(() => hook.result.current.focusDown());
+        act(() => hook.result.current.focusDown());
+        act(() => hook.result.current.focusDown());
+        
+        // 
+        expect(
+            window.HTMLElement.prototype.scrollIntoView
+        ).toHaveBeenCalledTimes(0);
+
+        act(() => hook.result.current.focusUp());
+        act(() => hook.result.current.focusUp());
+        act(() => hook.result.current.focusUp());
+        expect(
+            window.HTMLElement.prototype.scrollIntoView
+        ).toHaveBeenCalledTimes(0);
     });
 });
 
