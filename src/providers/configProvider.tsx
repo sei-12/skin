@@ -14,13 +14,13 @@ export function ConfigProvider({ children }: { children: React.ReactNode }) {
     const [config, setConfig] = useState<Config>(DEFAULT_CONFIG);
 
     useEffect(() => {
-        invoke<Config>("get_config").then((config) => {
-            setConfig(config);
+        invoke<Config>("get_config").then((con) => {
+            setConfig(con);
         });
 
         listen("change-config-file", () => {
-            invoke<Config>("get_config").then((config) => {
-                setConfig(config);
+            invoke<Config>("get_config").then((con) => {
+                setConfig(con);
             });
         });
     }, []);

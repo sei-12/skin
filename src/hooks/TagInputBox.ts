@@ -41,11 +41,25 @@ export function useTagInputBox(findTagMethod: FindTagMethod) {
             }
 
             inputBox.value = "";
-            setInputedTags((ary) => {
-                ary.pop();
-                return [...ary];
-            });
-        }, []
+            const newInputedTags = [...inputedTags]
+            newInputedTags.pop()
+            setInputedTags(newInputedTags)
+
+            // 動作しない！！！
+            // 理由はわからない
+            // テストは通るけど実際に動かすとコールバック関数が２度呼ばれて１度
+            // バックスペースを押しただけで２個削除される.
+            // popInputedTag自体は1度しか呼ばれないので、依存関係にInputtedTag
+            // を追加して上記のような実装にした
+            // 
+            // 不具合を起こすコード
+            // setInputedTags((ary) => {
+            //     console.log("hello") // 2回呼ばれる
+            //     ary.pop();
+            //     return [...ary];
+            // });
+            //
+        }, [inputedTags]
     )
 
     // 名前が相応しくない
