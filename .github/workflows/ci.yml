@@ -16,8 +16,6 @@ jobs:
             args: "--target x86_64-apple-darwin"
           - platform: "windows-latest"
             args: ""
-          # - platform: 'ubuntu-22.04' # for Tauri v1 you could replace this with ubuntu-20.04.
-          #   args: ''
 
     runs-on: ${{ matrix.platform }}
     steps:
@@ -28,17 +26,27 @@ jobs:
         with:
           node-version: lts/*
 
-      # - name: install dependencies (ubuntu only)
-      #   if: matrix.platform == 'ubuntu-22.04'
-      #   run: |
-      #     sudo apt-get update
-      #     sudo apt install -y libgtk-3-dev libwebkit2gtk-4.0-dev libappindicator3-dev librsvg2-dev patchelf libjavascriptcoregtk-4.0-dev libsoup3.0-dev
-
       - name: install Rust stable
         uses: dtolnay/rust-toolchain@stable
         with:
           # Those targets are only used on macos runners so it's in an `if` to slightly speed up windows and linux builds.
           targets: ${{ matrix.platform == 'macos-latest' && 'aarch64-apple-darwin,x86_64-apple-darwin' || '' }}
+
+      - name: Get node version
+        id: node
+        run: |
+          echo "::set-output name=version::$(node -v)"
+
+      - name: Get node_modules cache
+        uses: actions/cache@v3.0.2
+        id: node_modules
+        with:
+          path: |
+            **/node_modules
+          # Adding node version as cache key
+          key: ${{ runner.os }}-node_modules-${{ hashFiles('**/yarn.lock') }}-${{ steps.node.outputs.version }}
+
+      - uses: Swatinem/rust-cache@v2
 
       - name: install frontend dependencies
         run: yarn --frozen-lockfile && yarn install --network-timeout 600000 # change this to npm, pnpm or bun depending on which one you use.
