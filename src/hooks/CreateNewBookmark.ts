@@ -40,7 +40,8 @@ function useCreateNewBookmark(
         onChangeUrl(url);
     };
 
-    const getInputData = () => {
+
+    const getInputData = useCallback(() => {
         let title = ""
         let url = ""
         let desc = ""
@@ -61,7 +62,13 @@ function useCreateNewBookmark(
             url,
             tags: tagInputBoxHook.inputedTags.map((e) => e.text),
         };
-    };
+    }, [tagInputBoxHook.inputedTags]);
+
+    const onKeyDownBackspace = useCallback(() => {
+        const hasFocus = tagInputBoxHook.inputBoxRef.current == document.activeElement
+        if (!hasFocus) { return }
+        tagInputBoxHook.popInputedTag()
+    }, [tagInputBoxHook])
 
     const clearData = () => {
         if (titleRef.current === null) {
@@ -92,6 +99,7 @@ function useCreateNewBookmark(
             onChangeUrl,
         },
         tagInputBoxHook,
+        onKeyDownBackspace,
         setContent,
         getInputData,
         clearData,
@@ -150,7 +158,7 @@ export function useCreateNewBookmarkPage() {
     };
 
     // todo rename
-    const onKeyDownSpace = useCallback(async() => {
+    const onKeyDownSpace = useCallback(async () => {
         const inputBox =
             createNewBookmarkHook.tagInputBoxHook.inputBoxRef.current;
         if (inputBox === null) {
@@ -174,7 +182,7 @@ export function useCreateNewBookmarkPage() {
         });
         createNewBookmarkHook.tagInputBoxHook.suggestionWindowHook.close();
         inputBox.value = "";
-    },[]) 
+    }, [])
 
     const createNewBookmarkHook = useCreateNewBookmark(
         onClickCreateDone,
@@ -206,7 +214,6 @@ export function useCreateNewBookmarkPage() {
             preventDefault: true,
             enableOnFormTags: true,
         },
-        []
     );
 
     useHotkeys(
@@ -217,7 +224,6 @@ export function useCreateNewBookmarkPage() {
             preventDefault: true,
             enableOnFormTags: true,
         },
-        [createNewBookmarkHook]
     );
 
     useHotkeys(
@@ -232,9 +238,8 @@ export function useCreateNewBookmarkPage() {
 
     useHotkeys(
         "Backspace",
-        createNewBookmarkHook.tagInputBoxHook.popInputedTag,
+        createNewBookmarkHook.onKeyDownBackspace,
         { scopes: [HOTKEY_SCOPES.CREATE_NEW_BOOKMARK], enableOnFormTags: true },
-        []
     );
 
 

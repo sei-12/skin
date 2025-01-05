@@ -132,7 +132,6 @@ export function useSearchBookmarkPage(): SearchBookmarkProps {
             preventDefault: true,
             enableOnFormTags: true,
         },
-        []
     );
 
     useHotkeys("/", tagInputBoxHook.focusPredicateInputBox,
