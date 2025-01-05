@@ -33,6 +33,7 @@ jobs:
       - uses: Swatinem/rust-cache@v2
         with:
           shared-key: ${{ matrix.platform }}-${{ matrix.args }}
+          workspaces: './src-tauri -> target'
 
       - name: Get node version
         id: node
