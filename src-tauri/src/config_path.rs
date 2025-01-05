@@ -1,6 +1,6 @@
 
 fn macos_config_file_path() -> Result<String, Box<dyn std::error::Error>> {
-    use homedir::unix::my_home;
+    use homedir::my_home;
     let Some(home_dir) = my_home()? else {
         return Err("Could not find home directory".into());
     };
@@ -15,8 +15,9 @@ fn macos_config_file_path() -> Result<String, Box<dyn std::error::Error>> {
     ))
 }
 
+// #[cfg(target_os="linux")]
 fn linux_config_file_path() -> Result<String, Box<dyn std::error::Error>> {
-    use homedir::unix::my_home;
+    use homedir::my_home;
     let Some(home_dir) = my_home()? else {
         return Err("Could not find home directory".into());
     };

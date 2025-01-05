@@ -2,7 +2,7 @@ use notify::{recommended_watcher, Event, RecursiveMode, Watcher};
 use std::{ path::Path, sync::mpsc, thread};
 
 pub(crate) struct FileChangeWatcher {
-    watcher: Option<notify::FsEventWatcher>,
+    watcher: Option<notify::RecommendedWatcher>,
     stop_tx: Option<mpsc::Sender<()>>,
 }
 
