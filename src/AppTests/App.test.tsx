@@ -2,12 +2,12 @@ import { beforeEach, describe, expect, test, vi } from "vitest";
 import { act, render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom/vitest";
 import userEvent from "@testing-library/user-event";
-import { startMockWindowVisibleController } from "./services/windowVisibleController.test";
-import { WindowVisibleController } from "./services/windowVisibleController";
-import { startMockDB } from "./services/database.test";
-import { DB } from "./services/database";
-import { App } from "./App";
-import { DEFAULT_CONFIG } from "./providers/configProvider";
+import { startMockWindowVisibleController } from "../services/windowVisibleController.test";
+import { WindowVisibleController } from "../services/windowVisibleController";
+import { startMockDB } from "../services/database.test";
+import { DB } from "../services/database";
+import { App } from "../App";
+import { DEFAULT_CONFIG } from "../providers/configProvider";
 
 vi.mock("@tauri-apps/api/event", () => ({ listen: vi.fn() }));
 vi.mock("@tauri-apps/api/window", () => ({
@@ -30,6 +30,12 @@ vi.mock("@tauri-apps/api/core", () => ({
         }
     }),
 }));
+
+vi.mock("@tauri-apps/plugin-clipboard-manager",() => ({
+    readText: vi.fn(() => {
+        return ""
+    })
+}))
 
 describe("App.SearchBookmark", () => {
     beforeEach(async () => {
