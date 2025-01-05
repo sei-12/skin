@@ -2,11 +2,11 @@ import { useCallback, useEffect, useRef } from "react";
 import type { FindTagMethod } from "../components/SuggestionWindow";
 import { useNavigate } from "react-router-dom";
 import { invoke } from "@tauri-apps/api/core";
-import { HOTKEY_SCOPES, useAppHotkey } from "../lib/hotkey";
+import { HOTKEY_SCOPES, useAppHotkey } from "./hotkey";
 import { useHotkeys } from "react-hotkeys-hook";
 import { useTagInputBox } from "./TagInputBox";
-import { findTagMethod } from "../lib/findTagMethod";
-import { DB } from "../lib/database";
+import { findTagMethod } from "../services/findTagMethod";
+import { DB } from "../services/database";
 
 function useCreateNewBookmark(
     onClickDone: () => void,
@@ -40,7 +40,8 @@ function useCreateNewBookmark(
         onChangeUrl(url);
     };
 
-    const getInputData = () => {
+
+    const getInputData = useCallback(() => {
         let title = ""
         let url = ""
         let desc = ""
@@ -61,7 +62,13 @@ function useCreateNewBookmark(
             url,
             tags: tagInputBoxHook.inputedTags.map((e) => e.text),
         };
-    };
+    }, [tagInputBoxHook.inputedTags]);
+
+    const onKeyDownBackspace = useCallback(() => {
+        const hasFocus = tagInputBoxHook.inputBoxRef.current == document.activeElement
+        if (!hasFocus) { return }
+        tagInputBoxHook.popInputedTag()
+    }, [tagInputBoxHook])
 
     const clearData = () => {
         if (titleRef.current === null) {
@@ -92,6 +99,7 @@ function useCreateNewBookmark(
             onChangeUrl,
         },
         tagInputBoxHook,
+        onKeyDownBackspace,
         setContent,
         getInputData,
         clearData,
@@ -126,7 +134,6 @@ export function useCreateNewBookmarkPage() {
 
     // // TODO: 別のファイルに切り出してテストも書く
     const onChangeUrlInputBox = async (url: string) => {
-        console.log("onChangeUrl!!");
         const content = (await invoke("fetch_website_content", { url })) as {
             title: string;
             desc: string;
@@ -151,7 +158,7 @@ export function useCreateNewBookmarkPage() {
     };
 
     // todo rename
-    const onKeyDownSpace = useCallback(async() => {
+    const onKeyDownSpace = useCallback(async () => {
         const inputBox =
             createNewBookmarkHook.tagInputBoxHook.inputBoxRef.current;
         if (inputBox === null) {
@@ -175,7 +182,7 @@ export function useCreateNewBookmarkPage() {
         });
         createNewBookmarkHook.tagInputBoxHook.suggestionWindowHook.close();
         inputBox.value = "";
-    },[]) 
+    }, [])
 
     const createNewBookmarkHook = useCreateNewBookmark(
         onClickCreateDone,
@@ -207,7 +214,6 @@ export function useCreateNewBookmarkPage() {
             preventDefault: true,
             enableOnFormTags: true,
         },
-        []
     );
 
     useHotkeys(
@@ -218,7 +224,6 @@ export function useCreateNewBookmarkPage() {
             preventDefault: true,
             enableOnFormTags: true,
         },
-        [createNewBookmarkHook]
     );
 
     useHotkeys(
@@ -233,9 +238,8 @@ export function useCreateNewBookmarkPage() {
 
     useHotkeys(
         "Backspace",
-        createNewBookmarkHook.tagInputBoxHook.popInputedTag,
+        createNewBookmarkHook.onKeyDownBackspace,
         { scopes: [HOTKEY_SCOPES.CREATE_NEW_BOOKMARK], enableOnFormTags: true },
-        []
     );
 
 

@@ -3,12 +3,12 @@ import { act, render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom/vitest";
 import { HotkeysProvider } from "react-hotkeys-hook";
 import userEvent from "@testing-library/user-event";
-import { HOTKEY_SCOPES } from "../lib/hotkey";
+import { HOTKEY_SCOPES } from "./hotkey";
 import { SearchBookmarkPage } from "../pages/pages";
-import { startMockWindowVisibleController } from "../lib/windowVisibleController.test";
-import { WindowVisibleController } from "../lib/windowVisibleController";
-import { startMockDB } from "../lib/database.test";
-import { DB } from "../lib/database";
+import { startMockWindowVisibleController } from "../services/windowVisibleController.test";
+import { WindowVisibleController } from "../services/windowVisibleController";
+import { startMockDB } from "../services/database.test";
+import { DB } from "../services/database";
 
 vi.mock("@tauri-apps/api/event", () => ({ listen: vi.fn() }));
 vi.mock("@tauri-apps/api/window", () => ({

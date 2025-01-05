@@ -6,7 +6,7 @@ import { render, renderHook, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { useTagInputBox } from "./TagInputBox";
 import { act } from "react";
-import { startMockDB } from "../lib/database.test";
+import { startMockDB } from "../services/database.test";
 
 const DEFALT_TAGS: string[] = [
     "hello", "helloworld", "foo", "abcde"

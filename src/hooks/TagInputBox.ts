@@ -3,7 +3,7 @@ import type { TagInputBoxProps } from "../components/TagInputBox";
 import { useSuggestionWindow } from "../hooks/SuggestionWindow";
 
 import { useCallback, useRef, useState } from "react";
-import { DB } from "../lib/database";
+import { DB } from "../services/database";
 import { useConfig } from "../providers/configProvider";
 
 export function useTagInputBox(findTagMethod: FindTagMethod) {

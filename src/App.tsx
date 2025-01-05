@@ -1,11 +1,11 @@
 import { CssBaseline, ThemeProvider } from "@mui/material";
 import { HotkeysProvider } from "react-hotkeys-hook";
-import { HOTKEY_SCOPES } from "./lib/hotkey";
+import { HOTKEY_SCOPES } from "./hooks/hotkey";
 import { CustomWindow } from "./components/CustomWindow";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { CreateNewBookmarkPage, SearchBookmarkPage } from "./pages/pages";
 import { ConfigProvider } from "./providers/configProvider";
-import { muiTheme } from "./lib/theme";
+import { muiTheme } from "./vanilla/theme";
 
 export function App() {
     return (

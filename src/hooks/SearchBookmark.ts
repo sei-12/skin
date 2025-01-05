@@ -1,14 +1,14 @@
 import { useCallback, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { HOTKEY_SCOPES, useAppHotkey } from "../lib/hotkey";
+import { HOTKEY_SCOPES, useAppHotkey } from "./hotkey";
 import { useHotkeys } from "react-hotkeys-hook";
-import { WindowVisibleController } from "../lib/windowVisibleController";
+import { WindowVisibleController } from "../services/windowVisibleController";
 import type { SearchBookmarkProps } from "../components/SearchBookmark";
 import { useBookmarkList } from "./BookmarkList";
 import { useTagInputBox } from "./TagInputBox";
-import { findTagMethod } from "../lib/findTagMethod";
+import { findTagMethod } from "../services/findTagMethod";
 import { invoke } from "@tauri-apps/api/core";
-import { DB } from "../lib/database";
+import { DB } from "../services/database";
 
 
 export function useSearchBookmarkPage(): SearchBookmarkProps {
@@ -132,7 +132,6 @@ export function useSearchBookmarkPage(): SearchBookmarkProps {
             preventDefault: true,
             enableOnFormTags: true,
         },
-        []
     );
 
     useHotkeys("/", tagInputBoxHook.focusPredicateInputBox,
