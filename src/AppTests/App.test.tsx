@@ -285,7 +285,60 @@ describe("App.SearchBookmark", () => {
         expect(() => screen.getAllByTestId("taginputbox-tagitem")).toThrow();
     });
 
-    // create-new-bookmark
+    test("test9", async () => {
+        // https://stackoverflow.com/questions/53271193/typeerror-scrollintoview-is-not-a-function
+        window.HTMLElement.prototype.scrollIntoView = vi.fn();
+        const user = userEvent.setup();
+        const inputBox = screen.getByPlaceholderText("/");
+
+        expect(DB.findBookmark).toBeCalledTimes(1);
+        await user.type(inputBox, "t");
+        expect(screen.getAllByTestId("suggestion-item").length).toBe(8);
+        expect(DB.findTag).toBeCalledTimes(1);
+
+        await user.keyboard("{ArrowDown}");
+        await user.type(inputBox, "{Enter}");
+        expect(DB.findBookmark).toBeCalledTimes(2);
+        expect(screen.getAllByTestId("bkmkitem").length).toBe(3);
+        expect(screen.getAllByText("javascript").length).toBe(1);
+        expect(screen.getAllByText("#javascript").length).toBe(3);
+        await user.type(inputBox, "{Backspace}");
+
+        await user.type(inputBox, "t");
+        await user.keyboard("{ArrowDown}");
+        await user.type(inputBox, "{Enter}");
+        expect(screen.getAllByText("javascript").length).toBe(1);
+        await user.type(inputBox, "{Backspace}");
+
+        await user.type(inputBox, "t");
+        await user.keyboard("{ArrowDown}");
+        await user.keyboard("{ArrowDown}");
+        await user.type(inputBox, "{Enter}");
+        expect(screen.getAllByText("python").length).toBe(1);
+        await user.type(inputBox, "{Backspace}");
+
+        await user.type(inputBox, "t");
+        await user.keyboard("{ArrowDown}");
+        await user.keyboard("{ArrowDown}");
+        await user.keyboard("{ArrowDown}");
+        await user.keyboard("{ArrowDown}");
+        await user.keyboard("{ArrowDown}");
+        await user.keyboard("{ArrowDown}");
+        await user.keyboard("{ArrowDown}");
+        await user.keyboard("{ArrowDown}");
+        await user.keyboard("{ArrowDown}");
+        await user.keyboard("{ArrowDown}");
+        await user.type(inputBox, "{Enter}");
+        expect(screen.getAllByText("python").length).toBe(1);
+        await user.type(inputBox, "{Backspace}");
+
+        await user.type(inputBox, "t");
+        await user.keyboard("{ArrowUp}");
+        await user.type(inputBox, "{Enter}");
+        expect(screen.getAllByText("gist").length).toBe(1);
+        await user.type(inputBox, "{Backspace}");
+        expect(window.HTMLElement.prototype.scrollIntoView).toBeCalledTimes(15)
+    });
 });
 
 describe("App.CreateNewBookmark", () => {
