@@ -1,14 +1,13 @@
 import { beforeEach, describe, expect, test, vi } from "vitest";
 import { act, render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom/vitest";
-import { HotkeysProvider } from "react-hotkeys-hook";
 import userEvent from "@testing-library/user-event";
-import { HOTKEY_SCOPES } from "../lib/hotkey";
-import { SearchBookmarkPage } from "../pages/pages";
-import { startMockWindowVisibleController } from "../lib/windowVisibleController.test";
-import { WindowVisibleController } from "../lib/windowVisibleController";
-import { startMockDB } from "../lib/database.test";
-import { DB } from "../lib/database";
+import { startMockWindowVisibleController } from "./lib/windowVisibleController.test";
+import { WindowVisibleController } from "./lib/windowVisibleController";
+import { startMockDB } from "./lib/database.test";
+import { DB } from "./lib/database";
+import { App } from "./App";
+import { DEFAULT_CONFIG } from "./providers/configProvider";
 
 vi.mock("@tauri-apps/api/event", () => ({ listen: vi.fn() }));
 vi.mock("@tauri-apps/api/window", () => ({
@@ -17,25 +16,23 @@ vi.mock("@tauri-apps/api/window", () => ({
     })),
 }));
 vi.mock("@tauri-apps/plugin-global-shortcut", () => ({ register: vi.fn() }));
-vi.mock("@tauri-apps/api/core", () => ({ invoke: vi.fn() }));
-vi.mock("react-router-dom", () => ({
-    useNavigate: () => vi.fn((a) => console.log(a)),
+
+vi.mock("@tauri-apps/api/core", () => ({
+    invoke: vi.fn(async (cmd: string) => {
+        if (cmd === "get_config") {
+            return DEFAULT_CONFIG;
+        }
+    }),
 }));
 
-describe("SearchBookmark", () => {
+describe("App", () => {
     beforeEach(async () => {
         vi.clearAllMocks();
         startMockWindowVisibleController();
         startMockDB();
 
         await act(async () => {
-            render(
-                <HotkeysProvider
-                    initiallyActiveScopes={[HOTKEY_SCOPES.SEARCH_BOOKMARK]}
-                >
-                    <SearchBookmarkPage></SearchBookmarkPage>
-                </HotkeysProvider>
-            );
+            render(<App></App>);
         });
     });
 
@@ -106,9 +103,8 @@ describe("SearchBookmark", () => {
     });
 
     test("test5", async () => {
-
         // https://stackoverflow.com/questions/53271193/typeerror-scrollintoview-is-not-a-function
-        window.HTMLElement.prototype.scrollIntoView = function() {};
+        window.HTMLElement.prototype.scrollIntoView = function () {};
 
         const user = userEvent.setup();
         const inputBox = screen.getByPlaceholderText("/");
@@ -117,55 +113,51 @@ describe("SearchBookmark", () => {
         await user.type(inputBox, "t");
         expect(screen.getAllByTestId("suggestion-item").length).toBe(8);
         expect(DB.findTag).toBeCalledTimes(1);
-        
-        await user.keyboard("{Control>}N{/Control}")
+
+        await user.keyboard("{Control>}N{/Control}");
         await user.type(inputBox, "{Enter}");
         expect(DB.findBookmark).toBeCalledTimes(2);
         expect(screen.getAllByTestId("bkmkitem").length).toBe(3);
         expect(screen.getAllByText("javascript").length).toBe(1);
         expect(screen.getAllByText("#javascript").length).toBe(3);
         await user.type(inputBox, "{Backspace}");
-        
+
         await user.type(inputBox, "t");
-        await user.keyboard("{Control>}N{/Control}")
+        await user.keyboard("{Control>}N{/Control}");
         await user.type(inputBox, "{Enter}");
         expect(screen.getAllByText("javascript").length).toBe(1);
         await user.type(inputBox, "{Backspace}");
-        
-        
-        await user.type(inputBox, "t");
-        await user.keyboard("{Control>}N{/Control}")
-        await user.keyboard("{Control>}N{/Control}")
-        await user.type(inputBox, "{Enter}");
-        expect(screen.getAllByText("python").length).toBe(1);
-        await user.type(inputBox, "{Backspace}");
-        
-        
-        await user.type(inputBox, "t");
-        await user.keyboard("{Control>}N{/Control}")
-        await user.keyboard("{Control>}N{/Control}")
-        await user.keyboard("{Control>}N{/Control}")
-        await user.keyboard("{Control>}N{/Control}")
-        await user.keyboard("{Control>}N{/Control}")
-        await user.keyboard("{Control>}N{/Control}")
-        await user.keyboard("{Control>}N{/Control}")
-        await user.keyboard("{Control>}N{/Control}")
-        await user.keyboard("{Control>}N{/Control}")
-        await user.keyboard("{Control>}N{/Control}")
-        await user.type(inputBox, "{Enter}");
-        expect(screen.getAllByText("python").length).toBe(1);
-        await user.type(inputBox, "{Backspace}");
-        
 
         await user.type(inputBox, "t");
-        await user.keyboard("{Control>}P{/Control}")
+        await user.keyboard("{Control>}N{/Control}");
+        await user.keyboard("{Control>}N{/Control}");
+        await user.type(inputBox, "{Enter}");
+        expect(screen.getAllByText("python").length).toBe(1);
+        await user.type(inputBox, "{Backspace}");
+
+        await user.type(inputBox, "t");
+        await user.keyboard("{Control>}N{/Control}");
+        await user.keyboard("{Control>}N{/Control}");
+        await user.keyboard("{Control>}N{/Control}");
+        await user.keyboard("{Control>}N{/Control}");
+        await user.keyboard("{Control>}N{/Control}");
+        await user.keyboard("{Control>}N{/Control}");
+        await user.keyboard("{Control>}N{/Control}");
+        await user.keyboard("{Control>}N{/Control}");
+        await user.keyboard("{Control>}N{/Control}");
+        await user.keyboard("{Control>}N{/Control}");
+        await user.type(inputBox, "{Enter}");
+        expect(screen.getAllByText("python").length).toBe(1);
+        await user.type(inputBox, "{Backspace}");
+
+        await user.type(inputBox, "t");
+        await user.keyboard("{Control>}P{/Control}");
         await user.type(inputBox, "{Enter}");
         expect(screen.getAllByText("gist").length).toBe(1);
         await user.type(inputBox, "{Backspace}");
-        
     });
 
-    test("test6", async () => {
+    test("test6 Backspace時に1個ずつタグを削除していく", async () => {
         const user = userEvent.setup();
         const inputBox = screen.getByPlaceholderText("/");
 
@@ -191,6 +183,93 @@ describe("SearchBookmark", () => {
         await user.type(inputBox, "{Backspace}");
         expect(screen.getAllByTestId("taginputbox-tagitem").length).toBe(1);
         await user.type(inputBox, "{Backspace}");
+        expect(() => screen.getAllByTestId("taginputbox-tagitem")).toThrow();
+    });
+
+    test("test7 Backspace時に1個ずつタグを削除していく(2)", async () => {
+        const user = userEvent.setup();
+        const inputBox = screen.getByPlaceholderText("/");
+
+        expect(DB.findBookmark).toBeCalledTimes(1);
+
+        await user.type(inputBox, "y");
+        expect(DB.findTag).toBeCalledTimes(1);
+        await user.type(inputBox, "{Enter}");
+        expect(screen.getAllByTestId("taginputbox-tagitem").length).toBe(1);
+
+        await user.type(inputBox, "y");
+        expect(DB.findTag).toBeCalledTimes(2);
+        await user.type(inputBox, "{Enter}");
+        expect(screen.getAllByTestId("taginputbox-tagitem").length).toBe(2);
+
+        await user.type(inputBox, "y");
+        expect(DB.findTag).toBeCalledTimes(3);
+        await user.type(inputBox, "{Enter}");
+        expect(screen.getAllByTestId("taginputbox-tagitem").length).toBe(3);
+
+        await user.type(inputBox, "t");
+        expect(DB.findTag).toBeCalledTimes(4);
+        await user.type(inputBox, "{Enter}");
+        expect(screen.getAllByTestId("taginputbox-tagitem").length).toBe(4);
+
+        await user.type(inputBox, "a");
+        expect(DB.findTag).toBeCalledTimes(5);
+        await user.type(inputBox, "{Enter}");
+        expect(screen.getAllByTestId("taginputbox-tagitem").length).toBe(5);
+
+        await user.type(inputBox, "{Backspace}");
+        expect(screen.getAllByTestId("taginputbox-tagitem").length).toBe(4);
+        await user.type(inputBox, "{Backspace}");
+        expect(screen.getAllByTestId("taginputbox-tagitem").length).toBe(3);
+        await user.type(inputBox, "{Backspace}");
+        expect(screen.getAllByTestId("taginputbox-tagitem").length).toBe(2);
+        await user.type(inputBox, "{Backspace}");
+        expect(screen.getAllByTestId("taginputbox-tagitem").length).toBe(1);
+        await user.type(inputBox, "{Backspace}");
+        expect(() => screen.getAllByTestId("taginputbox-tagitem")).toThrow();
+    });
+
+    test("test8 Backspace時に1個ずつタグを削除していく(3)", async () => {
+        // type(inputBox) -> keyboard()
+        const user = userEvent.setup();
+        const inputBox = screen.getByPlaceholderText("/");
+
+        expect(DB.findBookmark).toBeCalledTimes(1);
+
+        await user.type(inputBox, "y");
+        expect(DB.findTag).toBeCalledTimes(1);
+        await user.type(inputBox, "{Enter}");
+        expect(screen.getAllByTestId("taginputbox-tagitem").length).toBe(1);
+
+        await user.type(inputBox, "y");
+        expect(DB.findTag).toBeCalledTimes(2);
+        await user.type(inputBox, "{Enter}");
+        expect(screen.getAllByTestId("taginputbox-tagitem").length).toBe(2);
+
+        await user.type(inputBox, "y");
+        expect(DB.findTag).toBeCalledTimes(3);
+        await user.type(inputBox, "{Enter}");
+        expect(screen.getAllByTestId("taginputbox-tagitem").length).toBe(3);
+
+        await user.type(inputBox, "t");
+        expect(DB.findTag).toBeCalledTimes(4);
+        await user.type(inputBox, "{Enter}");
+        expect(screen.getAllByTestId("taginputbox-tagitem").length).toBe(4);
+
+        await user.type(inputBox, "a");
+        expect(DB.findTag).toBeCalledTimes(5);
+        await user.type(inputBox, "{Enter}");
+        expect(screen.getAllByTestId("taginputbox-tagitem").length).toBe(5);
+
+        await user.keyboard("{Backspace}")
+        expect(screen.getAllByTestId("taginputbox-tagitem").length).toBe(4);
+        await user.keyboard("{Backspace}")
+        expect(screen.getAllByTestId("taginputbox-tagitem").length).toBe(3);
+        await user.keyboard("{Backspace}")
+        expect(screen.getAllByTestId("taginputbox-tagitem").length).toBe(2);
+        await user.keyboard("{Backspace}")
+        expect(screen.getAllByTestId("taginputbox-tagitem").length).toBe(1);
+        await user.keyboard("{Backspace}")
         expect(() => screen.getAllByTestId("taginputbox-tagitem")).toThrow();
     });
 });

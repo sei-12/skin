@@ -1,10 +1,13 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { FindTagMethod, SuggestionWindowProps } from "../components/SuggestionWindow";
+import { useConfig } from "../providers/configProvider";
 
 export function useSuggestionWindow(
     findTagMethod: FindTagMethod,
     getInputedTags: () => string[]
 ) {
+    const { colorTheme } = useConfig();
+    
     const [items, setItems] = useState<string[]>([]);
     const [predicate, setPredicate] = useState("");
     const [focusIndex, setFocusIndex] = useState(0);
@@ -67,6 +70,7 @@ export function useSuggestionWindow(
         predicate,
         focusIndex,
         itemRefs,
+        colorTheme,
     };
 
     return {

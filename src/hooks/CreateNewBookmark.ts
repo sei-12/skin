@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import type { FindTagMethod } from "../components/SuggestionWindow";
 import { useNavigate } from "react-router-dom";
 import { invoke } from "@tauri-apps/api/core";
@@ -150,6 +150,33 @@ export function useCreateNewBookmarkPage() {
         createNewBookmarkHook.setContent(title, desc);
     };
 
+    // todo rename
+    const onKeyDownSpace = useCallback(async() => {
+        const inputBox =
+            createNewBookmarkHook.tagInputBoxHook.inputBoxRef.current;
+        if (inputBox === null) {
+            return;
+        }
+        if (inputBox.value === "") {
+            return;
+        }
+        const item = inputBox.value;
+
+        const inputedTags = createNewBookmarkHook.getInputData().tags
+
+        const has = inputedTags.find((t) => t == item) !== undefined;
+        if (has) {
+            return;
+        }
+
+        const exists = await DB.isExistsTag(item);
+        createNewBookmarkHook.tagInputBoxHook.setInputedTags((ary) => {
+            return [...ary, { text: item, exists }];
+        });
+        createNewBookmarkHook.tagInputBoxHook.suggestionWindowHook.close();
+        inputBox.value = "";
+    },[]) 
+
     const createNewBookmarkHook = useCreateNewBookmark(
         onClickCreateDone,
         onClickCreateCancel,
@@ -174,9 +201,7 @@ export function useCreateNewBookmarkPage() {
 
     useHotkeys(
         "Escape",
-        () => {
-            onClickCreateCancel();
-        },
+        onClickCreateCancel,
         {
             scopes: [HOTKEY_SCOPES.CREATE_NEW_BOOKMARK],
             preventDefault: true,
@@ -187,9 +212,7 @@ export function useCreateNewBookmarkPage() {
 
     useHotkeys(
         "ctrl+Enter",
-        () => {
-            onClickCreateDone();
-        },
+        onClickCreateDone,
         {
             scopes: [HOTKEY_SCOPES.CREATE_NEW_BOOKMARK],
             preventDefault: true,
@@ -200,79 +223,25 @@ export function useCreateNewBookmarkPage() {
 
     useHotkeys(
         "Enter",
-        async () => {
-            const inputBox =
-                createNewBookmarkHook.tagInputBoxHook.inputBoxRef.current;
-            const item =
-                createNewBookmarkHook.tagInputBoxHook.suggestionWindowHook.getFocusedItem();
-            if (item === undefined) {
-                return;
-            }
-            if (inputBox === null) {
-                return;
-            }
-            inputBox.value = "";
-            const exists = await DB.isExistsTag(item);
-            createNewBookmarkHook.tagInputBoxHook.setInputedTags((ary) => {
-                return [...ary, { text: item, exists: exists }];
-            });
-            createNewBookmarkHook.tagInputBoxHook.suggestionWindowHook.close();
-        },
+        createNewBookmarkHook.tagInputBoxHook.addFocusedSuggestionItem,
         {
             scopes: [HOTKEY_SCOPES.CREATE_NEW_BOOKMARK_SUGGESTION_WINDOW],
             preventDefault: true,
             enableOnFormTags: true,
         },
-        [createNewBookmarkHook.tagInputBoxHook]
     );
 
     useHotkeys(
         "Backspace",
-        () => {
-            const inputBox =
-                createNewBookmarkHook.tagInputBoxHook.inputBoxRef.current;
-            if (inputBox === null) {
-                return;
-            }
-            if (inputBox.value !== "") {
-                return;
-            }
-            createNewBookmarkHook.tagInputBoxHook.setInputedTags((ary) => {
-                ary.pop();
-                return [...ary];
-            });
-        },
+        createNewBookmarkHook.tagInputBoxHook.popInputedTag,
         { scopes: [HOTKEY_SCOPES.CREATE_NEW_BOOKMARK], enableOnFormTags: true },
         []
     );
 
+
     useHotkeys(
         "Space",
-        async () => {
-            const inputBox =
-                createNewBookmarkHook.tagInputBoxHook.inputBoxRef.current;
-            if (inputBox === null) {
-                return;
-            }
-            if (inputBox.value === "") {
-                return;
-            }
-            const item = inputBox.value;
-
-            const inputedTags = createNewBookmarkHook.getInputData().tags
-
-            const has = inputedTags.find((t) => t == item) !== undefined;
-            if (has) {
-                return;
-            }
-
-            const exists = await DB.isExistsTag(item);
-            createNewBookmarkHook.tagInputBoxHook.setInputedTags((ary) => {
-                return [...ary, { text: item, exists }];
-            });
-            createNewBookmarkHook.tagInputBoxHook.suggestionWindowHook.close();
-            inputBox.value = "";
-        },
+        onKeyDownSpace,
         {
             scopes: [
                 HOTKEY_SCOPES.CREATE_NEW_BOOKMARK,

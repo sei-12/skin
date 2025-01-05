@@ -6,6 +6,7 @@ import { render, renderHook, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { useTagInputBox } from "./TagInputBox";
 import { act } from "react";
+import { startMockDB } from "../lib/database.test";
 
 const DEFALT_TAGS: string[] = [
     "hello", "helloworld", "foo", "abcde"
@@ -30,6 +31,7 @@ const makeMockedFindTagMethod = (tags?: string[]) => {
 
 test("useTagInputBox", async () => {
     const mocked_findTagMethod = makeMockedFindTagMethod()
+    startMockDB()
     
     const hook = renderHook(() => useTagInputBox(mocked_findTagMethod))
     render(<input

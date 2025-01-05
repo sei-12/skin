@@ -25,7 +25,25 @@ jobs:
 
       - name: install Rust stable
         uses: dtolnay/rust-toolchain@stable
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          shared-key: ${{ matrix.platform }}-${{ matrix.args }}
+          workspaces: './src-tauri -> target'
       
+      - name: Get node version
+        id: node
+        run: |
+          echo "version=$(node -v)" >> $GITHUB_OUTPUT
+
+      - name: Get node_modules cache
+        uses: actions/cache@v3.0.2
+        id: node_modules
+        with:
+          path: |
+            **/node_modules
+          key: ${{ matrix.platform }}-${{ matrix.args }}-node_modules-${{ hashFiles('**/yarn.lock') }}-${{ steps.node.outputs.version }}
+
       # Mac
       - name: Import Apple Developer Certificate
         env:

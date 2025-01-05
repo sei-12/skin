@@ -8,10 +8,10 @@ import {
     Stack,
     Typography,
 } from "@mui/material";
-import { globalColorTheme as GCT } from "../lib/theme";
 
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
+import type { ColorTheme } from "../../src-tauri/bindings/export/ColorTheme";
 
 export type BookmarkItemProps = {
     data: IData.Bookmark;
@@ -19,18 +19,19 @@ export type BookmarkItemProps = {
     onClickRemove: (key: number) => void;
     onClickEdit: (key: number) => void;
     focus: boolean;
+    colorTheme: ColorTheme
 };
 
 export const BookmarkItem = forwardRef<HTMLDivElement, BookmarkItemProps>(
-    (props, ref) => {
+    (p, ref) => {
         return (
             <div ref={ref} data-testid="bkmkitem">
                 <Card
                     variant="elevation"
                     sx={{
-                        bgcolor: props.focus
-                            ? GCT.bookmarkItem.focusBg
-                            : GCT.bookmarkItem.bg,
+                        bgcolor: p.focus
+                            ? p.colorTheme.bookmarkItem.focusBg
+                            : p.colorTheme.bookmarkItem.bg,
                         borderRadius: 2.5,
                         boxShadow: "1px 1px 5px 0 rgba(0,0,0,0.1)",
                         height: 135, // このやり方は良くないかもだけど、一旦問題はないし、他の方法が見当たらなかった
@@ -40,7 +41,7 @@ export const BookmarkItem = forwardRef<HTMLDivElement, BookmarkItemProps>(
                         <Typography
                             variant="h5"
                             sx={{
-                                color: GCT.bookmarkItem.title,
+                                color: p.colorTheme.bookmarkItem.title,
                                 fontWeight: "bold",
 
                                 overflow: "hidden",
@@ -51,20 +52,20 @@ export const BookmarkItem = forwardRef<HTMLDivElement, BookmarkItemProps>(
                                 WebkitBoxOrient: "vertical",
                             }}
                         >
-                            {props.data.title}
+                            {p.data.title}
                         </Typography>
                         <Stack
                             spacing={0.7}
                             direction={"row"}
                             sx={{ overflow: "hidden" }}
                         >
-                            {props.data.tags.map((t, i) => (
-                                <TagItem key={i} text={t}></TagItem>
+                            {p.data.tags.map((t, i) => (
+                                <TagItem key={i} text={t} colorTheme={p.colorTheme}></TagItem>
                             ))}
                         </Stack>
                         <Typography
                             sx={{
-                                color: GCT.bookmarkItem.desc,
+                                color: p.colorTheme.bookmarkItem.desc,
                                 fontWeight: 100,
 
                                 overflow: "hidden",
@@ -75,7 +76,7 @@ export const BookmarkItem = forwardRef<HTMLDivElement, BookmarkItemProps>(
                                 WebkitBoxOrient: "vertical",
                             }}
                         >
-                            {props.data.desc}
+                            {p.data.desc}
                         </Typography>
 
                         <Box
@@ -104,7 +105,7 @@ export const BookmarkItem = forwardRef<HTMLDivElement, BookmarkItemProps>(
                                 <Button
                                     variant="contained"
                                     onClick={() =>
-                                        props.onClickRemove(props.data.id)
+                                        p.onClickRemove(p.data.id)
                                     }
                                 >
                                     <DeleteIcon></DeleteIcon>
@@ -112,7 +113,7 @@ export const BookmarkItem = forwardRef<HTMLDivElement, BookmarkItemProps>(
                                 <Button
                                     variant="contained"
                                     onClick={() =>
-                                        props.onClickEdit(props.data.id)
+                                        p.onClickEdit(p.data.id)
                                     }
                                 >
                                     <EditIcon></EditIcon>
@@ -126,15 +127,15 @@ export const BookmarkItem = forwardRef<HTMLDivElement, BookmarkItemProps>(
     }
 );
 
-function TagItem(props: { text: string }) {
+function TagItem(p: { text: string , colorTheme: ColorTheme}) {
     return (
         <Typography
             sx={{
-                color: GCT.bookmarkItem.tag,
+                color: p.colorTheme.bookmarkItem.tag,
                 textWrap: "nowrap",
             }}
         >
-            #{props.text}
+            #{p.text}
         </Typography>
     );
 }

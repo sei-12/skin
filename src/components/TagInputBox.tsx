@@ -1,7 +1,7 @@
 import { Box, TextField, Typography } from "@mui/material";
 import type { SuggestionWindowProps } from "./SuggestionWindow";
 import { SuggestionWindow } from "./SuggestionWindow";
-import { globalColorTheme as GCT } from "../lib/theme";
+import type { ColorTheme } from "../../src-tauri/bindings/export/ColorTheme";
 
 const ITEM_HEIGHT = 35;
 const TEXT_FIELD_WIDTH = 200;
@@ -14,6 +14,7 @@ export type TagInputBoxProps = {
         exists: boolean;
     }[];
     onChangePredicateInputBox: ( targetVal: string) => Promise<void>;
+    colorTheme: ColorTheme
 };
 
 export const TagInputBox = (p: TagInputBoxProps) => {
@@ -27,21 +28,33 @@ export const TagInputBox = (p: TagInputBoxProps) => {
                 flexWrap: "wrap",
                 gap: 1,
                 borderRadius: 2,
-                bgcolor: GCT.predicateInputBox.bg,
+                bgcolor: p.colorTheme.predicateInputBox.bg,
                 boxShadow: "inset 0px 0px 5px 0px rgba(0,0,0,0.2)",
             }}
         >
             {p.inputedTags.map((tag, i) => {
-                return <TagItem key={i} {...tag}></TagItem>;
+                return <TagItem key={i} {...tag} colorTheme={p.colorTheme}></TagItem>;
             })}
             <Box
                 sx={{
                     height: ITEM_HEIGHT,
                     width: TEXT_FIELD_WIDTH,
                     position: "relative",
+                    // color: p.colorTheme.predicateInputBox.textColor,
+                    
+                    color: "white"
                 }}
             >
                 <TextField
+                    slotProps={{
+                        input: {
+                            style: {
+                                color: p.colorTheme.predicateInputBox.textColor,
+                                caretColor: p.colorTheme.predicateInputBox.caretColor,
+                            }
+                        }
+                    }}
+
                     data-testid="taginputbox-predicateinputbox"
                     onChange={(e) => {
                         p.onChangePredicateInputBox(e.target.value);
@@ -58,6 +71,9 @@ export const TagInputBox = (p: TagInputBoxProps) => {
                         position: "absolute",
                         // https://github.com/mui/material-ui/issues/30379
                         "& fieldset": { border: "none" },
+                        "::placeholder": {
+                            color: p.colorTheme.predicateInputBox.placeholder,
+                        }
                     }}
                     placeholder="/"
                 ></TextField>
@@ -67,12 +83,13 @@ export const TagInputBox = (p: TagInputBoxProps) => {
     );
 };
 
-function TagItem(p: { text: string; exists: boolean }) {
+function TagItem(p: { text: string; exists: boolean, colorTheme: ColorTheme }) {
     return (
         <Box
+            data-testid="taginputbox-tagitem"
             sx={{
-                bgcolor: GCT.tagItem.bg,
-                color: p.exists ? GCT.tagItem.exists : GCT.tagItem.notExists,
+                bgcolor: p.colorTheme.tagItem.bg,
+                color: p.exists ? p.colorTheme.tagItem.exists : p.colorTheme.tagItem.notExists,
                 display: "flex",
                 height: ITEM_HEIGHT,
                 minWidth: 60,
@@ -82,7 +99,7 @@ function TagItem(p: { text: string; exists: boolean }) {
                 borderRadius: 2,
                 borderStyle: "solid",
                 borderWidth: 2,
-                borderColor: GCT.tagItem.bordercolor,
+                borderColor: p.colorTheme.tagItem.borderColor,
             }}
         >
             <Typography
