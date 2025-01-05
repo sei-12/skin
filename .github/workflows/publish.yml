@@ -25,6 +25,10 @@ jobs:
 
       - name: install Rust stable
         uses: dtolnay/rust-toolchain@stable
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          shared-key: ${{ matrix.platform }}
       
       - name: Get node version
         id: node
@@ -37,10 +41,7 @@ jobs:
         with:
           path: |
             **/node_modules
-          # Adding node version as cache key
-          key: ${{ runner.os }}-node_modules-${{ hashFiles('**/yarn.lock') }}-${{ steps.node.outputs.version }}
-
-      - uses: Swatinem/rust-cache@v2
+          key: ${{ matrix.platform }}-node_modules-${{ hashFiles('**/yarn.lock') }}-${{ steps.node.outputs.version }}
 
       # Mac
       - name: Import Apple Developer Certificate

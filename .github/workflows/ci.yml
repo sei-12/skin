@@ -26,11 +26,13 @@ jobs:
         with:
           node-version: lts/*
 
-      - name: install Rust stable
-        uses: dtolnay/rust-toolchain@stable
+      - uses: dtolnay/rust-toolchain@stable
         with:
           # Those targets are only used on macos runners so it's in an `if` to slightly speed up windows and linux builds.
           targets: ${{ matrix.platform == 'macos-latest' && 'aarch64-apple-darwin,x86_64-apple-darwin' || '' }}
+      - uses: Swatinem/rust-cache@v2
+        with:
+          shared-key: ${{ matrix.platform }}
 
       - name: Get node version
         id: node
@@ -43,10 +45,8 @@ jobs:
         with:
           path: |
             **/node_modules
-          # Adding node version as cache key
-          key: ${{ runner.os }}-node_modules-${{ hashFiles('**/yarn.lock') }}-${{ steps.node.outputs.version }}
+          key: ${{ matrix.platform }}-node_modules-${{ hashFiles('**/yarn.lock') }}-${{ steps.node.outputs.version }}
 
-      - uses: Swatinem/rust-cache@v2
 
       - name: install frontend dependencies
         run: yarn --frozen-lockfile && yarn install --network-timeout 600000 # change this to npm, pnpm or bun depending on which one you use.
