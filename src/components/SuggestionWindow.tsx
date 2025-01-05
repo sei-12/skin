@@ -1,5 +1,5 @@
 import { Box, Typography } from "@mui/material";
-import { ZINDEX } from "../lib/zindex";
+import { ZINDEX } from "../vanilla/zindex";
 import { forwardRef } from "react";
 import type { ColorTheme } from "../../src-tauri/bindings/export/ColorTheme";
 

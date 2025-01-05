@@ -2,10 +2,10 @@ import { beforeEach, describe, expect, test, vi } from "vitest";
 import { act, render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom/vitest";
 import userEvent from "@testing-library/user-event";
-import { startMockWindowVisibleController } from "./lib/windowVisibleController.test";
-import { WindowVisibleController } from "./lib/windowVisibleController";
-import { startMockDB } from "./lib/database.test";
-import { DB } from "./lib/database";
+import { startMockWindowVisibleController } from "./services/windowVisibleController.test";
+import { WindowVisibleController } from "./services/windowVisibleController";
+import { startMockDB } from "./services/database.test";
+import { DB } from "./services/database";
 import { App } from "./App";
 import { DEFAULT_CONFIG } from "./providers/configProvider";
 

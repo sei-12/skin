@@ -5,7 +5,7 @@ import { CustomWindow } from "./components/CustomWindow";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { CreateNewBookmarkPage, SearchBookmarkPage } from "./pages/pages";
 import { ConfigProvider } from "./providers/configProvider";
-import { muiTheme } from "./lib/theme";
+import { muiTheme } from "./vanilla/theme";
 
 export function App() {
     return (

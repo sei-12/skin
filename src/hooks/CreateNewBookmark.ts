@@ -5,8 +5,8 @@ import { invoke } from "@tauri-apps/api/core";
 import { HOTKEY_SCOPES, useAppHotkey } from "./hotkey";
 import { useHotkeys } from "react-hotkeys-hook";
 import { useTagInputBox } from "./TagInputBox";
-import { findTagMethod } from "../lib/findTagMethod";
-import { DB } from "../lib/database";
+import { findTagMethod } from "../services/findTagMethod";
+import { DB } from "../services/database";
 
 function useCreateNewBookmark(
     onClickDone: () => void,
