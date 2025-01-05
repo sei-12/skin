@@ -32,7 +32,7 @@ jobs:
           targets: ${{ matrix.platform == 'macos-latest' && 'aarch64-apple-darwin,x86_64-apple-darwin' || '' }}
       - uses: Swatinem/rust-cache@v2
         with:
-          shared-key: ${{ matrix.platform }}
+          shared-key: ${{ matrix.platform }}-${{ matrix.args }}
 
       - name: Get node version
         id: node
@@ -45,7 +45,7 @@ jobs:
         with:
           path: |
             **/node_modules
-          key: ${{ matrix.platform }}-node_modules-${{ hashFiles('**/yarn.lock') }}-${{ steps.node.outputs.version }}
+          key: ${{ matrix.platform }}-${{ matrix.args }}-node_modules-${{ hashFiles('**/yarn.lock') }}-${{ steps.node.outputs.version }}
 
 
       - name: install frontend dependencies

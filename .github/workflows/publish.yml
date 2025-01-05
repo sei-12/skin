@@ -28,7 +28,7 @@ jobs:
 
       - uses: Swatinem/rust-cache@v2
         with:
-          shared-key: ${{ matrix.platform }}
+          shared-key: ${{ matrix.platform }}-${{ matrix.args }}
       
       - name: Get node version
         id: node
@@ -41,7 +41,7 @@ jobs:
         with:
           path: |
             **/node_modules
-          key: ${{ matrix.platform }}-node_modules-${{ hashFiles('**/yarn.lock') }}-${{ steps.node.outputs.version }}
+          key: ${{ matrix.platform }}-${{ matrix.args }}-node_modules-${{ hashFiles('**/yarn.lock') }}-${{ steps.node.outputs.version }}
 
       # Mac
       - name: Import Apple Developer Certificate
