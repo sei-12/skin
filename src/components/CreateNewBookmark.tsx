@@ -15,7 +15,7 @@ export type CreateNewBookmarkProps = {
 
 export function CreateNewBookmark(p: CreateNewBookmarkProps) {
     return (
-        <div>
+        <div data-testid="create-new-bookmark">
             <TextField
                 inputRef={p.urlRef}
                 sx={{ width: 0.8 }}

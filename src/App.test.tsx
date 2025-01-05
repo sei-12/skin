@@ -8,6 +8,7 @@ import { startMockDB } from "./lib/database.test";
 import { DB } from "./lib/database";
 import { App } from "./App";
 import { DEFAULT_CONFIG } from "./providers/configProvider";
+import type { InvokeArgs } from "@tauri-apps/api/core";
 
 vi.mock("@tauri-apps/api/event", () => ({ listen: vi.fn() }));
 vi.mock("@tauri-apps/api/window", () => ({
@@ -18,14 +19,21 @@ vi.mock("@tauri-apps/api/window", () => ({
 vi.mock("@tauri-apps/plugin-global-shortcut", () => ({ register: vi.fn() }));
 
 vi.mock("@tauri-apps/api/core", () => ({
-    invoke: vi.fn(async (cmd: string) => {
+    invoke: vi.fn(async (cmd: string, args: InvokeArgs ) => {
         if (cmd === "get_config") {
             return DEFAULT_CONFIG;
+        }
+        if ( cmd === "fetch_website_content" ){
+            console.log(args)
+            return {
+                title: "",
+                desc: ""
+            }
         }
     }),
 }));
 
-describe("App", () => {
+describe("App.SearchBookmark", () => {
     beforeEach(async () => {
         vi.clearAllMocks();
         startMockWindowVisibleController();
@@ -261,15 +269,139 @@ describe("App", () => {
         await user.type(inputBox, "{Enter}");
         expect(screen.getAllByTestId("taginputbox-tagitem").length).toBe(5);
 
-        await user.keyboard("{Backspace}")
+        await user.keyboard("{Backspace}");
         expect(screen.getAllByTestId("taginputbox-tagitem").length).toBe(4);
-        await user.keyboard("{Backspace}")
+        await user.keyboard("{Backspace}");
         expect(screen.getAllByTestId("taginputbox-tagitem").length).toBe(3);
-        await user.keyboard("{Backspace}")
+        await user.keyboard("{Backspace}");
         expect(screen.getAllByTestId("taginputbox-tagitem").length).toBe(2);
-        await user.keyboard("{Backspace}")
+        await user.keyboard("{Backspace}");
         expect(screen.getAllByTestId("taginputbox-tagitem").length).toBe(1);
-        await user.keyboard("{Backspace}")
+        await user.keyboard("{Backspace}");
         expect(() => screen.getAllByTestId("taginputbox-tagitem")).toThrow();
     });
+
+    // create-new-bookmark
+});
+
+describe("App.CreateNewBookmark", () => {
+    beforeEach(async () => {
+        vi.clearAllMocks();
+        startMockWindowVisibleController();
+        startMockDB();
+
+        await act(async () => {
+            render(<App></App>);
+        });
+
+        await userEvent.keyboard("{Control>}A{/Control}");
+    });
+
+    test("test1", async () => {
+        const user = userEvent.setup();
+        expect(screen.getByTestId("create-new-bookmark")).toBeInTheDocument();
+
+        await user.keyboard("{Escape}");
+        expect(WindowVisibleController.hide).toBeCalledTimes(0);
+        expect(screen.getByTestId("search-bookmark")).toBeInTheDocument();
+
+        await user.keyboard("{Control>}A{/Control}");
+        expect(screen.getByTestId("create-new-bookmark")).toBeInTheDocument();
+
+        await user.keyboard("{Escape}");
+        expect(WindowVisibleController.hide).toBeCalledTimes(0);
+        expect(screen.getByTestId("search-bookmark")).toBeInTheDocument();
+
+        await user.keyboard("{Control>}A{/Control}");
+        expect(screen.getByTestId("create-new-bookmark")).toBeInTheDocument();
+
+        await user.keyboard("{Escape}");
+        expect(WindowVisibleController.hide).toBeCalledTimes(0);
+        expect(screen.getByTestId("search-bookmark")).toBeInTheDocument();
+    });
+
+    test("test2", async () => {
+        const user = userEvent.setup();
+        expect(screen.getByTestId("create-new-bookmark")).toBeInTheDocument();
+
+        const toCreate = async () => {
+            await user.keyboard("{Control>}A{/Control}");
+            expect(
+                screen.getByTestId("create-new-bookmark")
+            ).toBeInTheDocument();
+        };
+        const toSearch = async () => {
+            const cancelButton = screen.getByText("Cancel");
+            expect(cancelButton).toBeInTheDocument();
+            await user.click(cancelButton);
+            expect(WindowVisibleController.hide).toBeCalledTimes(0);
+            expect(screen.getByTestId("search-bookmark")).toBeInTheDocument();
+        };
+
+        await toSearch()
+        await toCreate()
+        await toSearch()
+        await toCreate()
+        await toSearch()
+        await toCreate()
+        await toSearch()
+        await toCreate()
+        await toSearch()
+        await toCreate()
+        await toSearch()
+        await toCreate()
+    });
+    
+    test("test3", async () => {
+        const user = userEvent.setup();
+        expect(screen.getByTestId("create-new-bookmark")).toBeInTheDocument();
+
+        const toCreate = async () => {
+            user.click(screen.getByPlaceholderText("/"))
+            await user.keyboard("{Control>}A{/Control}");
+            expect(
+                screen.getByTestId("create-new-bookmark")
+            ).toBeInTheDocument();
+        };
+        const toSearch = async () => {
+            const cancelButton = screen.getByText("Cancel");
+            user.click(screen.getByPlaceholderText("/"))
+            expect(cancelButton).toBeInTheDocument();
+            await user.click(cancelButton);
+            expect(WindowVisibleController.hide).toBeCalledTimes(0);
+            expect(screen.getByTestId("search-bookmark")).toBeInTheDocument();
+        };
+
+        await toSearch()
+        await toCreate()
+        await toSearch()
+        await toCreate()
+        await toSearch()
+        await toCreate()
+        await toSearch()
+        await toCreate()
+        await toSearch()
+        await toCreate()
+        await toSearch()
+        await toCreate()
+    })   
+
+    test("test4",async () => {
+        const user = userEvent.setup()
+
+        const urlInputBox = screen.getByPlaceholderText("url")
+        const titleInputBox = screen.getByPlaceholderText("title")
+        const descInputBox = screen.getByPlaceholderText("desc")
+        const predicateInputBox = screen.getByPlaceholderText("/")
+        
+        expect(urlInputBox).toBeInTheDocument()
+        expect(titleInputBox).toBeInTheDocument()
+        expect(descInputBox).toBeInTheDocument()
+        expect(predicateInputBox).toBeInTheDocument()
+        
+        await user.click(predicateInputBox)
+        await user.type(predicateInputBox,"t")
+        await user.type(predicateInputBox,"{Enter}")
+        expect(screen.getAllByTestId("taginputbox-tagitem").length).toBe(1);
+    })
 });

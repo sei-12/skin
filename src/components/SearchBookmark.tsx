@@ -13,6 +13,7 @@ export type SearchBookmarkProps = {
 export function SearchBookmark(p: SearchBookmarkProps) {
     return (
         <Grid2
+            data-testid="search-bookmark"
             container
             spacing={1}
             flexDirection={"column"}

@@ -126,7 +126,6 @@ export function useCreateNewBookmarkPage() {
 
     // // TODO: 別のファイルに切り出してテストも書く
     const onChangeUrlInputBox = async (url: string) => {
-        console.log("onChangeUrl!!");
         const content = (await invoke("fetch_website_content", { url })) as {
             title: string;
             desc: string;
