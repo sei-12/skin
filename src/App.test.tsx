@@ -8,7 +8,6 @@ import { startMockDB } from "./lib/database.test";
 import { DB } from "./lib/database";
 import { App } from "./App";
 import { DEFAULT_CONFIG } from "./providers/configProvider";
-import type { InvokeArgs } from "@tauri-apps/api/core";
 
 vi.mock("@tauri-apps/api/event", () => ({ listen: vi.fn() }));
 vi.mock("@tauri-apps/api/window", () => ({
@@ -19,12 +18,11 @@ vi.mock("@tauri-apps/api/window", () => ({
 vi.mock("@tauri-apps/plugin-global-shortcut", () => ({ register: vi.fn() }));
 
 vi.mock("@tauri-apps/api/core", () => ({
-    invoke: vi.fn(async (cmd: string, args: InvokeArgs ) => {
+    invoke: vi.fn(async (cmd: string ) => {
         if (cmd === "get_config") {
             return DEFAULT_CONFIG;
         }
         if ( cmd === "fetch_website_content" ){
-            console.log(args)
             return {
                 title: "",
                 desc: ""
@@ -403,5 +401,118 @@ describe("App.CreateNewBookmark", () => {
         await user.type(predicateInputBox,"t")
         await user.type(predicateInputBox,"{Enter}")
         expect(screen.getAllByTestId("taginputbox-tagitem").length).toBe(1);
+    })
+
+    test("test5",async () => {
+        const user = userEvent.setup()
+
+        const urlInputBox = screen.getByPlaceholderText("url")
+        const titleInputBox = screen.getByPlaceholderText("title")
+        const descInputBox = screen.getByPlaceholderText("desc")
+        const predicateInputBox = screen.getByPlaceholderText("/")
+        
+        expect(urlInputBox).toBeInTheDocument()
+        expect(titleInputBox).toBeInTheDocument()
+        expect(descInputBox).toBeInTheDocument()
+        expect(predicateInputBox).toBeInTheDocument()
+        
+        await user.click(predicateInputBox)
+        await user.type(predicateInputBox,"t")
+        await user.type(predicateInputBox,"{Enter}")
+        expect(screen.getAllByTestId("taginputbox-tagitem").length).toBe(1);
+        
+        await user.type(titleInputBox,"hello")
+        await user.type(descInputBox,"description")
+        await user.type(urlInputBox,"url://hello")
+        
+        const doneButton = screen.getByText("Done")
+        expect(doneButton).toBeInTheDocument()
+        await user.click(doneButton)
+        
+        expect(DB.insertBookmark).toBeCalledTimes(1)
+        expect(DB.insertBookmark).toBeCalledWith(
+            "hello",
+            "url://hello",
+            "description",
+            ["typescript"]
+        )
+        expect(screen.getByTestId("search-bookmark")).toBeInTheDocument();
+    })
+
+    test("test6",async () => {
+        const user = userEvent.setup()
+
+        const urlInputBox: HTMLInputElement = screen.getByPlaceholderText("url")
+        const titleInputBox: HTMLInputElement = screen.getByPlaceholderText("title")
+        const descInputBox: HTMLInputElement = screen.getByPlaceholderText("desc")
+        const predicateInputBox: HTMLInputElement = screen.getByPlaceholderText("/")
+        
+        expect(urlInputBox).toBeInTheDocument()
+        expect(titleInputBox).toBeInTheDocument()
+        expect(descInputBox).toBeInTheDocument()
+        expect(predicateInputBox).toBeInTheDocument()
+        
+        await user.click(predicateInputBox)
+        await user.type(predicateInputBox,"t")
+        await user.type(predicateInputBox,"{Enter}")
+        expect(screen.getAllByTestId("taginputbox-tagitem").length).toBe(1);
+        
+        await user.type(titleInputBox,"hello")
+        await user.type(descInputBox,"description")
+        await user.type(urlInputBox,"url://hello")
+        
+        expect(titleInputBox.value).toBe("hello")
+        expect(descInputBox.value).toBe("description")
+        expect(urlInputBox.value).toBe("url://hello")
+
+        await user.keyboard("{Escape}");
+        expect(WindowVisibleController.hide).toBeCalledTimes(0);
+        expect(screen.getByTestId("search-bookmark")).toBeInTheDocument();
+
+        await user.keyboard("{Control>}A{/Control}");
+        const urlInputBox2: HTMLInputElement = screen.getByPlaceholderText("url")
+        const titleInputBox2: HTMLInputElement = screen.getByPlaceholderText("title")
+        const descInputBox2: HTMLInputElement = screen.getByPlaceholderText("desc")
+        expect(titleInputBox2.value).toBe("")
+        expect(descInputBox2.value).toBe("")
+        expect(urlInputBox2.value).toBe("")
+        expect(() => screen.getAllByTestId("taginputbox-tagitem")).toThrow();
+    })
+
+    test("test7",async () => {
+        const user = userEvent.setup()
+
+        const urlInputBox = screen.getByPlaceholderText("url")
+        const titleInputBox = screen.getByPlaceholderText("title")
+        const descInputBox = screen.getByPlaceholderText("desc")
+        const predicateInputBox = screen.getByPlaceholderText("/")
+        
+        expect(urlInputBox).toBeInTheDocument()
+        expect(titleInputBox).toBeInTheDocument()
+        expect(descInputBox).toBeInTheDocument()
+        expect(predicateInputBox).toBeInTheDocument()
+        
+        await user.click(predicateInputBox)
+        await user.type(predicateInputBox,"t")
+        await user.type(predicateInputBox,"{Enter}")
+        expect(screen.getAllByTestId("taginputbox-tagitem").length).toBe(1);
+        await user.type(predicateInputBox,"helloworld-aaaa")
+        await user.type(predicateInputBox,"{Space}")
+        expect(screen.getAllByTestId("taginputbox-tagitem").length).toBe(2);
+        
+        await user.type(titleInputBox,"hello")
+        await user.type(descInputBox,"description")
+        await user.type(urlInputBox,"url://hello")
+        
+        await user.keyboard("{Control>}{Enter}{/Control}");
+        
+        expect(DB.insertBookmark).toBeCalledTimes(1)
+        expect(DB.insertBookmark).toBeCalledWith(
+            "hello",
+            "url://hello",
+            "description",
+            ["typescript", "helloworld-aaaa"]
+        )
+        expect(screen.getByTestId("search-bookmark")).toBeInTheDocument();
     })
 });
