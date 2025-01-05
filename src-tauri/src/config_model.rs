@@ -50,19 +50,19 @@ pub struct Config {
 #[derive(Serialize, Deserialize, TS)]
 #[ts(export, export_to = "export/Keybinds.d.ts")]
 pub struct Keybinds {
-    #[serde_inline_default(Keys::Keys(vec!["ctrl+n".to_string(),"ArrowDown".to_string()]))]
+    #[serde_inline_default(Keys::Keys(Vec::from(["ctrl+n".to_string(),"ArrowDown".to_string()])))]
     focusDownBookmarkList: Keys,
 
-    #[serde_inline_default(Keys::Keys(vec!["ctrl+p".to_string(),"ArrowUp".to_string()]))]
+    #[serde_inline_default(Keys::Keys(Vec::from(["ctrl+p".to_string(),"ArrowUp".to_string()])))]
     focusUpBookmarkList: Keys,
 
     #[serde_inline_default(Keys::Key("Escape".to_string()))]
     closeWindow: Keys,
 
-    #[serde_inline_default(Keys::Keys(vec!["ctrl+n".to_string(),"ArrowDown".to_string()]))]
+    #[serde_inline_default(Keys::Keys(Vec::from(["ctrl+n".to_string(),"ArrowDown".to_string()])))]
     focusDownSuggestionWindow: Keys,
 
-    #[serde_inline_default(Keys::Keys(vec!["ctrl+p".to_string(),"ArrowUp".to_string()]))]
+    #[serde_inline_default(Keys::Keys(Vec::from(["ctrl+p".to_string(),"ArrowUp".to_string()])))]
     focusUpSuggestionWindow: Keys,
 
     // placeholderに書いちゃってるし、keyupが複雑だからこいつは固定。
@@ -237,11 +237,11 @@ mod tests {
                 bg: color_palette::dark2(),
             },
             keybinds: Keybinds {
-                focusDownBookmarkList: Keys::Key("ctrl+n".to_string()),
-                focusUpBookmarkList: Keys::Key("ctrl+p".to_string()),
+                focusDownBookmarkList: Keys::Keys(Vec::from(["ctrl+n".to_string(),"ArrowDown".to_string()])),
+                focusUpBookmarkList: Keys::Keys(Vec::from(["ctrl+p".to_string(),"ArrowUp".to_string()])),
                 closeWindow: Keys::Key("Escape".to_string()),
-                focusDownSuggestionWindow: Keys::Key("ctrl+n".to_string()),
-                focusUpSuggestionWindow: Keys::Key("ctrl+p".to_string()),
+                focusDownSuggestionWindow: Keys::Keys(Vec::from(["ctrl+n".to_string(),"ArrowDown".to_string()])),
+                focusUpSuggestionWindow: Keys::Keys(Vec::from(["ctrl+p".to_string(),"ArrowUp".to_string()])),
                 addFocusedSuggestionItem: Keys::Key("Enter".to_string()),
                 popInputedTag: Keys::Key("Backspace".to_string()),
                 closeSuggestionWindow: Keys::Key("Escape".to_string()),
