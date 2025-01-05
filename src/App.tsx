@@ -1,6 +1,6 @@
 import { CssBaseline, ThemeProvider } from "@mui/material";
 import { HotkeysProvider } from "react-hotkeys-hook";
-import { HOTKEY_SCOPES } from "./lib/hotkey";
+import { HOTKEY_SCOPES } from "./hooks/hotkey";
 import { CustomWindow } from "./components/CustomWindow";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { CreateNewBookmarkPage, SearchBookmarkPage } from "./pages/pages";

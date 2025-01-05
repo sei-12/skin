@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef } from "react";
 import type { FindTagMethod } from "../components/SuggestionWindow";
 import { useNavigate } from "react-router-dom";
 import { invoke } from "@tauri-apps/api/core";
-import { HOTKEY_SCOPES, useAppHotkey } from "../lib/hotkey";
+import { HOTKEY_SCOPES, useAppHotkey } from "./hotkey";
 import { useHotkeys } from "react-hotkeys-hook";
 import { useTagInputBox } from "./TagInputBox";
 import { findTagMethod } from "../lib/findTagMethod";

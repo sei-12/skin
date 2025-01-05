@@ -1,6 +1,6 @@
 import { useCallback, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { HOTKEY_SCOPES, useAppHotkey } from "../lib/hotkey";
+import { HOTKEY_SCOPES, useAppHotkey } from "./hotkey";
 import { useHotkeys } from "react-hotkeys-hook";
 import { WindowVisibleController } from "../lib/windowVisibleController";
 import type { SearchBookmarkProps } from "../components/SearchBookmark";

@@ -3,7 +3,7 @@ import { act, render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom/vitest";
 import { HotkeysProvider } from "react-hotkeys-hook";
 import userEvent from "@testing-library/user-event";
-import { HOTKEY_SCOPES } from "../lib/hotkey";
+import { HOTKEY_SCOPES } from "./hotkey";
 import { SearchBookmarkPage } from "../pages/pages";
 import { startMockWindowVisibleController } from "../lib/windowVisibleController.test";
 import { WindowVisibleController } from "../lib/windowVisibleController";
