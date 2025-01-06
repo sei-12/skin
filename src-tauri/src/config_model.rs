@@ -1,9 +1,9 @@
 // Jsonの変数はキャメルケースで定義する
 #![allow(non_snake_case)]
 
-use ts_rs::TS;
 use serde::{Deserialize, Serialize};
 use serde_inline_default::serde_inline_default;
+use ts_rs::TS;
 
 mod color_palette {
     pub(super) fn verydark() -> String {
@@ -18,95 +18,106 @@ mod color_palette {
     pub(super) fn dark3() -> String {
         "#292e42".to_string()
     }
-    // pub(super) fn dark4() -> String {
-    //     "#3b4261".to_string()
-    // }
-    // pub(super) fn dark5() -> String {
-    //     "#414868".to_string()
-    // }
     pub(super) fn dark6() -> String {
         "#545c7e".to_string()
     }
-    // pub(super) fn dark7() -> String {
-    //     "#565f89".to_string()
-    // }
-    // pub(super) fn dark8() -> String {
-    //     "#737aa2".to_string()
-    // }
-    // pub(super) fn blue1() -> String {
-    //     "#a9b1d6".to_string()
-    // }
-    // pub(super) fn blue2() -> String {
-    //     "#c0caf5".to_string()
-    // }
     pub(super) fn blue3() -> String {
         "#394b70".to_string()
     }
-    // pub(super) fn blue4() -> String {
-    //     "#3d59a1".to_string()
-    // }
     pub(super) fn blue5() -> String {
         "#7aa2f7".to_string()
     }
-    // pub(super) fn blue6() -> String {
-    //     "#7dcfff".to_string()
-    // }
-    // pub(super) fn blue7() -> String {
-    //     "#b4f9f8".to_string()
-    // }
     pub(super) fn purple1() -> String {
         "#bb9af7".to_string()
     }
-    // pub(super) fn purple2() -> String {
-    //     "#9d7cd8".to_string()
-    // }
-    // pub(super) fn orange1() -> String {
-    //     "#ff9e64".to_string()
-    // }
     pub(super) fn yellow1() -> String {
         "#ffc777".to_string()
     }
-    // pub(super) fn green1() -> String {
-    //     "#c3e88d".to_string()
-    // }
-    // pub(super) fn teal1() -> String {
-    //     "#4fd6be".to_string()
-    // }
-    // pub(super) fn teal2() -> String {
-    //     "#41a6b5".to_string()
-    // }
-    // pub(super) fn pink1() -> String {
-    //     "#ff757f".to_string()
-    // }
-    // pub(super) fn red1() -> String {
-    //     "#c53b53".to_string()
-    // }
-    // pub(super) fn magenta1() -> String {
-    //     "#ff007c".to_string()
-    // }
 }
 
 #[serde_inline_default]
-#[derive(Serialize, Deserialize,TS)]
+#[derive(Serialize, Deserialize, TS)]
 #[ts(export, export_to = "export/Config.d.ts")]
 pub struct Config {
     #[serde(default = "default_color_theme")]
     colorTheme: ColorTheme,
+
+    #[serde(default = "default_keybinds")]
+    keybinds: Keybinds,
 }
 
 #[serde_inline_default]
-#[derive(Serialize, Deserialize,TS)]
-#[ts(export,export_to = "export/ColorTheme.d.ts")]
+#[derive(Serialize, Deserialize, TS)]
+#[ts(export, export_to = "export/Keybinds.d.ts")]
+pub struct Keybinds {
+    #[serde_inline_default(Keys::Keys(Vec::from(["ctrl+n".to_string(),"ArrowDown".to_string()])))]
+    focusDownBookmarkList: Keys,
+
+    #[serde_inline_default(Keys::Keys(Vec::from(["ctrl+p".to_string(),"ArrowUp".to_string()])))]
+    focusUpBookmarkList: Keys,
+
+    #[serde_inline_default(Keys::Key("Escape".to_string()))]
+    closeWindow: Keys,
+
+    #[serde_inline_default(Keys::Keys(Vec::from(["ctrl+n".to_string(),"ArrowDown".to_string()])))]
+    focusDownSuggestionWindow: Keys,
+
+    #[serde_inline_default(Keys::Keys(Vec::from(["ctrl+p".to_string(),"ArrowUp".to_string()])))]
+    focusUpSuggestionWindow: Keys,
+
+    // placeholderに書いちゃってるし、keyupが複雑だからこいつは固定。
+    // #[serde_inline_default(Keys::Key("/".to_string()))]
+    // focusPredicateInputBox: Keys,
+
+    #[serde_inline_default(Keys::Key("Enter".to_string()))]
+    addFocusedSuggestionItem: Keys,
+
+    #[serde_inline_default(Keys::Key("Backspace".to_string()))]
+    popInputedTag: Keys,
+
+    #[serde_inline_default(Keys::Key("Escape".to_string()))]
+    closeSuggestionWindow: Keys,
+
+    #[serde_inline_default(Keys::Key("ctrl+a".to_string()))]
+    navigateCreateNewBookmark: Keys,
+
+    #[serde_inline_default(Keys::Key("Enter".to_string()))]
+    openUrl: Keys,
+
+    // --- create new bookmark --- //
+    #[serde_inline_default(Keys::Key("Escape".to_string()))]
+    cancelCreateNewBookmark: Keys,
+
+    #[serde_inline_default(Keys::Key("ctrl+Enter".to_string()))]
+    doneCreateNewBookmark: Keys,
+
+    #[serde_inline_default(Keys::Key("Space".to_string()))]
+    takeInputTag: Keys,
+}
+fn default_keybinds() -> Keybinds {
+    serde_json::from_str("{}").expect("Failed to parse default keybinds")
+}
+
+#[derive(Serialize, Deserialize, TS)]
+#[serde(untagged)]
+enum Keys {
+    Key(String),
+    Keys(Vec<String>),
+}
+
+#[serde_inline_default]
+#[derive(Serialize, Deserialize, TS)]
+#[ts(export, export_to = "export/ColorTheme.d.ts")]
 pub struct ColorTheme {
     #[serde(default = "default_bookmark_item_color_theme")]
     bookmarkItem: BookmarkItemColorTheme,
 
     #[serde(default = "default_suggestion_window")]
     suggestionWindow: SuggestionWindow,
-    
+
     #[serde(default = "default_predicate_input_box")]
     predicateInputBox: PredicateInputBox,
-    
+
     #[serde(default = "default_tag_item")]
     tagItem: TagItem,
 
@@ -136,7 +147,7 @@ fn default_bookmark_item_color_theme() -> BookmarkItemColorTheme {
 }
 
 #[serde_inline_default]
-#[derive(Serialize, Deserialize, Debug, Clone,TS)]
+#[derive(Serialize, Deserialize, Debug, Clone, TS)]
 pub struct SuggestionWindow {
     #[serde(default = "color_palette::dark1")]
     pub bg: String,
@@ -153,7 +164,7 @@ fn default_suggestion_window() -> SuggestionWindow {
     serde_json::from_str("{}").expect("Failed to parse default config")
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone,TS)]
+#[derive(Serialize, Deserialize, Debug, Clone, TS)]
 pub struct TagItem {
     #[serde(default = "color_palette::dark1")]
     pub bg: String,
@@ -173,10 +184,10 @@ fn default_tag_item() -> TagItem {
 pub struct PredicateInputBox {
     #[serde(default = "color_palette::verydark")]
     pub bg: String,
-    
+
     #[serde_inline_default("white".to_string())]
     pub textColor: String,
-    
+
     #[serde(default = "color_palette::dark6")]
     pub placeholder: String,
 
@@ -194,7 +205,7 @@ mod tests {
     #[test]
     fn test_default_config() {
         let config = serde_json::from_str::<Config>("{}").unwrap();
-        
+
         let expected = Config {
             colorTheme: ColorTheme {
                 bookmarkItem: BookmarkItemColorTheme {
@@ -225,29 +236,50 @@ mod tests {
                 },
                 bg: color_palette::dark2(),
             },
+            keybinds: Keybinds {
+                focusDownBookmarkList: Keys::Keys(Vec::from(["ctrl+n".to_string(),"ArrowDown".to_string()])),
+                focusUpBookmarkList: Keys::Keys(Vec::from(["ctrl+p".to_string(),"ArrowUp".to_string()])),
+                closeWindow: Keys::Key("Escape".to_string()),
+                focusDownSuggestionWindow: Keys::Keys(Vec::from(["ctrl+n".to_string(),"ArrowDown".to_string()])),
+                focusUpSuggestionWindow: Keys::Keys(Vec::from(["ctrl+p".to_string(),"ArrowUp".to_string()])),
+                addFocusedSuggestionItem: Keys::Key("Enter".to_string()),
+                popInputedTag: Keys::Key("Backspace".to_string()),
+                closeSuggestionWindow: Keys::Key("Escape".to_string()),
+                navigateCreateNewBookmark: Keys::Key("ctrl+a".to_string()),
+                openUrl: Keys::Key("Enter".to_string()),
+                cancelCreateNewBookmark: Keys::Key("Escape".to_string()),
+                doneCreateNewBookmark: Keys::Key("ctrl+Enter".to_string()),
+                takeInputTag: Keys::Key("Space".to_string()),
+            },
         };
-        
+
         assert_eq!(
             serde_json::to_string(&config).unwrap(),
             serde_json::to_string(&expected).unwrap()
         );
     }
-    
+
     #[test]
-    fn test_config1(){
+    fn test_config1() {
         let config_text = r#"
         {
             "colorTheme": {
                 "bookmarkItem": {
                     "tag": "red"
                 }
+            },
+            "keybinds": {
+                "takeInputTag": "Enter",
+                "openUrl": ["ctrl+o"]
             }
         }
         "#;
         let config = serde_json::from_str::<Config>(config_text).unwrap();
         let mut expected = serde_json::from_str::<Config>("{}").unwrap();
         expected.colorTheme.bookmarkItem.tag = "red".to_string();
-        
+        expected.keybinds.takeInputTag = Keys::Key("Enter".to_string());
+        expected.keybinds.openUrl = Keys::Keys(vec!["ctrl+o".to_string()]);
+
         assert_eq!(
             serde_json::to_string(&config).unwrap(),
             serde_json::to_string(&expected).unwrap()

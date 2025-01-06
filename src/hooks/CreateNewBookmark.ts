@@ -7,6 +7,8 @@ import { useHotkeys } from "react-hotkeys-hook";
 import { useTagInputBox } from "./TagInputBox";
 import { findTagMethod } from "../services/findTagMethod";
 import { DB } from "../services/database";
+import { readText } from "@tauri-apps/plugin-clipboard-manager";
+import { useConfig } from "../providers/configProvider";
 
 function useCreateNewBookmark(
     onClickDone: () => void,
@@ -39,7 +41,15 @@ function useCreateNewBookmark(
         // イベントを発生させたかったけど、少し難しかった。
         onChangeUrl(url);
     };
-
+    
+    const autoInputUrl = useCallback(async () => {
+        const clipboardText = await readText()
+        setUrl(clipboardText)
+    },[])
+    
+    useEffect(() => {
+        autoInputUrl()
+    },[])
 
     const getInputData = useCallback(() => {
         let title = ""
@@ -108,6 +118,7 @@ function useCreateNewBookmark(
 }
 export function useCreateNewBookmarkPage() {
     const navigate = useNavigate();
+    const { keybinds } = useConfig()
 
     const onClickCreateDone = () => {
         const inputData = createNewBookmarkHook.getInputData();
@@ -207,7 +218,7 @@ export function useCreateNewBookmarkPage() {
     }, [createNewBookmarkHook.tagInputBoxHook.suggestionWindowHook.items]);
 
     useHotkeys(
-        "Escape",
+        keybinds.cancelCreateNewBookmark,
         onClickCreateCancel,
         {
             scopes: [HOTKEY_SCOPES.CREATE_NEW_BOOKMARK],
@@ -217,7 +228,7 @@ export function useCreateNewBookmarkPage() {
     );
 
     useHotkeys(
-        "ctrl+Enter",
+        keybinds.doneCreateNewBookmark,
         onClickCreateDone,
         {
             scopes: [HOTKEY_SCOPES.CREATE_NEW_BOOKMARK],
@@ -227,7 +238,7 @@ export function useCreateNewBookmarkPage() {
     );
 
     useHotkeys(
-        "Enter",
+        keybinds.addFocusedSuggestionItem,
         createNewBookmarkHook.tagInputBoxHook.addFocusedSuggestionItem,
         {
             scopes: [HOTKEY_SCOPES.CREATE_NEW_BOOKMARK_SUGGESTION_WINDOW],
@@ -237,14 +248,14 @@ export function useCreateNewBookmarkPage() {
     );
 
     useHotkeys(
-        "Backspace",
+        keybinds.popInputedTag,
         createNewBookmarkHook.onKeyDownBackspace,
         { scopes: [HOTKEY_SCOPES.CREATE_NEW_BOOKMARK], enableOnFormTags: true },
     );
 
 
     useHotkeys(
-        "Space",
+        keybinds.takeInputTag,
         onKeyDownSpace,
         {
             scopes: [
@@ -256,7 +267,7 @@ export function useCreateNewBookmarkPage() {
         [createNewBookmarkHook]
     );
     useHotkeys(
-        "ctrl+n",
+        keybinds.focusDownSuggestionWindow,
         createNewBookmarkHook.tagInputBoxHook.suggestionWindowHook.focusDown,
         {
             scopes: [HOTKEY_SCOPES.CREATE_NEW_BOOKMARK_SUGGESTION_WINDOW],
@@ -266,7 +277,7 @@ export function useCreateNewBookmarkPage() {
     );
 
     useHotkeys(
-        "ctrl+p",
+        keybinds.focusUpSuggestionWindow,
         createNewBookmarkHook.tagInputBoxHook.suggestionWindowHook.focusUp,
         {
             scopes: [HOTKEY_SCOPES.CREATE_NEW_BOOKMARK_SUGGESTION_WINDOW],

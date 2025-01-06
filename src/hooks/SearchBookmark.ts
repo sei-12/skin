@@ -9,9 +9,12 @@ import { useTagInputBox } from "./TagInputBox";
 import { findTagMethod } from "../services/findTagMethod";
 import { invoke } from "@tauri-apps/api/core";
 import { DB } from "../services/database";
+import { useConfig } from "../providers/configProvider";
 
 
 export function useSearchBookmarkPage(): SearchBookmarkProps {
+    const { keybinds } = useConfig()
+
     const navigate = useNavigate()
 
     const onClickRemove = (id: number) => {
@@ -94,7 +97,7 @@ export function useSearchBookmarkPage(): SearchBookmarkProps {
     //
     // 
 
-    useHotkeys("Escape", closeWindow,
+    useHotkeys(keybinds.closeWindow, closeWindow,
         {
             scopes: [HOTKEY_SCOPES.SEARCH_BOOKMARK],
             preventDefault: true,
@@ -102,7 +105,7 @@ export function useSearchBookmarkPage(): SearchBookmarkProps {
         },
     );
 
-    useHotkeys("ctrl+n", bkmkListHook.focusDown,
+    useHotkeys(keybinds.focusDownBookmarkList, bkmkListHook.focusDown,
         {
             scopes: [HOTKEY_SCOPES.SEARCH_BOOKMARK],
             preventDefault: true,
@@ -110,7 +113,7 @@ export function useSearchBookmarkPage(): SearchBookmarkProps {
         },
     );
 
-    useHotkeys("ctrl+p", bkmkListHook.focusUp,
+    useHotkeys(keybinds.focusUpBookmarkList, bkmkListHook.focusUp,
         {
             scopes: [HOTKEY_SCOPES.SEARCH_BOOKMARK],
             preventDefault: true,
@@ -118,7 +121,7 @@ export function useSearchBookmarkPage(): SearchBookmarkProps {
         },
     );
 
-    useHotkeys("ctrl+n", tagInputBoxHook.suggestionWindowHook.focusDown,
+    useHotkeys(keybinds.focusDownSuggestionWindow, tagInputBoxHook.suggestionWindowHook.focusDown,
         {
             scopes: [HOTKEY_SCOPES.SEARCH_BOOKMARK_SUGGESTION_WINDOW],
             preventDefault: true,
@@ -126,7 +129,7 @@ export function useSearchBookmarkPage(): SearchBookmarkProps {
         },
     );
 
-    useHotkeys("ctrl+p", tagInputBoxHook.suggestionWindowHook.focusUp,
+    useHotkeys(keybinds.focusUpSuggestionWindow, tagInputBoxHook.suggestionWindowHook.focusUp,
         {
             scopes: [HOTKEY_SCOPES.SEARCH_BOOKMARK_SUGGESTION_WINDOW],
             preventDefault: true,
@@ -142,7 +145,7 @@ export function useSearchBookmarkPage(): SearchBookmarkProps {
         },
     );
 
-    useHotkeys("Enter", tagInputBoxHook.addFocusedSuggestionItem,
+    useHotkeys(keybinds.addFocusedSuggestionItem, tagInputBoxHook.addFocusedSuggestionItem,
         {
             scopes: [HOTKEY_SCOPES.SEARCH_BOOKMARK_SUGGESTION_WINDOW],
             preventDefault: true,
@@ -151,11 +154,11 @@ export function useSearchBookmarkPage(): SearchBookmarkProps {
     );
 
 
-    useHotkeys("Backspace", tagInputBoxHook.popInputedTag,
+    useHotkeys(keybinds.popInputedTag, tagInputBoxHook.popInputedTag,
         { scopes: [HOTKEY_SCOPES.SEARCH_BOOKMARK], enableOnFormTags: true }
     );
 
-    useHotkeys("ctrl+a", navigateCreateNewBookmark,
+    useHotkeys(keybinds.navigateCreateNewBookmark, navigateCreateNewBookmark,
         {
             scopes: [HOTKEY_SCOPES.SEARCH_BOOKMARK],
             preventDefault: false,
@@ -164,7 +167,7 @@ export function useSearchBookmarkPage(): SearchBookmarkProps {
     );
 
 
-    useHotkeys("Escape", closeSuggestionWindow,
+    useHotkeys(keybinds.closeSuggestionWindow, closeSuggestionWindow,
         {
             scopes: [HOTKEY_SCOPES.SEARCH_BOOKMARK_SUGGESTION_WINDOW],
             preventDefault: true,
@@ -172,7 +175,7 @@ export function useSearchBookmarkPage(): SearchBookmarkProps {
         },
     );
 
-    useHotkeys("Enter", openUrl,
+    useHotkeys(keybinds.openUrl, openUrl,
         { scopes: [HOTKEY_SCOPES.SEARCH_BOOKMARK], preventDefault: true, enableOnFormTags: true },
     )
 

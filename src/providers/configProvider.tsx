@@ -63,6 +63,21 @@ export const DEFAULT_CONFIG: Config = {
             notExists: "#000016",
         },
     },
+    keybinds: {
+        focusDownBookmarkList: ["ctrl+n", "ArrowDown"],
+        focusUpBookmarkList: ["ctrl+p", "ArrowUp"],
+        closeWindow: "Escape",
+        focusDownSuggestionWindow: ["ctrl+n", "ArrowDown"],
+        focusUpSuggestionWindow: ["ctrl+p", "ArrowUp"],
+        addFocusedSuggestionItem: "Enter",
+        popInputedTag: "Backspace",
+        closeSuggestionWindow: "Escape",
+        navigateCreateNewBookmark: "ctrl+a",
+        openUrl: "Enter",
+        cancelCreateNewBookmark: "Escape",
+        doneCreateNewBookmark: "ctrl+Enter",
+        takeInputTag: "Space",
+    },
 };
 
 const ConfigContext = createContext<Config>(DEFAULT_CONFIG);

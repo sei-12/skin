@@ -2,12 +2,12 @@ import { beforeEach, describe, expect, test, vi } from "vitest";
 import { act, render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom/vitest";
 import userEvent from "@testing-library/user-event";
-import { startMockWindowVisibleController } from "./services/windowVisibleController.test";
-import { WindowVisibleController } from "./services/windowVisibleController";
-import { startMockDB } from "./services/database.test";
-import { DB } from "./services/database";
-import { App } from "./App";
-import { DEFAULT_CONFIG } from "./providers/configProvider";
+import { startMockWindowVisibleController } from "../services/windowVisibleController.test";
+import { WindowVisibleController } from "../services/windowVisibleController";
+import { startMockDB } from "../services/database.test";
+import { DB } from "../services/database";
+import { App } from "../App";
+import { DEFAULT_CONFIG } from "../providers/configProvider";
 
 vi.mock("@tauri-apps/api/event", () => ({ listen: vi.fn() }));
 vi.mock("@tauri-apps/api/window", () => ({
@@ -30,6 +30,12 @@ vi.mock("@tauri-apps/api/core", () => ({
         }
     }),
 }));
+
+vi.mock("@tauri-apps/plugin-clipboard-manager",() => ({
+    readText: vi.fn(() => {
+        return ""
+    })
+}))
 
 describe("App.SearchBookmark", () => {
     beforeEach(async () => {
@@ -279,7 +285,60 @@ describe("App.SearchBookmark", () => {
         expect(() => screen.getAllByTestId("taginputbox-tagitem")).toThrow();
     });
 
-    // create-new-bookmark
+    test("test9", async () => {
+        // https://stackoverflow.com/questions/53271193/typeerror-scrollintoview-is-not-a-function
+        window.HTMLElement.prototype.scrollIntoView = vi.fn();
+        const user = userEvent.setup();
+        const inputBox = screen.getByPlaceholderText("/");
+
+        expect(DB.findBookmark).toBeCalledTimes(1);
+        await user.type(inputBox, "t");
+        expect(screen.getAllByTestId("suggestion-item").length).toBe(8);
+        expect(DB.findTag).toBeCalledTimes(1);
+
+        await user.keyboard("{ArrowDown}");
+        await user.type(inputBox, "{Enter}");
+        expect(DB.findBookmark).toBeCalledTimes(2);
+        expect(screen.getAllByTestId("bkmkitem").length).toBe(3);
+        expect(screen.getAllByText("javascript").length).toBe(1);
+        expect(screen.getAllByText("#javascript").length).toBe(3);
+        await user.type(inputBox, "{Backspace}");
+
+        await user.type(inputBox, "t");
+        await user.keyboard("{ArrowDown}");
+        await user.type(inputBox, "{Enter}");
+        expect(screen.getAllByText("javascript").length).toBe(1);
+        await user.type(inputBox, "{Backspace}");
+
+        await user.type(inputBox, "t");
+        await user.keyboard("{ArrowDown}");
+        await user.keyboard("{ArrowDown}");
+        await user.type(inputBox, "{Enter}");
+        expect(screen.getAllByText("python").length).toBe(1);
+        await user.type(inputBox, "{Backspace}");
+
+        await user.type(inputBox, "t");
+        await user.keyboard("{ArrowDown}");
+        await user.keyboard("{ArrowDown}");
+        await user.keyboard("{ArrowDown}");
+        await user.keyboard("{ArrowDown}");
+        await user.keyboard("{ArrowDown}");
+        await user.keyboard("{ArrowDown}");
+        await user.keyboard("{ArrowDown}");
+        await user.keyboard("{ArrowDown}");
+        await user.keyboard("{ArrowDown}");
+        await user.keyboard("{ArrowDown}");
+        await user.type(inputBox, "{Enter}");
+        expect(screen.getAllByText("python").length).toBe(1);
+        await user.type(inputBox, "{Backspace}");
+
+        await user.type(inputBox, "t");
+        await user.keyboard("{ArrowUp}");
+        await user.type(inputBox, "{Enter}");
+        expect(screen.getAllByText("gist").length).toBe(1);
+        await user.type(inputBox, "{Backspace}");
+        expect(window.HTMLElement.prototype.scrollIntoView).toBeCalledTimes(15)
+    });
 });
 
 describe("App.CreateNewBookmark", () => {
