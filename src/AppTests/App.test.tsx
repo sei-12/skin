@@ -8,6 +8,7 @@ import { startMockDB } from "../services/database.test";
 import { DB } from "../services/database";
 import { App } from "../App";
 import { DEFAULT_CONFIG } from "../providers/configProvider";
+import { startMockClipboardManager } from "../services/mockClipboard.test";
 
 vi.mock("@tauri-apps/api/event", () => ({ listen: vi.fn() }));
 vi.mock("@tauri-apps/api/window", () => ({
@@ -42,6 +43,7 @@ describe("App.SearchBookmark", () => {
         vi.clearAllMocks();
         startMockWindowVisibleController();
         startMockDB();
+        startMockClipboardManager("")
 
         await act(async () => {
             render(<App></App>);

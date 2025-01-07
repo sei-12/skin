@@ -7,7 +7,7 @@ import { CreateNewBookmarkPage } from "../pages/pages";
 import { startMockWindowVisibleController } from "../services/windowVisibleController.test";
 import { startMockDB } from "../services/database.test";
 import { DEFAULT_CONFIG } from "../providers/configProvider";
-import { startMockClipboardManager } from "../services/clipboard.test";
+import { startMockClipboardManager } from "../services/mockClipboard.test";
 
 vi.mock("@tauri-apps/api/event", () => ({ listen: vi.fn() }));
 vi.mock("@tauri-apps/api/window", () => ({
