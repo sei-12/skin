@@ -31,7 +31,7 @@ vi.mock("@tauri-apps/api/core", () => ({
 
 vi.mock("@tauri-apps/plugin-clipboard-manager",() => ({
     readText: vi.fn(() => {
-        return "foo://hello_world"
+        return "https://hello_world"
     })
 }))
 
@@ -53,7 +53,7 @@ describe("autoInputUrl", () => {
         const urlInputBox: HTMLInputElement = screen.getByPlaceholderText("url");
         const titleInputBox: HTMLInputElement = screen.getByPlaceholderText("title");
         const descInputBox: HTMLInputElement = screen.getByPlaceholderText("desc");
-        expect(urlInputBox.value).toBe("foo://hello_world")
+        expect(urlInputBox.value).toBe("https://hello_world")
         expect(titleInputBox.value).toBe("a")
         expect(descInputBox.value).toBe("b")
     });

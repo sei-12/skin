@@ -7,8 +7,9 @@ import { useHotkeys } from "react-hotkeys-hook";
 import { useTagInputBox } from "./TagInputBox";
 import { findTagMethod } from "../services/findTagMethod";
 import { DB } from "../services/database";
-import { readText } from "@tauri-apps/plugin-clipboard-manager";
 import { useConfig } from "../providers/configProvider";
+import { isUrl } from "../vanilla/isUrl";
+import { ClipBoardManager } from "../services/clipboard";
 
 function useCreateNewBookmark(
     onClickDone: () => void,
@@ -41,15 +42,18 @@ function useCreateNewBookmark(
         // イベントを発生させたかったけど、少し難しかった。
         onChangeUrl(url);
     };
-    
+
     const autoInputUrl = useCallback(async () => {
-        const clipboardText = await readText()
+        const clipboardText = await ClipBoardManager.read()
+        if (!isUrl(clipboardText)) {
+            return;
+        }
         setUrl(clipboardText)
-    },[])
-    
+    }, [])
+
     useEffect(() => {
         autoInputUrl()
-    },[])
+    }, [])
 
     const getInputData = useCallback(() => {
         let title = ""
