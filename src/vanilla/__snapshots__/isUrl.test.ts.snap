@@ -1,0 +1,401 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`isUrl > test3 1`] = `false`;
+
+exports[`isUrl > test3 2`] = `false`;
+
+exports[`isUrl > test3 3`] = `false`;
+
+exports[`isUrl > test3 4`] = `false`;
+
+exports[`isUrl > test3 5`] = `false`;
+
+exports[`isUrl > test3 6`] = `false`;
+
+exports[`isUrl > test3 7`] = `false`;
+
+exports[`isUrl > test3 8`] = `false`;
+
+exports[`isUrl > test3 9`] = `false`;
+
+exports[`isUrl > test3 10`] = `false`;
+
+exports[`isUrl > test3 11`] = `false`;
+
+exports[`isUrl > test3 12`] = `false`;
+
+exports[`isUrl > test3 13`] = `false`;
+
+exports[`isUrl > test3 14`] = `false`;
+
+exports[`isUrl > test3 15`] = `false`;
+
+exports[`isUrl > test3 16`] = `false`;
+
+exports[`isUrl > test3 17`] = `false`;
+
+exports[`isUrl > test3 18`] = `false`;
+
+exports[`isUrl > test3 19`] = `false`;
+
+exports[`isUrl > test3 20`] = `false`;
+
+exports[`isUrl > test3 21`] = `false`;
+
+exports[`isUrl > test3 22`] = `false`;
+
+exports[`isUrl > test3 23`] = `false`;
+
+exports[`isUrl > test3 24`] = `false`;
+
+exports[`isUrl > test3 25`] = `false`;
+
+exports[`isUrl > test3 26`] = `false`;
+
+exports[`isUrl > test3 27`] = `false`;
+
+exports[`isUrl > test3 28`] = `false`;
+
+exports[`isUrl > test3 29`] = `false`;
+
+exports[`isUrl > test3 30`] = `false`;
+
+exports[`isUrl > test3 31`] = `false`;
+
+exports[`isUrl > test3 32`] = `false`;
+
+exports[`isUrl > test3 33`] = `false`;
+
+exports[`isUrl > test3 34`] = `false`;
+
+exports[`isUrl > test3 35`] = `false`;
+
+exports[`isUrl > test3 36`] = `false`;
+
+exports[`isUrl > test3 37`] = `false`;
+
+exports[`isUrl > test3 38`] = `false`;
+
+exports[`isUrl > test3 39`] = `false`;
+
+exports[`isUrl > test3 40`] = `false`;
+
+exports[`isUrl > test3 41`] = `false`;
+
+exports[`isUrl > test3 42`] = `false`;
+
+exports[`isUrl > test3 43`] = `false`;
+
+exports[`isUrl > test3 44`] = `false`;
+
+exports[`isUrl > test3 45`] = `false`;
+
+exports[`isUrl > test3 46`] = `false`;
+
+exports[`isUrl > test3 47`] = `false`;
+
+exports[`isUrl > test3 48`] = `false`;
+
+exports[`isUrl > test3 49`] = `false`;
+
+exports[`isUrl > test3 50`] = `false`;
+
+exports[`isUrl > test3 51`] = `false`;
+
+exports[`isUrl > test3 52`] = `false`;
+
+exports[`isUrl > test3 53`] = `false`;
+
+exports[`isUrl > test3 54`] = `false`;
+
+exports[`isUrl > test3 55`] = `false`;
+
+exports[`isUrl > test3 56`] = `false`;
+
+exports[`isUrl > test3 57`] = `false`;
+
+exports[`isUrl > test3 58`] = `false`;
+
+exports[`isUrl > test3 59`] = `false`;
+
+exports[`isUrl > test3 60`] = `false`;
+
+exports[`isUrl > test3 61`] = `false`;
+
+exports[`isUrl > test3 62`] = `false`;
+
+exports[`isUrl > test3 63`] = `false`;
+
+exports[`isUrl > test3 64`] = `false`;
+
+exports[`isUrl > test3 65`] = `false`;
+
+exports[`isUrl > test3 66`] = `false`;
+
+exports[`isUrl > test3 67`] = `false`;
+
+exports[`isUrl > test3 68`] = `false`;
+
+exports[`isUrl > test3 69`] = `false`;
+
+exports[`isUrl > test3 70`] = `false`;
+
+exports[`isUrl > test3 71`] = `false`;
+
+exports[`isUrl > test3 72`] = `false`;
+
+exports[`isUrl > test3 73`] = `false`;
+
+exports[`isUrl > test3 74`] = `false`;
+
+exports[`isUrl > test3 75`] = `false`;
+
+exports[`isUrl > test3 76`] = `false`;
+
+exports[`isUrl > test3 77`] = `false`;
+
+exports[`isUrl > test3 78`] = `false`;
+
+exports[`isUrl > test3 79`] = `false`;
+
+exports[`isUrl > test3 80`] = `false`;
+
+exports[`isUrl > test3 81`] = `false`;
+
+exports[`isUrl > test3 82`] = `false`;
+
+exports[`isUrl > test3 83`] = `false`;
+
+exports[`isUrl > test3 84`] = `false`;
+
+exports[`isUrl > test3 85`] = `false`;
+
+exports[`isUrl > test3 86`] = `false`;
+
+exports[`isUrl > test3 87`] = `false`;
+
+exports[`isUrl > test3 88`] = `false`;
+
+exports[`isUrl > test3 89`] = `false`;
+
+exports[`isUrl > test3 90`] = `false`;
+
+exports[`isUrl > test3 91`] = `false`;
+
+exports[`isUrl > test3 92`] = `false`;
+
+exports[`isUrl > test3 93`] = `false`;
+
+exports[`isUrl > test3 94`] = `false`;
+
+exports[`isUrl > test3 95`] = `false`;
+
+exports[`isUrl > test3 96`] = `false`;
+
+exports[`isUrl > test3 97`] = `false`;
+
+exports[`isUrl > test3 98`] = `false`;
+
+exports[`isUrl > test3 99`] = `false`;
+
+exports[`isUrl > test3 100`] = `false`;
+
+exports[`isUrl > test3 101`] = `true`;
+
+exports[`isUrl > test3 102`] = `true`;
+
+exports[`isUrl > test3 103`] = `true`;
+
+exports[`isUrl > test3 104`] = `true`;
+
+exports[`isUrl > test3 105`] = `true`;
+
+exports[`isUrl > test3 106`] = `true`;
+
+exports[`isUrl > test3 107`] = `true`;
+
+exports[`isUrl > test3 108`] = `true`;
+
+exports[`isUrl > test3 109`] = `true`;
+
+exports[`isUrl > test3 110`] = `true`;
+
+exports[`isUrl > test3 111`] = `true`;
+
+exports[`isUrl > test3 112`] = `true`;
+
+exports[`isUrl > test3 113`] = `true`;
+
+exports[`isUrl > test3 114`] = `true`;
+
+exports[`isUrl > test3 115`] = `true`;
+
+exports[`isUrl > test3 116`] = `true`;
+
+exports[`isUrl > test3 117`] = `true`;
+
+exports[`isUrl > test3 118`] = `true`;
+
+exports[`isUrl > test3 119`] = `true`;
+
+exports[`isUrl > test3 120`] = `true`;
+
+exports[`isUrl > test3 121`] = `true`;
+
+exports[`isUrl > test3 122`] = `true`;
+
+exports[`isUrl > test3 123`] = `true`;
+
+exports[`isUrl > test3 124`] = `true`;
+
+exports[`isUrl > test3 125`] = `true`;
+
+exports[`isUrl > test3 126`] = `true`;
+
+exports[`isUrl > test3 127`] = `true`;
+
+exports[`isUrl > test3 128`] = `true`;
+
+exports[`isUrl > test3 129`] = `true`;
+
+exports[`isUrl > test3 130`] = `true`;
+
+exports[`isUrl > test3 131`] = `true`;
+
+exports[`isUrl > test3 132`] = `true`;
+
+exports[`isUrl > test3 133`] = `true`;
+
+exports[`isUrl > test3 134`] = `true`;
+
+exports[`isUrl > test3 135`] = `true`;
+
+exports[`isUrl > test3 136`] = `true`;
+
+exports[`isUrl > test3 137`] = `true`;
+
+exports[`isUrl > test3 138`] = `true`;
+
+exports[`isUrl > test3 139`] = `true`;
+
+exports[`isUrl > test3 140`] = `true`;
+
+exports[`isUrl > test3 141`] = `true`;
+
+exports[`isUrl > test3 142`] = `true`;
+
+exports[`isUrl > test3 143`] = `true`;
+
+exports[`isUrl > test3 144`] = `true`;
+
+exports[`isUrl > test3 145`] = `true`;
+
+exports[`isUrl > test3 146`] = `true`;
+
+exports[`isUrl > test3 147`] = `true`;
+
+exports[`isUrl > test3 148`] = `true`;
+
+exports[`isUrl > test3 149`] = `true`;
+
+exports[`isUrl > test3 150`] = `true`;
+
+exports[`isUrl > test3 151`] = `true`;
+
+exports[`isUrl > test3 152`] = `true`;
+
+exports[`isUrl > test3 153`] = `true`;
+
+exports[`isUrl > test3 154`] = `true`;
+
+exports[`isUrl > test3 155`] = `true`;
+
+exports[`isUrl > test3 156`] = `true`;
+
+exports[`isUrl > test3 157`] = `true`;
+
+exports[`isUrl > test3 158`] = `true`;
+
+exports[`isUrl > test3 159`] = `true`;
+
+exports[`isUrl > test3 160`] = `true`;
+
+exports[`isUrl > test3 161`] = `true`;
+
+exports[`isUrl > test3 162`] = `true`;
+
+exports[`isUrl > test3 163`] = `true`;
+
+exports[`isUrl > test3 164`] = `true`;
+
+exports[`isUrl > test3 165`] = `true`;
+
+exports[`isUrl > test3 166`] = `true`;
+
+exports[`isUrl > test3 167`] = `true`;
+
+exports[`isUrl > test3 168`] = `true`;
+
+exports[`isUrl > test3 169`] = `true`;
+
+exports[`isUrl > test3 170`] = `true`;
+
+exports[`isUrl > test3 171`] = `true`;
+
+exports[`isUrl > test3 172`] = `true`;
+
+exports[`isUrl > test3 173`] = `true`;
+
+exports[`isUrl > test3 174`] = `true`;
+
+exports[`isUrl > test3 175`] = `true`;
+
+exports[`isUrl > test3 176`] = `true`;
+
+exports[`isUrl > test3 177`] = `true`;
+
+exports[`isUrl > test3 178`] = `true`;
+
+exports[`isUrl > test3 179`] = `true`;
+
+exports[`isUrl > test3 180`] = `true`;
+
+exports[`isUrl > test3 181`] = `true`;
+
+exports[`isUrl > test3 182`] = `true`;
+
+exports[`isUrl > test3 183`] = `true`;
+
+exports[`isUrl > test3 184`] = `true`;
+
+exports[`isUrl > test3 185`] = `true`;
+
+exports[`isUrl > test3 186`] = `true`;
+
+exports[`isUrl > test3 187`] = `true`;
+
+exports[`isUrl > test3 188`] = `true`;
+
+exports[`isUrl > test3 189`] = `true`;
+
+exports[`isUrl > test3 190`] = `true`;
+
+exports[`isUrl > test3 191`] = `true`;
+
+exports[`isUrl > test3 192`] = `true`;
+
+exports[`isUrl > test3 193`] = `true`;
+
+exports[`isUrl > test3 194`] = `true`;
+
+exports[`isUrl > test3 195`] = `true`;
+
+exports[`isUrl > test3 196`] = `true`;
+
+exports[`isUrl > test3 197`] = `true`;
+
+exports[`isUrl > test3 198`] = `true`;
+
+exports[`isUrl > test3 199`] = `true`;
+
+exports[`isUrl > test3 200`] = `true`;

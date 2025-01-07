@@ -120,6 +120,9 @@ pub struct ColorTheme {
 
     #[serde(default = "default_tag_item")]
     tagItem: TagItem,
+    
+    #[serde(default = "default_create_new_bookmark")]
+    createNewBookmark: CreateNewBookmark,
 
     #[serde(default = "color_palette::dark2")]
     bg: String,
@@ -198,6 +201,23 @@ fn default_predicate_input_box() -> PredicateInputBox {
     serde_json::from_str("{}").expect("Failed to parse default config")
 }
 
+
+#[serde_inline_default]
+#[derive(Serialize, Deserialize, Debug, Clone, TS)]
+pub struct CreateNewBookmark {
+    #[serde_inline_default("white".to_string())]
+    pub textColor: String,
+
+    #[serde(default = "color_palette::dark6")]
+    pub placeholder: String,
+
+    #[serde_inline_default("white".to_string())]
+    pub caretColor: String,
+}
+fn default_create_new_bookmark() -> CreateNewBookmark {
+    serde_json::from_str("{}").expect("Failed to parse default config")
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -227,6 +247,11 @@ mod tests {
                     textColor: "white".to_string(),
                     placeholder: color_palette::dark6(),
                     caretColor: "white".to_string(),
+                },
+                createNewBookmark: CreateNewBookmark {
+                    caretColor: "white".to_string(),
+                    placeholder: color_palette::dark6(),
+                    textColor: "white".to_string(),
                 },
                 tagItem: TagItem {
                     bg: color_palette::dark1(),

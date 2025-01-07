@@ -21,7 +21,6 @@ export const TagInputBox = (p: TagInputBoxProps) => {
     return (
         <Box
             sx={{
-                margin: 0.5,
                 padding: 1,
                 position: "relative",
                 display: "flex",

@@ -10,6 +10,7 @@ import { DB } from "../services/database";
 import { useConfig } from "../providers/configProvider";
 import { isUrl } from "../vanilla/isUrl";
 import { ClipBoardManager } from "../services/clipboard";
+import type { CreateNewBookmarkProps } from "../components/CreateNewBookmark";
 
 function useCreateNewBookmark(
     onClickDone: () => void,
@@ -102,16 +103,20 @@ function useCreateNewBookmark(
         tagInputBoxHook.setInputedTags([]);
     };
 
+    const { colorTheme } = useConfig()
+    const props: CreateNewBookmarkProps = {
+        titleRef,
+        descRef,
+        urlRef,
+        tagInputBox: tagInputBoxHook.props,
+        onClickCancel,
+        onClickDone,
+        onChangeUrl,
+        colorTheme,
+    }
+
     return {
-        props: {
-            titleRef,
-            descRef,
-            urlRef,
-            tagInputBox: tagInputBoxHook.props,
-            onClickCancel,
-            onClickDone,
-            onChangeUrl,
-        },
+        props,
         tagInputBoxHook,
         onKeyDownBackspace,
         setContent,
