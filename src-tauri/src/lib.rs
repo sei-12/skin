@@ -1,12 +1,14 @@
 use std::sync::Mutex;
 
-use tauri::{Emitter, Manager, WindowEvent};
-use tauri_plugin_sql::{Migration, MigrationKind};
+use tauri::{async_runtime::block_on, Emitter, Manager, WindowEvent};
+// use tauri_plugin_sql::{Migration, MigrationKind};
 
 mod fetch_website_content;
 mod file_change_watcher;
 mod config_path;
 mod config;
+mod db;
+
 mod config_model;
 
 #[tauri::command]
@@ -27,35 +29,35 @@ fn get_config() -> config_model::Config {
     config::read_config()
 }
 
-fn migrations() -> Vec<Migration> {
-    vec![Migration {
-        version: 1,
-        description: "create initial tables",
-        sql: "
-            create table if not exists bookmarks (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                title text,
-                url text,
-                description text,
-                tag_count int not null
-            );
+// fn migrations() -> Vec<Migration> {
+//     vec![Migration {
+//         version: 1,
+//         description: "create initial tables",
+//         sql: "
+//             create table if not exists bookmarks (
+//                 id INTEGER PRIMARY KEY AUTOINCREMENT,
+//                 title text,
+//                 url text,
+//                 description text,
+//                 tag_count int not null
+//             );
 
-            create table if not exists tags (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                name text unique
-            );
+//             create table if not exists tags (
+//                 id INTEGER PRIMARY KEY AUTOINCREMENT,
+//                 name text unique
+//             );
 
-            create table if not exists tag_map (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                bkmk_id int,
-                tag_id int,
-                FOREIGN KEY (bkmk_id) REFERENCES bookmarks (id),
-                FOREIGN KEY (tag_id) REFERENCES tags (id)
-            );
-            ",
-        kind: MigrationKind::Up,
-    }]
-}
+//             create table if not exists tag_map (
+//                 id INTEGER PRIMARY KEY AUTOINCREMENT,
+//                 bkmk_id int,
+//                 tag_id int,
+//                 FOREIGN KEY (bkmk_id) REFERENCES bookmarks (id),
+//                 FOREIGN KEY (tag_id) REFERENCES tags (id)
+//             );
+//             ",
+//         kind: MigrationKind::Up,
+//     }]
+// }
 
 fn start_file_change_watcher(
     app: &mut tauri::App
@@ -83,11 +85,11 @@ pub fn run() {
         .plugin(tauri_plugin_clipboard_manager::init())
         .plugin(tauri_plugin_global_shortcut::Builder::new().build())
         //.plugin(tauri_plugin_sql::Builder::new().build())
-        .plugin(
-            tauri_plugin_sql::Builder::default()
-                .add_migrations("sqlite:skin.db", migrations())
-                .build(),
-        )
+        // .plugin(
+        //     tauri_plugin_sql::Builder::default()
+        //         .add_migrations("sqlite:skin.db", migrations())
+        //         .build(),
+        // )
         .plugin(tauri_plugin_shell::init())
         .invoke_handler(tauri::generate_handler![
             greet,
@@ -104,6 +106,14 @@ pub fn run() {
             app.manage(Mutex::new(f_watcher));
             
             Ok(())
+        })
+        .setup(|app| {
+            block_on(async {
+                let path = app.path().app_data_dir()?;
+                let pool = db::connect(path).await?;
+                app.manage(pool);
+                Ok(())
+            })
         })
         .on_window_event(|window,event| match event {
             WindowEvent::Destroyed => {
