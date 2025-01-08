@@ -17,9 +17,9 @@ fn migrations() -> MigrationList {
         sql: "
             create table if not exists bookmarks (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
-                title text,
-                url text,
-                description text,
+                title text not null,
+                url text not null,
+                description text not null,
                 tag_count int not null
             );
 
@@ -30,10 +30,11 @@ fn migrations() -> MigrationList {
 
             create table if not exists tag_map (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
-                bkmk_id int,
-                tag_id int,
+                bkmk_id int not null,
+                tag_id int not null,
                 FOREIGN KEY (bkmk_id) REFERENCES bookmarks (id),
-                FOREIGN KEY (tag_id) REFERENCES tags (id)
+                FOREIGN KEY (tag_id) REFERENCES tags (id),
+                UNIQUE (bkmk_id,tag_id)
             );
             ",
         kind: MigrationKind::Up,

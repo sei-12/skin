@@ -1,3 +1,5 @@
+use std::collections::HashSet;
+
 use futures::future::join_all;
 use tauri::{command, State};
 
@@ -34,12 +36,17 @@ pub async fn is_exists_tag<'a>(pool: State<'a, DbPool>, tag: String) -> Result<b
     Ok(result.is_some())
 }
 
+// 順番が変わらない
 #[command]
 pub async fn insert_bookmark<'a>(
     pool: State<'a, DbPool>,
     req: InsertBookmarkRequest,
 ) -> Result<(), CommandError> {
-    let Ok(tag_count) = u32::try_from(req.tags.len()) else {
+
+    // remoe duplicate tag
+    let tags: Vec<String> = filter_duplicate(req.tags);
+
+    let Ok(tag_count) = u32::try_from(tags.len()) else {
         return Err(CommandError::BadRequest);
     };
 
@@ -53,7 +60,7 @@ pub async fn insert_bookmark<'a>(
         return Err(CommandError::Validation);
     };
 
-    insert_tags_if_not_exists(&pool, &req.tags).await?;
+    insert_tags_if_not_exists(&pool, &tags).await?;
 
     let result = sqlx::query("insert into bookmarks values (null,$1,$2,$3,$4);")
         .bind(req.title)
@@ -63,7 +70,7 @@ pub async fn insert_bookmark<'a>(
         .execute(pool.inner())
         .await?;
 
-    mapping_tags(&pool, result.last_insert_rowid(), &req.tags).await?;
+    mapping_tags(&pool, result.last_insert_rowid(), &tags).await?;
 
     Ok(())
 }
@@ -100,6 +107,8 @@ pub async fn find_bookmark<'a>(
     pool: State<'a, DbPool>,
     filter_tags: Vec<String>,
 ) -> Result<Vec<Bookmark>, CommandError> {
+    let filter_tags = filter_duplicate(filter_tags);
+
     let q = build_query_find_bookmark(&filter_tags);
     let mut query = sqlx::query_as(&q);
     for tag in filter_tags {
@@ -257,4 +266,43 @@ fn vec_result_to_result_vec<T, E>(v: Vec<Result<T, E>>) -> Result<Vec<T>, E> {
             }
             Err(e) => Err(e),
         })
+}
+
+fn filter_duplicate(v: Vec<String>) -> Vec<String> {
+    let mut ret_vec:Vec<String> = Vec::with_capacity(v.len()); 
+    let mut s:HashSet<String> = HashSet::new();
+        
+    for string in v.into_iter() {
+        if s.contains(&string) {
+            continue;
+        }
+        s.insert(string.clone());
+        ret_vec.push(string);
+    };
+    
+    drop(s);
+
+    ret_vec
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_filter_duplicate(){
+        let a = vec![
+            "hello".to_string(),
+            "hello".to_string(),
+            "hello1".to_string(),
+            "hello1".to_string(),
+        ];
+        assert_eq!(
+            filter_duplicate(a),
+            vec![
+                "hello".to_string(),
+                "hello1".to_string(),
+            ]
+        )
+    }
 }

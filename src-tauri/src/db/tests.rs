@@ -6,23 +6,32 @@ use uuid::Uuid;
 
 use crate::db::commands;
 use crate::db::connect;
+use crate::db::DbPool;
 
 use super::error::CommandError;
 use super::models::Bookmark;
+use super::models::BookmarkRecord;
 use super::models::InsertBookmarkRequest;
 
-fn test_dir() -> PathBuf {
+fn tmp_dir() -> PathBuf {
     let path = temp_dir();
     let uuid = Uuid::new_v4();
     let path_string = path.join(uuid.to_string());
-    
+
     path_string
+}
+
+// 不具合を発見した時に使う
+#[allow(unused)]
+fn debug_dir(name: &str) -> PathBuf {
+    let path = PathBuf::from(format!("./__debug__/{}", name));
+    path
 }
 
 #[tokio::test]
 async fn test1() -> Result<(), CommandError> {
     let app = tauri::test::mock_app();
-    let path = test_dir();
+    let path = tmp_dir();
 
     let con = connect(path).await.expect("error connect");
     app.manage(con);
@@ -42,7 +51,7 @@ async fn test1() -> Result<(), CommandError> {
 #[tokio::test]
 async fn test2() -> Result<(), CommandError> {
     let app = tauri::test::mock_app();
-    let path = test_dir();
+    let path = tmp_dir();
 
     let con = connect(path).await.expect("error connect");
     app.manage(con);
@@ -115,7 +124,7 @@ async fn test2() -> Result<(), CommandError> {
 #[tokio::test]
 async fn test3() -> Result<(), CommandError> {
     let app = tauri::test::mock_app();
-    let path = test_dir();
+    let path = tmp_dir();
 
     let con = connect(path).await.expect("error connect");
     app.manage(con);
@@ -189,7 +198,7 @@ async fn test3() -> Result<(), CommandError> {
 #[tokio::test]
 async fn test4() -> Result<(), CommandError> {
     let app = tauri::test::mock_app();
-    let path = test_dir();
+    let path = tmp_dir();
 
     let con = connect(path).await.expect("error connect");
     app.manage(con);
@@ -226,7 +235,7 @@ async fn test4() -> Result<(), CommandError> {
 async fn test5_sort() -> Result<(), CommandError> {
     for _ in 0..5 {
         let app = tauri::test::mock_app();
-        let path = test_dir();
+        let path = tmp_dir();
 
         let con = connect(path).await.expect("error connect");
         app.manage(con);
@@ -264,7 +273,7 @@ async fn test5_sort() -> Result<(), CommandError> {
 async fn test6_sort() -> Result<(), CommandError> {
     for _ in 0..5 {
         let app = tauri::test::mock_app();
-        let path = test_dir();
+        let path = tmp_dir();
 
         let con = connect(path).await.expect("error connect");
         app.manage(con);
@@ -307,7 +316,7 @@ async fn test6_sort() -> Result<(), CommandError> {
 #[tokio::test]
 async fn test7() -> Result<(), CommandError> {
     let app = tauri::test::mock_app();
-    let path = test_dir();
+    let path = tmp_dir();
 
     let con = connect(path).await.expect("error connect");
     app.manage(con);
@@ -344,7 +353,7 @@ async fn test7() -> Result<(), CommandError> {
 #[tokio::test]
 async fn test8() -> Result<(), CommandError> {
     let app = tauri::test::mock_app();
-    let path = test_dir();
+    let path = tmp_dir();
 
     let con = connect(path).await.expect("error connect");
     app.manage(con);
@@ -386,7 +395,7 @@ async fn test8() -> Result<(), CommandError> {
 #[tokio::test]
 async fn test9() -> Result<(), CommandError> {
     let app = tauri::test::mock_app();
-    let path = test_dir();
+    let path = tmp_dir();
 
     let con = connect(path).await.expect("error connect");
     app.manage(con);
@@ -483,11 +492,11 @@ async fn test9() -> Result<(), CommandError> {
 #[tokio::test]
 async fn test10() -> Result<(), CommandError> {
     let app = tauri::test::mock_app();
-    let path = test_dir();
+    let path = tmp_dir();
 
     let con = connect(path).await.expect("error connect");
     app.manage(con);
-    
+
     let req = InsertBookmarkRequest {
         desc: "desc".to_string(),
         title: "title".to_string(),
@@ -500,23 +509,193 @@ async fn test10() -> Result<(), CommandError> {
         ],
     };
     commands::insert_bookmark(app.state(), req).await?;
-    
+
     commands::delete_bookmark(app.state(), 1).await?;
-    
-    let result = commands::find_bookmark(
-        app.state(),
-        vec![
-            "a".to_string(),
-            "b".to_string(),
-        ],
-    )
-    .await?;
+
+    let result =
+        commands::find_bookmark(app.state(), vec!["a".to_string(), "b".to_string()]).await?;
 
     let expect: Vec<Bookmark> = vec![];
     assert_eq!(expect, result);
-    
+
     //　エラーではない.
     commands::delete_bookmark(app.state(), 1).await?;
+
+    Ok(())
+}
+
+mod test_utils {
+    use crate::db::{commands, error::CommandError, models::InsertBookmarkRequest, DbPool};
+    use rand::Rng;
+    use tauri::{test::MockRuntime, App, Manager, State};
+
+    pub(super) async fn i_bkmk<'a>(
+        pool: State<'a, DbPool>,
+        title: &str,
+        url: &str,
+        desc: &str,
+        tags: &[&str],
+    ) -> Result<(), CommandError> {
+        let req = InsertBookmarkRequest {
+            desc: desc.to_string(),
+            title: title.to_string(),
+            url: url.to_string(),
+            tags: tags.iter().map(|s| s.to_string()).collect(),
+        };
+        commands::insert_bookmark(pool, req).await?;
+        Ok(())
+    }
+
+    pub(super) async fn f_bkmk<'a>(
+        pool: State<'a, DbPool>,
+        tags: &[&str],
+    ) -> Result<Vec<crate::db::models::Bookmark>, CommandError> {
+        commands::find_bookmark(pool, tags.iter().map(|s| s.to_string()).collect()).await
+    }
+
+    pub(super) async fn i_random_bkmk<'a>(app: &App<MockRuntime>) -> Result<(), CommandError> {
+        let title = uuid::Uuid::new_v4().to_string();
+        let url = uuid::Uuid::new_v4().to_string();
+        let desc = uuid::Uuid::new_v4().to_string();
+        let mut tags: Vec<String> = Vec::new();
+
+        let tag_count = rand::thread_rng().gen_range(1, 30);
+        for _ in 0..tag_count {
+            tags.push(gen_ascii_chars(rand::thread_rng().gen_range(1, 10)));
+        }
+
+        commands::insert_bookmark(
+            app.state(),
+            InsertBookmarkRequest {
+                title: title.clone(),
+                url: url.clone(),
+                desc: desc.clone(),
+                tags: tags.clone(),
+            },
+        )
+        .await?;
+
+        let result = commands::find_bookmark(app.state(), tags.clone()).await?;
+
+        assert!(
+            result.len() >= 1,
+            "bug: 
+            result.len() = {}
+            tags = {:?}
+            title = {}
+            url = {}
+            desc = {}
+        ",
+            result.len(),
+            tags,
+            title,
+            url,
+            desc,
+        );
+
+        Ok(())
+    }
+
+    extern crate rand;
+    use rand::seq::SliceRandom;
+
+    const BASE_STR: &str = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+    pub fn gen_ascii_chars(size: usize) -> String {
+        let mut rng = &mut rand::thread_rng();
+        String::from_utf8(
+            BASE_STR
+                .as_bytes()
+                .choose_multiple(&mut rng, size)
+                .cloned()
+                .collect(),
+        )
+        .unwrap()
+    }
+}
+
+#[tokio::test]
+async fn test11() -> Result<(), CommandError> {
+    let app = tauri::test::mock_app();
+    let path = tmp_dir();
+
+    let con = connect(path).await.expect("error connect");
+    app.manage(con);
+
+    let result = test_utils::i_bkmk(
+        app.state(),
+        "title",
+        "url",
+        "desc",
+        &["hello_world", "vali error"],
+    )
+    .await;
+    assert_eq!(result.unwrap_err(), CommandError::Validation);
+
+    let result = test_utils::i_bkmk(app.state(), "title", "url", "desc", &[""]).await;
+    assert_eq!(result.unwrap_err(), CommandError::Validation);
+
+    let result = test_utils::i_bkmk(app.state(), "title", "url", "desc", &[" "]).await;
+    assert_eq!(result.unwrap_err(), CommandError::Validation);
+
+    let result = test_utils::i_bkmk(app.state(), "", "url", "desc", &["hello"]).await;
+    assert_eq!(result.unwrap_err(), CommandError::Validation);
+
+    let result = test_utils::i_bkmk(app.state(), "title", "", "desc", &["hello"]).await;
+    assert_eq!(result.unwrap_err(), CommandError::Validation);
+
+    let result = test_utils::i_bkmk(app.state(), "title", "url", "desc", &[]).await;
+    assert_eq!(result.unwrap_err(), CommandError::Validation);
+
+    let result = test_utils::i_bkmk(app.state(), "", "", "", &[]).await;
+    assert_eq!(result.unwrap_err(), CommandError::Validation);
+
+    Ok(())
+}
+
+#[tokio::test]
+async fn test12() -> Result<(), CommandError> {
+    let app = tauri::test::mock_app();
+    let path = tmp_dir();
+
+    let con = connect(path).await.expect("error connect");
+    app.manage(con);
+
+    test_utils::i_bkmk(app.state(), "title1", "6678", "", &["hello"]).await?;
+    test_utils::i_bkmk(app.state(), "title2", "7678", "", &["hello"]).await?;
+    test_utils::i_bkmk(app.state(), "title3", "8678", "", &["hello"]).await?;
+    test_utils::i_bkmk(app.state(), "title4", "9678", "", &["hello"]).await?;
+    test_utils::i_bkmk(app.state(), "title5", "1068", "", &["hello"]).await?;
+    test_utils::i_bkmk(app.state(), "title6", "1168", "", &["hello"]).await?;
+    test_utils::i_bkmk(app.state(), "title7", "1268", "", &["hello"]).await?;
+
+    let res = test_utils::f_bkmk(app.state(), &["hello"]).await?;
+
+    assert!(res.len() == 7);
+
+    Ok(())
+}
+
+#[tokio::test]
+async fn test13() -> Result<(), CommandError> {
+    let app = tauri::test::mock_app();
+    let path = tmp_dir();
+    // let path = debug_dir("test13");
+
+    let con = connect(path).await.expect("error connect");
+    app.manage(con);
+
+    // 2,3回は成功する
+
+    for _ in 0..100 {
+        test_utils::i_random_bkmk(&app).await?;
+    }
+
+    let result: Vec<BookmarkRecord> = sqlx::query_as("select * from bookmarks")
+        .fetch_all(app.state::<DbPool>().inner())
+        .await?;
+
+    assert_eq!(result.len(), 100);
 
     Ok(())
 }
