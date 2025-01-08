@@ -2,6 +2,10 @@ name: "test-on-pr"
 
 on: [pull_request]
 
+# 参考URL: https://blog.lacolaco.net/posts/github-actions-yarn-cache/
+env:
+  YARN_CACHE_FOLDER: .cache/yarn
+
 # This workflow will build your tauri app without uploading it anywhere.
 
 jobs:
@@ -35,18 +39,22 @@ jobs:
           shared-key: ${{ matrix.platform }}-${{ matrix.args }}
           workspaces: 'src-tauri -> target'
 
-      - name: Get node version
-        id: node
-        run: |
-          echo "version=$(node -v)" >> $GITHUB_OUTPUT
+      # - name: Get node version
+      #   id: node
+      #   run: |
+      #     echo "version=$(node -v)" >> $GITHUB_OUTPUT
 
-      - name: Get node_modules cache
-        uses: actions/cache@v3.0.2
-        id: node_modules
+      # - name: Get node_modules cache
+      #   uses: actions/cache@v3.0.2
+      #   id: node_modules
+      #   with:
+      #     path: node_modules
+      #     key: ${{ matrix.platform }}-${{ matrix.args }}-node_modules-${{ hashFiles('yarn.lock') }}-${{ steps.node.outputs.version }}
+
+      - uses: actions/cache@v2
         with:
-          path: node_modules
-          key: ${{ matrix.platform }}-${{ matrix.args }}-node_modules-${{ hashFiles('yarn.lock') }}-${{ steps.node.outputs.version }}
-
+          path: ${YARN_CACHE_FOLDER}
+          key: ${{ runner.os }}-yarn-cache-v1
 
       - name: install frontend dependencies
         run: yarn --frozen-lockfile && yarn install --network-timeout 600000 # change this to npm, pnpm or bun depending on which one you use.
