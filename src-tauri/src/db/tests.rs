@@ -14,8 +14,9 @@ use super::models::InsertBookmarkRequest;
 fn test_dir() -> PathBuf {
     let path = temp_dir();
     let uuid = Uuid::new_v4();
-    let path_string = format!("{}/{}", path.to_str().unwrap(), uuid.to_string());
-    PathBuf::from(path_string)
+    let path_string = path.join(uuid.to_string());
+    
+    path_string
 }
 
 #[tokio::test]
