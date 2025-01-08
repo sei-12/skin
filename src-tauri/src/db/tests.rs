@@ -2,7 +2,6 @@ use std::{env::temp_dir, path::PathBuf};
 
 use rand::seq::SliceRandom;
 use tauri::Manager;
-use uuid::Uuid;
 
 use crate::db::commands;
 use crate::db::connect;
@@ -15,8 +14,7 @@ use super::models::InsertBookmarkRequest;
 
 fn tmp_dir() -> PathBuf {
     let path = temp_dir();
-    let uuid = Uuid::new_v4();
-    let path_string = path.join(uuid.to_string());
+    let path_string = path.join(test_utils::gen_ascii_chars(12));
 
     path_string
 }
@@ -554,9 +552,9 @@ mod test_utils {
     }
 
     pub(super) async fn i_random_bkmk<'a>(app: &App<MockRuntime>) -> Result<(), CommandError> {
-        let title = uuid::Uuid::new_v4().to_string();
-        let url = uuid::Uuid::new_v4().to_string();
-        let desc = uuid::Uuid::new_v4().to_string();
+        let title = gen_ascii_chars(10);
+        let url = gen_ascii_chars(10);
+        let desc = gen_ascii_chars(10);
         let mut tags: Vec<String> = Vec::new();
 
         let tag_count = rand::thread_rng().gen_range(1, 30);

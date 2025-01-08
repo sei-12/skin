@@ -1,5 +1,5 @@
 /// https://github.com/tauri-apps/tauri-plugin-sql/blob/99af9d81fa344181f86dfb1ed1e17c1ac8e6ec23/src/lib.rs
-use futures_core::future::BoxFuture;
+use futures::future::BoxFuture;
 use sqlx::{
     error::BoxDynError,
     migrate::{Migration as SqlxMigration, MigrationSource, MigrationType, Migrator},
