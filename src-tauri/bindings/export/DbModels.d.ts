@@ -2,4 +2,6 @@
 
 export type BookmarkRecord = { id: bigint, title: string, url: string, description: string, tag_count: number, };
 
+export type InsertBookmarkRequest = { title: string, url: string, description: string, tags: Array<string>, };
+
 export type TagRecord = { id: bigint, name: string, };

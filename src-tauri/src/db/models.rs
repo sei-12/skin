@@ -1,9 +1,8 @@
 use serde::{Deserialize, Serialize};
-use sqlx::prelude::FromRow;
 use ts_rs::TS;
 
 
-#[derive(Serialize, Deserialize, TS, FromRow, PartialEq, Debug)]
+#[derive(Serialize, Deserialize, TS, sqlx::FromRow, PartialEq, Debug)]
 #[ts(export, export_to = "export/DbModels.d.ts")]
 pub struct BookmarkRecord {
     id: i64,
@@ -14,9 +13,22 @@ pub struct BookmarkRecord {
 }
 
 
-#[derive(Serialize, Deserialize, TS, FromRow, PartialEq, Debug)]
+#[derive(Serialize, Deserialize, TS, sqlx::FromRow, PartialEq, Debug)]
 #[ts(export, export_to = "export/DbModels.d.ts")]
 pub struct TagRecord {
-    id: i64,
-    name: String,
+    pub id: i64,
+    pub name: String,
+}
+
+
+
+
+
+#[derive(Serialize, Deserialize, TS, PartialEq, Debug)]
+#[ts(export, export_to = "export/DbModels.d.ts")]
+pub struct InsertBookmarkRequest {
+    pub title: String,
+    pub url: String,
+    pub description: String,
+    pub tags: Vec<String>,
 }
