@@ -557,9 +557,9 @@ mod test_utils {
         let desc = gen_ascii_chars(10);
         let mut tags: Vec<String> = Vec::new();
 
-        let tag_count = rand::thread_rng().gen_range(1, 30);
+        let tag_count = rand::thread_rng().gen_range(1..30);
         for _ in 0..tag_count {
-            tags.push(gen_ascii_chars(rand::thread_rng().gen_range(1, 10)));
+            tags.push(gen_ascii_chars(rand::thread_rng().gen_range(1..10)));
         }
 
         commands::insert_bookmark(
