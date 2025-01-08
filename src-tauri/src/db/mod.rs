@@ -45,3 +45,6 @@ fn path_mapper(mut app_path: std::path::PathBuf, connection_string: &str) -> Str
 
 // #[cfg(test)]
 // mod tests;
+
+#[cfg(test)]
+mod test_test;
