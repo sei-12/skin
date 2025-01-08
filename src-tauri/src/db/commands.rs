@@ -1,13 +1,28 @@
-use std::result;
-
-use sqlx::{prelude::FromRow, query, Execute, QueryBuilder, Sqlite};
+use futures::future::join_all;
 use tauri::{command, State};
 
 use super::{
-    models::{InsertBookmarkRequest, TagRecord},
+    models::{Bookmark, BookmarkRecord, InsertBookmarkRequest, TagRecord},
     DbPool,
 };
 use crate::db::error::CommandError;
+
+#[command]
+pub async fn delete_bookmark<'a>(
+    pool: State<'a, DbPool>,
+    bookmark_id: i64,
+) -> Result<(), CommandError> {
+    sqlx::query(
+        "
+        delete from tag_map where bkmk_id = $1;
+        delete from bookmarks where id = $1;",
+    )
+    .bind(bookmark_id)
+    .execute(pool.inner())
+    .await?;
+
+    Ok(())
+}
 
 #[command]
 pub async fn is_exists_tag<'a>(pool: State<'a, DbPool>, tag: String) -> Result<bool, CommandError> {
@@ -62,19 +77,97 @@ pub async fn find_tag<'a>(
         return Ok(vec![]);
     };
 
-    let result: Vec<TagRecord> = sqlx::query_as(
-        "
-        select * from (select * from tags order by length(name)) where name like $1
-        union
-        select * from (select * from tags order by length(name)) where name like $2 and name not like $1
-        ",
+    let mut result1: Vec<TagRecord> =
+        sqlx::query_as(" select * from tags where name like $1 order by length(name), name")
+            .bind(format!("{}%", predicate))
+            .fetch_all(pool.inner())
+            .await?;
+    let mut result2: Vec<TagRecord> = sqlx::query_as(
+        "select * from tags where name like $2 and name not like $1 order by length(name), name",
     )
     .bind(format!("{}%", predicate))
     .bind(format!("%{}%", predicate))
     .fetch_all(pool.inner())
     .await?;
 
-    Ok(result.into_iter().map(|e| e.name).collect())
+    result1.append(&mut result2);
+
+    Ok(result1.into_iter().map(|e| e.name).collect())
+}
+
+#[command]
+pub async fn find_bookmark<'a>(
+    pool: State<'a, DbPool>,
+    filter_tags: Vec<String>,
+) -> Result<Vec<Bookmark>, CommandError> {
+    let q = build_query_find_bookmark(&filter_tags);
+    let mut query = sqlx::query_as(&q);
+    for tag in filter_tags {
+        query = query.bind(tag);
+    }
+    let records: Vec<BookmarkRecord> = query.fetch_all(pool.inner()).await?;
+
+    let select_process = records
+        .into_iter()
+        .map(|r| async { select_tags_where_bookmark(&pool, r).await });
+
+    let bookmarks = join_all(select_process).await;
+
+    vec_result_to_result_vec(bookmarks)
+}
+
+#[derive(sqlx::FromRow)]
+struct SelectTagsRecord {
+    tag_name: String,
+}
+
+async fn select_tags_where_bookmark<'a>(
+    pool: &State<'a, DbPool>,
+    record: BookmarkRecord,
+) -> Result<Bookmark, CommandError> {
+    let result: Vec<SelectTagsRecord> = sqlx::query_as(&format!(
+        "
+        SELECT tags.name as tag_name
+        FROM tags
+        JOIN tag_map ON tags.id = tag_map.tag_id
+        WHERE tag_map.bkmk_id = $1;"
+    ))
+    .bind(record.id)
+    .fetch_all(pool.inner())
+    .await?;
+
+    Ok(Bookmark {
+        id: record.id,
+        title: record.title,
+        url: record.url,
+        description: record.description,
+        tags: result.into_iter().map(|r| r.tag_name).collect(),
+    })
+}
+
+fn build_query_find_bookmark(tags: &Vec<String>) -> String {
+    let mut names = String::new();
+    for i in 1..tags.len() + 1 {
+        names.push_str(&format!("${},", i.to_string()));
+    }
+    names.pop();
+
+    let query = format!(
+        "
+    SELECT b.*
+    FROM bookmarks b
+    JOIN tag_map tm ON b.id = tm.bkmk_id
+    JOIN tags t ON tm.tag_id = t.id
+    WHERE t.name IN ({})
+    GROUP BY b.id
+    HAVING COUNT(DISTINCT t.name) = {}
+    ORDER BY b.tag_count ASC;
+    ",
+        names,
+        tags.len().to_string()
+    );
+
+    query
 }
 
 pub(super) async fn mapping_tags<'a>(
@@ -117,10 +210,23 @@ pub(super) async fn insert_tags_if_not_exists<'a>(
     let mut query = sqlx::query(&q);
 
     for tag in tags {
+        tag_validation_check(tag)?;
         query = query.bind(tag);
     }
 
     query.execute(pool.inner()).await?;
+
+    Ok(())
+}
+
+fn tag_validation_check(tag: &str) -> Result<(), CommandError> {
+    if tag == "" {
+        return Err(CommandError::Validation);
+    };
+
+    if tag.contains(" ") {
+        return Err(CommandError::Validation);
+    };
 
     Ok(())
 }
@@ -139,4 +245,16 @@ fn build_query_insert_tags_if_not_exists(tags_count: usize) -> String {
     query.push_str(";");
 
     query
+}
+
+// https://davirain.xlog.page/Convert-VecResultT-E-to-ResultVecT-E?locale=ja
+fn vec_result_to_result_vec<T, E>(v: Vec<Result<T, E>>) -> Result<Vec<T>, E> {
+    v.into_iter()
+        .try_fold(Vec::new(), |mut acc, res| match res {
+            Ok(t) => {
+                acc.push(t);
+                Ok(acc)
+            }
+            Err(e) => Err(e),
+        })
 }

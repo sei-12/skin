@@ -3,11 +3,11 @@ use std::sync::Mutex;
 use tauri::{async_runtime::block_on, Emitter, Manager, WindowEvent};
 // use tauri_plugin_sql::{Migration, MigrationKind};
 
+mod config;
+mod config_path;
+mod db;
 mod fetch_website_content;
 mod file_change_watcher;
-mod config_path;
-mod config;
-mod db;
 
 mod config_model;
 
@@ -29,38 +29,8 @@ fn get_config() -> config_model::Config {
     config::read_config()
 }
 
-// fn migrations() -> Vec<Migration> {
-//     vec![Migration {
-//         version: 1,
-//         description: "create initial tables",
-//         sql: "
-//             create table if not exists bookmarks (
-//                 id INTEGER PRIMARY KEY AUTOINCREMENT,
-//                 title text,
-//                 url text,
-//                 description text,
-//                 tag_count int not null
-//             );
-
-//             create table if not exists tags (
-//                 id INTEGER PRIMARY KEY AUTOINCREMENT,
-//                 name text unique
-//             );
-
-//             create table if not exists tag_map (
-//                 id INTEGER PRIMARY KEY AUTOINCREMENT,
-//                 bkmk_id int,
-//                 tag_id int,
-//                 FOREIGN KEY (bkmk_id) REFERENCES bookmarks (id),
-//                 FOREIGN KEY (tag_id) REFERENCES tags (id)
-//             );
-//             ",
-//         kind: MigrationKind::Up,
-//     }]
-// }
-
 fn start_file_change_watcher(
-    app: &mut tauri::App
+    app: &mut tauri::App,
 ) -> Option<file_change_watcher::FileChangeWatcher> {
     let mut f_watcher = file_change_watcher::FileChangeWatcher::new();
 
@@ -71,11 +41,11 @@ fn start_file_change_watcher(
     let result = f_watcher.spawn(file_path, move || {
         let _ = app_.emit("change-config-file", ());
     });
-    
+
     if result.is_err() {
         return None;
     }
-    
+
     Some(f_watcher)
 }
 
@@ -84,18 +54,17 @@ pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_clipboard_manager::init())
         .plugin(tauri_plugin_global_shortcut::Builder::new().build())
-        //.plugin(tauri_plugin_sql::Builder::new().build())
-        // .plugin(
-        //     tauri_plugin_sql::Builder::default()
-        //         .add_migrations("sqlite:skin.db", migrations())
-        //         .build(),
-        // )
         .plugin(tauri_plugin_shell::init())
         .invoke_handler(tauri::generate_handler![
             greet,
             open_url,
             get_config,
-            fetch_website_content::fetch_website_content
+            fetch_website_content::fetch_website_content,
+            db::commands::insert_bookmark,
+            db::commands::delete_bookmark,
+            db::commands::is_exists_tag,
+            db::commands::find_tag,
+            db::commands::find_bookmark,
         ])
         .setup(|app| {
             // 開発時だけdevtoolsを表示する。
@@ -104,7 +73,7 @@ pub fn run() {
 
             let f_watcher = start_file_change_watcher(app);
             app.manage(Mutex::new(f_watcher));
-            
+
             Ok(())
         })
         .setup(|app| {
@@ -115,9 +84,10 @@ pub fn run() {
                 Ok(())
             })
         })
-        .on_window_event(|window,event| match event {
+        .on_window_event(|window, event| match event {
             WindowEvent::Destroyed => {
-                let f_watcher = window.state::<Mutex<Option<file_change_watcher::FileChangeWatcher>>>();
+                let f_watcher =
+                    window.state::<Mutex<Option<file_change_watcher::FileChangeWatcher>>>();
                 let Ok(mut locked) = f_watcher.lock() else {
                     return;
                 };
