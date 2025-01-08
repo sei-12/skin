@@ -74,9 +74,6 @@ pub fn run() {
             let f_watcher = start_file_change_watcher(app);
             app.manage(Mutex::new(f_watcher));
 
-            Ok(())
-        })
-        .setup(|app| {
             block_on(async {
                 let path = app.path().app_data_dir()?;
                 let pool = db::connect(path).await?;

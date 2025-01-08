@@ -4,11 +4,11 @@ import "@testing-library/jest-dom/vitest";
 import { describe, it, expect, vi } from "vitest";
 import type { BookmarkItemProps } from "./BookmarkItem";
 import { BookmarkItem } from "./BookmarkItem";
-import type { IData } from "../dts/data";
 import { DEFAULT_CONFIG } from "../providers/configProvider";
+import type { Bookmark } from "../../src-tauri/bindings/export/DbModels";
 
 describe("BookmarkItem", () => {
-    const mockData: IData.Bookmark = {
+    const mockData: Bookmark = {
         id: 1,
         url: "aaa",
         title: "Sample Bookmark",

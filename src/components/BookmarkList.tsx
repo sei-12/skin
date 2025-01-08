@@ -1,14 +1,14 @@
 import { Stack } from "@mui/material";
-import type { IData } from "../dts/data";
 import { BookmarkItem } from "./BookmarkItem";
 import type { ColorTheme } from "../../src-tauri/bindings/export/ColorTheme";
+import type { Bookmark } from "../../src-tauri/bindings/export/DbModels";
 
 export type BookmarkListProps = {
     onClickEdit: (key: number) => void;
     onClickRemove: (key: number) => void;
     itemRefs: React.MutableRefObject<(HTMLDivElement | null)[]>;
     focusIndex: number;
-    items: IData.Bookmark[];
+    items: Bookmark[];
     colorTheme: ColorTheme;
 };
 

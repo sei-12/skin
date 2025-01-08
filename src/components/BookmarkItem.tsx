@@ -1,5 +1,4 @@
 import { forwardRef } from "react";
-import type { IData } from "../dts/data";
 import {
     Box,
     Button,
@@ -12,9 +11,10 @@ import {
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import type { ColorTheme } from "../../src-tauri/bindings/export/ColorTheme";
+import type { Bookmark } from "../../src-tauri/bindings/export/DbModels";
 
 export type BookmarkItemProps = {
-    data: IData.Bookmark;
+    data: Bookmark;
 
     onClickRemove: (key: number) => void;
     onClickEdit: (key: number) => void;

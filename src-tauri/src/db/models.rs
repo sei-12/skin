@@ -5,7 +5,7 @@ use ts_rs::TS;
 #[derive(Serialize, Deserialize, TS, sqlx::FromRow, PartialEq, Debug)]
 #[ts(export, export_to = "export/DbModels.d.ts")]
 pub struct BookmarkRecord {
-    pub id: i64,
+    pub id: u32,
     pub title: String,
     pub url: String,
     pub description: String,
@@ -27,7 +27,7 @@ pub struct TagRecord {
 pub struct InsertBookmarkRequest {
     pub title: String,
     pub url: String,
-    pub description: String,
+    pub desc: String,
     pub tags: Vec<String>,
 }
 
@@ -35,9 +35,9 @@ pub struct InsertBookmarkRequest {
 #[derive(Serialize, Deserialize, TS, PartialEq, Debug)]
 #[ts(export, export_to = "export/DbModels.d.ts")]
 pub struct Bookmark {
-    pub id: i64,
+    pub id: u32,
     pub title: String,
     pub url: String,
-    pub description: String,
+    pub desc: String,
     pub tags: Vec<String>,
 }

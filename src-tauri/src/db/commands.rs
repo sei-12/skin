@@ -58,7 +58,7 @@ pub async fn insert_bookmark<'a>(
     let result = sqlx::query("insert into bookmarks values (null,$1,$2,$3,$4);")
         .bind(req.title)
         .bind(req.url)
-        .bind(req.description)
+        .bind(req.desc)
         .bind(tag_count)
         .execute(pool.inner())
         .await?;
@@ -140,7 +140,7 @@ async fn select_tags_where_bookmark<'a>(
         id: record.id,
         title: record.title,
         url: record.url,
-        description: record.description,
+        desc: record.description,
         tags: result.into_iter().map(|r| r.tag_name).collect(),
     })
 }

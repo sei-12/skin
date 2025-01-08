@@ -120,7 +120,7 @@ async fn test3() -> Result<(), CommandError> {
     app.manage(con);
 
     let req = InsertBookmarkRequest {
-        description: "desc".to_string(),
+        desc: "desc".to_string(),
         title: "title".to_string(),
         url: "url".to_string(),
         tags: vec![
@@ -133,7 +133,7 @@ async fn test3() -> Result<(), CommandError> {
     commands::insert_bookmark(app.state(), req).await?;
 
     let req = InsertBookmarkRequest {
-        description: "desc".to_string(),
+        desc: "desc".to_string(),
         title: "title".to_string(),
         url: "url".to_string(),
         tags: vec![],
@@ -142,7 +142,7 @@ async fn test3() -> Result<(), CommandError> {
     assert_eq!(result.unwrap_err(), CommandError::Validation);
 
     let req = InsertBookmarkRequest {
-        description: "desc".to_string(),
+        desc: "desc".to_string(),
         title: "".to_string(),
         url: "url".to_string(),
         tags: vec![
@@ -156,7 +156,7 @@ async fn test3() -> Result<(), CommandError> {
     assert_eq!(result.unwrap_err(), CommandError::Validation);
 
     let req = InsertBookmarkRequest {
-        description: "desc".to_string(),
+        desc: "desc".to_string(),
         title: "title".to_string(),
         url: "".to_string(),
         tags: vec![
@@ -170,7 +170,7 @@ async fn test3() -> Result<(), CommandError> {
     assert_eq!(result.unwrap_err(), CommandError::Validation);
 
     let req = InsertBookmarkRequest {
-        description: "".to_string(),
+        desc: "".to_string(),
         title: "title".to_string(),
         url: "url".to_string(),
         tags: vec![
@@ -312,7 +312,7 @@ async fn test7() -> Result<(), CommandError> {
     app.manage(con);
 
     let req = InsertBookmarkRequest {
-        description: "desc".to_string(),
+        desc: "desc".to_string(),
         title: "title".to_string(),
         url: "url".to_string(),
         tags: vec![
@@ -349,7 +349,7 @@ async fn test8() -> Result<(), CommandError> {
     app.manage(con);
 
     let req = InsertBookmarkRequest {
-        description: "desc".to_string(),
+        desc: "desc".to_string(),
         title: "title".to_string(),
         url: "url".to_string(),
         tags: vec![
@@ -391,7 +391,7 @@ async fn test9() -> Result<(), CommandError> {
     app.manage(con);
 
     let req = InsertBookmarkRequest {
-        description: "desc".to_string(),
+        desc: "desc".to_string(),
         title: "title".to_string(),
         url: "url".to_string(),
         tags: vec![
@@ -410,7 +410,7 @@ async fn test9() -> Result<(), CommandError> {
             id: 1,
             title: "title".to_string(),
             url: "url".to_string(),
-            description: "desc".to_string(),
+            desc: "desc".to_string(),
             tags: vec![
                 "ab".to_string(),
                 "a".to_string(),
@@ -429,7 +429,7 @@ async fn test9() -> Result<(), CommandError> {
             id: 1,
             title: "title".to_string(),
             url: "url".to_string(),
-            description: "desc".to_string(),
+            desc: "desc".to_string(),
             tags: vec![
                 "ab".to_string(),
                 "a".to_string(),
@@ -451,7 +451,7 @@ async fn test9() -> Result<(), CommandError> {
             id: 1,
             title: "title".to_string(),
             url: "url".to_string(),
-            description: "desc".to_string(),
+            desc: "desc".to_string(),
             tags: vec![
                 "ab".to_string(),
                 "a".to_string(),
@@ -488,7 +488,7 @@ async fn test10() -> Result<(), CommandError> {
     app.manage(con);
     
     let req = InsertBookmarkRequest {
-        description: "desc".to_string(),
+        desc: "desc".to_string(),
         title: "title".to_string(),
         url: "url".to_string(),
         tags: vec![
