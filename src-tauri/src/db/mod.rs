@@ -43,8 +43,29 @@ fn path_mapper(mut app_path: std::path::PathBuf, connection_string: &str) -> Str
 }
 
 
-// #[cfg(test)]
-// mod tests;
 
 #[cfg(test)]
-mod test_test;
+#[cfg(not(target_os = "windows"))]
+mod tests;
+// #[cfg(not(target_os = "windows"))] について
+// tauri::test::mock_appを使用すると以下のようなエラーが出てテストを実行できない
+// process didn't exit successfully: `D:\a\skin\skin\src-tauri\target\debug\deps\skin_lib-1f62670fd56f937a.exe` (exit code: 0xc0000139, STATUS_ENTRYPOINT_NOT_FOUND)
+// 
+// tauri::testはunstableらしい
+// https://docs.rs/tauri/latest/tauri/test/index.html
+// 
+// コマンド(#[tauri::command]のこと)がState<DbPool>を受け取るため、テストするにはtauri::test::mock_appが必要(https://github.com/tauri-apps/tauri/discussions/11717)
+// コマンドを内部の関数を呼び出すだけの薄い設計にすればテストをかけると思う
+// 例：
+// ```rust
+// #[command]
+// pub async fn foo<'a>(pool: State<'a, DbPool>,) -> Result<(), CommandError> {
+//     inner_foo(pool.inner()).await?;
+// }
+// pub async fn inner_foo(pool: DbPool) -> Result<(), CommandError> {
+//     ...
+// }
+// ```
+// めんどくさいので今はやらない
+
+
