@@ -2,6 +2,7 @@ import { Box, Typography } from "@mui/material";
 import { ZINDEX } from "../vanilla/zindex";
 import { forwardRef } from "react";
 import type { ColorTheme } from "../../src-tauri/bindings/export/ColorTheme";
+import { highlightMatchedBlocks } from "../hooks/SuggestionWindow";
 
 export type FindTagMethod = (
     predicate: string,
@@ -98,34 +99,3 @@ export const SuggestionWindowItemTextBlock = (p: { isMatch: boolean; text: strin
     );
 };
 
-function highlightMatchedBlocks(
-    predicate: string,
-    item: string
-): { isMatch: boolean; text: string }[] {
-    const blocks: ReturnType<typeof highlightMatchedBlocks> = [];
-
-    const splitedPredicate = [...predicate];
-    const splitedItem = [...item];
-
-    while (splitedItem.length !== 0) {
-        const i = splitedItem.shift()!;
-        const p = splitedPredicate[0];
-        const match = i === p;
-
-        if (match) {
-            splitedPredicate.shift();
-        }
-        const lastBlock = blocks.at(-1);
-        if (lastBlock === undefined) {
-            blocks.push({ isMatch: match, text: i });
-        } else {
-            if (lastBlock.isMatch === match) {
-                lastBlock.text += i;
-            } else {
-                blocks.push({ isMatch: match, text: i });
-            }
-        }
-    }
-
-    return blocks;
-}

@@ -4,6 +4,7 @@ import "@testing-library/jest-dom/vitest";
 import { describe, expect, test } from "vitest";
 import { useRef } from "react";
 import { DEFAULT_CONFIG } from "../providers/configProvider";
+import { highlightMatchedBlocks } from "../hooks/SuggestionWindow";
 
 
 describe("SuggestionWindow", () => {
@@ -74,5 +75,73 @@ describe("Item", () => {
         expect(screen.getAllByText("b")[1]).toBeInTheDocument();
         expect(screen.getAllByText("c")[0]).toBeInTheDocument();
         expect(screen.getAllByText("c")[1]).toBeInTheDocument();
+    });
+});
+
+
+
+describe("highlightMatchedBlocks", () => {
+    test("完全一致の場合", () => {
+        const result = highlightMatchedBlocks("abc", "abc");
+        expect(result).toEqual([
+            { isMatch: true, text: "abc" }
+        ]);
+    });
+
+    test("部分一致の場合", () => {
+        const result = highlightMatchedBlocks("abc", "aXbYc");
+        expect(result).toEqual([
+            { isMatch: true, text: "a" },
+            { isMatch: false, text: "X" },
+            { isMatch: true, text: "b" },
+            { isMatch: false, text: "Y" },
+            { isMatch: true, text: "c" }
+        ]);
+    });
+
+    test("大文字小文字を区別しない", () => {
+        const result = highlightMatchedBlocks("abc", "aBc");
+        expect(result).toEqual([
+            { isMatch: true, text: "aBc" }
+        ]);
+    });
+
+    test("一致する文字がない場合", () => {
+        const result = highlightMatchedBlocks("abc", "xyz");
+        expect(result).toEqual([
+            { isMatch: false, text: "xyz" }
+        ]);
+    });
+
+    test("predicateが空の場合", () => {
+        const result = highlightMatchedBlocks("", "abc");
+        expect(result).toEqual([
+            { isMatch: false, text: "abc" }
+        ]);
+    });
+
+    test("itemが空の場合", () => {
+        const result = highlightMatchedBlocks("abc", "");
+        expect(result).toEqual([]);
+    });
+
+    test("両方が空の場合", () => {
+        const result = highlightMatchedBlocks("", "");
+        expect(result).toEqual([]);
+    });
+
+    test("長いpredicateと短いitem", () => {
+        const result = highlightMatchedBlocks("abcdef", "abc");
+        expect(result).toEqual([
+            { isMatch: true, text: "abc" }
+        ]);
+    });
+
+    test("短いpredicateと長いitem", () => {
+        const result = highlightMatchedBlocks("abc", "abcdef");
+        expect(result).toEqual([
+            { isMatch: true, text: "abc" },
+            { isMatch: false, text: "def" }
+        ]);
     });
 });
