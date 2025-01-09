@@ -1,7 +1,7 @@
 # Skin
 skinはタグで検索を行うブックマークマネージャーです。
 
-![sample](https://github.com/sei-12/skin/issues/42#issue-2776854948)
+![sample](https://github.com/user-attachments/assets/21b72303-4a8a-4188-84ce-5248a6649b4a)
 
 # 特徴
 
