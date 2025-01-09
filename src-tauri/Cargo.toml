@@ -38,3 +38,8 @@ rand = "0.8.5"
 
 [target.'cfg(not(any(target_os = "android", target_os = "ios")))'.dependencies]
 tauri-plugin-global-shortcut = "2"
+
+
+[features]
+default = []
+dev_disable_hide_on_blur = []
