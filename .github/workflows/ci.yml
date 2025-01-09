@@ -4,7 +4,7 @@ name: "test-on-pr"
 on:
   push:
     branches:
-      - master # 簡単のため main に変更
+      - development # 簡単のため main に変更
 
 # 参考URL: https://blog.lacolaco.net/posts/github-actions-yarn-cache/
 env:
