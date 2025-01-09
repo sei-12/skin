@@ -1,7 +1,7 @@
 # Skin
 skinはタグで検索を行うブックマークマネージャーです。
 
-![sample](assets/readme1.mov)
+![sample](https://github.com/sei-12/skin/blob/development/assets/readme1.mov)
 
 # 特徴
 
