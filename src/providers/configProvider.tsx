@@ -62,6 +62,11 @@ export const DEFAULT_CONFIG: Config = {
             exists: "#000015",
             notExists: "#000016",
         },
+        createNewBookmark: {
+            caretColor: "white",
+            placeholder: "#000015",
+            textColor: "white",
+        }
     },
     keybinds: {
         focusDownBookmarkList: ["ctrl+n", "ArrowDown"],

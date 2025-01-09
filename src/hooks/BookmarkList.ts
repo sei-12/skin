@@ -1,13 +1,13 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import type { IData } from "../dts/data";
 import type { BookmarkListProps } from "../components/BookmarkList";
 import { useConfig } from "../providers/configProvider";
+import type { Bookmark } from "../../src-tauri/bindings/export/DbModels";
 
 export function useBookmarkList(
     onClickRemove: (key: number) => void,
     onClickEdit: (key: number) => void
 ) {
-    const [items, setItems] = useState<IData.Bookmark[]>([]);
+    const [items, setItems] = useState<Bookmark[]>([]);
     const [focusIndex, setFocusIndex] = useState(0);
     const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
 

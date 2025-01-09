@@ -4,28 +4,28 @@ import { listen } from "@tauri-apps/api/event";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 import { register } from "@tauri-apps/plugin-global-shortcut";
 
+if ( import.meta.env.MODE === "production" ){
+    getCurrentWindow().setVisibleOnAllWorkspaces(true)
 
-getCurrentWindow().setVisibleOnAllWorkspaces(true)
+    register("Alt+Z", async (event) => {
+        if (event.state === "Released") {
+            return;
+        }
 
-register("Alt+Z", async (event) => {
-    if (event.state === "Released") {
-        return;
-    }
+        const curVisibility = await WindowVisibleController.currentVisible();
+        if (curVisibility) {
+            WindowVisibleController.hide();
+        } else {
+            WindowVisibleController.show();
+        }
+    });
 
-    const curVisibility = await WindowVisibleController.currentVisible();
-    if (curVisibility) {
+    listen("tauri://blur", async () => {
         WindowVisibleController.hide();
-    } else {
-        WindowVisibleController.show();
-        // tagInputBoxHook.inputBoxRef.current?.focus();
-    }
-});
+    });
+}
 
-listen("tauri://blur", async () => {
-    WindowVisibleController.hide();
-    // 再度開いた時に前回の検索結果などが残らないようにする。
-    // tagInputBoxHook.setInputedTags([]);
-});
+
 
 /**
  * ウィンドウの表示/非表示関係の処理がとてもテストしにくいため、別のモジュールに分ける
@@ -33,12 +33,14 @@ listen("tauri://blur", async () => {
 export namespace WindowVisibleController {
 
     export function show() {
+        if ( import.meta.env.MODE !== "production" ){ return }
         const curWinodw = getCurrentWindow()
         curWinodw.show()
         curWinodw.setFocus()
     }
 
     export function hide() {
+        if ( import.meta.env.MODE !== "production" ){ return }
         const curWinodw = getCurrentWindow()
         curWinodw.hide()
     }

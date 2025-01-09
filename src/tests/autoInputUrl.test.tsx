@@ -6,6 +6,7 @@ import { startMockWindowVisibleController } from "../services/windowVisibleContr
 import { startMockDB } from "../services/database.test";
 import { App } from "../App";
 import { DEFAULT_CONFIG } from "../providers/configProvider";
+import { startMockClipboardManager } from "../services/mockClipboard.test";
 
 vi.mock("@tauri-apps/api/event", () => ({ listen: vi.fn() }));
 vi.mock("@tauri-apps/api/window", () => ({
@@ -29,31 +30,28 @@ vi.mock("@tauri-apps/api/core", () => ({
     }),
 }));
 
-vi.mock("@tauri-apps/plugin-clipboard-manager",() => ({
-    readText: vi.fn(() => {
-        return "foo://hello_world"
-    })
-}))
-
 describe("autoInputUrl", () => {
     beforeEach(async () => {
         vi.clearAllMocks();
         startMockWindowVisibleController();
         startMockDB();
 
-        await act(async () => {
-            render(<App></App>);
-        });
     });
 
     test("test1", async () => {
+
+        startMockClipboardManager("https://hello_world")
+        await act(async () => {
+            render(<App></App>);
+        });
+
         const user = userEvent.setup();
         await user.keyboard("{Control>}A{/Control}");
 
         const urlInputBox: HTMLInputElement = screen.getByPlaceholderText("url");
         const titleInputBox: HTMLInputElement = screen.getByPlaceholderText("title");
         const descInputBox: HTMLInputElement = screen.getByPlaceholderText("desc");
-        expect(urlInputBox.value).toBe("foo://hello_world")
+        expect(urlInputBox.value).toBe("https://hello_world")
         expect(titleInputBox.value).toBe("a")
         expect(descInputBox.value).toBe("b")
     });

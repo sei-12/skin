@@ -1,6 +1,6 @@
 import { expect, test, vi } from "vitest";
 import { DB } from "./database";
-import type { IData } from "../dts/data";
+import type { Bookmark } from "../../src-tauri/bindings/export/DbModels";
 
 export function startMockDB() {
     vi.spyOn(DB, "deleteBookmark").mockImplementation(async (id: number) => {
@@ -43,7 +43,7 @@ const testTags = [
     "rust", "scala", "haskell", "perl", "sql", "html", "css", "sass", "less", "json","gist","clang","cpp",
 ]
 
-const testBookmarks: IData.Bookmark[] = [
+const testBookmarks: Bookmark[] = [
     { id: 0, title: "hello0", desc: "d", url: "", tags: ["less", "cpp", "rust", "javascript"] },
     { id: 1, title: "hello1", desc: "d", url: "", tags: ["rust", "sass"] },
     { id: 2, title: "hello2", desc: "d", url: "", tags: ["java", "ruby", "php", "java"] },
