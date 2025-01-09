@@ -580,7 +580,7 @@ mod test_utils {
         let tag_count = rand::thread_rng().gen_range(1..30);
         for _ in 0..tag_count {
             tags.push(gen_ascii_chars(rand::thread_rng().gen_range(1..10)));
-        };
+        }
 
         commands::insert_bookmark(
             app.state(),
@@ -613,7 +613,6 @@ mod test_utils {
 
         Ok(())
     }
-    
 
     extern crate rand;
     use rand::seq::SliceRandom;
@@ -648,7 +647,8 @@ fn test11() -> Result<(), CommandError> {
             "url",
             "desc",
             &["hello_world", "vali error"],
-        ).await;
+        )
+        .await;
         assert_eq!(result.unwrap_err(), CommandError::Validation);
 
         let result = test_utils::i_bkmk(app.state(), "title", "url", "desc", &[""]).await;
@@ -720,6 +720,41 @@ fn test13() -> Result<(), CommandError> {
 
         assert_eq!(result.len(), 100);
 
+        Ok(())
+    })
+}
+
+#[test]
+fn test14() -> Result<(), CommandError> {
+    // タグ検索において大文字小文字を区別しない
+
+    tauri::async_runtime::block_on(async {
+        let app = tauri::test::mock_app();
+        let path = tmp_dir();
+
+        let con = connect(path).await.expect("error connect");
+        app.manage(con);
+
+        commands::insert_tags_if_not_exists(
+            &app.state(),
+            &vec![
+                "Hello".to_string(),
+                "hEllo".to_string(),
+                "hello".to_string(),
+            ],
+        )
+        .await?;
+
+        let result = commands::find_tag(app.state(), String::from("hello")).await?;
+        assert_eq!(result.len(),3);
+        assert_eq!(
+            result,
+            vec![
+                "Hello".to_string(),
+                "hEllo".to_string(),
+                "hello".to_string(),
+            ],
+        );
         Ok(())
     })
 }
