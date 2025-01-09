@@ -1,20 +1,15 @@
 use std::sync::Mutex;
 
-use tauri::{async_runtime::block_on, Emitter, Manager, WindowEvent};
-// use tauri_plugin_sql::{Migration, MigrationKind};
+use tauri::{async_runtime::block_on, AppHandle, Emitter, Listener, Manager, WindowEvent};
 
 mod config;
 mod config_path;
 mod db;
 mod fetch_website_content;
 mod file_change_watcher;
+mod global_hotkey;
 
 mod config_model;
-
-#[tauri::command]
-fn greet(name: &str) -> String {
-    format!("Hello, {}! You've been greeted from Rust!", name)
-}
 
 #[tauri::command]
 fn open_url(url: &str) -> bool {
@@ -49,14 +44,28 @@ fn start_file_change_watcher(
     Some(f_watcher)
 }
 
+#[cfg(not(feature = "dev_disable_hide_on_blur"))]
+fn enable_hide_on_blur(app_handle: &AppHandle){
+    let Some(window) = app_handle.get_webview_window("main") else {
+        return ();
+    };
+    
+    let app_handle_ = app_handle.clone();
+
+    window.listen("tauri://blur", move|_| {
+        let Some(window) = app_handle_.get_webview_window("main") else {
+            return ();
+        };
+        let _ = window.hide();
+    });
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_clipboard_manager::init())
-        .plugin(tauri_plugin_global_shortcut::Builder::new().build())
         .plugin(tauri_plugin_shell::init())
         .invoke_handler(tauri::generate_handler![
-            greet,
             open_url,
             get_config,
             fetch_website_content::fetch_website_content,
@@ -67,12 +76,23 @@ pub fn run() {
             db::commands::find_bookmark,
         ])
         .setup(|app| {
+            
+            let main_window = app.get_webview_window("main").expect("err get main window");
+            main_window.set_visible_on_all_workspaces(true)?;
+
             // 開発時だけdevtoolsを表示する。
             #[cfg(debug_assertions)]
             app.get_webview_window("main").unwrap().open_devtools();
 
             let f_watcher = start_file_change_watcher(app);
             app.manage(Mutex::new(f_watcher));
+            
+            global_hotkey::set_global_hotkeys(app.handle())?;
+
+
+            // フォーカスを外したらウィンドウを非表示にする機能は開発時にはあまりにも邪魔
+            #[cfg(not(feature = "dev_disable_hide_on_blur"))]
+            enable_hide_on_blur(app.handle());
 
             block_on(async {
                 let path = app.path().app_data_dir()?;
