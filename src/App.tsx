@@ -6,6 +6,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { CreateNewBookmarkPage, SearchBookmarkPage } from "./pages/pages";
 import { ConfigProvider } from "./providers/configProvider";
 import { muiTheme } from "./vanilla/theme";
+import { GlobalHotkeySetter } from "./providers/globalHotkeySetter";
 
 export function App() {
     return (
@@ -14,6 +15,7 @@ export function App() {
         >
             <ThemeProvider theme={muiTheme}>
                 <ConfigProvider>
+                    <GlobalHotkeySetter></GlobalHotkeySetter>
                     <CssBaseline></CssBaseline>
                     <CustomWindow>
                         <BrowserRouter>

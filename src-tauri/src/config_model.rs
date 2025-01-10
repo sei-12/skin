@@ -50,6 +50,10 @@ pub struct Config {
 #[derive(Serialize, Deserialize, TS, Clone)]
 #[ts(export, export_to = "export/Keybinds.d.ts")]
 pub struct Keybinds {
+
+    #[serde(default="default_global_keybind")]
+    global: GlobalKeybind,
+
     #[serde_inline_default(Keys::Keys(Vec::from(["ctrl+n".to_string(),"ArrowDown".to_string()])))]
     focusDownBookmarkList: Keys,
 
@@ -95,6 +99,16 @@ pub struct Keybinds {
     takeInputTag: Keys,
 }
 fn default_keybinds() -> Keybinds {
+    serde_json::from_str("{}").expect("Failed to parse default keybinds")
+}
+
+#[serde_inline_default]
+#[derive(Serialize, Deserialize, TS, Clone)]
+pub struct GlobalKeybind {
+    #[serde_inline_default(Keys::Key("alt+z".to_string()))]
+    toggleWindowVisible: Keys,
+}
+fn default_global_keybind() -> GlobalKeybind {
     serde_json::from_str("{}").expect("Failed to parse default keybinds")
 }
 
@@ -283,6 +297,9 @@ mod tests {
                 bg: color_palette::dark2(),
             },
             keybinds: Keybinds {
+                global: GlobalKeybind { 
+                    toggleWindowVisible: Keys::Key("alt+z".to_string()) 
+                },
                 focusDownBookmarkList: Keys::Keys(Vec::from(["ctrl+n".to_string(),"ArrowDown".to_string()])),
                 focusUpBookmarkList: Keys::Keys(Vec::from(["ctrl+p".to_string(),"ArrowUp".to_string()])),
                 closeWindow: Keys::Key("Escape".to_string()),

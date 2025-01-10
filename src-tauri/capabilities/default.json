@@ -14,6 +14,8 @@
     "core:window:allow-show",
     "core:window:allow-set-focus",
     "core:window:allow-set-visible-on-all-workspaces",
-    "clipboard-manager:allow-read-text"
+    "clipboard-manager:allow-read-text",
+    "global-shortcut:allow-register",
+    "global-shortcut:allow-unregister-all"
   ]
 }

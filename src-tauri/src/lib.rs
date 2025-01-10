@@ -8,7 +8,6 @@ mod config_path;
 mod db;
 mod fetch_website_content;
 mod file_change_watcher;
-mod global_hotkey;
 
 mod config_model;
 
@@ -119,6 +118,7 @@ pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_clipboard_manager::init())
         .plugin(tauri_plugin_shell::init())
+        .plugin(tauri_plugin_global_shortcut::Builder::new().build())
         .invoke_handler(tauri::generate_handler![
             open_url,
             get_config,
@@ -142,8 +142,6 @@ pub fn run() {
             app.manage(Mutex::new(ConfigFileChangeEmitTime::new()));
             let f_watcher = start_file_change_watcher(app);
             app.manage(Mutex::new(f_watcher));
-
-            global_hotkey::set_global_hotkeys(app.handle())?;
 
             // フォーカスを外したらウィンドウを非表示にする機能は開発時にはあまりにも邪魔
             #[cfg(not(feature = "dev_disable_hide_on_blur"))]

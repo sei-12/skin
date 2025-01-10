@@ -74,6 +74,9 @@ export const DEFAULT_CONFIG: Config = {
         },
     },
     keybinds: {
+        global: {
+            toggleWindowVisible: "alt+z"
+        },
         focusDownBookmarkList: ["ctrl+n", "ArrowDown"],
         focusUpBookmarkList: ["ctrl+p", "ArrowUp"],
         closeWindow: "Escape",
