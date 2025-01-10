@@ -36,7 +36,7 @@ mod color_palette {
 }
 
 #[serde_inline_default]
-#[derive(Serialize, Deserialize, TS)]
+#[derive(Serialize, Deserialize, TS, Clone)]
 #[ts(export, export_to = "export/Config.d.ts")]
 pub struct Config {
     #[serde(default = "default_color_theme")]
@@ -47,7 +47,7 @@ pub struct Config {
 }
 
 #[serde_inline_default]
-#[derive(Serialize, Deserialize, TS)]
+#[derive(Serialize, Deserialize, TS, Clone)]
 #[ts(export, export_to = "export/Keybinds.d.ts")]
 pub struct Keybinds {
     #[serde_inline_default(Keys::Keys(Vec::from(["ctrl+n".to_string(),"ArrowDown".to_string()])))]
@@ -98,7 +98,7 @@ fn default_keybinds() -> Keybinds {
     serde_json::from_str("{}").expect("Failed to parse default keybinds")
 }
 
-#[derive(Serialize, Deserialize, TS)]
+#[derive(Serialize, Deserialize, TS, Clone)]
 #[serde(untagged)]
 enum Keys {
     Key(String),
@@ -106,7 +106,7 @@ enum Keys {
 }
 
 #[serde_inline_default]
-#[derive(Serialize, Deserialize, TS)]
+#[derive(Serialize, Deserialize, TS, Clone)]
 #[ts(export, export_to = "export/ColorTheme.d.ts")]
 pub struct ColorTheme {
     #[serde(default = "default_add_button_color_theme")]
