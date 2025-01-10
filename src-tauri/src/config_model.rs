@@ -136,11 +136,11 @@ fn default_color_theme() -> ColorTheme {
 #[serde_inline_default]
 #[derive(Serialize, Deserialize, Debug, Clone, TS)]
 pub struct AddButton {
-    #[serde(default = "color_palette::purple1")]
+    #[serde(default = "color_palette::blue5")]
     pub borderColor: String,
-    #[serde(default = "color_palette::dark6")]
+    #[serde(default = "color_palette::dark1")]
     pub bgColor: String,
-    #[serde_inline_default("white".to_string())]
+    #[serde(default = "color_palette::blue5")]
     pub color: String,
 }
 fn default_add_button_color_theme() -> AddButton {
@@ -245,9 +245,9 @@ mod tests {
         let expected = Config {
             colorTheme: ColorTheme {
                 addButton: AddButton {
-                    borderColor: color_palette::purple1(),
-                    color: "white".to_string(),
-                    bgColor: color_palette::dark6(),
+                    borderColor: color_palette::blue5(),
+                    color: color_palette::blue5(),
+                    bgColor: color_palette::dark1(),
                 },
                 bookmarkItem: BookmarkItemColorTheme {
                     tag: color_palette::purple1(),
