@@ -60,13 +60,13 @@ describe("SearchBookmark", () => {
         const user = userEvent.setup();
         const inputBox = screen.getByPlaceholderText("/");
 
-        expect(DB.findBookmark).toBeCalledTimes(1);
+        expect(DB.fetchBookmarks).toBeCalledTimes(1);
         await user.type(inputBox, "t");
         expect(screen.getAllByTestId("suggestion-item").length).toBe(8);
         expect(DB.findTag).toBeCalledTimes(1);
 
         // TestingLibraryElementError
-        expect(() => screen.getAllByTestId("bkmkitem")).toThrow();
+        expect(screen.getAllByTestId("bkmkitem").length).toBe(20)
 
         await user.type(inputBox, "y");
         expect(screen.getAllByTestId("suggestion-item").length).toBe(1);
@@ -74,7 +74,7 @@ describe("SearchBookmark", () => {
 
         await user.type(inputBox, "{Enter}");
 
-        expect(DB.findBookmark).toBeCalledTimes(2);
+        expect(DB.findBookmark).toBeCalledTimes(1);
         expect(screen.getAllByTestId("bkmkitem").length).toBe(4);
         expect(screen.getAllByText("typescript").length).toBe(1);
         expect(screen.getAllByText("#typescript").length).toBe(4);
@@ -84,8 +84,8 @@ describe("SearchBookmark", () => {
         expect(screen.getByText("hello18")).toBeInTheDocument();
 
         await user.type(inputBox, "{Backspace}");
-        expect(() => screen.getAllByTestId("bkmkitem")).toThrow();
-        expect(DB.findBookmark).toBeCalledTimes(3);
+        expect(screen.getAllByTestId("bkmkitem").length).toBe(20)
+        expect(DB.findBookmark).toBeCalledTimes(1);
         expect(screen.getByTestId("suggestion-window")).not.toBeVisible();
     });
 
@@ -94,13 +94,13 @@ describe("SearchBookmark", () => {
         const inputBox = screen.getByPlaceholderText("/");
 
         await user.type(inputBox, "tya");
-        expect(() => screen.getAllByTestId("bkmkitem")).toThrow();
+        expect(screen.getAllByTestId("bkmkitem").length).toBe(20)
         expect(() => screen.getAllByTestId("suggestion-item")).toThrow();
         expect(screen.getByTestId("suggestion-window")).not.toBeVisible();
 
         expect(DB.findTag).toBeCalledTimes(3); // タイプ数
         expect(DB.deleteBookmark).toBeCalledTimes(0);
-        expect(DB.findBookmark).toBeCalledTimes(1); //一番初めに一度呼ばれる
+        expect(DB.fetchBookmarks).toBeCalledTimes(1); //一番初めに一度呼ばれる
         expect(DB.insertBookmark).toBeCalledTimes(0);
         expect(DB.isExistsTag).toBeCalledTimes(0);
     });
@@ -113,14 +113,14 @@ describe("SearchBookmark", () => {
         const user = userEvent.setup();
         const inputBox = screen.getByPlaceholderText("/");
 
-        expect(DB.findBookmark).toBeCalledTimes(1);
+        expect(DB.fetchBookmarks).toBeCalledTimes(1);
         await user.type(inputBox, "t");
         expect(screen.getAllByTestId("suggestion-item").length).toBe(8);
         expect(DB.findTag).toBeCalledTimes(1);
         
         await user.keyboard("{Control>}N{/Control}")
         await user.type(inputBox, "{Enter}");
-        expect(DB.findBookmark).toBeCalledTimes(2);
+        expect(DB.findBookmark).toBeCalledTimes(1);
         expect(screen.getAllByTestId("bkmkitem").length).toBe(3);
         expect(screen.getAllByText("javascript").length).toBe(1);
         expect(screen.getAllByText("#javascript").length).toBe(3);
@@ -169,7 +169,7 @@ describe("SearchBookmark", () => {
         const user = userEvent.setup();
         const inputBox = screen.getByPlaceholderText("/");
 
-        expect(DB.findBookmark).toBeCalledTimes(1);
+        expect(DB.fetchBookmarks).toBeCalledTimes(1);
 
         await user.type(inputBox, "y");
         expect(DB.findTag).toBeCalledTimes(1);
@@ -192,5 +192,9 @@ describe("SearchBookmark", () => {
         expect(screen.getAllByTestId("taginputbox-tagitem").length).toBe(1);
         await user.type(inputBox, "{Backspace}");
         expect(() => screen.getAllByTestId("taginputbox-tagitem")).toThrow();
+    });
+
+    test("検索タグが0の時に全てのブックマークを表示", async () => {
+        expect(screen.getAllByTestId("bkmkitem").length).toBe(20)
     });
 });

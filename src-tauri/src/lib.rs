@@ -131,6 +131,7 @@ pub fn run() {
             db::commands::is_exists_tag,
             db::commands::find_tag,
             db::commands::find_bookmark,
+            db::commands::fetch_bookmarks
         ])
         .setup(|app| {
 

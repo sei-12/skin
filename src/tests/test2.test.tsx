@@ -6,6 +6,7 @@ import { startMockDB } from "../services/database.test";
 import { App } from "../App";
 import { DEFAULT_CONFIG } from "../providers/configProvider";
 import { startMockClipboardManager } from "../services/mockClipboard.test";
+import userEvent from "@testing-library/user-event";
 
 vi.mock("@tauri-apps/api/event", () => ({ listen: vi.fn() }));
 
@@ -48,4 +49,35 @@ describe("App.SearchBookmark2", () => {
         expect(addButton).toHaveStyle("color: "+ DEFAULT_CONFIG.colorTheme.addButton.color)
         expect(addButton).toHaveStyle("border-color: "+ DEFAULT_CONFIG.colorTheme.addButton.borderColor)
     })
+    
+    test("検索タグが0の時に全てのブックマークを表示", async () => {
+        {
+            expect(screen.getAllByTestId("bkmkitem").length).toBe(20)
+            const user = userEvent.setup();
+            const addButton = screen.getByTestId("add-button");
+            await user.click(addButton);
+            await user.keyboard("{Escape}")
+        }
+        {
+            expect(screen.getAllByTestId("bkmkitem").length).toBe(20)
+            const user = userEvent.setup();
+            const addButton = screen.getByTestId("add-button");
+            await user.click(addButton);
+            await user.keyboard("{Escape}")
+        }
+        {
+            expect(screen.getAllByTestId("bkmkitem").length).toBe(20)
+            const user = userEvent.setup();
+            const addButton = screen.getByTestId("add-button");
+            await user.click(addButton);
+            await user.keyboard("{Escape}")
+        }
+        {
+            expect(screen.getAllByTestId("bkmkitem").length).toBe(20)
+            const user = userEvent.setup();
+            const addButton = screen.getByTestId("add-button");
+            await user.click(addButton);
+            await user.keyboard("{Escape}")
+        }
+    });
 })

@@ -125,6 +125,26 @@ pub async fn find_bookmark<'a>(
     vec_result_to_result_vec(bookmarks)
 }
 
+#[command]
+pub async fn fetch_bookmarks<'a>(
+    pool: State<'a, DbPool>,
+    max_length: i64,
+) -> Result<Vec<Bookmark>, CommandError> {
+    // IDはAUTOINCREMENTであることが保証されている
+    let records: Vec<BookmarkRecord> = sqlx::query_as("select * from bookmarks order by id desc limit $1 ;")
+        .bind(max_length)
+        .fetch_all(pool.inner())
+        .await?;
+
+    let select_process = records
+        .into_iter()
+        .map(|r| async { select_tags_where_bookmark(&pool, r).await });
+
+    let bookmarks = join_all(select_process).await;
+
+    vec_result_to_result_vec(bookmarks)
+}
+
 #[derive(sqlx::FromRow)]
 struct SelectTagsRecord {
     tag_name: String,

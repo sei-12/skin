@@ -571,6 +571,31 @@ mod test_utils {
         commands::find_bookmark(pool, tags.iter().map(|s| s.to_string()).collect()).await
     }
 
+    pub(super) async fn i_random_bkmk_no_check<'a>(app: &App<MockRuntime>) -> Result<(), CommandError> {
+        let title = gen_ascii_chars(10);
+        let url = gen_ascii_chars(10);
+        let desc = gen_ascii_chars(10);
+        let mut tags: Vec<String> = Vec::new();
+
+        let tag_count = rand::thread_rng().gen_range(1..30);
+        for _ in 0..tag_count {
+            tags.push(gen_ascii_chars(rand::thread_rng().gen_range(1..10)));
+        }
+
+        commands::insert_bookmark(
+            app.state(),
+            InsertBookmarkRequest {
+                title: title.clone(),
+                url: url.clone(),
+                desc: desc.clone(),
+                tags: tags.clone(),
+            },
+        )
+        .await?;
+
+        Ok(())
+    }
+
     pub(super) async fn i_random_bkmk<'a>(app: &App<MockRuntime>) -> Result<(), CommandError> {
         let title = gen_ascii_chars(10);
         let url = gen_ascii_chars(10);
@@ -708,7 +733,6 @@ fn test13() -> Result<(), CommandError> {
         let con = connect(path).await.expect("error connect");
         app.manage(con);
 
-        // 2,3回は成功する
 
         for _ in 0..100 {
             test_utils::i_random_bkmk(&app).await?;
@@ -755,6 +779,89 @@ fn test14() -> Result<(), CommandError> {
                 "hello".to_string(),
             ],
         );
+        Ok(())
+    })
+}
+
+#[test]
+fn test15() -> Result<(), CommandError> {
+    tauri::async_runtime::block_on(async {
+        let app = tauri::test::mock_app();
+        let path = tmp_dir();
+
+        let con = connect(path).await.expect("error connect");
+        app.manage(con);
+        
+        for _ in 0..1000 {
+            test_utils::i_random_bkmk(&app).await?;
+        }
+        
+        let result = commands::fetch_bookmarks(app.state(), 100).await?;
+        
+        assert_eq!(result.len(), 100);
+
+        Ok(())
+    })
+}
+
+#[test]
+fn test16() -> Result<(), CommandError> {
+    tauri::async_runtime::block_on(async {
+        let app = tauri::test::mock_app();
+        let path = tmp_dir();
+
+        let con = connect(path).await.expect("error connect");
+        app.manage(con);
+        
+        for _ in 0..5000 {
+            test_utils::i_random_bkmk_no_check(&app).await?;
+        }
+        
+        let result = commands::fetch_bookmarks(app.state(), 1000).await?;
+        
+        assert_eq!(result.len(), 1000);
+
+        Ok(())
+    })
+}
+
+#[test]
+fn test17() -> Result<(), CommandError> {
+    tauri::async_runtime::block_on(async {
+        let app = tauri::test::mock_app();
+        let path = tmp_dir();
+
+        let con = connect(path).await.expect("error connect");
+        app.manage(con);
+        
+        for _ in 0..100 {
+            test_utils::i_random_bkmk_no_check(&app).await?;
+        }
+        
+        test_utils::i_bkmk(app.state(), "hello", "url", "desc", &[
+            "hello_world",
+            "hello-world",
+            "hello!world",
+        ]).await?;
+
+        let result = commands::fetch_bookmarks(app.state(), 10).await?;
+        assert_eq!(result.len(), 10);
+        assert_eq!(
+            result[0],
+            Bookmark {
+                id: 101,
+                title: "hello".to_string(),
+                url: "url".to_string(),
+                desc: "desc".to_string(),
+                tags: vec![
+                    "hello_world".to_string(),
+                    "hello-world".to_string(),
+                    "hello!world".to_string(),
+                ]
+            }
+            
+        );
+
         Ok(())
     })
 }
