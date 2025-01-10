@@ -14,7 +14,6 @@ vi.mock("@tauri-apps/api/window", () => ({
         setVisibleOnAllWorkspaces: vi.fn(),
     })),
 }));
-vi.mock("@tauri-apps/plugin-global-shortcut", () => ({ register: vi.fn() }));
 
 vi.mock("@tauri-apps/api/core", () => ({
     invoke: vi.fn(async (cmd: string) => {

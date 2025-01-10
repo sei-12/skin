@@ -10,23 +10,18 @@ import { findTagMethod } from "../services/findTagMethod";
 import { invoke } from "@tauri-apps/api/core";
 import { DB } from "../services/database";
 import { useConfig } from "../providers/configProvider";
+import type { Bookmark } from "../../src-tauri/bindings/export/DbModels";
 
 
 export function useSearchBookmarkPage(): SearchBookmarkProps {
-    const { keybinds } = useConfig()
+    const { keybinds, colorTheme } = useConfig()
 
     const navigate = useNavigate()
 
-    const onClickRemove = (id: number) => {
-        DB.deleteBookmark(id).then(() => {
-            DB
-                .findBookmark(
-                    tagInputBoxHook.inputedTags.map((i) => i.text)
-                )
-                .then((data) => {
-                    bkmkListHook.setItems(data);
-                });
-        });
+
+    const onClickRemove = async (id: number) => {
+        await DB.deleteBookmark(id)
+        reloadBookmarks()
     }
 
     const bkmkListHook = useBookmarkList(
@@ -37,6 +32,23 @@ export function useSearchBookmarkPage(): SearchBookmarkProps {
     const tagInputBoxHook = useTagInputBox(findTagMethod);
 
     const appHotkeyHook = useAppHotkey();
+
+    const reloadBookmarks = useCallback(async () => {
+        const tags = tagInputBoxHook.inputedTags.map((e) => {
+            return e.text;
+        });
+        
+        let bookmarks: Bookmark[]
+        if ( tags.length === 0 ){
+            bookmarks = await DB.fetchBookmarks(100)
+        }else{
+            bookmarks = await DB.findBookmark(tags)
+        }
+
+        bkmkListHook.setItems(bookmarks);
+        bkmkListHook.resetFocusIndex();
+
+    }, [tagInputBoxHook.inputedTags])
 
     useEffect(() => {
         if (tagInputBoxHook.suggestionWindowHook.items.length === 0) {
@@ -49,13 +61,7 @@ export function useSearchBookmarkPage(): SearchBookmarkProps {
     }, [tagInputBoxHook.suggestionWindowHook.items]);
 
     useEffect(() => {
-        const tags = tagInputBoxHook.inputedTags.map((e) => {
-            return e.text;
-        });
-        DB.findBookmark(tags).then((data) => {
-            bkmkListHook.setItems(data);
-            bkmkListHook.resetFocusIndex();
-        });
+        reloadBookmarks()
     }, [tagInputBoxHook.inputedTags]);
 
     const closeWindow = useCallback(() => {
@@ -182,6 +188,7 @@ export function useSearchBookmarkPage(): SearchBookmarkProps {
     return {
         bkmkListProps: bkmkListHook.props,
         tagInputBoxProps: tagInputBoxHook.props,
+        colorTheme,
         onClickAdd: navigateCreateNewBookmark,
     };
 }

@@ -33,6 +33,11 @@ export function startMockDB() {
     vi.spyOn(DB, "findTag").mockImplementation(async (predicate: string) => {
         return testTags.filter(t => t.includes(predicate))
     });
+    
+
+    vi.spyOn(DB,"fetchBookmarks").mockImplementation(async(maxLength: number) => {
+        return testBookmarks.slice(0,maxLength)
+    })
 }
 
 test("")

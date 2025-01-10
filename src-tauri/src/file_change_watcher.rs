@@ -1,5 +1,5 @@
 use notify::{recommended_watcher, Event, RecursiveMode, Watcher};
-use std::{ path::Path, sync::mpsc, thread};
+use std::{path::Path, sync::mpsc, thread};
 
 pub(crate) struct FileChangeWatcher {
     watcher: Option<notify::RecommendedWatcher>,
@@ -87,5 +87,4 @@ impl From<notify::Error> for FileChangeWatcherError {
     fn from(_: notify::Error) -> Self {
         FileChangeWatcherError::NotifyError
     }
-    
 }

@@ -31,13 +31,15 @@ notify = "6.1.1"
 homedir = "0.3.4"
 serde-inline-default = "0.2.3"
 ts-rs = "10.1"
-
+chrono = "0.4.39"
 sqlx = { version = "0.8", features = [ "sqlite", "runtime-tokio" ] }
 futures = "0.3.31"
 rand = "0.8.5"
 
 [target.'cfg(not(any(target_os = "android", target_os = "ios")))'.dependencies]
+tauri-plugin-autostart = "2"
 tauri-plugin-global-shortcut = "2"
+tauri-plugin-single-instance = "2"
 
 
 [features]

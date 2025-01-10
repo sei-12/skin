@@ -36,7 +36,7 @@ mod color_palette {
 }
 
 #[serde_inline_default]
-#[derive(Serialize, Deserialize, TS)]
+#[derive(Serialize, Deserialize, TS, Clone)]
 #[ts(export, export_to = "export/Config.d.ts")]
 pub struct Config {
     #[serde(default = "default_color_theme")]
@@ -47,9 +47,12 @@ pub struct Config {
 }
 
 #[serde_inline_default]
-#[derive(Serialize, Deserialize, TS)]
+#[derive(Serialize, Deserialize, TS, Clone)]
 #[ts(export, export_to = "export/Keybinds.d.ts")]
 pub struct Keybinds {
+    #[serde(default = "default_global_keybind")]
+    global: GlobalKeybind,
+
     #[serde_inline_default(Keys::Keys(Vec::from(["ctrl+n".to_string(),"ArrowDown".to_string()])))]
     focusDownBookmarkList: Keys,
 
@@ -68,7 +71,6 @@ pub struct Keybinds {
     // placeholderに書いちゃってるし、keyupが複雑だからこいつは固定。
     // #[serde_inline_default(Keys::Key("/".to_string()))]
     // focusPredicateInputBox: Keys,
-
     #[serde_inline_default(Keys::Key("Enter".to_string()))]
     addFocusedSuggestionItem: Keys,
 
@@ -98,7 +100,17 @@ fn default_keybinds() -> Keybinds {
     serde_json::from_str("{}").expect("Failed to parse default keybinds")
 }
 
-#[derive(Serialize, Deserialize, TS)]
+#[serde_inline_default]
+#[derive(Serialize, Deserialize, TS, Clone)]
+pub struct GlobalKeybind {
+    #[serde_inline_default(Keys::Key("alt+z".to_string()))]
+    toggleWindowVisible: Keys,
+}
+fn default_global_keybind() -> GlobalKeybind {
+    serde_json::from_str("{}").expect("Failed to parse default keybinds")
+}
+
+#[derive(Serialize, Deserialize, TS, Clone)]
 #[serde(untagged)]
 enum Keys {
     Key(String),
@@ -106,9 +118,11 @@ enum Keys {
 }
 
 #[serde_inline_default]
-#[derive(Serialize, Deserialize, TS)]
+#[derive(Serialize, Deserialize, TS, Clone)]
 #[ts(export, export_to = "export/ColorTheme.d.ts")]
 pub struct ColorTheme {
+    #[serde(default = "default_add_button_color_theme")]
+    addButton: AddButton,
     #[serde(default = "default_bookmark_item_color_theme")]
     bookmarkItem: BookmarkItemColorTheme,
 
@@ -120,7 +134,7 @@ pub struct ColorTheme {
 
     #[serde(default = "default_tag_item")]
     tagItem: TagItem,
-    
+
     #[serde(default = "default_create_new_bookmark")]
     createNewBookmark: CreateNewBookmark,
 
@@ -128,6 +142,20 @@ pub struct ColorTheme {
     bg: String,
 }
 fn default_color_theme() -> ColorTheme {
+    serde_json::from_str("{}").expect("Failed to parse default config")
+}
+
+#[serde_inline_default]
+#[derive(Serialize, Deserialize, Debug, Clone, TS)]
+pub struct AddButton {
+    #[serde(default = "color_palette::blue5")]
+    pub borderColor: String,
+    #[serde(default = "color_palette::dark1")]
+    pub bgColor: String,
+    #[serde(default = "color_palette::blue5")]
+    pub color: String,
+}
+fn default_add_button_color_theme() -> AddButton {
     serde_json::from_str("{}").expect("Failed to parse default config")
 }
 
@@ -201,7 +229,6 @@ fn default_predicate_input_box() -> PredicateInputBox {
     serde_json::from_str("{}").expect("Failed to parse default config")
 }
 
-
 #[serde_inline_default]
 #[derive(Serialize, Deserialize, Debug, Clone, TS)]
 pub struct CreateNewBookmark {
@@ -228,6 +255,11 @@ mod tests {
 
         let expected = Config {
             colorTheme: ColorTheme {
+                addButton: AddButton {
+                    borderColor: color_palette::blue5(),
+                    color: color_palette::blue5(),
+                    bgColor: color_palette::dark1(),
+                },
                 bookmarkItem: BookmarkItemColorTheme {
                     tag: color_palette::purple1(),
                     title: color_palette::blue5(),
@@ -262,11 +294,26 @@ mod tests {
                 bg: color_palette::dark2(),
             },
             keybinds: Keybinds {
-                focusDownBookmarkList: Keys::Keys(Vec::from(["ctrl+n".to_string(),"ArrowDown".to_string()])),
-                focusUpBookmarkList: Keys::Keys(Vec::from(["ctrl+p".to_string(),"ArrowUp".to_string()])),
+                global: GlobalKeybind {
+                    toggleWindowVisible: Keys::Key("alt+z".to_string()),
+                },
+                focusDownBookmarkList: Keys::Keys(Vec::from([
+                    "ctrl+n".to_string(),
+                    "ArrowDown".to_string(),
+                ])),
+                focusUpBookmarkList: Keys::Keys(Vec::from([
+                    "ctrl+p".to_string(),
+                    "ArrowUp".to_string(),
+                ])),
                 closeWindow: Keys::Key("Escape".to_string()),
-                focusDownSuggestionWindow: Keys::Keys(Vec::from(["ctrl+n".to_string(),"ArrowDown".to_string()])),
-                focusUpSuggestionWindow: Keys::Keys(Vec::from(["ctrl+p".to_string(),"ArrowUp".to_string()])),
+                focusDownSuggestionWindow: Keys::Keys(Vec::from([
+                    "ctrl+n".to_string(),
+                    "ArrowDown".to_string(),
+                ])),
+                focusUpSuggestionWindow: Keys::Keys(Vec::from([
+                    "ctrl+p".to_string(),
+                    "ArrowUp".to_string(),
+                ])),
                 addFocusedSuggestionItem: Keys::Key("Enter".to_string()),
                 popInputedTag: Keys::Key("Backspace".to_string()),
                 closeSuggestionWindow: Keys::Key("Escape".to_string()),

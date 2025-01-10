@@ -24,6 +24,11 @@ export namespace DB {
         return await invoke<void>("delete_bookmark",{ bookmarkId: id })
             .catch((e) => {throw e})
     }
+    
+    export async function fetchBookmarks(maxLength: number): Promise<Bookmark[]> {
+        return await invoke<Bookmark[]>("fetch_bookmarks",{ maxLength })
+            .catch((e) => {throw e})
+    }
 
     export async function isExistsTag(tag: string) {
         return await invoke<boolean>("is_exists_tag",{ tag: tag })

@@ -177,8 +177,14 @@ export function useCreateNewBookmarkPage() {
         createNewBookmarkHook.setContent(title, desc);
     };
 
-    // todo rename
-    const onKeyDownSpace = useCallback(async () => {
+    const createNewBookmarkHook = useCreateNewBookmark(
+        onClickCreateDone,
+        onClickCreateCancel,
+        findTagMethod,
+        onChangeUrlInputBox
+    );
+
+    const takeInputTag = useCallback(async () => {
         const inputBox =
             createNewBookmarkHook.tagInputBoxHook.inputBoxRef.current;
         if (inputBox === null) {
@@ -193,6 +199,7 @@ export function useCreateNewBookmarkPage() {
 
         const has = inputedTags.find((t) => t == item) !== undefined;
         if (has) {
+            inputBox.value = ""
             return;
         }
 
@@ -202,14 +209,7 @@ export function useCreateNewBookmarkPage() {
         });
         createNewBookmarkHook.tagInputBoxHook.suggestionWindowHook.close();
         inputBox.value = "";
-    }, [])
-
-    const createNewBookmarkHook = useCreateNewBookmark(
-        onClickCreateDone,
-        onClickCreateCancel,
-        findTagMethod,
-        onChangeUrlInputBox
-    );
+    }, [createNewBookmarkHook.getInputData])
 
     const appHotkeyHook = useAppHotkey();
 
@@ -263,9 +263,16 @@ export function useCreateNewBookmarkPage() {
     );
 
 
+    useHotkeys("/", createNewBookmarkHook.tagInputBoxHook.focusPredicateInputBox,
+        {
+            scopes: [HOTKEY_SCOPES.CREATE_NEW_BOOKMARK],
+            preventDefault: true,
+        }
+    )
+
     useHotkeys(
         keybinds.takeInputTag,
-        onKeyDownSpace,
+        takeInputTag,
         {
             scopes: [
                 HOTKEY_SCOPES.CREATE_NEW_BOOKMARK,
