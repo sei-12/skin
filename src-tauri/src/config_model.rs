@@ -109,6 +109,8 @@ enum Keys {
 #[derive(Serialize, Deserialize, TS)]
 #[ts(export, export_to = "export/ColorTheme.d.ts")]
 pub struct ColorTheme {
+    #[serde(default = "default_add_button_color_theme")]
+    addButton: AddButton,
     #[serde(default = "default_bookmark_item_color_theme")]
     bookmarkItem: BookmarkItemColorTheme,
 
@@ -128,6 +130,20 @@ pub struct ColorTheme {
     bg: String,
 }
 fn default_color_theme() -> ColorTheme {
+    serde_json::from_str("{}").expect("Failed to parse default config")
+}
+
+#[serde_inline_default]
+#[derive(Serialize, Deserialize, Debug, Clone, TS)]
+pub struct AddButton {
+    #[serde(default = "color_palette::purple1")]
+    pub borderColor: String,
+    #[serde(default = "color_palette::dark6")]
+    pub bgColor: String,
+    #[serde_inline_default("white".to_string())]
+    pub color: String,
+}
+fn default_add_button_color_theme() -> AddButton {
     serde_json::from_str("{}").expect("Failed to parse default config")
 }
 
@@ -228,6 +244,11 @@ mod tests {
 
         let expected = Config {
             colorTheme: ColorTheme {
+                addButton: AddButton {
+                    borderColor: color_palette::purple1(),
+                    color: "white".to_string(),
+                    bgColor: color_palette::dark6(),
+                },
                 bookmarkItem: BookmarkItemColorTheme {
                     tag: color_palette::purple1(),
                     title: color_palette::blue5(),

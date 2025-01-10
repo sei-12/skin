@@ -13,7 +13,8 @@ import { useConfig } from "../providers/configProvider";
 
 
 export function useSearchBookmarkPage(): SearchBookmarkProps {
-    const { keybinds } = useConfig()
+    const { keybinds,colorTheme } = useConfig()
+
 
     const navigate = useNavigate()
 
@@ -182,6 +183,7 @@ export function useSearchBookmarkPage(): SearchBookmarkProps {
     return {
         bkmkListProps: bkmkListHook.props,
         tagInputBoxProps: tagInputBoxHook.props,
+        colorTheme,
         onClickAdd: navigateCreateNewBookmark,
     };
 }

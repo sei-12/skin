@@ -36,6 +36,11 @@ export function ConfigProvider({ children }: { children: React.ReactNode }) {
 export const DEFAULT_CONFIG: Config = {
     colorTheme: {
         bg: "#000001",
+        addButton: {
+            bgColor: "#fffffa",
+            color: "#fffffb",
+            borderColor: "#fffffc",
+        },
         bookmarkItem: {
             bg: "#000002",
             desc: "#000003",
@@ -66,7 +71,7 @@ export const DEFAULT_CONFIG: Config = {
             caretColor: "white",
             placeholder: "#000015",
             textColor: "white",
-        }
+        },
     },
     keybinds: {
         focusDownBookmarkList: ["ctrl+n", "ArrowDown"],

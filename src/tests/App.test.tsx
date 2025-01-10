@@ -11,12 +11,6 @@ import { DEFAULT_CONFIG } from "../providers/configProvider";
 import { startMockClipboardManager } from "../services/mockClipboard.test";
 
 vi.mock("@tauri-apps/api/event", () => ({ listen: vi.fn() }));
-vi.mock("@tauri-apps/api/window", () => ({
-    getCurrentWindow: vi.fn(() => ({
-        setVisibleOnAllWorkspaces: vi.fn(),
-    })),
-}));
-vi.mock("@tauri-apps/plugin-global-shortcut", () => ({ register: vi.fn() }));
 
 vi.mock("@tauri-apps/api/core", () => ({
     invoke: vi.fn(async (cmd: string) => {
@@ -32,18 +26,18 @@ vi.mock("@tauri-apps/api/core", () => ({
     }),
 }));
 
-vi.mock("@tauri-apps/plugin-clipboard-manager",() => ({
+vi.mock("@tauri-apps/plugin-clipboard-manager", () => ({
     readText: vi.fn(() => {
-        return ""
-    })
-}))
+        return "";
+    }),
+}));
 
 describe("App.SearchBookmark", () => {
     beforeEach(async () => {
         vi.clearAllMocks();
         startMockWindowVisibleController();
         startMockDB();
-        startMockClipboardManager("")
+        startMockClipboardManager("");
 
         await act(async () => {
             render(<App></App>);
@@ -339,8 +333,51 @@ describe("App.SearchBookmark", () => {
         await user.type(inputBox, "{Enter}");
         expect(screen.getAllByText("gist").length).toBe(1);
         await user.type(inputBox, "{Backspace}");
-        expect(window.HTMLElement.prototype.scrollIntoView).toBeCalledTimes(15)
+        expect(window.HTMLElement.prototype.scrollIntoView).toBeCalledTimes(15);
     });
+
+    test("test10 AddButton", async () => {
+        const user = userEvent.setup();
+        const addButton = screen.getByTestId("add-button");
+        await user.click(addButton);
+        expect(screen.getByTestId("create-new-bookmark")).toBeInTheDocument();
+    });
+
+    test("test11 AddButton2", async () => {
+        const user = userEvent.setup();
+
+        const toCreate = async () => {
+            const addButton = screen.getByTestId("add-button");
+            await user.click(addButton);
+            expect(
+                screen.getByTestId("create-new-bookmark")
+            ).toBeInTheDocument();
+        };
+        const toSearch = async () => {
+            const cancelButton = screen.getByText("Cancel");
+            await user.click(screen.getByPlaceholderText("/"));
+            expect(cancelButton).toBeInTheDocument();
+            await user.click(cancelButton);
+            expect(WindowVisibleController.hide).toBeCalledTimes(0);
+            expect(screen.getByTestId("search-bookmark")).toBeInTheDocument();
+        };
+
+        await toSearch();
+        await toCreate();
+        await toSearch();
+        await toCreate();
+        await toSearch();
+        await toCreate();
+        await toSearch();
+        await toCreate();
+        await toSearch();
+        await toCreate();
+        await toSearch();
+        await toCreate();
+        await toSearch();
+        await toCreate();
+    });
+
 });
 
 describe("App.CreateNewBookmark", () => {
@@ -416,7 +453,7 @@ describe("App.CreateNewBookmark", () => {
         expect(screen.getByTestId("create-new-bookmark")).toBeInTheDocument();
 
         const toCreate = async () => {
-            user.click(screen.getByPlaceholderText("/"));
+            await user.click(screen.getByPlaceholderText("/"));
             await user.keyboard("{Control>}A{/Control}");
             expect(
                 screen.getByTestId("create-new-bookmark")
@@ -424,7 +461,7 @@ describe("App.CreateNewBookmark", () => {
         };
         const toSearch = async () => {
             const cancelButton = screen.getByText("Cancel");
-            user.click(screen.getByPlaceholderText("/"));
+            await user.click(screen.getByPlaceholderText("/"));
             expect(cancelButton).toBeInTheDocument();
             await user.click(cancelButton);
             expect(WindowVisibleController.hide).toBeCalledTimes(0);
@@ -604,7 +641,7 @@ describe("App.CreateNewBookmark", () => {
         await user.type(predicateInputBox, "helloworld-aaaa");
         await user.type(predicateInputBox, "{Space}");
         expect(screen.getAllByTestId("taginputbox-tagitem").length).toBe(2);
-        await user.type(predicateInputBox,"{Backspace}")
+        await user.type(predicateInputBox, "{Backspace}");
 
         await user.type(titleInputBox, "hello");
         await user.type(descInputBox, "description");
@@ -659,7 +696,6 @@ describe("App.CreateNewBookmark", () => {
             ["typescript", "helloworld-aaaa"]
         );
         expect(screen.getByTestId("search-bookmark")).toBeInTheDocument();
-
     });
 
     test("タグではない入力ボックスでバックスペースを押した時にタグが削除される不具合 case2", async () => {
@@ -669,29 +705,31 @@ describe("App.CreateNewBookmark", () => {
         const descInputBox = screen.getByPlaceholderText("desc");
         const predicateInputBox = screen.getByPlaceholderText("/");
 
-        let count = 0
+        let count = 0;
         const type = async (k: string) => {
             await user.type(predicateInputBox, k);
             await user.type(predicateInputBox, "{Enter}");
-            count += 1
-            expect(screen.getAllByTestId("taginputbox-tagitem").length).toBe(count);
-        }
+            count += 1;
+            expect(screen.getAllByTestId("taginputbox-tagitem").length).toBe(
+                count
+            );
+        };
 
-        await type("t")
-        await type("u")
-        await type("s")
-        await type("t")
-        await type("u")
-        await type("s")
-        await type("f")
-        
-        await user.type(urlInputBox,"{Backspace}")
-        await user.type(titleInputBox,"{Backspace}")
-        await user.type(descInputBox,"{Backspace}")
-        await user.type(urlInputBox,"{Backspace}")
-        await user.type(titleInputBox,"{Backspace}")
-        await user.type(descInputBox,"{Backspace}")
-        
+        await type("t");
+        await type("u");
+        await type("s");
+        await type("t");
+        await type("u");
+        await type("s");
+        await type("f");
+
+        await user.type(urlInputBox, "{Backspace}");
+        await user.type(titleInputBox, "{Backspace}");
+        await user.type(descInputBox, "{Backspace}");
+        await user.type(urlInputBox, "{Backspace}");
+        await user.type(titleInputBox, "{Backspace}");
+        await user.type(descInputBox, "{Backspace}");
+
         expect(screen.getAllByTestId("taginputbox-tagitem").length).toBe(count);
     });
 
@@ -699,36 +737,40 @@ describe("App.CreateNewBookmark", () => {
         const user = userEvent.setup();
         const predicateInputBox = screen.getByPlaceholderText("/");
 
-        let count = 0
+        let count = 0;
         const type = async (k: string) => {
             await user.type(predicateInputBox, k);
             await user.type(predicateInputBox, "{Enter}");
-            count += 1
-            expect(screen.getAllByTestId("taginputbox-tagitem").length).toBe(count);
-        }
+            count += 1;
+            expect(screen.getAllByTestId("taginputbox-tagitem").length).toBe(
+                count
+            );
+        };
         const back = async () => {
-            await user.type(predicateInputBox,"{Backspace}")
-            count -= 1
-            expect(screen.getAllByTestId("taginputbox-tagitem").length).toBe(count);
-        }
+            await user.type(predicateInputBox, "{Backspace}");
+            count -= 1;
+            expect(screen.getAllByTestId("taginputbox-tagitem").length).toBe(
+                count
+            );
+        };
 
-        await type("t")
-        await type("t")
-        await type("a")
-        await back()
-        await back()
-        await type("s")
-        await type("f")
-        await back()
-        await type("t")
-        await type("t")
-        await back()
-        await back()
-        await type("a")
-        await type("c")
-        await type("e")
-        await type("f")
-        await back()
-        await back()
+        await type("t");
+        await type("t");
+        await type("a");
+        await back();
+        await back();
+        await type("s");
+        await type("f");
+        await back();
+        await type("t");
+        await type("t");
+        await back();
+        await back();
+        await type("a");
+        await type("c");
+        await type("e");
+        await type("f");
+        await back();
+        await back();
     });
 });
