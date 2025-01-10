@@ -133,6 +133,29 @@ pub fn run() {
             db::commands::find_bookmark,
         ])
         .setup(|app| {
+
+            {
+                use tauri_plugin_autostart::MacosLauncher;
+                use tauri_plugin_autostart::ManagerExt;
+
+                let _ = app.handle().plugin(tauri_plugin_autostart::init(
+                    MacosLauncher::LaunchAgent,
+                    Some(vec![]),
+                ));
+
+                // Get the autostart manager
+                let autostart_manager = app.autolaunch();
+                // Enable autostart
+                let _ = autostart_manager.enable();
+                // Check enable state
+                println!(
+                    "registered for autostart? {}",
+                    autostart_manager.is_enabled().unwrap()
+                );
+                // Disable autostart
+                // let _ = autostart_manager.disable();
+            }
+
             let main_window = app.get_webview_window("main").expect("err get main window");
             main_window.set_visible_on_all_workspaces(true)?;
 
@@ -149,6 +172,7 @@ pub fn run() {
             // フォーカスを外したらウィンドウを非表示にする機能は開発時にはあまりにも邪魔
             #[cfg(not(feature = "dev_disable_hide_on_blur"))]
             enable_hide_on_blur(app.handle());
+
 
             block_on(async {
                 let path = app.path().app_data_dir()?;
