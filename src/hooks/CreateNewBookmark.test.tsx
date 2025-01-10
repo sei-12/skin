@@ -185,20 +185,20 @@ describe("CreateNewBookmark", () => {
         await user.keyboard("/");
         expect(predicateInputBox).toHaveFocus();
         expect(predicateInputBox.value).toBe("");
-        
-        await user.click(urlInputBox)
-        await user.keyboard("/")
-        expect(urlInputBox.value).toBe("/")
+
+        await user.click(urlInputBox);
+        await user.keyboard("/");
+        expect(urlInputBox.value).toBe("/");
         expect(predicateInputBox).not.toHaveFocus();
 
-        await user.click(titleInputBox)
-        await user.keyboard("/")
-        expect(titleInputBox.value).toBe("a/")
+        await user.click(titleInputBox);
+        await user.keyboard("/");
+        expect(titleInputBox.value).toBe("a/");
         expect(predicateInputBox).not.toHaveFocus();
 
-        await user.click(descInputBox)
-        await user.keyboard("/")
-        expect(descInputBox.value).toBe("b/")
+        await user.click(descInputBox);
+        await user.keyboard("/");
+        expect(descInputBox.value).toBe("b/");
         expect(predicateInputBox).not.toHaveFocus();
     });
 });
@@ -346,6 +346,66 @@ describe("CreateNewBookmark.insert2", () => {
         await user.type(urlInputBox, "url");
         await user.type(predicateInputBox, "t{Enter}");
         await user.type(predicateInputBox, "t{Enter}");
+        await user.type(urlInputBox, "a");
+        await user.type(descInputBox, "desc");
+        await user.type(titleInputBox, "a");
+
+        await user.keyboard("{Control>}{Enter}{/Control}");
+
+        expect(DB.insertBookmark).toBeCalledTimes(1);
+        expect(DB.insertBookmark).toBeCalledWith("titlea", "urla", "desc", [
+            "typescript",
+            "javascript",
+        ]);
+    });
+});
+
+describe("fix bug", () => {
+    beforeEach(async () => {
+        vi.clearAllMocks();
+        startMockWindowVisibleController();
+        startMockDB();
+        vi.mocked(invoke).mockImplementation(async (cmd: string) => {
+            if (cmd === "get_config") {
+                return DEFAULT_CONFIG;
+            }
+            if (cmd === "fetch_website_content") {
+                return {
+                    title: "",
+                    desc: "",
+                };
+            }
+        });
+
+        await act(async () => {
+            render(
+                <HotkeysProvider
+                    initiallyActiveScopes={[HOTKEY_SCOPES.SEARCH_BOOKMARK]}
+                >
+                    <CreateNewBookmarkPage></CreateNewBookmarkPage>
+                </HotkeysProvider>
+            );
+        });
+    });
+
+    test("create new bookmarkでスペースを押した時に重複するタグを入れることができるバグ", async () => {
+        const user = userEvent.setup();
+        const urlInputBox = screen.getByPlaceholderText("url");
+        const titleInputBox = screen.getByPlaceholderText("title");
+        const descInputBox = screen.getByPlaceholderText("desc");
+        const predicateInputBox: HTMLInputElement = screen.getByPlaceholderText("/");
+
+        await user.type(titleInputBox, "title");
+        await user.type(urlInputBox, "url");
+        await user.type(predicateInputBox, "t{Enter}");
+        await user.type(predicateInputBox, "typescript{Space}");
+        expect(predicateInputBox.value).toBe("") // クリアされる
+
+
+        await user.type(predicateInputBox, "t{Enter}");
+        await user.type(predicateInputBox, "javascript{Space}");
+        expect(predicateInputBox.value).toBe("") // クリアされる
+
         await user.type(urlInputBox, "a");
         await user.type(descInputBox, "desc");
         await user.type(titleInputBox, "a");
