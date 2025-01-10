@@ -1,4 +1,3 @@
-
 fn macos_config_file_path() -> Result<String, Box<dyn std::error::Error>> {
     use homedir::my_home;
     let Some(home_dir) = my_home()? else {
@@ -9,10 +8,7 @@ fn macos_config_file_path() -> Result<String, Box<dyn std::error::Error>> {
         return Err("Could not convert home directory to string".into());
     };
 
-    Ok(format!(
-        "{}/.config/skin/config.json",
-        home_dir_str
-    ))
+    Ok(format!("{}/.config/skin/config.json", home_dir_str))
 }
 
 // #[cfg(target_os="linux")]
@@ -26,10 +22,7 @@ fn linux_config_file_path() -> Result<String, Box<dyn std::error::Error>> {
         return Err("Could not convert home directory to string".into());
     };
 
-    Ok(format!(
-        "{}/.config/skin/config.json",
-        home_dir_str
-    ))
+    Ok(format!("{}/.config/skin/config.json", home_dir_str))
 }
 
 // windowsについて詳しくない
@@ -40,10 +33,7 @@ fn windows_config_file_path() -> Result<String, Box<dyn std::error::Error>> {
     let home_dir =
         env::var("USERPROFILE").map_err(|_| "Could not find USERPROFILE environment variable")?;
 
-    Ok(format!(
-        r"{}\AppData\Roaming\skin\config.json",
-        home_dir
-    ))
+    Ok(format!(r"{}\AppData\Roaming\skin\config.json", home_dir))
 }
 
 pub(super) fn config_file_path() -> Result<String, Box<dyn std::error::Error>> {

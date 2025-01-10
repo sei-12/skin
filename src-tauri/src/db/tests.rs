@@ -746,7 +746,7 @@ fn test14() -> Result<(), CommandError> {
         .await?;
 
         let result = commands::find_tag(app.state(), String::from("hello")).await?;
-        assert_eq!(result.len(),3);
+        assert_eq!(result.len(), 3);
         assert_eq!(
             result,
             vec![

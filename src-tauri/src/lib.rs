@@ -20,11 +20,13 @@ fn open_url(url: &str) -> bool {
 }
 
 #[tauri::command]
-fn get_config<'a>(config: State<'a, Mutex<config_model::Config>>) -> Result<config_model::Config, ()> {
+fn get_config<'a>(
+    config: State<'a, Mutex<config_model::Config>>,
+) -> Result<config_model::Config, ()> {
     let Ok(locked) = config.lock() else {
         return Err(());
     };
-    
+
     // もっといい方法がある気がする
     Ok(locked.clone())
 }
@@ -77,7 +79,7 @@ fn start_file_change_watcher(
 
         prev_time.update();
         drop(prev_time);
-        
+
         let new_config = config::read_config();
 
         let config_mutex = app_.state::<Mutex<config_model::Config>>();
@@ -116,6 +118,7 @@ fn enable_hide_on_blur(app_handle: &AppHandle) {
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
+        .plugin(tauri_plugin_single_instance::init(|_, _, _| {}))
         .plugin(tauri_plugin_clipboard_manager::init())
         .plugin(tauri_plugin_shell::init())
         .plugin(tauri_plugin_global_shortcut::Builder::new().build())

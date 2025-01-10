@@ -43,7 +43,6 @@ pub async fn insert_bookmark<'a>(
     pool: State<'a, DbPool>,
     req: InsertBookmarkRequest,
 ) -> Result<(), CommandError> {
-
     // remoe duplicate tag
     let tags: Vec<String> = filter_duplicate(req.tags);
 
@@ -270,17 +269,17 @@ fn vec_result_to_result_vec<T, E>(v: Vec<Result<T, E>>) -> Result<Vec<T>, E> {
 }
 
 fn filter_duplicate(v: Vec<String>) -> Vec<String> {
-    let mut ret_vec:Vec<String> = Vec::with_capacity(v.len()); 
-    let mut s:HashSet<String> = HashSet::new();
-        
+    let mut ret_vec: Vec<String> = Vec::with_capacity(v.len());
+    let mut s: HashSet<String> = HashSet::new();
+
     for string in v.into_iter() {
         if s.contains(&string) {
             continue;
         }
         s.insert(string.clone());
         ret_vec.push(string);
-    };
-    
+    }
+
     drop(s);
 
     ret_vec
@@ -291,7 +290,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_filter_duplicate(){
+    fn test_filter_duplicate() {
         let a = vec![
             "hello".to_string(),
             "hello".to_string(),
@@ -300,10 +299,7 @@ mod tests {
         ];
         assert_eq!(
             filter_duplicate(a),
-            vec![
-                "hello".to_string(),
-                "hello1".to_string(),
-            ]
+            vec!["hello".to_string(), "hello1".to_string(),]
         )
     }
 }
