@@ -135,6 +135,72 @@ describe("CreateNewBookmark", () => {
             ["typescript"]
         );
     });
+
+    test("test4 /を押した時にタグ入力ボックスにフォーカス", async () => {
+        await act(async () => {
+            render(
+                <HotkeysProvider
+                    initiallyActiveScopes={[HOTKEY_SCOPES.SEARCH_BOOKMARK]}
+                >
+                    <CreateNewBookmarkPage></CreateNewBookmarkPage>
+                </HotkeysProvider>
+            );
+        });
+        const user = userEvent.setup();
+        const predicateInputBox: HTMLInputElement =
+            screen.getByPlaceholderText("/");
+
+        await user.keyboard("/");
+        expect(predicateInputBox).toHaveFocus();
+        expect(predicateInputBox.value).toBe("");
+
+        await user.keyboard("/");
+        expect(predicateInputBox.value).toBe("/");
+    });
+
+    test("test5 /を入力する事ができる", async () => {
+        await act(async () => {
+            render(
+                <HotkeysProvider
+                    initiallyActiveScopes={[HOTKEY_SCOPES.SEARCH_BOOKMARK]}
+                >
+                    <CreateNewBookmarkPage></CreateNewBookmarkPage>
+                </HotkeysProvider>
+            );
+        });
+        const user = userEvent.setup();
+
+        const predicateInputBox: HTMLInputElement =
+            screen.getByPlaceholderText("/");
+
+        const urlInputBox: HTMLInputElement =
+            screen.getByPlaceholderText("url");
+
+        const titleInputBox: HTMLInputElement =
+            screen.getByPlaceholderText("title");
+
+        const descInputBox: HTMLInputElement =
+            screen.getByPlaceholderText("desc");
+
+        await user.keyboard("/");
+        expect(predicateInputBox).toHaveFocus();
+        expect(predicateInputBox.value).toBe("");
+        
+        await user.click(urlInputBox)
+        await user.keyboard("/")
+        expect(urlInputBox.value).toBe("/")
+        expect(predicateInputBox).not.toHaveFocus();
+
+        await user.click(titleInputBox)
+        await user.keyboard("/")
+        expect(titleInputBox.value).toBe("a/")
+        expect(predicateInputBox).not.toHaveFocus();
+
+        await user.click(descInputBox)
+        await user.keyboard("/")
+        expect(descInputBox.value).toBe("b/")
+        expect(predicateInputBox).not.toHaveFocus();
+    });
 });
 
 describe("CreateNewBookmark.insert1", () => {
@@ -265,9 +331,9 @@ describe("CreateNewBookmark.insert2", () => {
         expect(DB.insertBookmark).toBeCalledTimes(1);
         expect(DB.insertBookmark).toBeCalledWith("titlea", "urla", "desc", [
             "typescript",
-            "javascript"
+            "javascript",
         ]);
-    })
+    });
 
     test("test4", async () => {
         const user = userEvent.setup();
@@ -289,7 +355,7 @@ describe("CreateNewBookmark.insert2", () => {
         expect(DB.insertBookmark).toBeCalledTimes(1);
         expect(DB.insertBookmark).toBeCalledWith("titlea", "urla", "desc", [
             "typescript",
-            "javascript"
+            "javascript",
         ]);
-    })
+    });
 });

@@ -263,6 +263,13 @@ export function useCreateNewBookmarkPage() {
     );
 
 
+    useHotkeys("/", createNewBookmarkHook.tagInputBoxHook.focusPredicateInputBox,
+        {
+            scopes: [HOTKEY_SCOPES.CREATE_NEW_BOOKMARK],
+            preventDefault: true,
+        }
+    )
+
     useHotkeys(
         keybinds.takeInputTag,
         onKeyDownSpace,

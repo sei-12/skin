@@ -425,4 +425,41 @@ describe("App.CreateNewBookmark", () => {
         await back();
         await back();
     });
+
+    test("test11 /を押した時にタグ入力ボックスにフォーカス", async () => {
+        const user = userEvent.setup();
+
+        const urlInputBox = screen.getByPlaceholderText("url");
+        const titleInputBox = screen.getByPlaceholderText("title");
+        const descInputBox = screen.getByPlaceholderText("desc");
+        const predicateInputBox = screen.getByPlaceholderText("/");
+
+        expect(urlInputBox).toBeInTheDocument();
+        expect(titleInputBox).toBeInTheDocument();
+        expect(descInputBox).toBeInTheDocument();
+        expect(predicateInputBox).toBeInTheDocument();
+
+        await user.keyboard("/");
+        expect(predicateInputBox).toHaveFocus();
+        await user.keyboard("t");
+        await user.keyboard("{Enter}");
+        expect(screen.getAllByTestId("taginputbox-tagitem").length).toBe(1);
+
+        await user.type(titleInputBox, "hello");
+        await user.type(descInputBox, "description");
+        await user.type(urlInputBox, "url://hello");
+
+        const doneButton = screen.getByText("Done");
+        expect(doneButton).toBeInTheDocument();
+        await user.click(doneButton);
+
+        expect(DB.insertBookmark).toBeCalledTimes(1);
+        expect(DB.insertBookmark).toBeCalledWith(
+            "hello",
+            "url://hello",
+            "description",
+            ["typescript"]
+        );
+        expect(screen.getByTestId("search-bookmark")).toBeInTheDocument();
+    });
 });
