@@ -55,11 +55,11 @@ describe("BookmarkItem", () => {
         );
     });
 
-    it("calls the correct functions on click actions", async () => {
-        const user = userEvent.setup();
+
+    it("onclick remove",async () => {
+        const user = userEvent.setup()
         const handleClickRemove = vi.fn();
         const handleClickEdit = vi.fn();
-
         render(
             <BookmarkItem
                 {...defaultProps}
@@ -67,17 +67,21 @@ describe("BookmarkItem", () => {
                 onClickEdit={handleClickEdit}
             />
         );
+        
+        
+        // クリックする前は表示されていない
+        expect(() => screen.getByTestId("bookmarkitem-menu")).toThrow()
 
-        // Simulate clicks
-        // Replace these with actual buttons or clickable elements if present in your BookmarkItem
+        const openMenuButton = screen.getByTestId("open-bookmark-button")
+        await user.click(openMenuButton)
 
-        await user.click(screen.getAllByRole("button")[0]); // どう書いたらいいかわからんかった
-        await user.click(screen.getAllByRole("button")[1]);
-
-        // Uncomment and replace with appropriate selectors if implemented
-        expect(handleClickRemove).toHaveBeenCalledOnce();
-        expect(handleClickEdit).toHaveBeenCalledOnce();
-    });
+        const menuWindow = screen.getByTestId("bookmarkitem-menu")
+        expect(menuWindow).toBeInTheDocument()
+        await user.click(screen.getByText("Delete"))
+        expect(handleClickRemove).toBeCalledTimes(1)
+        expect(handleClickRemove).toBeCalledWith(defaultProps.data.id)
+        
+    })
 
     it("tag style", async () => {
         render(<BookmarkItem {...defaultProps} />);
