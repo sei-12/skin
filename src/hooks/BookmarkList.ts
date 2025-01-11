@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import type { BookmarkListProps } from "../components/BookmarkList";
 import { useConfig } from "../providers/configProvider";
 import type { Bookmark } from "../../src-tauri/bindings/export/DbModels";
@@ -11,13 +11,13 @@ export function useBookmarkList(
     const [focusIndex, setFocusIndex] = useState(0);
     const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
 
-    useEffect(() => {
+    const scrollToFocusItem = (focusIndex: number) => {
         // フォーカスが変更されたときにスクロールする
         const focusedItem = itemRefs.current.at(focusIndex);
         if (focusedItem !== undefined && focusedItem !== null) {
             focusedItem.scrollIntoView({ block: "nearest" });
         }
-    }, [focusIndex]);
+    }
 
     const focusUp = useCallback(() => {
         setFocusIndex((cur) => {
@@ -25,6 +25,7 @@ export function useBookmarkList(
             if (newIndex < 0) {
                 newIndex = items.length - 1;
             }
+            scrollToFocusItem(newIndex)
             return newIndex;
         })
     }, [items])
@@ -35,6 +36,7 @@ export function useBookmarkList(
             if (newIndex >= items.length) {
                 newIndex = 0;
             }
+            scrollToFocusItem(newIndex)
             return newIndex;
         })
     }, [items])
