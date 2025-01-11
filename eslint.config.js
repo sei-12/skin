@@ -21,13 +21,18 @@ export default tseslint.config(
             "react-hooks": reactHooks,
             "react-refresh": reactRefresh,
         },
+
+        // 基準
+        // warn : 良くないコード
+        // error: 動かないコード
         rules: {
             ...reactHooks.configs.recommended.rules,
             "@typescript-eslint/no-namespace": "off",
             "react-hooks/exhaustive-deps": "off",
             "@typescript-eslint/consistent-type-imports": "warn",
+            "@typescript-eslint/no-unused-vars": "warn",
             "@typescript-eslint/strict-boolean-expressions": [
-                "error",
+                "warn",
                 {
                     allowString: false,
                     allowNumber: false,
