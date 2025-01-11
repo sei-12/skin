@@ -77,6 +77,7 @@ export const DEFAULT_CONFIG: Config = {
         global: {
             toggleWindowVisible: "alt+z"
         },
+        removeFocusedBookmark: "ctrl+shift+d",
         focusDownBookmarkList: ["ctrl+n", "ArrowDown"],
         focusUpBookmarkList: ["ctrl+p", "ArrowUp"],
         closeWindow: "Escape",

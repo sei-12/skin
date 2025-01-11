@@ -1,15 +1,19 @@
-import { forwardRef } from "react";
+import { forwardRef, useState } from "react";
+import DeleteIcon from "@mui/icons-material/Delete";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
 import {
     Box,
-    Button,
     Card,
     CardContent,
+    Grid2,
+    ListItemIcon,
+    ListItemText,
+    Menu,
+    MenuItem,
     Stack,
     Typography,
 } from "@mui/material";
 
-import DeleteIcon from "@mui/icons-material/Delete";
-import EditIcon from "@mui/icons-material/Edit";
 import type { ColorTheme } from "../../src-tauri/bindings/export/ColorTheme";
 import type { Bookmark } from "../../src-tauri/bindings/export/DbModels";
 
@@ -19,7 +23,7 @@ export type BookmarkItemProps = {
     onClickRemove: (key: number) => void;
     onClickEdit: (key: number) => void;
     focus: boolean;
-    colorTheme: ColorTheme
+    colorTheme: ColorTheme;
 };
 
 export const BookmarkItem = forwardRef<HTMLDivElement, BookmarkItemProps>(
@@ -38,29 +42,44 @@ export const BookmarkItem = forwardRef<HTMLDivElement, BookmarkItemProps>(
                     }}
                 >
                     <CardContent sx={{ position: "relative" }}>
-                        <Typography
-                            variant="h5"
-                            sx={{
-                                color: p.colorTheme.bookmarkItem.title,
-                                fontWeight: "bold",
+                        <Grid2 container>
+                            <Grid2 size="grow">
+                                <Typography
+                                    variant="h5"
+                                    sx={{
+                                        color: p.colorTheme.bookmarkItem.title,
+                                        fontWeight: "bold",
 
-                                overflow: "hidden",
-                                display: "-webkit-box",
-                                wordBreak: "break-all",
-                                lineClamp: 1,
-                                WebkitLineClamp: 1,
-                                WebkitBoxOrient: "vertical",
-                            }}
-                        >
-                            {p.data.title}
-                        </Typography>
+                                        overflow: "hidden",
+                                        display: "-webkit-box",
+                                        wordBreak: "break-all",
+                                        lineClamp: 1,
+                                        WebkitLineClamp: 1,
+                                        WebkitBoxOrient: "vertical",
+                                    }}
+                                >
+                                    {p.data.title}
+                                </Typography>
+                            </Grid2>
+                            <Grid2 size="auto">
+                                <BookmarkItemMenu
+                                    colorTheme={p.colorTheme}
+                                    onClickRemove={() => p.onClickRemove(p.data.id)}
+                                ></BookmarkItemMenu>
+                            </Grid2>
+                        </Grid2>
+
                         <Stack
                             spacing={0.7}
                             direction={"row"}
                             sx={{ overflow: "hidden" }}
                         >
                             {p.data.tags.map((t, i) => (
-                                <TagItem key={i} text={t} colorTheme={p.colorTheme}></TagItem>
+                                <TagItem
+                                    key={i}
+                                    text={t}
+                                    colorTheme={p.colorTheme}
+                                ></TagItem>
                             ))}
                         </Stack>
                         <Typography
@@ -78,48 +97,6 @@ export const BookmarkItem = forwardRef<HTMLDivElement, BookmarkItemProps>(
                         >
                             {p.data.desc}
                         </Typography>
-
-                        <Box
-                            sx={{
-                                position: "absolute",
-                                opacity: 0,
-                                ":hover": {
-                                    opacity: 1,
-                                },
-                                transition: "opacity 0.5s",
-                                top: 0,
-                                left: 0,
-                                width: "100%",
-                                height: "100%",
-                            }}
-                        >
-                            <Stack
-                                direction={"row"}
-                                spacing={1}
-                                sx={{
-                                    position: "absolute",
-                                    bottom: 10,
-                                    right: 10,
-                                }}
-                            >
-                                <Button
-                                    variant="contained"
-                                    onClick={() =>
-                                        p.onClickRemove(p.data.id)
-                                    }
-                                >
-                                    <DeleteIcon></DeleteIcon>
-                                </Button>
-                                <Button
-                                    variant="contained"
-                                    onClick={() =>
-                                        p.onClickEdit(p.data.id)
-                                    }
-                                >
-                                    <EditIcon></EditIcon>
-                                </Button>
-                            </Stack>
-                        </Box>
                     </CardContent>
                 </Card>
             </div>
@@ -127,7 +104,7 @@ export const BookmarkItem = forwardRef<HTMLDivElement, BookmarkItemProps>(
     }
 );
 
-function TagItem(p: { text: string , colorTheme: ColorTheme}) {
+function TagItem(p: { text: string; colorTheme: ColorTheme }) {
     return (
         <Typography
             sx={{
@@ -137,5 +114,91 @@ function TagItem(p: { text: string , colorTheme: ColorTheme}) {
         >
             #{p.text}
         </Typography>
+    );
+}
+
+
+type BookmarkItemMenuProps = {
+    colorTheme: ColorTheme
+    onClickRemove: () => void
+}
+function BookmarkItemMenu(p: BookmarkItemMenuProps) {
+    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+    const open = Boolean(anchorEl);
+    const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+        setAnchorEl(event.currentTarget);
+    };
+    const handleClose = () => {
+        setAnchorEl(null);
+    };
+
+    return (
+        <Box
+            sx={{
+                position: "relative",
+            }}
+        >
+            <Box
+                id="basic-button"
+                data-testid="open-bookmark-button"
+                aria-controls={open ? "basic-menu" : undefined}
+                aria-haspopup="true"
+                aria-expanded={open ? "true" : undefined}
+                onClick={handleClick}
+            >
+                <MoreVertIcon
+                    sx={{
+                        color: "#394b70",
+                        ":hover": {
+                            color: "white",
+                        },
+                        ":active": {
+                            color: "#394b70",
+                        },
+                    }}
+                ></MoreVertIcon>
+            </Box>
+
+            <Menu
+                id="basic-menu"
+                data-testid="bookmarkitem-menu"
+                anchorEl={anchorEl}
+                open={open}
+                onClose={handleClose}
+                MenuListProps={{
+                    "aria-labelledby": "basic-button",
+                }}
+                anchorOrigin={{
+                    vertical: "top",
+                    horizontal: "left",
+                }}
+                transformOrigin={{
+                    vertical: "top",
+                    horizontal: "right",
+                }}
+                slotProps={{
+                    paper: {
+                        style: {
+                            backgroundColor: "#1f2335",
+                            border: "solid 2px",
+                            borderColor: "#3b4261",
+                            color: "#c0caf5",
+                        },
+                    },
+                }}
+            >
+                <MenuItem onClick={p.onClickRemove}>
+                    <ListItemIcon>
+                        <DeleteIcon
+                            sx={{
+                                color: "#394b70",
+                            }}
+                            fontSize="small"
+                        />
+                    </ListItemIcon>
+                    <ListItemText>Delete</ListItemText>
+                </MenuItem>
+            </Menu>
+        </Box>
     );
 }

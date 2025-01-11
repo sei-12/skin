@@ -23,7 +23,7 @@ export function useSearchBookmarkPage(): SearchBookmarkProps {
         await DB.deleteBookmark(id)
         reloadBookmarks()
     }
-
+    
     const bkmkListHook = useBookmarkList(
         onClickRemove,
         () => console.log("onclick edit!!")
@@ -32,6 +32,15 @@ export function useSearchBookmarkPage(): SearchBookmarkProps {
     const tagInputBoxHook = useTagInputBox(findTagMethod);
 
     const appHotkeyHook = useAppHotkey();
+
+    const removeFocusedBookmark = useCallback(async () => {
+        const focusedItem = bkmkListHook.getFocusedItem()
+        if ( focusedItem === undefined ){
+            return
+        }
+        await DB.deleteBookmark(focusedItem.id)
+        await reloadBookmarks()
+    },[bkmkListHook.getFocusedItem])
 
     const reloadBookmarks = useCallback(async () => {
         const tags = tagInputBoxHook.inputedTags.map((e) => {
@@ -182,6 +191,10 @@ export function useSearchBookmarkPage(): SearchBookmarkProps {
     );
 
     useHotkeys(keybinds.openUrl, openUrl,
+        { scopes: [HOTKEY_SCOPES.SEARCH_BOOKMARK], preventDefault: true, enableOnFormTags: true },
+    )
+    
+    useHotkeys(keybinds.removeFocusedBookmark,removeFocusedBookmark,
         { scopes: [HOTKEY_SCOPES.SEARCH_BOOKMARK], preventDefault: true, enableOnFormTags: true },
     )
 
