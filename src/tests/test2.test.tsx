@@ -7,6 +7,7 @@ import { App } from "../App";
 import { DEFAULT_CONFIG } from "../providers/configProvider";
 import { startMockClipboardManager } from "../services/mockClipboard.test";
 import userEvent from "@testing-library/user-event";
+import { DB } from "../services/database";
 
 vi.mock("@tauri-apps/api/event", () => ({ listen: vi.fn() }));
 
@@ -41,43 +42,68 @@ describe("App.SearchBookmark2", () => {
             render(<App></App>);
         });
     });
-    
-    test("AddButton",async ( ) => {
+
+    test("AddButton", async () => {
         const addButton = screen.getByTestId("add-button");
-        expect(addButton).toBeInTheDocument()
-        expect(addButton).toHaveStyle("background-color: "+ DEFAULT_CONFIG.colorTheme.addButton.bgColor)
-        expect(addButton).toHaveStyle("color: "+ DEFAULT_CONFIG.colorTheme.addButton.color)
-        expect(addButton).toHaveStyle("border-color: "+ DEFAULT_CONFIG.colorTheme.addButton.borderColor)
-    })
-    
+        expect(addButton).toBeInTheDocument();
+        expect(addButton).toHaveStyle(
+            "background-color: " + DEFAULT_CONFIG.colorTheme.addButton.bgColor
+        );
+        expect(addButton).toHaveStyle(
+            "color: " + DEFAULT_CONFIG.colorTheme.addButton.color
+        );
+        expect(addButton).toHaveStyle(
+            "border-color: " + DEFAULT_CONFIG.colorTheme.addButton.borderColor
+        );
+    });
+
     test("検索タグが0の時に全てのブックマークを表示", async () => {
         {
-            expect(screen.getAllByTestId("bkmkitem").length).toBe(20)
+            expect(screen.getAllByTestId("bkmkitem").length).toBe(20);
             const user = userEvent.setup();
             const addButton = screen.getByTestId("add-button");
             await user.click(addButton);
-            await user.keyboard("{Escape}")
+            await user.keyboard("{Escape}");
         }
         {
-            expect(screen.getAllByTestId("bkmkitem").length).toBe(20)
+            expect(screen.getAllByTestId("bkmkitem").length).toBe(20);
             const user = userEvent.setup();
             const addButton = screen.getByTestId("add-button");
             await user.click(addButton);
-            await user.keyboard("{Escape}")
+            await user.keyboard("{Escape}");
         }
         {
-            expect(screen.getAllByTestId("bkmkitem").length).toBe(20)
+            expect(screen.getAllByTestId("bkmkitem").length).toBe(20);
             const user = userEvent.setup();
             const addButton = screen.getByTestId("add-button");
             await user.click(addButton);
-            await user.keyboard("{Escape}")
+            await user.keyboard("{Escape}");
         }
         {
-            expect(screen.getAllByTestId("bkmkitem").length).toBe(20)
+            expect(screen.getAllByTestId("bkmkitem").length).toBe(20);
             const user = userEvent.setup();
             const addButton = screen.getByTestId("add-button");
             await user.click(addButton);
-            await user.keyboard("{Escape}")
+            await user.keyboard("{Escape}");
         }
     });
-})
+
+    test("ショートカットキーで項目を削除", async () => {
+        window.HTMLElement.prototype.scrollIntoView = function () {};
+        const user = userEvent.setup();
+        const focus_down_and_delete = async (id: number) => {
+            vi.clearAllMocks();
+            startMockDB();
+            for (let i = 0; i < id; i++) {
+                await user.keyboard("{Control>}N{/Control}");
+            }
+            await user.keyboard("{Control>}{Shift>}D{/Shift}{/Control}");
+            expect(DB.deleteBookmark).toBeCalledTimes(1);
+            expect(DB.deleteBookmark).toBeCalledWith(id);
+        };
+    
+        for (let i = 0; i < 10; i++) {
+            await focus_down_and_delete(i)
+        }
+    });
+});

@@ -197,4 +197,10 @@ describe("SearchBookmark", () => {
     test("検索タグが0の時に全てのブックマークを表示", async () => {
         expect(screen.getAllByTestId("bkmkitem").length).toBe(20)
     });
+
+    test("ショートカットキーで項目を削除", async () => {
+        const user = userEvent.setup();
+        await user.keyboard("{Control>}{Shift>}D{/Shift}{/Control}")
+        expect(DB.deleteBookmark).toBeCalledTimes(1);
+    });
 });
