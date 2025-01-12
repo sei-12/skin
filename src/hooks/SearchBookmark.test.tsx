@@ -22,6 +22,7 @@ vi.mock("react-router-dom", () => ({
     useNavigate: () => vi.fn((a) => console.log(a)),
 }));
 
+window.HTMLElement.prototype.scrollIntoView = vi.fn();
 describe("SearchBookmark", () => {
     beforeEach(async () => {
         vi.clearAllMocks();

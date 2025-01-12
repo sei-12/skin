@@ -12,6 +12,7 @@ const DEFALT_TAGS: string[] = [
     "hello", "helloworld", "foo", "abcde"
 ] as const;
 
+window.HTMLElement.prototype.scrollIntoView = vi.fn();
 const makeMockedFindTagMethod = (tags?: string[]) => {
     let _tags: string[] = DEFALT_TAGS
 

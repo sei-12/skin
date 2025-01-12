@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { BookmarkListProps } from "../components/BookmarkList";
 import { useConfig } from "../providers/configProvider";
 import type { Bookmark } from "../../src-tauri/bindings/export/DbModels";
@@ -19,13 +19,17 @@ export function useBookmarkList(
         }
     }
 
+    // fix: 一度閉じてから開いた時に、フォーカスしているアイテムが見えない
+    useEffect(() => {
+        scrollToFocusItem(focusIndex)
+    },[itemRefs,focusIndex])
+
     const focusUp = useCallback(() => {
         setFocusIndex((cur) => {
             let newIndex = cur - 1;
             if (newIndex < 0) {
                 newIndex = items.length - 1;
             }
-            scrollToFocusItem(newIndex)
             return newIndex;
         })
     }, [items])
@@ -36,7 +40,6 @@ export function useBookmarkList(
             if (newIndex >= items.length) {
                 newIndex = 0;
             }
-            scrollToFocusItem(newIndex)
             return newIndex;
         })
     }, [items])
