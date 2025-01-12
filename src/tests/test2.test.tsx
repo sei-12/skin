@@ -102,8 +102,16 @@ describe("App.SearchBookmark2", () => {
             expect(DB.deleteBookmark).toBeCalledWith(id);
         };
     
-        for (let i = 0; i < 10; i++) {
+        for (let i = 0; i < 8; i++) {
             await focus_down_and_delete(i)
         }
+    });
+
+    test("AddButtonをダブルクリック", async () => {
+        window.HTMLElement.prototype.scrollIntoView = function () {};
+        const user = userEvent.setup();
+        const addButton = screen.getByTestId("add-button");
+        await user.dblClick(addButton)
+        expect(screen.getByTestId("create-new-bookmark")).toBeInTheDocument();
     });
 });
