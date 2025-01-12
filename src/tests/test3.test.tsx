@@ -12,6 +12,7 @@ import { DEFAULT_CONFIG } from "../providers/configProvider";
 
 vi.mock("@tauri-apps/api/event", () => ({ listen: vi.fn() }));
 
+window.HTMLElement.prototype.scrollIntoView = vi.fn();
 vi.mock("@tauri-apps/api/core", () => ({
     invoke: vi.fn(async (cmd: string) => {
         if (cmd === "get_config") {

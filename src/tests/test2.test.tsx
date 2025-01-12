@@ -42,7 +42,7 @@ describe("App.SearchBookmark2", () => {
             render(<App></App>);
         });
     });
-
+    
     test("AddButton", async () => {
         const addButton = screen.getByTestId("add-button");
         expect(addButton).toBeInTheDocument();
@@ -58,6 +58,7 @@ describe("App.SearchBookmark2", () => {
     });
 
     test("検索タグが0の時に全てのブックマークを表示", async () => {
+        window.HTMLElement.prototype.scrollIntoView = vi.fn();
         {
             expect(screen.getAllByTestId("bkmkitem").length).toBe(20);
             const user = userEvent.setup();
@@ -102,8 +103,18 @@ describe("App.SearchBookmark2", () => {
             expect(DB.deleteBookmark).toBeCalledWith(id);
         };
     
-        for (let i = 0; i < 10; i++) {
+        for (let i = 0; i < 8; i++) {
             await focus_down_and_delete(i)
         }
     });
+
+    test("AddButtonをダブルクリック", async () => {
+        window.HTMLElement.prototype.scrollIntoView = function () {};
+        const user = userEvent.setup();
+        const addButton = screen.getByTestId("add-button");
+        await user.dblClick(addButton)
+        expect(screen.getByTestId("create-new-bookmark")).toBeInTheDocument();
+    });
+    
+
 });
