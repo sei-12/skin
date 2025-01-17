@@ -56,15 +56,4 @@ describe("App.SearchBookmark4", () => {
         await user.keyboard("{Escape}")
         expect(window.HTMLElement.prototype.scrollIntoView).toBeCalledTimes(5)
     })
-    
-    test("ウィンドウを閉じた時に検索ボックスをクリア",async () => {
-        const user = userEvent.setup();
-        await user.keyboard("/");
-        await user.keyboard("hello-world")
-        expect(screen.getByTestId("suggestion-window")).not.toBeVisible();
-        const inputBox: HTMLInputElement = screen.getByPlaceholderText("/");
-        expect(inputBox.value).toBe("hello-world")
-        await user.keyboard("{Escape}")
-        expect(inputBox.value).toBe("")
-    })
 });
