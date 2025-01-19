@@ -78,8 +78,6 @@ export function useSearchBookmarkPage(): SearchBookmarkProps {
     const closeWindow = useCallback(() => {
         WindowVisibleController.hide();
         tagInputBoxHook.setInputedTags([]);
-        const inputBox = tagInputBoxHook.inputBoxRef.current
-        if ( inputBox !== null ){ inputBox.value = "" }
     }, [])
 
 
