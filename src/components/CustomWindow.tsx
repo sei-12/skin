@@ -10,6 +10,7 @@ export const CustomWindow: FunctionComponent<CustomWindowProps> = (p) => {
     const { colorTheme } = useConfig();
     return (
         <Box
+            data-testid="custom-window"
             sx={{
                 margin: "15px",
                 bgcolor: colorTheme.bg,
