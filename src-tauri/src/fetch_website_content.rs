@@ -18,15 +18,15 @@ fn parse_html(html: &str) -> Result<WebSiteContent, Box<dyn std::error::Error>> 
     let title_selector = scraper::Selector::parse("title")?;
     let desc_selector = scraper::Selector::parse("meta[name='description']")?;
 
-    let title = match document.select(&title_selector).next() {
-        Some(element) => Some(element.inner_html()),
-        None => None,
-    };
+    let title = document
+        .select(&title_selector)
+        .next()
+        .map(|element| element.inner_html());
 
-    let desc = match document.select(&desc_selector).next() {
-        Some(element) => Some(element.value().attr("content").unwrap_or("").to_string()),
-        None => None,
-    };
+    let desc = document
+        .select(&desc_selector)
+        .next()
+        .map(|element| element.value().attr("content").unwrap_or("").to_string());
 
     Ok(WebSiteContent { title, desc })
 }

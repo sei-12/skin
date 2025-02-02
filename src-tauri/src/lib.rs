@@ -20,9 +20,7 @@ fn open_url(url: &str) -> bool {
 }
 
 #[tauri::command]
-fn get_config<'a>(
-    config: State<'a, Mutex<config_model::Config>>,
-) -> Result<config_model::Config, ()> {
+fn get_config(config: State<'_, Mutex<config_model::Config>>) -> Result<config_model::Config, ()> {
     let Ok(locked) = config.lock() else {
         return Err(());
     };
@@ -102,14 +100,14 @@ fn start_file_change_watcher(
 #[cfg(not(feature = "dev_disable_hide_on_blur"))]
 fn enable_hide_on_blur(app_handle: &AppHandle) {
     let Some(window) = app_handle.get_webview_window("main") else {
-        return ();
+        return;
     };
 
     let app_handle_ = app_handle.clone();
 
     window.listen("tauri://blur", move |_| {
         let Some(window) = app_handle_.get_webview_window("main") else {
-            return ();
+            return;
         };
         let _ = window.hide();
     });
@@ -134,7 +132,6 @@ pub fn run() {
             db::commands::fetch_bookmarks
         ])
         .setup(|app| {
-
             {
                 use tauri_plugin_autostart::MacosLauncher;
                 use tauri_plugin_autostart::ManagerExt;
@@ -174,7 +171,6 @@ pub fn run() {
             #[cfg(not(feature = "dev_disable_hide_on_blur"))]
             enable_hide_on_blur(app.handle());
 
-
             block_on(async {
                 let path = app.path().app_data_dir()?;
                 let pool = db::connect(path).await?;
@@ -182,8 +178,8 @@ pub fn run() {
                 Ok(())
             })
         })
-        .on_window_event(|window, event| match event {
-            WindowEvent::Destroyed => {
+        .on_window_event(|window, event| {
+            if let WindowEvent::Destroyed = event {
                 let f_watcher =
                     window.state::<Mutex<Option<file_change_watcher::FileChangeWatcher>>>();
                 let Ok(mut locked) = f_watcher.lock() else {
@@ -195,7 +191,6 @@ pub fn run() {
                 };
                 let _ = f_watcher.despawn();
             }
-            _ => {}
         })
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
