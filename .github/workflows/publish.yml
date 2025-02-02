@@ -16,7 +16,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        platform: [macos-latest, windows-latest]
+        platform: [macos-latest, windows-latest, ubuntu-latest]
 
     runs-on: ${{ matrix.platform }}
     steps:
@@ -34,6 +34,10 @@ jobs:
           shared-key: ${{ matrix.platform }}-${{ matrix.args }}
           workspaces: './src-tauri -> target'
       
+      - name: install packages
+        if: matrix.platform == 'ubuntu-latest'
+        run: sudo apt-get update && sudo apt-get install javascriptcoregtk-4.1 libsoup-3.0 webkit2gtk-4.1 librsvg2-dev -y
+
       - uses: actions/cache@v2
         with:
           path: ${YARN_CACHE_FOLDER}
