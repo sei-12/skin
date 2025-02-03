@@ -1,8 +1,19 @@
-# skin
-タグで検索を行うブックマークマネージャー。
+<p align="center">
+<a >
+<img src="src-tauri/icons/icon.png" alt="Slidev" height="250" width="250"/>
+</a>
+</p>
+<h1 align="center">skin</h1>
+<div align="center">
 
-![workflow](https://github.com/sei-12/skin/actions/workflows/ci.yml/badge.svg)
-![workflow](https://github.com/sei-12/skin/actions/workflows/publish.yml/badge.svg)
+  ![workflow](https://github.com/sei-12/skin/actions/workflows/ci.yml/badge.svg)
+  ![workflow](https://github.com/sei-12/skin/actions/workflows/publish.yml/badge.svg)
+<br/>
+<a align="center">タグで検索を行うブックマークマネージャー</a>
+</div>
+
+
+
 
 ![sample](assets/readme1.gif)
 
