@@ -8,14 +8,13 @@
 
   ![workflow](https://github.com/sei-12/skin/actions/workflows/ci.yml/badge.svg)
   ![workflow](https://github.com/sei-12/skin/actions/workflows/publish.yml/badge.svg)
+  ![GitHub License](https://img.shields.io/github/license/sei-12/skin)
 <br/>
 <a align="center">タグで検索を行うブックマークマネージャー</a>
 </div>
 
 
-
-
-![sample](assets/readme1.gif)
+![sample](assets/readme3.gif)
 
 # 特徴
  - グローバルホットキーからウィンドウを表示します
