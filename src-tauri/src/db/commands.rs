@@ -11,8 +11,8 @@ use super::{
 use crate::db::error::CommandError;
 
 #[command]
-pub async fn delete_bookmark<'a>(
-    pool: State<'a, DbPool>,
+pub async fn delete_bookmark(
+    pool: State<'_, DbPool>,
     bookmark_id: i64,
 ) -> Result<(), CommandError> {
     sqlx::query(
@@ -28,7 +28,7 @@ pub async fn delete_bookmark<'a>(
 }
 
 #[command]
-pub async fn is_exists_tag<'a>(pool: State<'a, DbPool>, tag: String) -> Result<bool, CommandError> {
+pub async fn is_exists_tag(pool: State<'_, DbPool>, tag: String) -> Result<bool, CommandError> {
     let result = sqlx::query("select * from tags where name = $1")
         .bind(tag)
         .fetch_optional(pool.inner())
@@ -39,8 +39,8 @@ pub async fn is_exists_tag<'a>(pool: State<'a, DbPool>, tag: String) -> Result<b
 
 // 順番が変わらない
 #[command]
-pub async fn insert_bookmark<'a>(
-    pool: State<'a, DbPool>,
+pub async fn insert_bookmark(
+    pool: State<'_, DbPool>,
     req: InsertBookmarkRequest,
 ) -> Result<(), CommandError> {
     // remoe duplicate tag
@@ -53,10 +53,10 @@ pub async fn insert_bookmark<'a>(
     if tag_count == 0 {
         return Err(CommandError::Validation);
     };
-    if req.title == "" {
+    if req.title.is_empty() {
         return Err(CommandError::Validation);
     };
-    if req.url == "" {
+    if req.url.is_empty() {
         return Err(CommandError::Validation);
     };
 
@@ -76,11 +76,11 @@ pub async fn insert_bookmark<'a>(
 }
 
 #[command]
-pub async fn find_tag<'a>(
-    pool: State<'a, DbPool>,
+pub async fn find_tag(
+    pool: State<'_, DbPool>,
     predicate: String,
 ) -> Result<Vec<String>, CommandError> {
-    if predicate == "" {
+    if predicate.is_empty() {
         return Ok(vec![]);
     };
 
@@ -103,8 +103,8 @@ pub async fn find_tag<'a>(
 }
 
 #[command]
-pub async fn find_bookmark<'a>(
-    pool: State<'a, DbPool>,
+pub async fn find_bookmark(
+    pool: State<'_, DbPool>,
     filter_tags: Vec<String>,
 ) -> Result<Vec<Bookmark>, CommandError> {
     let filter_tags = filter_duplicate(filter_tags);
@@ -126,15 +126,16 @@ pub async fn find_bookmark<'a>(
 }
 
 #[command]
-pub async fn fetch_bookmarks<'a>(
-    pool: State<'a, DbPool>,
+pub async fn fetch_bookmarks(
+    pool: State<'_, DbPool>,
     max_length: i64,
 ) -> Result<Vec<Bookmark>, CommandError> {
     // IDはAUTOINCREMENTであることが保証されている
-    let records: Vec<BookmarkRecord> = sqlx::query_as("select * from bookmarks order by id desc limit $1 ;")
-        .bind(max_length)
-        .fetch_all(pool.inner())
-        .await?;
+    let records: Vec<BookmarkRecord> =
+        sqlx::query_as("select * from bookmarks order by id desc limit $1 ;")
+            .bind(max_length)
+            .fetch_all(pool.inner())
+            .await?;
 
     let select_process = records
         .into_iter()
@@ -150,17 +151,17 @@ struct SelectTagsRecord {
     tag_name: String,
 }
 
-async fn select_tags_where_bookmark<'a>(
-    pool: &State<'a, DbPool>,
+async fn select_tags_where_bookmark(
+    pool: &State<'_, DbPool>,
     record: BookmarkRecord,
 ) -> Result<Bookmark, CommandError> {
-    let result: Vec<SelectTagsRecord> = sqlx::query_as(&format!(
+    let result: Vec<SelectTagsRecord> = sqlx::query_as(
         "
         SELECT tags.name as tag_name
         FROM tags
         JOIN tag_map ON tags.id = tag_map.tag_id
-        WHERE tag_map.bkmk_id = $1;"
-    ))
+        WHERE tag_map.bkmk_id = $1;",
+    )
     .bind(record.id)
     .fetch_all(pool.inner())
     .await?;
@@ -174,10 +175,10 @@ async fn select_tags_where_bookmark<'a>(
     })
 }
 
-fn build_query_find_bookmark(tags: &Vec<String>) -> String {
+fn build_query_find_bookmark(tags: &[String]) -> String {
     let mut names = String::new();
     for i in 1..tags.len() + 1 {
-        names.push_str(&format!("${},", i.to_string()));
+        names.push_str(&format!("${},", i));
     }
     names.pop();
 
@@ -193,14 +194,14 @@ fn build_query_find_bookmark(tags: &Vec<String>) -> String {
     ORDER BY b.tag_count ASC;
     ",
         names,
-        tags.len().to_string()
+        tags.len()
     );
 
     query
 }
 
-pub(super) async fn mapping_tags<'a>(
-    pool: &State<'a, DbPool>,
+pub(super) async fn mapping_tags(
+    pool: &State<'_, DbPool>,
     bookmark_id: i64,
     tags: &Vec<String>,
 ) -> Result<(), CommandError> {
@@ -211,13 +212,10 @@ pub(super) async fn mapping_tags<'a>(
     .to_string();
 
     for i in 2..tags.len() + 2 {
-        q.push_str(&format!(
-            "($1,(select id from tags where name = ${})),",
-            i.to_string()
-        ));
+        q.push_str(&format!("($1,(select id from tags where name = ${})),", i));
     }
     q.pop();
-    q.push_str(";");
+    q.push(';');
 
     let mut query = sqlx::query(&q);
     query = query.bind(bookmark_id);
@@ -231,8 +229,8 @@ pub(super) async fn mapping_tags<'a>(
     Ok(())
 }
 
-pub(super) async fn insert_tags_if_not_exists<'a>(
-    pool: &State<'a, DbPool>,
+pub(super) async fn insert_tags_if_not_exists(
+    pool: &State<'_, DbPool>,
     tags: &Vec<String>,
 ) -> Result<(), CommandError> {
     let q = build_query_insert_tags_if_not_exists(tags.len());
@@ -249,7 +247,7 @@ pub(super) async fn insert_tags_if_not_exists<'a>(
 }
 
 fn tag_validation_check(tag: &str) -> Result<(), CommandError> {
-    if tag == "" {
+    if tag.is_empty() {
         return Err(CommandError::Validation);
     };
 
@@ -261,17 +259,17 @@ fn tag_validation_check(tag: &str) -> Result<(), CommandError> {
 }
 
 fn build_query_insert_tags_if_not_exists(tags_count: usize) -> String {
-    let mut query = format!("insert or ignore into tags (id,name) values ");
+    let mut query = "insert or ignore into tags (id,name) values ".to_string();
 
     for i in 1..tags_count + 1 {
-        query.push_str(&format!("(null,${}),", i.to_string()));
+        query.push_str(&format!("(null,${}),", i));
     }
 
     // ,を削除
     // もっといい方法があると思う
     query.pop();
 
-    query.push_str(";");
+    query.push(';');
 
     query
 }

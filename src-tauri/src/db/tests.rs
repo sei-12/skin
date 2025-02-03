@@ -14,16 +14,14 @@ use super::models::InsertBookmarkRequest;
 
 fn tmp_dir() -> PathBuf {
     let path = temp_dir();
-    let path_string = path.join(test_utils::gen_ascii_chars(12));
 
-    path_string
+    path.join(test_utils::gen_ascii_chars(12))
 }
 
 // 不具合を発見した時に使う
 #[allow(unused)]
 fn debug_dir(name: &str) -> PathBuf {
-    let path = PathBuf::from(format!("./__debug__/{}", name));
-    path
+    PathBuf::from(format!("./__debug__/{}", name))
 }
 
 #[test]
@@ -36,13 +34,13 @@ fn test1() -> Result<(), CommandError> {
         app.manage(con);
 
         let result = commands::is_exists_tag(app.state(), "hello".to_string()).await?;
-        assert!(result == false);
+        assert!(!result);
         let result = commands::is_exists_tag(app.state(), "aaaa".to_string()).await?;
-        assert!(result == false);
+        assert!(!result);
         let result = commands::is_exists_tag(app.state(), "".to_string()).await?;
-        assert!(result == false);
+        assert!(!result);
         let result = commands::is_exists_tag(app.state(), "こんにちは".to_string()).await?;
-        assert!(result == false);
+        assert!(!result);
 
         Ok(())
     })
@@ -58,13 +56,13 @@ fn test2() -> Result<(), CommandError> {
         app.manage(con);
 
         let result = commands::is_exists_tag(app.state(), "hello".to_string()).await?;
-        assert!(result == false);
+        assert!(!result);
         let result = commands::is_exists_tag(app.state(), "aaaa".to_string()).await?;
-        assert!(result == false);
+        assert!(!result);
         let result = commands::is_exists_tag(app.state(), "".to_string()).await?;
-        assert!(result == false);
+        assert!(!result);
         let result = commands::is_exists_tag(app.state(), "こんにちは".to_string()).await?;
-        assert!(result == false);
+        assert!(!result);
 
         commands::insert_tags_if_not_exists(
             &app.state(),
@@ -547,8 +545,8 @@ mod test_utils {
     use rand::Rng;
     use tauri::{test::MockRuntime, App, Manager, State};
 
-    pub(super) async fn i_bkmk<'a>(
-        pool: State<'a, DbPool>,
+    pub(super) async fn i_bkmk(
+        pool: State<'_, DbPool>,
         title: &str,
         url: &str,
         desc: &str,
@@ -564,14 +562,16 @@ mod test_utils {
         Ok(())
     }
 
-    pub(super) async fn f_bkmk<'a>(
-        pool: State<'a, DbPool>,
+    pub(super) async fn f_bkmk(
+        pool: State<'_, DbPool>,
         tags: &[&str],
     ) -> Result<Vec<crate::db::models::Bookmark>, CommandError> {
         commands::find_bookmark(pool, tags.iter().map(|s| s.to_string()).collect()).await
     }
 
-    pub(super) async fn i_random_bkmk_no_check<'a>(app: &App<MockRuntime>) -> Result<(), CommandError> {
+    pub(super) async fn i_random_bkmk_no_check(
+        app: &App<MockRuntime>,
+    ) -> Result<(), CommandError> {
         let title = gen_ascii_chars(10);
         let url = gen_ascii_chars(10);
         let desc = gen_ascii_chars(10);
@@ -596,7 +596,7 @@ mod test_utils {
         Ok(())
     }
 
-    pub(super) async fn i_random_bkmk<'a>(app: &App<MockRuntime>) -> Result<(), CommandError> {
+    pub(super) async fn i_random_bkmk(app: &App<MockRuntime>) -> Result<(), CommandError> {
         let title = gen_ascii_chars(10);
         let url = gen_ascii_chars(10);
         let desc = gen_ascii_chars(10);
@@ -621,7 +621,7 @@ mod test_utils {
         let result = commands::find_bookmark(app.state(), tags.clone()).await?;
 
         assert!(
-            result.len() >= 1,
+            !result.is_empty(),
             "bug: 
                 result.len() = {}
                 tags = {:?}
@@ -733,7 +733,6 @@ fn test13() -> Result<(), CommandError> {
         let con = connect(path).await.expect("error connect");
         app.manage(con);
 
-
         for _ in 0..100 {
             test_utils::i_random_bkmk(&app).await?;
         }
@@ -791,13 +790,13 @@ fn test15() -> Result<(), CommandError> {
 
         let con = connect(path).await.expect("error connect");
         app.manage(con);
-        
+
         for _ in 0..1000 {
             test_utils::i_random_bkmk(&app).await?;
         }
-        
+
         let result = commands::fetch_bookmarks(app.state(), 100).await?;
-        
+
         assert_eq!(result.len(), 100);
 
         Ok(())
@@ -812,13 +811,13 @@ fn test16() -> Result<(), CommandError> {
 
         let con = connect(path).await.expect("error connect");
         app.manage(con);
-        
+
         for _ in 0..5000 {
             test_utils::i_random_bkmk_no_check(&app).await?;
         }
-        
+
         let result = commands::fetch_bookmarks(app.state(), 1000).await?;
-        
+
         assert_eq!(result.len(), 1000);
 
         Ok(())
@@ -833,16 +832,19 @@ fn test17() -> Result<(), CommandError> {
 
         let con = connect(path).await.expect("error connect");
         app.manage(con);
-        
+
         for _ in 0..100 {
             test_utils::i_random_bkmk_no_check(&app).await?;
         }
-        
-        test_utils::i_bkmk(app.state(), "hello", "url", "desc", &[
-            "hello_world",
-            "hello-world",
-            "hello!world",
-        ]).await?;
+
+        test_utils::i_bkmk(
+            app.state(),
+            "hello",
+            "url",
+            "desc",
+            &["hello_world", "hello-world", "hello!world"],
+        )
+        .await?;
 
         let result = commands::fetch_bookmarks(app.state(), 10).await?;
         assert_eq!(result.len(), 10);
@@ -859,7 +861,6 @@ fn test17() -> Result<(), CommandError> {
                     "hello!world".to_string(),
                 ]
             }
-            
         );
 
         Ok(())

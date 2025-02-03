@@ -1,4 +1,8 @@
-skinはタグで検索を行うブックマークマネージャーです。
+# skin
+タグで検索を行うブックマークマネージャー。
+
+![workflow](https://github.com/sei-12/skin/actions/workflows/ci.yml/badge.svg)
+![workflow](https://github.com/sei-12/skin/actions/workflows/publish.yml/badge.svg)
 
 ![sample](assets/readme1.gif)
 
