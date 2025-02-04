@@ -10,14 +10,7 @@ use tauri::{Emitter, Manager};
 
 use crate::file_change_watcher::FileChangeWatcher;
 
-pub struct ConfigManger<T>
-where
-    T: serde::Serialize
-        + serde::de::DeserializeOwned
-        + std::marker::Sync
-        + std::marker::Send
-        + 'static,
-{
+pub struct ConfigManger<T> {
     config_file_path: PathBuf,
     config: Mutex<T>,
     watcher: Mutex<FileChangeWatcher>,
@@ -39,10 +32,16 @@ where
         let config_file_path = config_dir.join(file_name);
 
         if !config_file_path.exists() {
-            todo!();
+            let default = Self::default_config();
+            let contents = serde_json::to_string(&default)?;
+            fs::write(&config_file_path, contents)?;
         }
 
-        let config = Self::read_file(&config_file_path).expect("todo");
+        let config = match Self::read_file(&config_file_path) {
+            Ok(c) => c,
+            Err(_) => Self::default_config(),
+        };
+
         let config = Mutex::new(config);
 
         let watcher = Self::start_file_watch(app, &config_file_path)?;
@@ -64,15 +63,19 @@ where
         let _ = f_watcher.despawn();
     }
 
+    pub fn get(&self) -> T {
+        let c = self.config.lock().expect("todo");
+        c.clone()
+    }
+
+    fn default_config() -> T {
+        serde_json::from_str("{}").expect("fail default_config")
+    }
+
     fn read_file(path: impl AsRef<std::path::Path>) -> Result<T> {
         let contents = read_to_string(path)?;
         let config = serde_json::from_str(&contents)?;
         Ok(config)
-    }
-
-    pub fn get(&self) -> T {
-        let c = self.config.lock().expect("todo");
-        c.clone()
     }
 
     fn start_file_watch(
