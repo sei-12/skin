@@ -569,9 +569,7 @@ mod test_utils {
         commands::find_bookmark(pool, tags.iter().map(|s| s.to_string()).collect()).await
     }
 
-    pub(super) async fn i_random_bkmk_no_check(
-        app: &App<MockRuntime>,
-    ) -> Result<(), CommandError> {
+    pub(super) async fn i_random_bkmk_no_check(app: &App<MockRuntime>) -> Result<(), CommandError> {
         let title = gen_ascii_chars(10);
         let url = gen_ascii_chars(10);
         let desc = gen_ascii_chars(10);
