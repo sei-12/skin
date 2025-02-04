@@ -44,3 +44,4 @@ pub(super) fn config_file_path() -> Result<String, Box<dyn std::error::Error>> {
         _ => Err("Unsupported OS".into()),
     }
 }
+

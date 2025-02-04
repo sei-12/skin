@@ -1,10 +1,11 @@
 use std::sync::Mutex;
 
 use chrono::Utc;
+use config::if_not_exists_write_default_config;
 use tauri::{async_runtime::block_on, AppHandle, Emitter, Listener, Manager, State, WindowEvent};
 
 mod config;
-mod config_path;
+// mod config_path;
 mod db;
 mod fetch_website_content;
 mod file_change_watcher;
@@ -54,12 +55,13 @@ fn start_file_change_watcher(
 ) -> Option<file_change_watcher::FileChangeWatcher> {
     let mut f_watcher = file_change_watcher::FileChangeWatcher::new();
 
-    let Ok(file_path) = config_path::config_file_path() else {
-        return None;
-    };
+    let mut config_file_path = app.path().app_config_dir().unwrap();
+    config_file_path.push("config.json");
+    let config_file_path = config_file_path.into_os_string().into_string().unwrap();
+
     let app_ = app.handle().clone();
 
-    let result = f_watcher.spawn(file_path, move || {
+    let result = f_watcher.spawn(config_file_path, move || {
         // 一度eventをemitしたら{min_interval_ms}ミリ秒間はeventをemitしない
         let min_interval_ms = 1000;
 
@@ -78,7 +80,10 @@ fn start_file_change_watcher(
         prev_time.update();
         drop(prev_time);
 
-        let new_config = config::read_config();
+        let new_config = config::read_or_default_config(
+            // todo: anyhowを入れる
+            app_.path().app_config_dir().unwrap(),
+        );
 
         let config_mutex = app_.state::<Mutex<config_model::Config>>();
         let Ok(mut config) = config_mutex.lock() else {
@@ -132,6 +137,7 @@ pub fn run() {
             db::commands::fetch_bookmarks
         ])
         .setup(|app| {
+            if_not_exists_write_default_config(app.path().app_config_dir().unwrap()).unwrap();
             {
                 use tauri_plugin_autostart::MacosLauncher;
                 use tauri_plugin_autostart::ManagerExt;
@@ -157,7 +163,9 @@ pub fn run() {
             let main_window = app.get_webview_window("main").expect("err get main window");
             main_window.set_visible_on_all_workspaces(true)?;
 
-            app.manage(Mutex::new(config::read_config()));
+            app.manage(Mutex::new(config::read_or_default_config(
+                app.path().app_config_dir().unwrap(),
+            )));
 
             // 開発時だけdevtoolsを表示する。
             #[cfg(debug_assertions)]
