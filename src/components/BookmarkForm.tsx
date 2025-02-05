@@ -3,7 +3,7 @@ import type { TagInputBoxProps } from "./TagInputBox";
 import { TagInputBox } from "./TagInputBox";
 import type { ColorTheme } from "../../src-tauri/bindings/export/ColorTheme";
 
-export type CreateNewBookmarkProps = {
+export type BookmarkFormProps = {
     titleRef: React.RefObject<HTMLInputElement>;
     descRef: React.RefObject<HTMLInputElement>;
     urlRef: React.RefObject<HTMLInputElement>;
@@ -15,7 +15,7 @@ export type CreateNewBookmarkProps = {
     tagInputBox: TagInputBoxProps;
 };
 
-export function CreateNewBookmark(p: CreateNewBookmarkProps) {
+export function BookmarkForm(p: BookmarkFormProps) {
     const inputStyle = {
         input: {
             style: {

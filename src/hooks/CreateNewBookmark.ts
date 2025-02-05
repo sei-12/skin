@@ -10,7 +10,7 @@ import { DB } from "../services/database";
 import { useConfig } from "../providers/configProvider";
 import { isUrl } from "../vanilla/isUrl";
 import { ClipBoardManager } from "../services/clipboard";
-import type { CreateNewBookmarkProps } from "../components/CreateNewBookmark";
+import type { BookmarkFormProps } from "../components/BookmarkForm";
 
 function useCreateNewBookmark(
     onClickDone: () => void,
@@ -104,7 +104,7 @@ function useCreateNewBookmark(
     };
 
     const { colorTheme } = useConfig()
-    const props: CreateNewBookmarkProps = {
+    const props: BookmarkFormProps = {
         titleRef,
         descRef,
         urlRef,

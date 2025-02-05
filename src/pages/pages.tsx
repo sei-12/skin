@@ -1,11 +1,11 @@
-import { CreateNewBookmark } from "../components/CreateNewBookmark";
+import { BookmarkForm } from "../components/BookmarkForm";
 import { useSearchBookmarkPage } from "../hooks/SearchBookmark";
 import { SearchBookmark } from "../components/SearchBookmark";
 import { useCreateNewBookmarkPage } from "../hooks/CreateNewBookmark";
 
 export function CreateNewBookmarkPage() {
     const hook = useCreateNewBookmarkPage();
-    return <CreateNewBookmark {...hook.props} />;
+    return <BookmarkForm {...hook.props} />;
 }
 
 
