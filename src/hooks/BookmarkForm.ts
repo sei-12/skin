@@ -186,6 +186,8 @@ export function useBookmarkForm(
                 HOTKEY_SCOPES.CREATE_NEW_BOOKMARK,
                 HOTKEY_SCOPES.CREATE_NEW_BOOKMARK_SUGGESTION_WINDOW,
             ],
+            keyup: true,
+            keydown: false,
             enableOnFormTags: true,
         },
     );
