@@ -19,7 +19,7 @@ export function useBookmarkForm(
 
     const tagInputBoxHook = useTagInputBox(findTagMethod);
 
-    const setContent = (title: string, desc: string) => {
+    const setContent = async (title: string, desc: string, tags: string[]) => {
         if (titleRef.current === null) {
             return;
         }
@@ -28,6 +28,11 @@ export function useBookmarkForm(
         }
         titleRef.current.value = title;
         descRef.current.value = desc;
+
+        const inputedTags = await Promise.all(
+            tags.map(t => DB.isExistsTag(t).then(a => ({ text: t, exists: a })))
+        )
+        tagInputBoxHook.setInputedTags(inputedTags)
     };
 
     const setUrl = (url: string) => {

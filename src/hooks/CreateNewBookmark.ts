@@ -55,7 +55,7 @@ export function useCreateNewBookmarkPage() {
 
         const title = setData(currentContent?.title, content.title);
         const desc = setData(currentContent?.desc, content.desc);
-        bookmarkFormHook.setContent(title, desc);
+        bookmarkFormHook.setContent(title, desc, []);
     };
 
     const bookmarkFormHook = useBookmarkForm(

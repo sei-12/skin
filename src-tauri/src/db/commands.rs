@@ -5,7 +5,7 @@ use futures::future::join_all;
 use tauri::{command, State};
 
 use super::{
-    models::{Bookmark, BookmarkRecord, InsertBookmarkRequest, TagRecord},
+    models::{Bookmark, BookmarkRecord, EditBookmarkRequest, InsertBookmarkRequest, TagRecord},
     DbPool,
 };
 use crate::db::error::CommandError;
@@ -35,6 +35,69 @@ pub async fn is_exists_tag(pool: State<'_, DbPool>, tag: String) -> Result<bool,
         .await?;
 
     Ok(result.is_some())
+}
+
+#[command]
+pub async fn edit_bookmark(
+    pool: State<'_, DbPool>,
+    req: EditBookmarkRequest,
+) -> Result<(), CommandError> {
+    let tags: Vec<String> = filter_duplicate(req.tags);
+
+    let Ok(tag_count) = u32::try_from(tags.len()) else {
+        return Err(CommandError::BadRequest);
+    };
+
+    if tag_count == 0 {
+        return Err(CommandError::Validation);
+    };
+    if req.title.is_empty() {
+        return Err(CommandError::Validation);
+    };
+    if req.url.is_empty() {
+        return Err(CommandError::Validation);
+    };
+
+    insert_tags_if_not_exists(&pool, &tags).await?;
+
+    sqlx::query(
+        "
+        update bookmarks
+        set title = $1,
+            url = $2,
+            description = $3,
+            tag_count = $4
+        where
+            id = $5",
+    )
+    .bind(req.title)
+    .bind(req.url)
+    .bind(req.desc)
+    .bind(tag_count)
+    .bind(req.id)
+    .execute(pool.inner())
+    .await?;
+
+    sqlx::query("delete from tag_map where bkmk_id = $1;")
+        .bind(req.id)
+        .execute(pool.inner())
+        .await?;
+
+    mapping_tags(&pool, req.id, &tags).await?;
+
+    Ok(())
+}
+
+#[command]
+pub async fn get_bookmark(pool: State<'_, DbPool>, id: i64) -> Result<Bookmark, CommandError> {
+    let record: BookmarkRecord = sqlx::query_as("select * from bookmarks where id = $1;")
+        .bind(id)
+        .fetch_one(pool.inner())
+        .await?;
+
+    let bookmark = select_tags_where_bookmark(&pool, record).await?;
+
+    Ok(bookmark)
 }
 
 // 順番が変わらない

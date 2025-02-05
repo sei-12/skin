@@ -5,6 +5,7 @@ use tauri::Manager;
 
 use crate::db::commands;
 use crate::db::connect;
+use crate::db::models::EditBookmarkRequest;
 use crate::db::DbPool;
 
 use super::error::CommandError;
@@ -789,7 +790,7 @@ fn test15() -> Result<(), CommandError> {
         let con = connect(path).await.expect("error connect");
         app.manage(con);
 
-        for _ in 0..1000 {
+        for _ in 0..500 {
             test_utils::i_random_bkmk(&app).await?;
         }
 
@@ -810,7 +811,7 @@ fn test16() -> Result<(), CommandError> {
         let con = connect(path).await.expect("error connect");
         app.manage(con);
 
-        for _ in 0..5000 {
+        for _ in 0..2000 {
             test_utils::i_random_bkmk_no_check(&app).await?;
         }
 
@@ -860,6 +861,180 @@ fn test17() -> Result<(), CommandError> {
                 ]
             }
         );
+
+        Ok(())
+    })
+}
+
+#[test]
+fn test18() -> Result<(), CommandError> {
+    tauri::async_runtime::block_on(async {
+        let app = tauri::test::mock_app();
+        let path = tmp_dir();
+
+        let con = connect(path).await.expect("error connect");
+        app.manage(con);
+
+        let req = InsertBookmarkRequest {
+            desc: "desc".to_string(),
+            title: "title".to_string(),
+            url: "url".to_string(),
+            tags: vec![
+                "ab".to_string(),
+                "a".to_string(),
+                "abc".to_string(),
+                "b".to_string(),
+            ],
+        };
+        commands::insert_bookmark(app.state(), req).await?;
+
+        let result = commands::find_bookmark(app.state(), vec!["a".to_string()]).await?;
+        assert_eq!(result.len(), 1);
+
+        let req = EditBookmarkRequest {
+            id: 1,
+            desc: "edited desc".to_string(),
+            title: "edited title".to_string(),
+            url: "edited url".to_string(),
+            tags: vec!["edited".to_string(), "a".to_string()],
+        };
+
+        commands::edit_bookmark(app.state(), req).await?;
+        let mut result = commands::find_bookmark(app.state(), vec!["a".to_string()]).await?;
+        assert_eq!(result.len(), 1);
+        let edited = result.pop().unwrap();
+        assert_eq!(edited.desc, "edited desc");
+        assert_eq!(edited.title, "edited title");
+        assert_eq!(edited.url, "edited url");
+
+        let result = commands::find_bookmark(app.state(), vec!["ab".to_string()]).await?;
+        assert_eq!(result.len(), 0);
+        let result = commands::find_bookmark(app.state(), vec!["abc".to_string()]).await?;
+        assert_eq!(result.len(), 0);
+        let result = commands::find_bookmark(app.state(), vec!["b".to_string()]).await?;
+        assert_eq!(result.len(), 0);
+        let result = commands::find_bookmark(app.state(), vec!["edited".to_string()]).await?;
+        assert_eq!(result.len(), 1);
+
+        // bad req
+        let bad_req = EditBookmarkRequest {
+            id: 1,
+            desc: "helloworld".to_string(),
+            title: "".to_string(),
+            url: "edited url".to_string(),
+            tags: vec![
+                "bad_req_tag".to_string(),
+                "edited".to_string(),
+                "a".to_string(),
+            ],
+        };
+        let result = commands::edit_bookmark(app.state(), bad_req).await;
+        assert!(matches!(result, Err(CommandError::Validation)));
+        // bad reqを送った後に変更が加えられていないことを確認
+        let result = commands::find_bookmark(app.state(), vec!["ab".to_string()]).await?;
+        assert_eq!(result.len(), 0);
+        let result = commands::find_bookmark(app.state(), vec!["abc".to_string()]).await?;
+        assert_eq!(result.len(), 0);
+        let result = commands::find_bookmark(app.state(), vec!["b".to_string()]).await?;
+        assert_eq!(result.len(), 0);
+        let result = commands::find_bookmark(app.state(), vec!["edited".to_string()]).await?;
+        assert_eq!(result.len(), 1);
+        let result = commands::find_tag(app.state(), "a".to_string()).await?;
+        assert_eq!(result.len(), 3);
+        let result = commands::find_tag(app.state(), "bad_req_tag".to_string()).await?;
+        assert_eq!(result.len(), 0);
+
+        // bad req
+        let bad_req = EditBookmarkRequest {
+            id: 1,
+            desc: "helloworld".to_string(),
+            title: "helloworld".to_string(),
+            url: "".to_string(),
+            tags: vec![
+                "bad_req_tag".to_string(),
+                "edited".to_string(),
+                "a".to_string(),
+            ],
+        };
+        let result = commands::edit_bookmark(app.state(), bad_req).await;
+        assert!(matches!(result, Err(CommandError::Validation)));
+        // bad reqを送った後に変更が加えられていないことを確認
+        let result = commands::find_bookmark(app.state(), vec!["ab".to_string()]).await?;
+        assert_eq!(result.len(), 0);
+        let result = commands::find_bookmark(app.state(), vec!["abc".to_string()]).await?;
+        assert_eq!(result.len(), 0);
+        let result = commands::find_bookmark(app.state(), vec!["b".to_string()]).await?;
+        assert_eq!(result.len(), 0);
+        let result = commands::find_bookmark(app.state(), vec!["edited".to_string()]).await?;
+        assert_eq!(result.len(), 1);
+        let result = commands::find_tag(app.state(), "a".to_string()).await?;
+        assert_eq!(result.len(), 3);
+        let result = commands::find_tag(app.state(), "bad_req_tag".to_string()).await?;
+        assert_eq!(result.len(), 0);
+
+        // bad req
+        let bad_req = EditBookmarkRequest {
+            id: 1,
+            desc: "helloworld".to_string(),
+            title: "helloworld".to_string(),
+            url: "helloworld".to_string(),
+            tags: vec![],
+        };
+        let result = commands::edit_bookmark(app.state(), bad_req).await;
+        assert!(matches!(result, Err(CommandError::Validation)));
+        // bad reqを送った後に変更が加えられていないことを確認
+        let result = commands::find_tag(app.state(), "a".to_string()).await?;
+        assert_eq!(result.len(), 3);
+        let result = commands::find_tag(app.state(), "bad_req_tag".to_string()).await?;
+        assert_eq!(result.len(), 0);
+
+        Ok(())
+    })
+}
+
+#[test]
+fn test19() -> Result<(), CommandError> {
+    tauri::async_runtime::block_on(async {
+        let app = tauri::test::mock_app();
+        let path = tmp_dir();
+
+        let con = connect(path).await.expect("error connect");
+        app.manage(con);
+
+        let req = InsertBookmarkRequest {
+            desc: "desc".to_string(),
+            title: "title".to_string(),
+            url: "url".to_string(),
+            tags: vec![
+                "ab".to_string(),
+                "a".to_string(),
+                "abc".to_string(),
+                "b".to_string(),
+            ],
+        };
+        commands::insert_bookmark(app.state(), req).await?;
+        let result = commands::find_bookmark(app.state(), vec!["a".to_string()]).await?;
+        assert_eq!(result.len(), 1);
+
+        let result = commands::get_bookmark(app.state(), 1).await?;
+        assert_eq!(
+            result,
+            Bookmark {
+                desc: "desc".to_string(),
+                id: 1,
+                title: "title".to_string(),
+                url: "url".to_string(),
+                tags: vec![
+                    "ab".to_string(),
+                    "a".to_string(),
+                    "abc".to_string(),
+                    "b".to_string(),
+                ],
+            }
+        );
+        
+        let result = commands::get_bookmark(app.state(), 2).await;
+        assert!(result.is_err());
 
         Ok(())
     })

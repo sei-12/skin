@@ -4,6 +4,8 @@ export type Bookmark = { id: number, title: string, url: string, desc: string, t
 
 export type BookmarkRecord = { id: number, title: string, url: string, description: string, tag_count: number, };
 
+export type EditBookmarkRequest = { id: bigint, title: string, url: string, desc: string, tags: Array<string>, };
+
 export type InsertBookmarkRequest = { title: string, url: string, desc: string, tags: Array<string>, };
 
 export type TagRecord = { id: bigint, name: string, };

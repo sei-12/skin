@@ -3,7 +3,7 @@ import { HotkeysProvider } from "react-hotkeys-hook";
 import { HOTKEY_SCOPES } from "./hooks/hotkey";
 import { CustomWindow } from "./components/CustomWindow";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import { CreateNewBookmarkPage, SearchBookmarkPage } from "./pages/pages";
+import { CreateNewBookmarkPage, EditBookmarkPage, SearchBookmarkPage } from "./pages/pages";
 import { ConfigProvider } from "./providers/configProvider";
 import { muiTheme } from "./vanilla/theme";
 import { GlobalHotkeySetter } from "./providers/globalHotkeySetter";
@@ -30,6 +30,12 @@ export function App() {
                                     path="/create-new-bookmark"
                                     element={
                                         <CreateNewBookmarkPage></CreateNewBookmarkPage>
+                                    }
+                                ></Route>
+                                <Route
+                                    path="/edit-bookmark"
+                                    element={
+                                        <EditBookmarkPage></EditBookmarkPage>
                                     }
                                 ></Route>
                             </Routes>
