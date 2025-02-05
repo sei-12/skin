@@ -1,8 +1,5 @@
 import { getCurrentWindow } from "@tauri-apps/api/window";
 
-/**
- * ウィンドウの表示/非表示関係の処理がとてもテストしにくいため、別のモジュールに分ける
- */
 export namespace WindowVisibleController {
 
     export async function toggle() {

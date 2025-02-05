@@ -55,8 +55,6 @@ export function useSearchBookmarkPage(): SearchBookmarkProps {
         }
 
         bkmkListHook.setItems(bookmarks);
-        // awaitについて
-        // アイテムが全て表示されてから呼び出す必要がある
         bkmkListHook.resetFocusIndex();
 
     }, [tagInputBoxHook.inputedTags])
