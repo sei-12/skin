@@ -73,10 +73,12 @@ export function useBookmarkForm(
         if (inputBox === null) {
             return;
         }
-        if (inputBox.value === "") {
+
+        const item = inputBox.value.replace(/ /g,"");
+
+        if (item === "") {
             return;
         }
-        const item = inputBox.value;
 
         const inputedTags = tagInputBoxHook.inputedTags.map(e => e.text)
 
