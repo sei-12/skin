@@ -5,9 +5,8 @@ import { useCreateNewBookmarkPage } from "../hooks/CreateNewBookmark";
 
 export function CreateNewBookmarkPage() {
     const hook = useCreateNewBookmarkPage();
-    return <BookmarkForm {...hook.props} />;
+    return <BookmarkForm {...hook} />;
 }
-
 
 export function SearchBookmarkPage() {
     const hook = useSearchBookmarkPage();
