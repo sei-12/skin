@@ -27,6 +27,7 @@ export function useTagInputBox(findTagMethod: FindTagMethod) {
         colorTheme
     };
 
+    // TODO: rename
     const popInputedTag = useCallback(
         () => {
             const inputBox = inputBoxRef.current;
