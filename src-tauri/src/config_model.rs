@@ -67,7 +67,7 @@ pub struct Keybinds {
 
     #[serde_inline_default(Keys::Keys(Vec::from(["ctrl+p".to_string(),"ArrowUp".to_string()])))]
     focusUpSuggestionWindow: Keys,
-    
+
     #[serde_inline_default(Keys::Key("ctrl+shift+d".to_string()))]
     removeFocusedBookmark: Keys,
 

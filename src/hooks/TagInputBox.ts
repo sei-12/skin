@@ -27,8 +27,7 @@ export function useTagInputBox(findTagMethod: FindTagMethod) {
         colorTheme
     };
 
-    // 名前が相応しくない
-    // inputBoxの状態によって挙動が変わるのが良くない
+    // TODO: rename
     const popInputedTag = useCallback(
         () => {
             const inputBox = inputBoxRef.current;
@@ -62,8 +61,6 @@ export function useTagInputBox(findTagMethod: FindTagMethod) {
         }, [inputedTags]
     )
 
-    // 名前が相応しくない
-    // inputBoxの状態によって挙動が変わるのが良くない
     const addFocusedSuggestionItem = useCallback(async () => {
         const item = suggestionWindowHook.getFocusedItem();
         const inputBox = inputBoxRef.current;

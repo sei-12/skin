@@ -1,10 +1,8 @@
-use std::sync::Mutex;
-
-use chrono::Utc;
-use tauri::{async_runtime::block_on, AppHandle, Emitter, Listener, Manager, State, WindowEvent};
+use config::ConfigManger;
+use tauri::{async_runtime::block_on, AppHandle, Listener, Manager, State, WindowEvent};
 
 mod config;
-mod config_path;
+// mod config_path;
 mod db;
 mod fetch_website_content;
 mod file_change_watcher;
@@ -20,81 +18,12 @@ fn open_url(url: &str) -> bool {
 }
 
 #[tauri::command]
-fn get_config(config: State<'_, Mutex<config_model::Config>>) -> Result<config_model::Config, ()> {
-    let Ok(locked) = config.lock() else {
-        return Err(());
-    };
+fn get_config(
+    config: State<'_, ConfigManger<config_model::Config>>,
+) -> Result<config_model::Config, ()> {
+    let conf = config.inner();
 
-    // もっといい方法がある気がする
-    Ok(locked.clone())
-}
-
-struct ConfigFileChangeEmitTime {
-    prev_time: i64,
-}
-
-impl ConfigFileChangeEmitTime {
-    fn new() -> Self {
-        ConfigFileChangeEmitTime { prev_time: 0 }
-    }
-
-    fn calc_diff(&self) -> i64 {
-        let now = Utc::now().timestamp_millis();
-        now - self.prev_time
-    }
-
-    fn update(&mut self) {
-        let now = Utc::now().timestamp_millis();
-        self.prev_time = now;
-    }
-}
-
-fn start_file_change_watcher(
-    app: &mut tauri::App,
-) -> Option<file_change_watcher::FileChangeWatcher> {
-    let mut f_watcher = file_change_watcher::FileChangeWatcher::new();
-
-    let Ok(file_path) = config_path::config_file_path() else {
-        return None;
-    };
-    let app_ = app.handle().clone();
-
-    let result = f_watcher.spawn(file_path, move || {
-        // 一度eventをemitしたら{min_interval_ms}ミリ秒間はeventをemitしない
-        let min_interval_ms = 1000;
-
-        let prev_time = app_.state::<Mutex<ConfigFileChangeEmitTime>>();
-
-        let Ok(mut prev_time) = prev_time.lock() else {
-            return;
-        };
-
-        let diff = prev_time.calc_diff();
-
-        if min_interval_ms > diff {
-            return;
-        };
-
-        prev_time.update();
-        drop(prev_time);
-
-        let new_config = config::read_config();
-
-        let config_mutex = app_.state::<Mutex<config_model::Config>>();
-        let Ok(mut config) = config_mutex.lock() else {
-            return;
-        };
-        *config = new_config;
-        drop(config);
-
-        let _ = app_.emit("change-config-file", ());
-    });
-
-    if result.is_err() {
-        return None;
-    }
-
-    Some(f_watcher)
+    Ok(conf.get())
 }
 
 #[cfg(not(feature = "dev_disable_hide_on_blur"))]
@@ -129,9 +58,13 @@ pub fn run() {
             db::commands::is_exists_tag,
             db::commands::find_tag,
             db::commands::find_bookmark,
-            db::commands::fetch_bookmarks
+            db::commands::fetch_bookmarks,
+            db::commands::edit_bookmark,
+            db::commands::get_bookmark,
         ])
         .setup(|app| {
+            // if_not_exists_write_default_config(app.path().app_config_dir().unwrap()).unwrap();
+
             {
                 use tauri_plugin_autostart::MacosLauncher;
                 use tauri_plugin_autostart::ManagerExt;
@@ -154,18 +87,15 @@ pub fn run() {
                 // let _ = autostart_manager.disable();
             }
 
+            let config_manager = ConfigManger::<config_model::Config>::setup(app, "config.json")?;
+            app.manage(config_manager);
+
             let main_window = app.get_webview_window("main").expect("err get main window");
             main_window.set_visible_on_all_workspaces(true)?;
-
-            app.manage(Mutex::new(config::read_config()));
 
             // 開発時だけdevtoolsを表示する。
             #[cfg(debug_assertions)]
             app.get_webview_window("main").unwrap().open_devtools();
-
-            app.manage(Mutex::new(ConfigFileChangeEmitTime::new()));
-            let f_watcher = start_file_change_watcher(app);
-            app.manage(Mutex::new(f_watcher));
 
             // フォーカスを外したらウィンドウを非表示にする機能は開発時にはあまりにも邪魔
             #[cfg(not(feature = "dev_disable_hide_on_blur"))]
@@ -180,16 +110,8 @@ pub fn run() {
         })
         .on_window_event(|window, event| {
             if let WindowEvent::Destroyed = event {
-                let f_watcher =
-                    window.state::<Mutex<Option<file_change_watcher::FileChangeWatcher>>>();
-                let Ok(mut locked) = f_watcher.lock() else {
-                    return;
-                };
-                let f_watcher = locked.take();
-                let Some(mut f_watcher) = f_watcher else {
-                    return;
-                };
-                let _ = f_watcher.despawn();
+                let config_manager = window.state::<ConfigManger<config_model::Config>>();
+                config_manager.finalize();
             }
         })
         .run(tauri::generate_context!())

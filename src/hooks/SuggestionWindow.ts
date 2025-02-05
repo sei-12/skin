@@ -37,7 +37,6 @@ export function useSuggestionWindow(
     };
 
     useEffect(() => {
-        // フォーカスが変更されたときにスクロールする
         const focusedItem = itemRefs.current.at(focusIndex);
         if (focusedItem !== null && focusedItem !== undefined) {
             focusedItem.scrollIntoView({ block: "nearest" });
@@ -102,7 +101,7 @@ export function highlightMatchedBlocks(
         const p = splitedPredicate[0];
 
         if (p === undefined) {
-            break; // flag1
+            break; 
         }
 
         const i = splitedItem.shift()!;

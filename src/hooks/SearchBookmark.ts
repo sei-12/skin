@@ -23,10 +23,14 @@ export function useSearchBookmarkPage(): SearchBookmarkProps {
         await DB.deleteBookmark(id)
         reloadBookmarks()
     }
-    
+
+    const onClickEdit = (id: number) => {
+        navigate("/edit-bookmark", { state: { bookmarkId: id } })
+    }
+
     const bkmkListHook = useBookmarkList(
         onClickRemove,
-        () => console.log("onclick edit!!")
+        onClickEdit
     );
 
     const tagInputBoxHook = useTagInputBox(findTagMethod);
@@ -35,28 +39,26 @@ export function useSearchBookmarkPage(): SearchBookmarkProps {
 
     const removeFocusedBookmark = useCallback(async () => {
         const focusedItem = bkmkListHook.getFocusedItem()
-        if ( focusedItem === undefined ){
+        if (focusedItem === undefined) {
             return
         }
         await DB.deleteBookmark(focusedItem.id)
         await reloadBookmarks()
-    },[bkmkListHook.getFocusedItem])
+    }, [bkmkListHook.getFocusedItem])
 
     const reloadBookmarks = useCallback(async () => {
         const tags = tagInputBoxHook.inputedTags.map((e) => {
             return e.text;
         });
-        
+
         let bookmarks: Bookmark[]
-        if ( tags.length === 0 ){
+        if (tags.length === 0) {
             bookmarks = await DB.fetchBookmarks(100)
-        }else{
+        } else {
             bookmarks = await DB.findBookmark(tags)
         }
 
         bkmkListHook.setItems(bookmarks);
-        // awaitについて
-        // アイテムが全て表示されてから呼び出す必要がある
         bkmkListHook.resetFocusIndex();
 
     }, [tagInputBoxHook.inputedTags])
@@ -79,7 +81,7 @@ export function useSearchBookmarkPage(): SearchBookmarkProps {
         WindowVisibleController.hide();
         tagInputBoxHook.setInputedTags([]);
         const inputBox = tagInputBoxHook.inputBoxRef.current
-        if ( inputBox !== null ){ inputBox.value = "" }
+        if (inputBox !== null) { inputBox.value = "" }
     }, [])
 
 
@@ -197,8 +199,8 @@ export function useSearchBookmarkPage(): SearchBookmarkProps {
     useHotkeys(keybinds.openUrl, openUrl,
         { scopes: [HOTKEY_SCOPES.SEARCH_BOOKMARK], preventDefault: true, enableOnFormTags: true },
     )
-    
-    useHotkeys(keybinds.removeFocusedBookmark,removeFocusedBookmark,
+
+    useHotkeys(keybinds.removeFocusedBookmark, removeFocusedBookmark,
         { scopes: [HOTKEY_SCOPES.SEARCH_BOOKMARK], preventDefault: true, enableOnFormTags: true },
     )
 

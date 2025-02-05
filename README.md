@@ -26,8 +26,8 @@
 
 ### ソースからビルドする場合
 
+ubuntu の場合は以下のパッケージが必要です。
 
-ubuntuの場合は以下のパッケージが必要です。
 ```sh
 sudo apt-get update
 sudo apt-get install javascriptcoregtk-4.1 libsoup-3.0 webkit2gtk-4.1 librsvg2-dev -y
@@ -50,7 +50,6 @@ brew tap sei-12/formulae
 brew install --cask skin
 ```
 
-
 # データベースの保存場所
 
 -   Linux : `$XDG_DATA_HOME/com.skin.app/database.sqlite` or `$HOME/.local/share/com.skin.app/database.sqlite`
@@ -58,4 +57,15 @@ brew install --cask skin
 -   Windows: `{FOLDERID_RoamingAppData}/com.skin.app/database.sqlite`
 
 詳しくは以下を参照してください<br>
-https://jonaskruckenberg.github.io/tauri-sys/tauri_sys/path/fn.app_data_dir.html
+https://docs.rs/tauri/2.2.5/tauri/path/struct.PathResolver.html#method.app_data_dir
+
+# 設定ファイル
+
+### 保存場所
+
+-   Linux : `$XDG_CONFIG_HOME/com.skin.app/config.json` or `$HOME/.config/com.skin.app/config.json`
+-   macOS : `$HOME/Library/Application Support/com.skin.app/config.json`
+-   Windows: `{FOLDERID_RoamingAppData}/com.skin.app/config.json`
+
+詳しくは以下を参照してください<br>
+https://docs.rs/tauri/2.2.5/tauri/path/struct.PathResolver.html#method.app_config_dir

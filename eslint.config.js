@@ -5,7 +5,7 @@ import reactRefresh from "eslint-plugin-react-refresh";
 import tseslint from "typescript-eslint";
 
 export default tseslint.config(
-    { ignores: ["dist"] },
+    { ignores: ["dist","src-tauri"] },
     {
         extends: [js.configs.recommended, ...tseslint.configs.recommended],
         files: ["src/**/*.{ts,tsx}"],
@@ -29,6 +29,7 @@ export default tseslint.config(
             ...reactHooks.configs.recommended.rules,
             "@typescript-eslint/no-namespace": "off",
             "react-hooks/exhaustive-deps": "off",
+            "prefer-const": "warn",
             "@typescript-eslint/consistent-type-imports": "warn",
             "@typescript-eslint/no-unused-vars": "warn",
             "@typescript-eslint/strict-boolean-expressions": [

@@ -68,7 +68,6 @@ describe("Item", () => {
             <SuggestionWindowItem predicate={predicate} item={item} focus={false} ref={null} colorTheme={DEFAULT_CONFIG.colorTheme} />
         );
 
-        // Verify blocks rendered correctly
         expect(screen.getAllByText("a")[0]).toBeInTheDocument();
         expect(screen.getAllByText("a")[1]).toBeInTheDocument();
         expect(screen.getAllByText("b")[0]).toBeInTheDocument();

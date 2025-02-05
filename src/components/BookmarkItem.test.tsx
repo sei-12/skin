@@ -27,7 +27,6 @@ describe("BookmarkItem", () => {
     it("renders the title, description, and tags", () => {
         render(<BookmarkItem {...defaultProps} />);
 
-        // expect(screen.getByText("Sample Bookmark")).toBeInTheDocument();
         expect(screen.getByText("Sample Bookmark")).toBeVisible();
         expect(
             screen.getByText(

@@ -463,4 +463,29 @@ describe("App.CreateNewBookmark", () => {
         );
         expect(screen.getByTestId("search-bookmark")).toBeInTheDocument();
     });
+
+    test("test12 重複するタグを入力したときに、スペースが追加されてしまうバグ", async () => {
+        const user = userEvent.setup();
+
+        const urlInputBox = screen.getByPlaceholderText("url");
+        const titleInputBox = screen.getByPlaceholderText("title");
+        const descInputBox = screen.getByPlaceholderText("desc");
+        const predicateInputBox = screen.getByPlaceholderText("/");
+
+        expect(urlInputBox).toBeInTheDocument();
+        expect(titleInputBox).toBeInTheDocument();
+        expect(descInputBox).toBeInTheDocument();
+        expect(predicateInputBox).toBeInTheDocument();
+
+        await user.keyboard("/hello ")
+        expect(screen.getAllByTestId("taginputbox-tagitem").length).toBe(1);
+        await user.keyboard("hello ")
+        expect(screen.getAllByTestId("taginputbox-tagitem").length).toBe(1);
+        // ここで " hello"というタグを入力してしまうバグ
+        await user.keyboard("hello ")
+        expect(screen.getAllByTestId("taginputbox-tagitem").length).toBe(1); // バグっている状態だと2になる
+        await user.keyboard("hello ")
+        expect(screen.getAllByTestId("taginputbox-tagitem").length).toBe(1);
+    });
+
 });

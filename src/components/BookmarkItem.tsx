@@ -1,5 +1,6 @@
 import { forwardRef, useState } from "react";
 import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import {
     Box,
@@ -64,7 +65,10 @@ export const BookmarkItem = forwardRef<HTMLDivElement, BookmarkItemProps>(
                             <Grid2 size="auto">
                                 <BookmarkItemMenu
                                     colorTheme={p.colorTheme}
-                                    onClickRemove={() => p.onClickRemove(p.data.id)}
+                                    onClickRemove={() =>
+                                        p.onClickRemove(p.data.id)
+                                    }
+                                    onClickEdit={() => p.onClickEdit(p.data.id)}
                                 ></BookmarkItemMenu>
                             </Grid2>
                         </Grid2>
@@ -118,10 +122,12 @@ function TagItem(p: { text: string; colorTheme: ColorTheme }) {
 }
 
 
+// TODO: ColorTheme
 type BookmarkItemMenuProps = {
-    colorTheme: ColorTheme
-    onClickRemove: () => void
-}
+    colorTheme: ColorTheme;
+    onClickRemove: () => void;
+    onClickEdit: () => void;
+};
 function BookmarkItemMenu(p: BookmarkItemMenuProps) {
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
@@ -197,6 +203,17 @@ function BookmarkItemMenu(p: BookmarkItemMenuProps) {
                         />
                     </ListItemIcon>
                     <ListItemText>Delete</ListItemText>
+                </MenuItem>
+                <MenuItem onClick={p.onClickEdit}>
+                    <ListItemIcon>
+                        <EditIcon
+                            sx={{
+                                color: "#394b70",
+                            }}
+                            fontSize="small"
+                        ></EditIcon>
+                    </ListItemIcon>
+                    <ListItemText>Edit</ListItemText>
                 </MenuItem>
             </Menu>
         </Box>
