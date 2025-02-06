@@ -64,14 +64,14 @@ describe("SearchBookmark", () => {
         expect(DB.fetchBookmarks).toBeCalledTimes(1);
         await user.type(inputBox, "t");
         expect(screen.getAllByTestId("suggestion-item").length).toBe(8);
-        expect(DB.findTag).toBeCalledTimes(1);
+        expect(DB.fuzzyFindTag).toBeCalledTimes(1);
 
         // TestingLibraryElementError
         expect(screen.getAllByTestId("bkmkitem").length).toBe(20)
 
         await user.type(inputBox, "y");
         expect(screen.getAllByTestId("suggestion-item").length).toBe(1);
-        expect(DB.findTag).toBeCalledTimes(2);
+        expect(DB.fuzzyFindTag).toBeCalledTimes(2);
 
         await user.type(inputBox, "{Enter}");
 
@@ -99,7 +99,7 @@ describe("SearchBookmark", () => {
         expect(() => screen.getAllByTestId("suggestion-item")).toThrow();
         expect(screen.getByTestId("suggestion-window")).not.toBeVisible();
 
-        expect(DB.findTag).toBeCalledTimes(3); // タイプ数
+        expect(DB.fuzzyFindTag).toBeCalledTimes(3); // タイプ数
         expect(DB.deleteBookmark).toBeCalledTimes(0);
         expect(DB.fetchBookmarks).toBeCalledTimes(1); //一番初めに一度呼ばれる
         expect(DB.insertBookmark).toBeCalledTimes(0);
@@ -117,7 +117,7 @@ describe("SearchBookmark", () => {
         expect(DB.fetchBookmarks).toBeCalledTimes(1);
         await user.type(inputBox, "t");
         expect(screen.getAllByTestId("suggestion-item").length).toBe(8);
-        expect(DB.findTag).toBeCalledTimes(1);
+        expect(DB.fuzzyFindTag).toBeCalledTimes(1);
         
         await user.keyboard("{Control>}N{/Control}")
         await user.type(inputBox, "{Enter}");
@@ -173,17 +173,17 @@ describe("SearchBookmark", () => {
         expect(DB.fetchBookmarks).toBeCalledTimes(1);
 
         await user.type(inputBox, "y");
-        expect(DB.findTag).toBeCalledTimes(1);
+        expect(DB.fuzzyFindTag).toBeCalledTimes(1);
         await user.type(inputBox, "{Enter}");
         expect(screen.getAllByTestId("taginputbox-tagitem").length).toBe(1);
 
         await user.type(inputBox, "y");
-        expect(DB.findTag).toBeCalledTimes(2);
+        expect(DB.fuzzyFindTag).toBeCalledTimes(2);
         await user.type(inputBox, "{Enter}");
         expect(screen.getAllByTestId("taginputbox-tagitem").length).toBe(2);
 
         await user.type(inputBox, "y");
-        expect(DB.findTag).toBeCalledTimes(3);
+        expect(DB.fuzzyFindTag).toBeCalledTimes(3);
         await user.type(inputBox, "{Enter}");
         expect(screen.getAllByTestId("taginputbox-tagitem").length).toBe(3);
 

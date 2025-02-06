@@ -8,14 +8,16 @@ export function useSuggestionWindow(
 ) {
     const { colorTheme } = useConfig();
 
-    const [items, setItems] = useState<string[]>([]);
+    const [items, setItems] = useState<[string, boolean][][]>([]);
     const [predicate, setPredicate] = useState("");
     const [focusIndex, setFocusIndex] = useState(0);
 
     const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
 
     const getFocusedItem = useCallback(() => {
-        return items.at(focusIndex);
+        let focusedItem = ""
+        items.at(focusIndex)?.forEach(block => focusedItem += block[0]);
+        return focusedItem
     }, [items, focusIndex])
 
     const close = useCallback(() => {
@@ -101,7 +103,7 @@ export function highlightMatchedBlocks(
         const p = splitedPredicate[0];
 
         if (p === undefined) {
-            break; 
+            break;
         }
 
         const i = splitedItem.shift()!;

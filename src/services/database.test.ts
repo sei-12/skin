@@ -34,6 +34,14 @@ export function startMockDB() {
         return testTags.filter(t => t.includes(predicate))
     });
 
+    /**
+     * 実装が面倒
+     * テストするならそっちで書いて
+     */
+    vi.spyOn(DB, "fuzzyFindTag").mockImplementation(async (predicate: string) => {
+        return testTags.filter(t => t.includes(predicate)).map(t => [[t, true]])
+    })
+
 
     vi.spyOn(DB, "fetchBookmarks").mockImplementation(async (maxLength: number) => {
         return testBookmarks.slice(0, maxLength)
@@ -55,7 +63,7 @@ export function startMockDB() {
         expect(url !== "").toBe(true)
         expect(desc !== undefined).toBe(true)
         expect(tags.length !== 0).toBe(true)
-        expect( -1 < id && id < testBookmarks.length).toBe(true)
+        expect(-1 < id && id < testBookmarks.length).toBe(true)
     })
 }
 
