@@ -34,14 +34,17 @@ fn split_blocks<'a>(predicate: &str, tag: &'a str) -> Vec<(&'a str, bool)> {
     if predicate.is_empty() || tag.is_empty() {
         return vec![];
     }
+
     let mut blocks = Vec::new();
     let mut predicate_chars = predicate.chars().peekable();
-    let mut current_is_match: Option<bool> = None;
-    let mut right = 1;
+    let mut prev_is_match: Option<bool> = None;
+    let mut right = 0;
     let mut left = 0;
 
     for t in tag.chars() {
+        right += 1;
         let tag_char = t.to_ascii_lowercase();
+
         let p_char = predicate_chars.peek().map(|x| x.to_ascii_lowercase());
         let is_match = Some(tag_char) == p_char;
 
@@ -49,25 +52,22 @@ fn split_blocks<'a>(predicate: &str, tag: &'a str) -> Vec<(&'a str, bool)> {
             predicate_chars.next();
         }
 
-        let Some(cur_is_match) = current_is_match else {
-            current_is_match = Some(is_match);
+        let Some(p_is_m) = prev_is_match else {
+            prev_is_match = Some(is_match);
             continue;
         };
 
-        if is_match == cur_is_match {
-            right += 1;
-        } else {
-            blocks.push((&tag[left..right], cur_is_match));
-            current_is_match = Some(!cur_is_match);
-            left = right;
-            right += 1;
+        if is_match != p_is_m {
+            blocks.push((&tag[left..right - 1], p_is_m));
+            prev_is_match = Some(!p_is_m);
+            left = right - 1;
         }
     }
 
-    let Some(cur_is_match) = current_is_match else {
+    let Some(p_is_m) = prev_is_match else {
         return vec![];
     };
-    blocks.push((&tag[left..right], cur_is_match));
+    blocks.push((&tag[left..right], p_is_m));
 
     blocks
 }
