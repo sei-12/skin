@@ -8,7 +8,7 @@ use super::{
     models::{Bookmark, BookmarkRecord, EditBookmarkRequest, InsertBookmarkRequest, TagRecord},
     DbPool,
 };
-use crate::db::error::CommandError;
+use crate::db::{error::CommandError, fuzzy_find_tag};
 
 #[command]
 pub async fn delete_bookmark(
@@ -163,6 +163,28 @@ pub async fn find_tag(
     result1.append(&mut result2);
 
     Ok(result1.into_iter().map(|e| e.name).collect())
+}
+
+#[command]
+pub async fn fuzzy_find_tag(
+    pool: State<'_, DbPool>,
+    predicate: String,
+) -> Result<Vec<Vec<(String, bool)>>, CommandError> {
+    
+    if predicate.is_empty() {
+        return Ok(vec![]);
+    };
+    
+    let tags: Vec<TagRecord> = sqlx::query_as("select * from tags;")
+        .fetch_all(pool.inner())
+        .await?;
+
+    let result = fuzzy_find_tag::fuzzy_find_tag(&predicate, &tags, 50)
+        .into_iter()
+        .map(|x| x.iter().map(|x| (x.0.to_string(), x.1)).collect())
+        .collect();
+
+    Ok(result)
 }
 
 #[command]

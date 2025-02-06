@@ -5,6 +5,7 @@ use sqlx::migrate::MigrateDatabase;
 use sqlx::{Sqlite, SqlitePool};
 
 pub mod commands;
+mod fuzzy_find_tag;
 mod error;
 mod migrations;
 pub mod models;
