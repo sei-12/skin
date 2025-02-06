@@ -29,9 +29,10 @@ pub fn fuzzy_find_tag<'a>(
         .collect()
 }
 
+// TODO: リファクタリング
 fn split_blocks_<'a>(predicate: &str, tag: &'a str) -> Vec<(&'a str, bool)> {
     if predicate.is_empty() || tag.is_empty() {
-        panic!();
+        return vec![];
     }
 
     let mut blocks = Vec::new();
@@ -39,7 +40,12 @@ fn split_blocks_<'a>(predicate: &str, tag: &'a str) -> Vec<(&'a str, bool)> {
     let mut predicate_chars = predicate.chars().peekable();
     let mut tag_chars = tag.chars();
 
-    let mut cur_is_match = tag_chars.next() == predicate_chars.peek().copied();
+    let mut cur_is_match = tag_chars.next().map(|x| x.to_ascii_lowercase())
+        == predicate_chars
+            .peek()
+            .copied()
+            .map(|x| x.to_ascii_lowercase());
+
     if cur_is_match {
         predicate_chars.next();
     }
@@ -48,7 +54,10 @@ fn split_blocks_<'a>(predicate: &str, tag: &'a str) -> Vec<(&'a str, bool)> {
     let mut left = 0;
 
     for t in tag_chars {
-        if (Some(&t) == predicate_chars.peek()) == cur_is_match {
+        let tag_char = t.to_ascii_lowercase();
+        let p_char = predicate_chars.peek().map(|x| x.to_ascii_lowercase());
+
+        if (Some(tag_char) == p_char) == cur_is_match {
             right += 1;
         } else {
             blocks.push((&tag[left..right], cur_is_match));
@@ -57,10 +66,11 @@ fn split_blocks_<'a>(predicate: &str, tag: &'a str) -> Vec<(&'a str, bool)> {
             right += 1;
         }
 
-        if Some(&t) == predicate_chars.peek() {
+        if Some(tag_char) == p_char {
             predicate_chars.next();
         }
     }
+
     blocks.push((&tag[left..right], cur_is_match));
 
     blocks
@@ -99,6 +109,22 @@ mod tests {
                 ("9", false)
             ]
         );
+
+        assert_eq!(
+            split_blocks_("HELLO", "worldhelloworld"),
+            vec![("world", false), ("hello", true), ("world", false)]
+        );
+
+        assert_eq!(
+            split_blocks_("HELLO", "worldHelLOworld"),
+            vec![("world", false), ("HelLO", true), ("world", false)]
+        );
+
+        assert_eq!(
+            split_blocks_("heLlO", "worldHelLOworld"),
+            vec![("world", false), ("HelLO", true), ("world", false)]
+        );
+
     }
 
     #[test]
@@ -127,8 +153,6 @@ mod tests {
                 vec![("aaa", false), ("hello", true), ("world", false)],
             ]
         );
-        
-
 
         let tag_records = [
             TagRecord {
@@ -163,5 +187,36 @@ mod tests {
             ]
         );
 
+        let tag_records = [
+            TagRecord {
+                id: 1,
+                name: "HELLO".to_string(),
+            },
+            TagRecord {
+                id: 2,
+                name: "helloworld".to_string(),
+            },
+            TagRecord {
+                id: 3,
+                name: "aaahelloworld".to_string(),
+            },
+            TagRecord {
+                id: 4,
+                name: "aaa".to_string(),
+            },
+            TagRecord {
+                id: 5,
+                name: "hell".to_string(),
+            },
+        ];
+        let result = fuzzy_find_tag("hello", &tag_records, 10);
+        assert_eq!(
+            result,
+            vec![
+                vec![("hello", true), ("world", false)],
+                vec![("HELLO", true)],
+                vec![("aaa", false), ("hello", true), ("world", false)],
+            ]
+        );
     }
 }
