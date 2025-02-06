@@ -25,8 +25,8 @@ const makeMockedFindTagMethod = (tags?: string[]) => {
         let filted = _tags
 
         filted = filted.filter(t => !inputedTagsSet.has(t))
-        filted = filted.filter(t => t.includes(predicate))
-        return filted
+        const a: [string, boolean][][] = filted.filter(t => t.includes(predicate)).map(t => [[t, true]])
+        return a
     })
 }
 

@@ -19,8 +19,8 @@ const makeMockedFindTagMethod = (tags?: string[]) => {
         let filted = _tags
 
         filted = filted.filter(t => !inputedTagsSet.has(t))
-        filted = filted.filter(t => t.includes(predicate))
-        return filted
+        const a: [string, boolean][][] = filted.filter(t => t.includes(predicate)).map(t => [[t, true]])
+        return a
     })
 }
 
@@ -65,6 +65,6 @@ describe("useSuggestionWindow", () => {
 
         await act(async () => { hook.result.current.close() })
         expect(hook.result.current.items.length).toEqual(0)
-        expect(hook.result.current.getFocusedItem()).toEqual(undefined)
+        expect(hook.result.current.getFocusedItem()).toEqual("")
     })
 })

@@ -2,20 +2,18 @@ import { Box, Typography } from "@mui/material";
 import { ZINDEX } from "../vanilla/zindex";
 import { forwardRef } from "react";
 import type { ColorTheme } from "../../src-tauri/bindings/export/ColorTheme";
-import { highlightMatchedBlocks } from "../hooks/SuggestionWindow";
 
 export type FindTagMethod = (
     predicate: string,
     inputedTags: string[]
-) => Promise<string[]>;
-
+) => Promise<[string, boolean][][]>;
 
 export type SuggestionWindowProps = {
-    items: string[];
+    items: [string, boolean][][];
     predicate: string;
     focusIndex: number;
     itemRefs: React.MutableRefObject<(HTMLDivElement | null)[]>;
-    colorTheme: ColorTheme
+    colorTheme: ColorTheme;
 };
 
 export function SuggestionWindow(p: SuggestionWindowProps) {
@@ -57,33 +55,45 @@ export function SuggestionWindow(p: SuggestionWindowProps) {
 
 type ItemProps = {
     predicate: string;
-    item: string;
+    item: [string, boolean][];
     focus: boolean;
-    colorTheme: ColorTheme
+    colorTheme: ColorTheme;
 };
 
-export const SuggestionWindowItem = forwardRef<HTMLDivElement, ItemProps>((p, ref) => {
-    const highlightBlocks = highlightMatchedBlocks(p.predicate, p.item);
-    return (
-        <Box
-            data-testid="suggestion-item"
-            ref={ref}
-            sx={{
-                bgcolor: p.focus
-                    ? p.colorTheme.suggestionWindow.focusBg
-                    : p.colorTheme.suggestionWindow.bg,
-                padding: 0.2,
-                paddingLeft: 0.5,
-            }}
-        >
-            {highlightBlocks.map((b, i) => {
-                return <SuggestionWindowItemTextBlock key={i} {...b} colorTheme={p.colorTheme}></SuggestionWindowItemTextBlock>;
-            })}
-        </Box>
-    );
-});
+export const SuggestionWindowItem = forwardRef<HTMLDivElement, ItemProps>(
+    (p, ref) => {
+        return (
+            <Box
+                data-testid="suggestion-item"
+                ref={ref}
+                sx={{
+                    bgcolor: p.focus
+                        ? p.colorTheme.suggestionWindow.focusBg
+                        : p.colorTheme.suggestionWindow.bg,
+                    padding: 0.2,
+                    paddingLeft: 0.5,
+                }}
+            >
+                {p.item.map((b, i) => {
+                    return (
+                        <SuggestionWindowItemTextBlock
+                            key={i}
+                            isMatch={b[1]}
+                            text={b[0]}
+                            colorTheme={p.colorTheme}
+                        ></SuggestionWindowItemTextBlock>
+                    );
+                })}
+            </Box>
+        );
+    }
+);
 
-export const SuggestionWindowItemTextBlock = (p: { isMatch: boolean; text: string , colorTheme: ColorTheme}) => {
+export const SuggestionWindowItemTextBlock = (p: {
+    isMatch: boolean;
+    text: string;
+    colorTheme: ColorTheme;
+}) => {
     return (
         <Typography
             sx={{
@@ -98,4 +108,3 @@ export const SuggestionWindowItemTextBlock = (p: { isMatch: boolean; text: strin
         </Typography>
     );
 };
-

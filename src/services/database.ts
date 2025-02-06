@@ -24,7 +24,7 @@ export namespace DB {
     ): Promise<void> {
         return await invoke("edit_bookmark", { req: { id, title, url, desc, tags } })
     }
-    
+
     export async function getBookmark(id: number): Promise<Bookmark> {
         return await invoke<Bookmark>("get_bookmark", { id })
     }
@@ -52,5 +52,9 @@ export namespace DB {
     export async function findBookmark(filterTags: string[]): Promise<Bookmark[]> {
         return await invoke<Bookmark[]>("find_bookmark", { filterTags })
             .catch((e) => { throw e })
+    }
+
+    export async function fuzzyFindTag(predicate: string) {
+        return await invoke<[string, boolean][][]>("fuzzy_find_tag", { predicate })
     }
 }
