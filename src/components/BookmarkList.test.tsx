@@ -86,8 +86,8 @@ describe("BookmarkList.tsx", () => {
         act(() => hook.result.current.focusDown());
         act(() => hook.result.current.focusDown());
         act(() => hook.result.current.focusDown());
-        
-        // 
+
+        //
         expect(
             window.HTMLElement.prototype.scrollIntoView
         ).toHaveBeenCalledTimes(0);
@@ -108,6 +108,7 @@ const items = [
         url: "url1",
         desc: "desc1",
         tags: ["tag1", "tag2"],
+        created_at: "2025-02-07",
     },
     {
         id: 2,
@@ -115,6 +116,7 @@ const items = [
         url: "url2",
         desc: "desc2",
         tags: ["tag3", "tag4"],
+        created_at: "2025-02-07",
     },
     {
         id: 3,
@@ -122,5 +124,6 @@ const items = [
         url: "url3",
         desc: "desc3",
         tags: ["tag5", "tag6"],
+        created_at: "2025-02-07",
     },
 ];

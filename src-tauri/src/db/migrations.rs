@@ -38,6 +38,12 @@ fn migrations() -> MigrationList {
             );
             ",
         kind: MigrationKind::Up,
+    },
+    Migration {
+        version: 2,
+        description: "add column created_at",
+        sql: "ALTER TABLE bookmarks ADD COLUMN created_at text;",
+        kind: MigrationKind::Up
     }])
 }
 
