@@ -1,6 +1,7 @@
 use fuzzy_matcher::skim::SkimMatcherV2;
 use fuzzy_matcher::FuzzyMatcher;
 use std::cmp::Reverse;
+use std::vec;
 
 use super::models::TagRecord;
 
@@ -25,77 +26,72 @@ pub fn fuzzy_find_tag<'a>(
     filted_tags
         .iter()
         .take(max_length)
-        .map(|x| split_blocks_(predicate, x.0))
+        .map(|x| split_blocks(predicate, x.0))
         .collect()
 }
 
-// TODO: リファクタリング
-fn split_blocks_<'a>(predicate: &str, tag: &'a str) -> Vec<(&'a str, bool)> {
+fn split_blocks<'a>(predicate: &str, tag: &'a str) -> Vec<(&'a str, bool)> {
     if predicate.is_empty() || tag.is_empty() {
         return vec![];
     }
 
     let mut blocks = Vec::new();
-
     let mut predicate_chars = predicate.chars().peekable();
-    let mut tag_chars = tag.chars();
-
-    let mut cur_is_match = tag_chars.next().map(|x| x.to_ascii_lowercase())
-        == predicate_chars
-            .peek()
-            .copied()
-            .map(|x| x.to_ascii_lowercase());
-
-    if cur_is_match {
-        predicate_chars.next();
-    }
-
-    let mut right = 1;
+    let mut prev_is_match: Option<bool> = None;
+    let mut right = 0;
     let mut left = 0;
 
-    for t in tag_chars {
+    for t in tag.chars() {
+        right += 1;
         let tag_char = t.to_ascii_lowercase();
-        let p_char = predicate_chars.peek().map(|x| x.to_ascii_lowercase());
 
-        if (Some(tag_char) == p_char) == cur_is_match {
-            right += 1;
-        } else {
-            blocks.push((&tag[left..right], cur_is_match));
-            cur_is_match = !cur_is_match;
-            left = right;
-            right += 1;
+        let p_char = predicate_chars.peek().map(|x| x.to_ascii_lowercase());
+        let is_match = Some(tag_char) == p_char;
+
+        if is_match {
+            predicate_chars.next();
         }
 
-        if Some(tag_char) == p_char {
-            predicate_chars.next();
+        let Some(p_is_m) = prev_is_match else {
+            prev_is_match = Some(is_match);
+            continue;
+        };
+
+        if is_match != p_is_m {
+            blocks.push((&tag[left..right - 1], p_is_m));
+            prev_is_match = Some(!p_is_m);
+            left = right - 1;
         }
     }
 
-    blocks.push((&tag[left..right], cur_is_match));
+    let Some(p_is_m) = prev_is_match else {
+        return vec![];
+    };
+    blocks.push((&tag[left..right], p_is_m));
 
     blocks
 }
 
 #[cfg(test)]
 mod tests {
-    use crate::db::{fuzzy_find_tag::split_blocks_, models::TagRecord};
+    use crate::db::{fuzzy_find_tag::split_blocks, models::TagRecord};
 
     use super::fuzzy_find_tag;
 
     #[test]
     fn test_split_blocks() {
         assert_eq!(
-            split_blocks_("hello", "helloworld"),
+            split_blocks("hello", "helloworld"),
             vec![("hello", true), ("world", false)]
         );
 
         assert_eq!(
-            split_blocks_("hello", "worldhelloworld"),
+            split_blocks("hello", "worldhelloworld"),
             vec![("world", false), ("hello", true), ("world", false)]
         );
 
         assert_eq!(
-            split_blocks_("02468", "0123456789"),
+            split_blocks("02468", "0123456789"),
             vec![
                 ("0", true),
                 ("1", false),
@@ -111,20 +107,39 @@ mod tests {
         );
 
         assert_eq!(
-            split_blocks_("HELLO", "worldhelloworld"),
+            split_blocks("HELLO", "worldhelloworld"),
             vec![("world", false), ("hello", true), ("world", false)]
         );
 
         assert_eq!(
-            split_blocks_("HELLO", "worldHelLOworld"),
+            split_blocks("HELLO", "worldHelLOworld"),
             vec![("world", false), ("HelLO", true), ("world", false)]
         );
 
         assert_eq!(
-            split_blocks_("heLlO", "worldHelLOworld"),
+            split_blocks("heLlO", "worldHelLOworld"),
             vec![("world", false), ("HelLO", true), ("world", false)]
         );
 
+        assert_eq!(split_blocks("", "worldHelLOworld"), vec![]);
+
+        assert_eq!(split_blocks("hellow", ""), vec![]);
+
+        assert_eq!(
+            split_blocks("hello", "HaeBlcLdoe"),
+            vec![
+                ("H", true),
+                ("a", false),
+                ("e", true),
+                ("B", false),
+                ("l", true),
+                ("c", false),
+                ("L", true),
+                ("d", false),
+                ("o", true),
+                ("e", false)
+            ]
+        );
     }
 
     #[test]

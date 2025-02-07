@@ -125,13 +125,14 @@ pub async fn insert_bookmark(
 
     insert_tags_if_not_exists(&pool, &tags).await?;
 
-    let result = sqlx::query("insert into bookmarks values (null,$1,$2,$3,$4);")
-        .bind(req.title)
-        .bind(req.url)
-        .bind(req.desc)
-        .bind(tag_count)
-        .execute(pool.inner())
-        .await?;
+    let result =
+        sqlx::query("insert into bookmarks values (null,$1,$2,$3,$4,date('now','localtime'));")
+            .bind(req.title)
+            .bind(req.url)
+            .bind(req.desc)
+            .bind(tag_count)
+            .execute(pool.inner())
+            .await?;
 
     mapping_tags(&pool, result.last_insert_rowid(), &tags).await?;
 
@@ -170,11 +171,10 @@ pub async fn fuzzy_find_tag(
     pool: State<'_, DbPool>,
     predicate: String,
 ) -> Result<Vec<Vec<(String, bool)>>, CommandError> {
-    
     if predicate.is_empty() {
         return Ok(vec![]);
     };
-    
+
     let tags: Vec<TagRecord> = sqlx::query_as("select * from tags;")
         .fetch_all(pool.inner())
         .await?;
@@ -257,6 +257,7 @@ async fn select_tags_where_bookmark(
         url: record.url,
         desc: record.description,
         tags: result.into_iter().map(|r| r.tag_name).collect(),
+        created_at: record.created_at,
     })
 }
 

@@ -25,10 +25,9 @@ describe("BookmarkList", () => {
         ));
 
         const items = [
-            { id: 1, title: "title1", url: "url1", desc: "desc1", tags: ["tag1", "tag2"] },
-            { id: 2, title: "title2", url: "url2", desc: "desc2", tags: ["tag3", "tag4"] },
-            { id: 3, title: "title3", url: "url3", desc: "desc3", tags: ["tag5", "tag6"] },
-
+            { id: 1, title: "title1", url: "url1", desc: "desc1", tags: ["tag1", "tag2"] ,created_at: "2025-02-07" },
+            { id: 2, title: "title2", url: "url2", desc: "desc2", tags: ["tag3", "tag4"] ,created_at: "2025-02-07" },
+            { id: 3, title: "title3", url: "url3", desc: "desc3", tags: ["tag5", "tag6"] ,created_at: "2025-02-07" },
         ]
         act(() => {
             hook.result.current.setItems(items)
@@ -54,9 +53,9 @@ describe("BookmarkList", () => {
         ));
 
         const items = [
-            { id: 1, title: "title1", url: "url1", desc: "desc1", tags: ["tag1", "tag2"] },
-            { id: 2, title: "title2", url: "url2", desc: "desc2", tags: ["tag3", "tag4"] },
-            { id: 3, title: "title3", url: "url3", desc: "desc3", tags: ["tag5", "tag6"] },
+            { id: 1, title: "title1", url: "url1", desc: "desc1", tags: ["tag1", "tag2"] ,created_at: "2025-02-07" },
+            { id: 2, title: "title2", url: "url2", desc: "desc2", tags: ["tag3", "tag4"] ,created_at: "2025-02-07" },
+            { id: 3, title: "title3", url: "url3", desc: "desc3", tags: ["tag5", "tag6"] ,created_at: "2025-02-07" },
 
         ]
         act(() => {
@@ -83,10 +82,9 @@ describe("BookmarkList", () => {
         ));
 
         const items = [
-            { id: 1, title: "title1", url: "url1", desc: "desc1", tags: ["tag1", "tag2"] },
-            { id: 2, title: "title2", url: "url2", desc: "desc2", tags: ["tag3", "tag4"] },
-            { id: 3, title: "title3", url: "url3", desc: "desc3", tags: ["tag5", "tag6"] },
-
+            { id: 1, title: "title1", url: "url1", desc: "desc1", tags: ["tag1", "tag2"] ,created_at: "2025-02-07" },
+            { id: 2, title: "title2", url: "url2", desc: "desc2", tags: ["tag3", "tag4"] ,created_at: "2025-02-07" },
+            { id: 3, title: "title3", url: "url3", desc: "desc3", tags: ["tag5", "tag6"] ,created_at: "2025-02-07" },
         ]
 
         act(() => {

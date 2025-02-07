@@ -9,6 +9,7 @@ pub struct BookmarkRecord {
     pub url: String,
     pub description: String,
     pub tag_count: i32,
+    pub created_at: Option<String>,
 }
 
 #[derive(Serialize, Deserialize, TS, sqlx::FromRow, PartialEq, Debug)]
@@ -45,4 +46,5 @@ pub struct Bookmark {
     pub url: String,
     pub desc: String,
     pub tags: Vec<String>,
+    pub created_at: Option<String>,
 }

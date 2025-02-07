@@ -433,6 +433,7 @@ fn test9() -> Result<(), CommandError> {
             vec![Bookmark {
                 id: 1,
                 title: "title".to_string(),
+                created_at: test_utils::date_now_localtime(),
                 url: "url".to_string(),
                 desc: "desc".to_string(),
                 tags: vec![
@@ -454,6 +455,7 @@ fn test9() -> Result<(), CommandError> {
                 title: "title".to_string(),
                 url: "url".to_string(),
                 desc: "desc".to_string(),
+                created_at: test_utils::date_now_localtime(),
                 tags: vec![
                     "ab".to_string(),
                     "a".to_string(),
@@ -476,6 +478,7 @@ fn test9() -> Result<(), CommandError> {
                 title: "title".to_string(),
                 url: "url".to_string(),
                 desc: "desc".to_string(),
+                created_at: test_utils::date_now_localtime(),
                 tags: vec![
                     "ab".to_string(),
                     "a".to_string(),
@@ -545,6 +548,11 @@ mod test_utils {
     use crate::db::{commands, error::CommandError, models::InsertBookmarkRequest, DbPool};
     use rand::Rng;
     use tauri::{test::MockRuntime, App, Manager, State};
+
+    pub fn date_now_localtime() -> Option<String> {
+        let date = chrono::Local::now();
+        Some(date.naive_local().date().to_string())
+    }
 
     pub(super) async fn i_bkmk(
         pool: State<'_, DbPool>,
@@ -858,7 +866,8 @@ fn test17() -> Result<(), CommandError> {
                     "hello_world".to_string(),
                     "hello-world".to_string(),
                     "hello!world".to_string(),
-                ]
+                ],
+                created_at: test_utils::date_now_localtime(),
             }
         );
 
@@ -1021,6 +1030,7 @@ fn test19() -> Result<(), CommandError> {
             result,
             Bookmark {
                 desc: "desc".to_string(),
+                created_at: test_utils::date_now_localtime(),
                 id: 1,
                 title: "title".to_string(),
                 url: "url".to_string(),
@@ -1075,16 +1085,16 @@ fn test20() -> Result<(), CommandError> {
         .await?;
 
         let result = commands::fuzzy_find_tag(app.state(), "hello".to_string()).await?;
-        assert_eq!(result.len(),0);
+        assert_eq!(result.len(), 0);
 
         let result = commands::fuzzy_find_tag(app.state(), "tag".to_string()).await?;
-        assert_eq!(result.len(),18);
+        assert_eq!(result.len(), 18);
 
         let result = commands::fuzzy_find_tag(app.state(), "t1".to_string()).await?;
-        assert_eq!(result.len(),10);
+        assert_eq!(result.len(), 10);
 
         let result = commands::fuzzy_find_tag(app.state(), "".to_string()).await?;
-        assert_eq!(result.len(),0);
+        assert_eq!(result.len(), 0);
 
         Ok(())
     })

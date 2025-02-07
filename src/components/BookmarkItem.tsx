@@ -39,7 +39,7 @@ export const BookmarkItem = forwardRef<HTMLDivElement, BookmarkItemProps>(
                             : p.colorTheme.bookmarkItem.bg,
                         borderRadius: 2.5,
                         boxShadow: "1px 1px 5px 0 rgba(0,0,0,0.1)",
-                        height: 135, // このやり方は良くないかもだけど、一旦問題はないし、他の方法が見当たらなかった
+                        height: 155, // このやり方は良くないかもだけど、一旦問題はないし、他の方法が見当たらなかった
                     }}
                 >
                     <CardContent sx={{ position: "relative" }}>
@@ -86,6 +86,17 @@ export const BookmarkItem = forwardRef<HTMLDivElement, BookmarkItemProps>(
                                 ></TagItem>
                             ))}
                         </Stack>
+
+                        <Typography
+                            sx={{
+                                color: p.colorTheme.bookmarkItem.desc,
+                            }}
+                        >
+                            created at {p.data.created_at === null
+                                ? "----/--/--"
+                                : p.data.created_at.split("-").join("/")}
+                        </Typography>
+
                         <Typography
                             sx={{
                                 color: p.colorTheme.bookmarkItem.desc,
@@ -120,7 +131,6 @@ function TagItem(p: { text: string; colorTheme: ColorTheme }) {
         </Typography>
     );
 }
-
 
 // TODO: ColorTheme
 type BookmarkItemMenuProps = {
