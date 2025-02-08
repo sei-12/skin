@@ -11,16 +11,30 @@ import { invoke } from "@tauri-apps/api/core";
 import { DB } from "../services/database";
 import { useConfig } from "../providers/configProvider";
 import type { Bookmark } from "../../src-tauri/bindings/export/DbModels";
+import { useNotice } from "../providers/NoticeProvider";
 
 
 export function useSearchBookmarkPage(): SearchBookmarkProps {
     const { keybinds, colorTheme } = useConfig()
 
+    const { addNotice } = useNotice()
     const navigate = useNavigate()
 
 
     const onClickRemove = async (id: number) => {
         await DB.deleteBookmark(id)
+            .then(() => {
+                addNotice({
+                    message: "SUCCESS!",
+                    serverity: "success"
+                })
+            })
+            .catch(() => {
+                addNotice({
+                    message: "ERROR!",
+                    serverity: "error"
+                })
+            })
         reloadBookmarks()
     }
 
@@ -43,6 +57,19 @@ export function useSearchBookmarkPage(): SearchBookmarkProps {
             return
         }
         await DB.deleteBookmark(focusedItem.id)
+            .then(() => {
+                addNotice({
+                    message: "SUCCESS!",
+                    serverity: "success"
+                })
+            })
+            .catch(() => {
+                addNotice({
+                    message: "ERROR!",
+                    serverity: "error"
+                })
+            })
+
         await reloadBookmarks()
     }, [bkmkListHook.getFocusedItem])
 
@@ -53,9 +80,23 @@ export function useSearchBookmarkPage(): SearchBookmarkProps {
 
         let bookmarks: Bookmark[]
         if (tags.length === 0) {
-            bookmarks = await DB.fetchBookmarks(100)
+            bookmarks = await DB.fetchBookmarks(100).catch(() => {
+                addNotice({
+                    message: "ERROR!",
+                    serverity: "error"
+                })
+                return []
+            })
+
         } else {
-            bookmarks = await DB.findBookmark(tags)
+            bookmarks = await DB.findBookmark(tags).catch(() => {
+                addNotice({
+                    message: "ERROR!",
+                    serverity: "error"
+                })
+                return []
+            })
+
         }
 
         bkmkListHook.setItems(bookmarks);

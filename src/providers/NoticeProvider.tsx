@@ -1,4 +1,7 @@
-import { Alert, Snackbar, SnackbarCloseReason } from "@mui/material";
+/* eslint-disable react-refresh/only-export-components */
+
+import type { SnackbarCloseReason } from "@mui/material";
+import { Alert, Snackbar } from "@mui/material";
 import React, { createContext, useCallback, useContext, useState } from "react";
 
 export type Severity = "info" | "warning" | "error" | "success";
@@ -8,9 +11,9 @@ export interface Notice {
     message: string;
 
     /**
-     * default: 6000
+     * default: 4000
      */
-    timeout_ms?: number;
+    timeoutMs?: number;
 }
 
 type NoticeContext = {
@@ -47,7 +50,7 @@ export function NoticeProvider({ children }: { children: React.ReactNode }) {
         setMessage(notice.message);
         setOpen(true);
         setSeverity(notice.serverity);
-        setAutoHideDuration(notice.timeout_ms ?? 6000);
+        setAutoHideDuration(notice.timeoutMs ?? 4000);
     }, []);
 
     const [notice] = useState<NoticeContext>({
@@ -59,6 +62,7 @@ export function NoticeProvider({ children }: { children: React.ReactNode }) {
             <Snackbar
                 open={open}
                 autoHideDuration={autoHideDuration}
+                anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
                 onClose={handleClose}
             >
                 <Alert

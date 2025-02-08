@@ -9,6 +9,7 @@ import { startMockWindowVisibleController } from "../services/windowVisibleContr
 import { WindowVisibleController } from "../services/windowVisibleController";
 import { startMockDB } from "../services/database.test";
 import { DB } from "../services/database";
+import { NoticeProvider } from "../providers/NoticeProvider";
 
 vi.mock("@tauri-apps/api/event", () => ({ listen: vi.fn() }));
 vi.mock("@tauri-apps/api/window", () => ({
@@ -34,7 +35,9 @@ describe("SearchBookmark", () => {
                 <HotkeysProvider
                     initiallyActiveScopes={[HOTKEY_SCOPES.SEARCH_BOOKMARK]}
                 >
-                    <SearchBookmarkPage></SearchBookmarkPage>
+                    <NoticeProvider>
+                        <SearchBookmarkPage></SearchBookmarkPage>
+                    </NoticeProvider>
                 </HotkeysProvider>
             );
         });
@@ -67,7 +70,7 @@ describe("SearchBookmark", () => {
         expect(DB.fuzzyFindTag).toBeCalledTimes(1);
 
         // TestingLibraryElementError
-        expect(screen.getAllByTestId("bkmkitem").length).toBe(20)
+        expect(screen.getAllByTestId("bkmkitem").length).toBe(20);
 
         await user.type(inputBox, "y");
         expect(screen.getAllByTestId("suggestion-item").length).toBe(1);
@@ -85,7 +88,7 @@ describe("SearchBookmark", () => {
         expect(screen.getByText("hello18")).toBeInTheDocument();
 
         await user.type(inputBox, "{Backspace}");
-        expect(screen.getAllByTestId("bkmkitem").length).toBe(20)
+        expect(screen.getAllByTestId("bkmkitem").length).toBe(20);
         expect(DB.findBookmark).toBeCalledTimes(1);
         expect(screen.getByTestId("suggestion-window")).not.toBeVisible();
     });
@@ -95,7 +98,7 @@ describe("SearchBookmark", () => {
         const inputBox = screen.getByPlaceholderText("/");
 
         await user.type(inputBox, "tya");
-        expect(screen.getAllByTestId("bkmkitem").length).toBe(20)
+        expect(screen.getAllByTestId("bkmkitem").length).toBe(20);
         expect(() => screen.getAllByTestId("suggestion-item")).toThrow();
         expect(screen.getByTestId("suggestion-window")).not.toBeVisible();
 
@@ -107,9 +110,8 @@ describe("SearchBookmark", () => {
     });
 
     test("test5", async () => {
-
         // https://stackoverflow.com/questions/53271193/typeerror-scrollintoview-is-not-a-function
-        window.HTMLElement.prototype.scrollIntoView = function() {};
+        window.HTMLElement.prototype.scrollIntoView = function () {};
 
         const user = userEvent.setup();
         const inputBox = screen.getByPlaceholderText("/");
@@ -118,52 +120,48 @@ describe("SearchBookmark", () => {
         await user.type(inputBox, "t");
         expect(screen.getAllByTestId("suggestion-item").length).toBe(8);
         expect(DB.fuzzyFindTag).toBeCalledTimes(1);
-        
-        await user.keyboard("{Control>}N{/Control}")
+
+        await user.keyboard("{Control>}N{/Control}");
         await user.type(inputBox, "{Enter}");
         expect(DB.findBookmark).toBeCalledTimes(1);
         expect(screen.getAllByTestId("bkmkitem").length).toBe(3);
         expect(screen.getAllByText("javascript").length).toBe(1);
         expect(screen.getAllByText("#javascript").length).toBe(3);
         await user.type(inputBox, "{Backspace}");
-        
+
         await user.type(inputBox, "t");
-        await user.keyboard("{Control>}N{/Control}")
+        await user.keyboard("{Control>}N{/Control}");
         await user.type(inputBox, "{Enter}");
         expect(screen.getAllByText("javascript").length).toBe(1);
         await user.type(inputBox, "{Backspace}");
-        
-        
-        await user.type(inputBox, "t");
-        await user.keyboard("{Control>}N{/Control}")
-        await user.keyboard("{Control>}N{/Control}")
-        await user.type(inputBox, "{Enter}");
-        expect(screen.getAllByText("python").length).toBe(1);
-        await user.type(inputBox, "{Backspace}");
-        
-        
-        await user.type(inputBox, "t");
-        await user.keyboard("{Control>}N{/Control}")
-        await user.keyboard("{Control>}N{/Control}")
-        await user.keyboard("{Control>}N{/Control}")
-        await user.keyboard("{Control>}N{/Control}")
-        await user.keyboard("{Control>}N{/Control}")
-        await user.keyboard("{Control>}N{/Control}")
-        await user.keyboard("{Control>}N{/Control}")
-        await user.keyboard("{Control>}N{/Control}")
-        await user.keyboard("{Control>}N{/Control}")
-        await user.keyboard("{Control>}N{/Control}")
-        await user.type(inputBox, "{Enter}");
-        expect(screen.getAllByText("python").length).toBe(1);
-        await user.type(inputBox, "{Backspace}");
-        
 
         await user.type(inputBox, "t");
-        await user.keyboard("{Control>}P{/Control}")
+        await user.keyboard("{Control>}N{/Control}");
+        await user.keyboard("{Control>}N{/Control}");
+        await user.type(inputBox, "{Enter}");
+        expect(screen.getAllByText("python").length).toBe(1);
+        await user.type(inputBox, "{Backspace}");
+
+        await user.type(inputBox, "t");
+        await user.keyboard("{Control>}N{/Control}");
+        await user.keyboard("{Control>}N{/Control}");
+        await user.keyboard("{Control>}N{/Control}");
+        await user.keyboard("{Control>}N{/Control}");
+        await user.keyboard("{Control>}N{/Control}");
+        await user.keyboard("{Control>}N{/Control}");
+        await user.keyboard("{Control>}N{/Control}");
+        await user.keyboard("{Control>}N{/Control}");
+        await user.keyboard("{Control>}N{/Control}");
+        await user.keyboard("{Control>}N{/Control}");
+        await user.type(inputBox, "{Enter}");
+        expect(screen.getAllByText("python").length).toBe(1);
+        await user.type(inputBox, "{Backspace}");
+
+        await user.type(inputBox, "t");
+        await user.keyboard("{Control>}P{/Control}");
         await user.type(inputBox, "{Enter}");
         expect(screen.getAllByText("gist").length).toBe(1);
         await user.type(inputBox, "{Backspace}");
-        
     });
 
     test("test6", async () => {
@@ -196,12 +194,45 @@ describe("SearchBookmark", () => {
     });
 
     test("検索タグが0の時に全てのブックマークを表示", async () => {
-        expect(screen.getAllByTestId("bkmkitem").length).toBe(20)
+        expect(screen.getAllByTestId("bkmkitem").length).toBe(20);
     });
 
     test("ショートカットキーで項目を削除", async () => {
         const user = userEvent.setup();
-        await user.keyboard("{Control>}{Shift>}D{/Shift}{/Control}")
+        await user.keyboard("{Control>}{Shift>}D{/Shift}{/Control}");
+        expect(DB.deleteBookmark).toBeCalledTimes(1);
+    });
+
+    test("削除した時に通知1 (ボタンを押す)", async () => {
+        const user = userEvent.setup();
+
+        // この時点では表示されていない
+        expect(() => {
+            screen.getByText("SUCCESS!");
+        }).toThrow();
+
+        const openMenuButton = screen.getAllByTestId("open-bookmark-button")[0];
+        await user.click(openMenuButton);
+        const menuWindow = screen.getByTestId("bookmarkitem-menu");
+        expect(menuWindow).toBeInTheDocument();
+        await user.click(screen.getByText("Delete"));
+
+        // 通知が表示されている
+        expect(screen.getByText("SUCCESS!")).toBeInTheDocument();
+        expect(DB.deleteBookmark).toBeCalledTimes(1);
+    });
+    test("削除した時に通知2 (ショートカットキー)", async () => {
+        const user = userEvent.setup();
+
+        // この時点では表示されていない
+        expect(() => {
+            screen.getByText("SUCCESS!");
+        }).toThrow();
+
+        await user.keyboard("{Control>}{Shift>}D{/Shift}{/Control}");
+
+        // 通知が表示されている
+        expect(screen.getByText("SUCCESS!")).toBeInTheDocument();
         expect(DB.deleteBookmark).toBeCalledTimes(1);
     });
 });

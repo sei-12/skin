@@ -5,12 +5,15 @@ import { useSuggestionWindow } from "../hooks/SuggestionWindow";
 import { useCallback, useRef, useState } from "react";
 import { DB } from "../services/database";
 import { useConfig } from "../providers/configProvider";
+import { useNotice } from "../providers/NoticeProvider";
 
 export function useTagInputBox(findTagMethod: FindTagMethod) {
     const inputBoxRef = useRef<HTMLInputElement>(null);
     const [inputedTags, setInputedTags] = useState<
         { text: string; exists: boolean }[]
     >([]);
+    
+    const { addNotice } = useNotice()
 
     const suggestionWindowHook = useSuggestionWindow(findTagMethod, () => {
         return inputedTags.map((t) => t.text);
@@ -74,7 +77,15 @@ export function useTagInputBox(findTagMethod: FindTagMethod) {
 
         inputBox.value = "";
 
-        const exists = await DB.isExistsTag(item);
+        const exists = await DB.isExistsTag(item).catch(() => {
+            addNotice({
+                message: "ERROR!",
+                serverity: "error"
+            })
+            
+            return false;
+        })
+;
         setInputedTags((ary) => {
             return [...ary, { text: item, exists }];
         });

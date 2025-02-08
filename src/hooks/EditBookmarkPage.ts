@@ -4,6 +4,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useBookmarkForm } from "./BookmarkForm";
 import { findTagMethod } from "../services/findTagMethod";
 import { DB } from "../services/database";
+import { useNotice } from "../providers/NoticeProvider";
 
 interface State {
     bookmarkId: number
@@ -11,19 +12,38 @@ interface State {
 
 export function useEditBookmarkPage(): BookmarkFormProps {
     const navigate = useNavigate();
+    const { addNotice } = useNotice()
     const location = useLocation();
     const { bookmarkId } = location.state as State;
 
     const onClickDone = async () => {
         const inputedData = bookmarkFormHook.getInputData()
-        await DB.editBookmark(
+        const success = await DB.editBookmark(
             bookmarkId,
             inputedData.title,
             inputedData.url,
             inputedData.desc,
             inputedData.tags
         )
-        goRoot()
+            .then(() => {
+                return true
+            })
+            .catch(() => {
+                return false
+            })
+
+        if (success) {
+            addNotice({
+                message: "SUCCESS!",
+                serverity: "success"
+            })
+            goRoot()
+        } else {
+            addNotice({
+                message: "ERROR!",
+                serverity: "error",
+            })
+        }
     }
 
     const goRoot = () => {

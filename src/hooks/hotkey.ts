@@ -1,5 +1,10 @@
 import { useHotkeysContext } from "react-hotkeys-hook";
 
+//
+// TODO
+// ページを分けたから必要ない
+// default,suggestion_windowの二つでいいと思う
+//
 export const HOTKEY_SCOPES = {
     SEARCH_BOOKMARK: "search_bookmark",
     SEARCH_BOOKMARK_SUGGESTION_WINDOW: "SEARCH_BOOKMARK_SUGGESTION_WINDOW",
