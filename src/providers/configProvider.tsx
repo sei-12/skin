@@ -4,6 +4,7 @@ import { invoke } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
 import { createContext, useContext, useEffect, useState } from "react";
 import type { Config } from "../../src-tauri/bindings/export/Config";
+import { useNotice } from "./NoticeProvider";
 
 export function useConfig() {
     const c = useContext(ConfigContext);
@@ -12,16 +13,31 @@ export function useConfig() {
 
 export function ConfigProvider({ children }: { children: React.ReactNode }) {
     const [config, setConfig] = useState<Config>(DEFAULT_CONFIG);
+    const { addNotice } = useNotice();
 
     useEffect(() => {
-        invoke<Config>("get_config").then((con) => {
-            setConfig(con);
-        });
+        invoke<Config>("get_config")
+            .then((con) => {
+                setConfig(con);
+            })
+            .catch(() => {
+                addNotice({
+                    message: "ERROR!",
+                    serverity: "error",
+                });
+            });
 
         listen("change-config-file", () => {
-            invoke<Config>("get_config").then((con) => {
-                setConfig(con);
-            });
+            invoke<Config>("get_config")
+                .then((con) => {
+                    setConfig(con);
+                })
+                .catch(() => {
+                    addNotice({
+                        message: "ERROR!",
+                        serverity: "error",
+                    });
+                });
         });
     }, []);
 
@@ -75,7 +91,7 @@ export const DEFAULT_CONFIG: Config = {
     },
     keybinds: {
         global: {
-            toggleWindowVisible: "alt+z"
+            toggleWindowVisible: "alt+z",
         },
         removeFocusedBookmark: "ctrl+shift+d",
         focusDownBookmarkList: ["ctrl+n", "ArrowDown"],

@@ -6,10 +6,12 @@ import { DB } from "../services/database";
 import { isUrl } from "../vanilla/isUrl";
 import { ClipBoardManager } from "../services/clipboard";
 import { useBookmarkForm } from "./BookmarkForm";
+import { useNotice } from "../providers/NoticeProvider";
 
 
 export function useCreateNewBookmarkPage() {
     const navigate = useNavigate();
+    const { addNotice } = useNotice()
 
     const onClickCreateDone = () => {
         const inputData = bookmarkFormHook.getInputData();
@@ -26,6 +28,16 @@ export function useCreateNewBookmarkPage() {
             )
             .then(() => {
                 onClickCreateCancel();
+                addNotice({
+                    message: "SUCCESS!",
+                    serverity: "success"
+                })
+            })
+            .catch(() => {
+                addNotice({
+                    message: "ERROR!",
+                    serverity: "error"
+                })
             });
     };
 

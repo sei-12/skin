@@ -11,6 +11,7 @@ import { startMockClipboardManager } from "../services/mockClipboard.test";
 import userEvent from "@testing-library/user-event";
 import { DB } from "../services/database";
 import { invoke } from "@tauri-apps/api/core";
+import { NoticeProvider } from "../providers/NoticeProvider";
 
 vi.mock("@tauri-apps/api/event", () => ({ listen: vi.fn() }));
 vi.mock("@tauri-apps/api/window", () => ({
@@ -52,7 +53,9 @@ describe("CreateNewBookmark", () => {
                 <HotkeysProvider
                     initiallyActiveScopes={[HOTKEY_SCOPES.SEARCH_BOOKMARK]}
                 >
-                    <CreateNewBookmarkPage></CreateNewBookmarkPage>
+                    <NoticeProvider>
+                        <CreateNewBookmarkPage></CreateNewBookmarkPage>
+                    </NoticeProvider>
                 </HotkeysProvider>
             );
         });
@@ -76,7 +79,9 @@ describe("CreateNewBookmark", () => {
                 <HotkeysProvider
                     initiallyActiveScopes={[HOTKEY_SCOPES.SEARCH_BOOKMARK]}
                 >
-                    <CreateNewBookmarkPage></CreateNewBookmarkPage>
+                    <NoticeProvider>
+                        <CreateNewBookmarkPage></CreateNewBookmarkPage>
+                    </NoticeProvider>
                 </HotkeysProvider>
             );
         });
@@ -98,7 +103,9 @@ describe("CreateNewBookmark", () => {
                 <HotkeysProvider
                     initiallyActiveScopes={[HOTKEY_SCOPES.SEARCH_BOOKMARK]}
                 >
-                    <CreateNewBookmarkPage></CreateNewBookmarkPage>
+                    <NoticeProvider>
+                        <CreateNewBookmarkPage></CreateNewBookmarkPage>
+                    </NoticeProvider>
                 </HotkeysProvider>
             );
         });
@@ -142,7 +149,9 @@ describe("CreateNewBookmark", () => {
                 <HotkeysProvider
                     initiallyActiveScopes={[HOTKEY_SCOPES.SEARCH_BOOKMARK]}
                 >
-                    <CreateNewBookmarkPage></CreateNewBookmarkPage>
+                    <NoticeProvider>
+                        <CreateNewBookmarkPage></CreateNewBookmarkPage>
+                    </NoticeProvider>
                 </HotkeysProvider>
             );
         });
@@ -164,7 +173,9 @@ describe("CreateNewBookmark", () => {
                 <HotkeysProvider
                     initiallyActiveScopes={[HOTKEY_SCOPES.SEARCH_BOOKMARK]}
                 >
-                    <CreateNewBookmarkPage></CreateNewBookmarkPage>
+                    <NoticeProvider>
+                        <CreateNewBookmarkPage></CreateNewBookmarkPage>
+                    </NoticeProvider>
                 </HotkeysProvider>
             );
         });
@@ -201,6 +212,65 @@ describe("CreateNewBookmark", () => {
         expect(descInputBox.value).toBe("b/");
         expect(predicateInputBox).not.toHaveFocus();
     });
+    
+    test("test6 結果を通知", async () => {
+        await act(async () => {
+            render(
+                <HotkeysProvider
+                    initiallyActiveScopes={[HOTKEY_SCOPES.SEARCH_BOOKMARK]}
+                >
+                    <NoticeProvider>
+                        <CreateNewBookmarkPage></CreateNewBookmarkPage>
+                    </NoticeProvider>
+                </HotkeysProvider>
+            );
+        });
+        const user = userEvent.setup();
+
+        const predicateInputBox: HTMLInputElement =
+            screen.getByPlaceholderText("/");
+
+        const urlInputBox: HTMLInputElement =
+            screen.getByPlaceholderText("url");
+
+        const titleInputBox: HTMLInputElement =
+            screen.getByPlaceholderText("title");
+
+        const descInputBox: HTMLInputElement =
+            screen.getByPlaceholderText("desc");
+
+        await user.click(predicateInputBox);
+        await user.type(predicateInputBox, "t");
+        await user.type(predicateInputBox, "{Enter}");
+        expect(screen.getAllByTestId("taginputbox-tagitem").length).toBe(1);
+
+        await user.type(titleInputBox, "hello");
+        await user.type(descInputBox, "description");
+        await user.type(urlInputBox, "url://hello");
+
+        // この時点では表示されていない
+        expect(() => {
+            screen.getByText("SUCCESS!");
+        }).toThrow();
+
+        const doneButton = screen.getByText("Done");
+        expect(doneButton).toBeInTheDocument();
+        await user.click(doneButton);
+        
+        // 通知が表示されている
+        expect(screen.getByText("SUCCESS!")).toBeInTheDocument();
+
+
+        expect(DB.insertBookmark).toBeCalledTimes(1);
+        expect(DB.insertBookmark).toBeCalledWith(
+            "hello",
+            "url://hello",
+            "description",
+            ["typescript"]
+        );
+        
+        
+    })
 });
 
 describe("CreateNewBookmark.insert1", () => {
@@ -215,7 +285,9 @@ describe("CreateNewBookmark.insert1", () => {
                 <HotkeysProvider
                     initiallyActiveScopes={[HOTKEY_SCOPES.SEARCH_BOOKMARK]}
                 >
-                    <CreateNewBookmarkPage></CreateNewBookmarkPage>
+                    <NoticeProvider>
+                        <CreateNewBookmarkPage></CreateNewBookmarkPage>
+                    </NoticeProvider>
                 </HotkeysProvider>
             );
         });
@@ -286,7 +358,9 @@ describe("CreateNewBookmark.insert2", () => {
                 <HotkeysProvider
                     initiallyActiveScopes={[HOTKEY_SCOPES.SEARCH_BOOKMARK]}
                 >
-                    <CreateNewBookmarkPage></CreateNewBookmarkPage>
+                    <NoticeProvider>
+                        <CreateNewBookmarkPage></CreateNewBookmarkPage>
+                    </NoticeProvider>
                 </HotkeysProvider>
             );
         });
@@ -382,7 +456,9 @@ describe("fix bug", () => {
                 <HotkeysProvider
                     initiallyActiveScopes={[HOTKEY_SCOPES.SEARCH_BOOKMARK]}
                 >
-                    <CreateNewBookmarkPage></CreateNewBookmarkPage>
+                    <NoticeProvider>
+                        <CreateNewBookmarkPage></CreateNewBookmarkPage>
+                    </NoticeProvider>
                 </HotkeysProvider>
             );
         });
@@ -393,18 +469,18 @@ describe("fix bug", () => {
         const urlInputBox = screen.getByPlaceholderText("url");
         const titleInputBox = screen.getByPlaceholderText("title");
         const descInputBox = screen.getByPlaceholderText("desc");
-        const predicateInputBox: HTMLInputElement = screen.getByPlaceholderText("/");
+        const predicateInputBox: HTMLInputElement =
+            screen.getByPlaceholderText("/");
 
         await user.type(titleInputBox, "title");
         await user.type(urlInputBox, "url");
         await user.type(predicateInputBox, "t{Enter}");
         await user.type(predicateInputBox, "typescript{Space}");
-        expect(predicateInputBox.value).toBe("") // クリアされる
-
+        expect(predicateInputBox.value).toBe(""); // クリアされる
 
         await user.type(predicateInputBox, "t{Enter}");
         await user.type(predicateInputBox, "javascript{Space}");
-        expect(predicateInputBox.value).toBe("") // クリアされる
+        expect(predicateInputBox.value).toBe(""); // クリアされる
 
         await user.type(urlInputBox, "a");
         await user.type(descInputBox, "desc");

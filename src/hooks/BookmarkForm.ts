@@ -6,6 +6,7 @@ import { useTagInputBox } from "./TagInputBox";
 import { DB } from "../services/database";
 import { useConfig } from "../providers/configProvider";
 import type { BookmarkFormProps } from "../components/BookmarkForm";
+import { useNotice } from "../providers/NoticeProvider";
 
 export function useBookmarkForm(
     onClickDone: () => void,
@@ -16,6 +17,7 @@ export function useBookmarkForm(
     const titleRef = useRef<HTMLInputElement>(null);
     const urlRef = useRef<HTMLInputElement>(null);
     const descRef = useRef<HTMLInputElement>(null);
+    const { addNotice } = useNotice()
 
     const tagInputBoxHook = useTagInputBox(findTagMethod);
 
@@ -30,7 +32,16 @@ export function useBookmarkForm(
         descRef.current.value = desc;
 
         const inputedTags = await Promise.all(
-            tags.map(t => DB.isExistsTag(t).then(a => ({ text: t, exists: a })))
+            tags.map(t => DB.isExistsTag(t)
+                .then(a => ({ text: t, exists: a }))
+                .catch(() => {
+                    addNotice({
+                        message: "ERROR!",
+                        serverity: "error"
+                    })
+                    return { text: "ERROR", exists: false }
+                })
+            )
         )
         tagInputBoxHook.setInputedTags(inputedTags)
     };
@@ -74,7 +85,7 @@ export function useBookmarkForm(
             return;
         }
 
-        const item = inputBox.value.replace(/ /g,"");
+        const item = inputBox.value.replace(/ /g, "");
 
         if (item === "") {
             return;
@@ -88,7 +99,14 @@ export function useBookmarkForm(
             return;
         }
 
-        const exists = await DB.isExistsTag(item);
+        const exists = await DB.isExistsTag(item).catch(() => {
+            addNotice({
+                message: "ERROR!",
+                serverity: "error"
+            })
+            return false;
+        });
+
         tagInputBoxHook.setInputedTags((ary) => {
             return [...ary, { text: item, exists }];
         });
