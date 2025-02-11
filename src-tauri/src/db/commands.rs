@@ -11,6 +11,52 @@ use super::{
 use crate::db::{error::CommandError, fuzzy_find_tag};
 
 #[command]
+pub async fn fetch_tags(pool: State<'_, DbPool>) -> Result<Vec<TagRecord>, CommandError> {
+    let records: Vec<TagRecord> = sqlx::query_as("select * from tags order by id desc;")
+        .fetch_all(pool.inner())
+        .await?;
+
+    Ok(records)
+}
+
+#[command]
+pub async fn edit_tag(
+    pool: State<'_, DbPool>,
+    tag_id: i64,
+    new_name: String,
+) -> Result<(), CommandError> {
+    sqlx::query(
+        "
+        update 
+            tags
+        set 
+            name = $1
+        where 
+            id = $2",
+    )
+    .bind(new_name)
+    .bind(tag_id)
+    .execute(pool.inner())
+    .await?;
+
+    Ok(())
+}
+
+#[command]
+pub async fn delete_tag(pool: State<'_, DbPool>, tag_id: i64) -> Result<(), CommandError> {
+    sqlx::query(
+        "
+        delete from tag_map where bkmk_id = $1;
+        delete from tags where id = $1;",
+    )
+    .bind(tag_id)
+    .execute(pool.inner())
+    .await?;
+
+    Ok(())
+}
+
+#[command]
 pub async fn delete_bookmark(
     pool: State<'_, DbPool>,
     bookmark_id: i64,

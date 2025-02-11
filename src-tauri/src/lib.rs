@@ -62,6 +62,9 @@ pub fn run() {
             db::commands::edit_bookmark,
             db::commands::get_bookmark,
             db::commands::fuzzy_find_tag,
+            db::commands::fetch_tags,
+            db::commands::edit_tag,
+            db::commands::delete_tag,
         ])
         .setup(|app| {
             // if_not_exists_write_default_config(app.path().app_config_dir().unwrap()).unwrap();
