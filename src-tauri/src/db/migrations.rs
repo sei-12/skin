@@ -11,10 +11,11 @@ pub(super) async fn migrator() -> Result<Migrator, sqlx::Error> {
 }
 
 fn migrations() -> MigrationList {
-    MigrationList(vec![Migration {
-        version: 1,
-        description: "create initial tables",
-        sql: "
+    MigrationList(vec![
+        Migration {
+            version: 1,
+            description: "create initial tables",
+            sql: "
             create table if not exists bookmarks (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 title text not null,
@@ -37,14 +38,15 @@ fn migrations() -> MigrationList {
                 UNIQUE (bkmk_id,tag_id)
             );
             ",
-        kind: MigrationKind::Up,
-    },
-    Migration {
-        version: 2,
-        description: "add column created_at",
-        sql: "ALTER TABLE bookmarks ADD COLUMN created_at text;",
-        kind: MigrationKind::Up
-    }])
+            kind: MigrationKind::Up,
+        },
+        Migration {
+            version: 2,
+            description: "add column created_at",
+            sql: "ALTER TABLE bookmarks ADD COLUMN created_at text;",
+            kind: MigrationKind::Up,
+        },
+    ])
 }
 
 #[derive(Debug)]
