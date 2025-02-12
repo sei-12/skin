@@ -1,6 +1,6 @@
 // import Database from "@tauri-apps/plugin-sql";
 import { invoke } from "@tauri-apps/api/core";
-import type { Bookmark } from "../../src-tauri/bindings/export/DbModels";
+import type { Bookmark, TagRecord } from "../../src-tauri/bindings/export/DbModels";
 
 // TODO:エラーを通知する
 
@@ -56,5 +56,16 @@ export namespace DB {
 
     export async function fuzzyFindTag(predicate: string) {
         return await invoke<[string, boolean][][]>("fuzzy_find_tag", { predicate })
+    }
+
+
+    export async function fetchTags() {
+        return await invoke<TagRecord[]>("fetch_tags")
+    }
+    export async function editTag(tagId: number, newName: string) {
+        return await invoke<void>("edit_tag", { tagId, newName })
+    }
+    export async function deleteTag(tagId: number) {
+        return await invoke<void>("delete_tag", { tagId })
     }
 }

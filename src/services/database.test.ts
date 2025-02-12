@@ -52,6 +52,25 @@ export function startMockDB() {
         return testBookmarks[id]
     })
 
+    vi.spyOn(DB, "editTag").mockImplementation(async (id: number, newName: string) => {
+        expect(id >= 0).toBe(true);
+        expect(id < testTags.length).toBe(true)
+        expect(newName != "").toBe(true)
+    })
+
+    vi.spyOn(DB, "fetchTags").mockImplementation(async () => {
+        return testTags.map((t, i) => ({
+            id: BigInt(i),
+            name: t
+        }))
+    })
+
+
+    vi.spyOn(DB, "deleteBookmark").mockImplementation(async (id: number) => {
+        expect(id >= 0).toBe(true);
+        expect(id < testTags.length).toBe(true)
+    })
+
     vi.spyOn(DB, "editBookmark").mockImplementation(async (
         id: number,
         title: string,

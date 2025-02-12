@@ -14,6 +14,7 @@ function buildProps(): SearchBookmarkProps {
 
     return {
         onClickAdd: vi.fn(),
+        onClickGoTagList: vi.fn(),
         colorTheme: DEFAULT_CONFIG.colorTheme,
         tagInputBoxProps: {
             inputBoxRef: inputBoxRef.result.current,
@@ -43,10 +44,12 @@ function buildProps(): SearchBookmarkProps {
 describe("SearchBookmark", () => {
     test("case1", async () => {
         const props = buildProps();
+        const user = userEvent.setup();
         render(<SearchBookmark {...props}></SearchBookmark>);
 
-        const addButton = screen.getByTestId("add-button");
-        const user = userEvent.setup();
+        const menubutton = screen.getByTestId("search-bookmark-menu-button");
+        await user.click(menubutton);
+        const addButton = screen.getByText("Create new Bookmark");
 
         expect(props.onClickAdd).toBeCalledTimes(0);
         await user.click(addButton);
@@ -59,36 +62,56 @@ describe("SearchBookmark", () => {
         const props = buildProps();
         render(<SearchBookmark {...props}></SearchBookmark>);
 
-        const predicateInputBox = screen.getByPlaceholderText("/")
+        const predicateInputBox = screen.getByPlaceholderText("/");
         const user = userEvent.setup();
-        
-        await user.type(predicateInputBox, "t")
-        expect(props.tagInputBoxProps.onChangePredicateInputBox).toBeCalledTimes(1)
-        expect(props.tagInputBoxProps.onChangePredicateInputBox).toBeCalledWith("t")
 
-        await user.type(predicateInputBox, "t")
-        expect(props.tagInputBoxProps.onChangePredicateInputBox).toBeCalledTimes(2)
-        expect(props.tagInputBoxProps.onChangePredicateInputBox).toBeCalledWith("tt")
+        await user.type(predicateInputBox, "t");
+        expect(
+            props.tagInputBoxProps.onChangePredicateInputBox
+        ).toBeCalledTimes(1);
+        expect(props.tagInputBoxProps.onChangePredicateInputBox).toBeCalledWith(
+            "t"
+        );
 
-        await user.type(predicateInputBox, "{Backspace}")
-        expect(props.tagInputBoxProps.onChangePredicateInputBox).toBeCalledTimes(3)
-        expect(props.tagInputBoxProps.onChangePredicateInputBox).toBeCalledWith("t")
+        await user.type(predicateInputBox, "t");
+        expect(
+            props.tagInputBoxProps.onChangePredicateInputBox
+        ).toBeCalledTimes(2);
+        expect(props.tagInputBoxProps.onChangePredicateInputBox).toBeCalledWith(
+            "tt"
+        );
 
-        await user.type(predicateInputBox, "{Backspace}")
-        expect(props.tagInputBoxProps.onChangePredicateInputBox).toBeCalledTimes(4)
-        expect(props.tagInputBoxProps.onChangePredicateInputBox).toBeCalledWith("")
+        await user.type(predicateInputBox, "{Backspace}");
+        expect(
+            props.tagInputBoxProps.onChangePredicateInputBox
+        ).toBeCalledTimes(3);
+        expect(props.tagInputBoxProps.onChangePredicateInputBox).toBeCalledWith(
+            "t"
+        );
+
+        await user.type(predicateInputBox, "{Backspace}");
+        expect(
+            props.tagInputBoxProps.onChangePredicateInputBox
+        ).toBeCalledTimes(4);
+        expect(props.tagInputBoxProps.onChangePredicateInputBox).toBeCalledWith(
+            ""
+        );
     });
 
     test("case3", async () => {
         const props = buildProps();
         render(<SearchBookmark {...props}></SearchBookmark>);
 
-        const predicateInputBox = screen.getByPlaceholderText("/")
+        const predicateInputBox = screen.getByPlaceholderText("/");
         const user = userEvent.setup();
-        
-        const typeScring = "helloworld@d_.:-¥-@:s:13:"
-        await user.type(predicateInputBox, typeScring)
-        expect(props.tagInputBoxProps.onChangePredicateInputBox).toBeCalledTimes(typeScring.length)
-        expect(props.tagInputBoxProps.onChangePredicateInputBox).toBeCalledWith(typeScring)
+
+        const typeScring = "helloworld@d_.:-¥-@:s:13:";
+        await user.type(predicateInputBox, typeScring);
+        expect(
+            props.tagInputBoxProps.onChangePredicateInputBox
+        ).toBeCalledTimes(typeScring.length);
+        expect(props.tagInputBoxProps.onChangePredicateInputBox).toBeCalledWith(
+            typeScring
+        );
     });
 });
