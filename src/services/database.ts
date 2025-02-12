@@ -65,7 +65,4 @@ export namespace DB {
     export async function editTag(tagId: number, newName: string) {
         return await invoke<void>("edit_tag", { tagId, newName })
     }
-    export async function deleteTag(tagId: number) {
-        return await invoke<void>("delete_tag", { tagId })
-    }
 }

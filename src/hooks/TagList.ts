@@ -4,6 +4,7 @@ import type { TagRecord } from "../../src-tauri/bindings/export/DbModels";
 import { DB } from "../services/database";
 import { useNotice } from "../providers/NoticeProvider";
 import { useConfig } from "../providers/configProvider";
+import { useNavigate } from "react-router-dom";
 
 export function useTagListPage(): TagListProps {
 
@@ -12,38 +13,45 @@ export function useTagListPage(): TagListProps {
 
     const load = async () => {
         const result = await DB.fetchTags().catch(() => {
-
             addNotice({
-                message: "ERROR!",
+                message: "ERROR! タグの読み込みに失敗しました",
                 serverity: "error",
             })
             return []
         });
 
-
-
         setTags(result)
     }
-
 
     useEffect(() => {
         load()
     }, [])
 
-    const onClickDelete = (id: number) => {
-        console.log("delete tag ", id)
-    }
-
     const onClickEdit = (id: number, newName: string) => {
-        console.log("edit tag ", id, newName)
+        DB.editTag(id, newName)
+            .then(() => {
+                addNotice({
+                    message: "SUCCESS!",
+                    serverity: "success",
+                })
+                load()
+            })
+            .catch(() => {
+                addNotice({
+                    message: "ERROR! タグの更新に失敗しました",
+                    serverity: "error",
+                })
+            })
     }
 
-    const onClickGoRoot = () => { }
+    const navigate = useNavigate()
+    const onClickGoRoot = () => {
+        navigate("/")
+    }
 
     const { colorTheme } = useConfig()
 
     return {
-        onClickDelete,
         colorTheme,
         onClickEdit,
         onClickGoRoot,

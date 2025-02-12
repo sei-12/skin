@@ -1137,19 +1137,19 @@ fn test21() -> Result<(), CommandError> {
         let result = commands::fetch_tags(app.state()).await?;
         assert_eq!(result.len(), 18);
 
-        commands::delete_tag(app.state(), 1).await?;
-        let result = commands::fetch_tags(app.state()).await?;
-        assert_eq!(result.len(), 17);
+        // commands::delete_tag(app.state(), 1).await?;
+        // let result = commands::fetch_tags(app.state()).await?;
+        // assert_eq!(result.len(), 17);
 
         let result = commands::fuzzy_find_tag(app.state(), "hello".to_string()).await?;
         assert_eq!(result.len(), 0);
         let result = commands::fuzzy_find_tag(app.state(), "tag".to_string()).await?;
-        assert_eq!(result.len(), 17);
+        assert_eq!(result.len(), 18);
         commands::edit_tag(app.state(), 2, "helloworld".to_string()).await?;
         let result = commands::fuzzy_find_tag(app.state(), "hello".to_string()).await?;
         assert_eq!(result.len(), 1);
         let result = commands::fuzzy_find_tag(app.state(), "tag".to_string()).await?;
-        assert_eq!(result.len(), 16);
+        assert_eq!(result.len(), 17);
 
         Ok(())
     })

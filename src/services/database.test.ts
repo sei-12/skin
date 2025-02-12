@@ -65,12 +65,6 @@ export function startMockDB() {
         }))
     })
 
-
-    vi.spyOn(DB, "deleteBookmark").mockImplementation(async (id: number) => {
-        expect(id >= 0).toBe(true);
-        expect(id < testTags.length).toBe(true)
-    })
-
     vi.spyOn(DB, "editBookmark").mockImplementation(async (
         id: number,
         title: string,

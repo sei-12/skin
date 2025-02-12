@@ -8,14 +8,11 @@ import { TagList } from "./TagList";
 
 function buildProps(): TagListProps {
     const tags = TESTDATA.map((t) => ({ id: BigInt(t.id), name: t.name }));
-
-    const onClickDelete = vi.fn();
     const onClickEdit = vi.fn();
     const onClickGoRoot = vi.fn();
     return {
         colorTheme: DEFAULT_CONFIG.colorTheme,
         tags,
-        onClickDelete,
         onClickEdit,
         onClickGoRoot,
     };
@@ -43,11 +40,9 @@ describe("TagList", () => {
 
             const buttons = within(item).getAllByRole("button");
             const editButton = buttons[0];
-            const deleteButton = buttons[1];
 
-            expect(buttons.length).toBe(2);
+            expect(buttons.length).toBe(1);
             expect(editButton).toBeInTheDocument();
-            expect(deleteButton).toBeInTheDocument();
 
             await user.click(editButton);
             expect(props.onClickEdit).toBeCalledTimes(1 + i);
@@ -56,9 +51,6 @@ describe("TagList", () => {
                 TESTDATA[i].name + "hello"
             );
 
-            await user.click(deleteButton);
-            expect(props.onClickDelete).toBeCalledTimes(1 + i);
-            expect(props.onClickDelete).toBeCalledWith(TESTDATA[i].id);
         }
     });
 });

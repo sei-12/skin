@@ -42,19 +42,23 @@ pub async fn edit_tag(
     Ok(())
 }
 
-#[command]
-pub async fn delete_tag(pool: State<'_, DbPool>, tag_id: i64) -> Result<(), CommandError> {
-    sqlx::query(
-        "
-        delete from tag_map where bkmk_id = $1;
-        delete from tags where id = $1;",
-    )
-    .bind(tag_id)
-    .execute(pool.inner())
-    .await?;
+//
+// 普通にバグだらけだった。
+// 綺麗な解決策を思いついてから実装する
+//
+// #[command]
+// pub async fn delete_tag(pool: State<'_, DbPool>, tag_id: i64) -> Result<(), CommandError> {
+//     sqlx::query(
+//         "
+//         delete from tag_map where tag_id = $1;
+//         delete from tags where id = $1;",
+//     )
+//     .bind(tag_id)
+//     .execute(pool.inner())
+//     .await?;
 
-    Ok(())
-}
+//     Ok(())
+// }
 
 #[command]
 pub async fn delete_bookmark(

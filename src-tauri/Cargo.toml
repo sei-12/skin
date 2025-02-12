@@ -37,6 +37,7 @@ futures = "0.3.31"
 rand = "0.8.5"
 anyhow = "1.0.95"
 fuzzy-matcher = "0.3.7"
+tauri-plugin-dialog = "2"
 
 [target.'cfg(not(any(target_os = "android", target_os = "ios")))'.dependencies]
 tauri-plugin-autostart = "2"

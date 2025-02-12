@@ -1,6 +1,12 @@
-import { Box, Button, Grid2, Stack, styled, TextField } from "@mui/material";
+import {
+    Box,
+    Button,
+    Grid2,
+    Stack,
+    styled,
+    TextField,
+} from "@mui/material";
 import type { TagRecord } from "../../src-tauri/bindings/export/DbModels";
-import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import type { ColorTheme } from "../../src-tauri/bindings/export/ColorTheme";
 import { useState } from "react";
@@ -8,46 +14,55 @@ import { useState } from "react";
 export type TagListProps = {
     colorTheme: ColorTheme;
     tags: TagRecord[];
-    onClickDelete: (id: number) => void;
     onClickEdit: (id: number, newName: string) => void;
     onClickGoRoot: () => void;
 };
 
 export function TagList(p: TagListProps) {
     return (
-        <Stack
-            spacing={1}
+        <Box
             sx={{
-                width: 1,
                 height: 1,
-                boxSizing: "border-box",
-                padding: 1,
+                width: 1,
                 overflow: "scroll",
                 "&::-webkit-scrollbar": {
                     display: "none",
                 },
             }}
-            data-testid="tag-list-page"
         >
-            {p.tags.map((t) => {
-                return (
-                    <TagItem
-                        colorTheme={p.colorTheme}
-                        data={t}
-                        key={t.id}
-                        onClickDelete={p.onClickDelete}
-                        onClickEdit={p.onClickEdit}
-                    ></TagItem>
-                );
-            })}
-        </Stack>
+            <Box>
+                <Button
+                onClick={p.onClickGoRoot}
+                >back</Button>
+            </Box>
+            <Stack
+                spacing={1}
+                sx={{
+                    width: 1,
+                    height: 1,
+                    boxSizing: "border-box",
+                    padding: 1,
+                }}
+                data-testid="tag-list-page"
+            >
+                {p.tags.map((t) => {
+                    return (
+                        <TagItem
+                            colorTheme={p.colorTheme}
+                            data={t}
+                            key={t.id}
+                            onClickEdit={p.onClickEdit}
+                        ></TagItem>
+                    );
+                })}
+            </Stack>
+        </Box>
     );
 }
 
 type TagItemProps = {
     data: TagRecord;
     colorTheme: ColorTheme;
-    onClickDelete: (id: number) => void;
     onClickEdit: (id: number, newName: string) => void;
 };
 
@@ -118,11 +133,6 @@ function TagItem(p: TagItemProps) {
                         }
                     >
                         <EditIcon></EditIcon>
-                    </IconButton>
-                    <IconButton
-                        onClick={() => p.onClickDelete(Number(p.data.id))}
-                    >
-                        <DeleteIcon></DeleteIcon>
                     </IconButton>
                 </Grid2>
             </Grid2>
