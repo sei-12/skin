@@ -20,6 +20,9 @@ export function useSearchBookmarkPage(): SearchBookmarkProps {
     const { addNotice } = useNotice()
     const navigate = useNavigate()
 
+    const onClickGoTagList = () => {
+        navigate("/tag-list")
+    }
 
     const onClickRemove = async (id: number) => {
         await DB.deleteBookmark(id)
@@ -250,5 +253,6 @@ export function useSearchBookmarkPage(): SearchBookmarkProps {
         tagInputBoxProps: tagInputBoxHook.props,
         colorTheme,
         onClickAdd: navigateCreateNewBookmark,
+        onClickGoTagList,
     };
 }

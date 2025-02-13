@@ -339,7 +339,12 @@ describe("App.SearchBookmark", () => {
 
     test("test10 AddButton", async () => {
         const user = userEvent.setup();
-        const addButton = screen.getByTestId("add-button");
+        const menubutton = screen.getByTestId(
+            "search-bookmark-menu-button"
+        );
+        await user.click(menubutton);
+        const addButton = screen.getByText("Create new Bookmark");
+
         await user.click(addButton);
         expect(screen.getByTestId("create-new-bookmark")).toBeInTheDocument();
     });
@@ -348,7 +353,12 @@ describe("App.SearchBookmark", () => {
         const user = userEvent.setup();
 
         const toCreate = async () => {
-            const addButton = screen.getByTestId("add-button");
+            const menubutton = screen.getByTestId(
+                "search-bookmark-menu-button"
+            );
+            await user.click(menubutton);
+            const addButton = screen.getByText("Create new Bookmark");
+    
             await user.click(addButton);
             expect(
                 screen.getByTestId("create-new-bookmark")

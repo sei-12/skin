@@ -7,6 +7,7 @@ import {
     CreateNewBookmarkPage,
     EditBookmarkPage,
     SearchBookmarkPage,
+    TagListPage,
 } from "./pages/pages";
 import { ConfigProvider } from "./providers/configProvider";
 import { muiTheme } from "./vanilla/theme";
@@ -43,6 +44,10 @@ export function App() {
                                         element={
                                             <EditBookmarkPage></EditBookmarkPage>
                                         }
+                                    ></Route>
+                                    <Route
+                                        path="/tag-list"
+                                        element={<TagListPage></TagListPage>}
                                     ></Route>
                                 </Routes>
                             </BrowserRouter>

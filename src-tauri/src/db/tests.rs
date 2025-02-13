@@ -1099,3 +1099,59 @@ fn test20() -> Result<(), CommandError> {
         Ok(())
     })
 }
+
+#[test]
+fn test21() -> Result<(), CommandError> {
+    tauri::async_runtime::block_on(async {
+        let app = tauri::test::mock_app();
+        let path = tmp_dir();
+
+        let con = connect(path).await.expect("error connect");
+        app.manage(con);
+
+        commands::insert_tags_if_not_exists(
+            &app.state(),
+            &vec![
+                "tag2".to_string(),
+                "tag3".to_string(),
+                "tag4".to_string(),
+                "tag5".to_string(),
+                "tag6".to_string(),
+                "tag7".to_string(),
+                "tag8".to_string(),
+                "tag9".to_string(),
+                "tag10".to_string(),
+                "tag11".to_string(),
+                "tag12".to_string(),
+                "tag13".to_string(),
+                "tag14".to_string(),
+                "tag15".to_string(),
+                "tag16".to_string(),
+                "tag17".to_string(),
+                "tag18".to_string(),
+                "tag19".to_string(),
+            ],
+        )
+        .await?;
+
+        let result = commands::fetch_tags(app.state()).await?;
+        assert_eq!(result.len(), 18);
+
+        let result = commands::fuzzy_find_tag(app.state(), "hello".to_string()).await?;
+        assert_eq!(result.len(), 0);
+        let result = commands::fuzzy_find_tag(app.state(), "tag".to_string()).await?;
+        assert_eq!(result.len(), 18);
+
+        commands::edit_tag(app.state(), 2, "helloworld".to_string()).await?;
+        let result = commands::fuzzy_find_tag(app.state(), "hello".to_string()).await?;
+        assert_eq!(result.len(), 1);
+
+        let result = commands::fuzzy_find_tag(app.state(), "tag".to_string()).await?;
+        assert_eq!(result.len(), 17);
+
+        let result = commands::edit_tag(app.state(), 3, "".to_string()).await;
+        assert!(result.is_err());
+
+        Ok(())
+    })
+}
