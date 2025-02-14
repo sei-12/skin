@@ -68,7 +68,6 @@ export function useSuggestionWindow(
 
     const props: SuggestionWindowProps = {
         items,
-        predicate,
         focusIndex,
         itemRefs,
         colorTheme,

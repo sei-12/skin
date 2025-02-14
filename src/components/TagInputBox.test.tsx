@@ -12,7 +12,6 @@ function bulidSwProps(): SuggestionWindowProps {
     return {
         colorTheme: DEFAULT_CONFIG.colorTheme,
         focusIndex: 0,
-        predicate: "",
         items: [],
         itemRefs: renderHook(() => useRef<(HTMLDivElement | null)[]>([])).result
             .current,

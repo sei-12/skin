@@ -18,7 +18,6 @@ describe("SuggestionWindow", () => {
                 ["ello", false],
             ],
         ];
-        const predicate = "h";
         const focusIndex = 0;
         const colorTheme = DEFAULT_CONFIG.colorTheme;
         const refs = renderHook(() => {
@@ -28,7 +27,6 @@ describe("SuggestionWindow", () => {
         const { container } = render(
             <SuggestionWindow
                 items={items}
-                predicate={predicate}
                 focusIndex={focusIndex}
                 itemRefs={refs.result.current}
                 colorTheme={colorTheme}
@@ -81,8 +79,6 @@ describe("TextBlock", () => {
 
 describe("Item", () => {
     test("renders item with highlighted blocks", () => {
-        const predicate = "abc";
-        // const item = "aabbcc";
         const item: [string, boolean][] = [
             ["a", true],
             ["a", false],
@@ -93,7 +89,6 @@ describe("Item", () => {
         ];
         render(
             <SuggestionWindowItem
-                predicate={predicate}
                 item={item}
                 focus={false}
                 ref={null}

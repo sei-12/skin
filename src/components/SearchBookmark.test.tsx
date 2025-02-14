@@ -26,7 +26,6 @@ function buildProps(): SearchBookmarkProps {
                 focusIndex: 0,
                 items: [],
                 itemRefs: itemRefs.result.current,
-                predicate: "",
             },
         },
 
