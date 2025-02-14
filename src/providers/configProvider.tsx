@@ -15,7 +15,7 @@ export function ConfigProvider({ children }: { children: React.ReactNode }) {
     const [config, setConfig] = useState<Config>(DEFAULT_CONFIG);
     const { addNotice } = useNotice();
 
-    useEffect(() => {
+    const getConfig = () => {
         invoke<Config>("get_config")
             .then((con) => {
                 setConfig(con);
@@ -26,18 +26,12 @@ export function ConfigProvider({ children }: { children: React.ReactNode }) {
                     serverity: "error",
                 });
             });
+    };
 
+    useEffect(() => {
+        getConfig();
         listen("change-config-file", () => {
-            invoke<Config>("get_config")
-                .then((con) => {
-                    setConfig(con);
-                })
-                .catch(() => {
-                    addNotice({
-                        message: "ERROR!",
-                        serverity: "error",
-                    });
-                });
+            getConfig();
         });
     }, []);
 
