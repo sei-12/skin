@@ -1,4 +1,5 @@
 import { describe, expect, test, vi } from "vitest";
+import "@testing-library/jest-dom/vitest";
 import { SearchBookmark, type SearchBookmarkProps } from "./SearchBookmark";
 import { DEFAULT_CONFIG } from "../providers/configProvider";
 import { useRef } from "react";
@@ -113,4 +114,37 @@ describe("SearchBookmark", () => {
             typeScring
         );
     });
+    
+    test("case4 onClickGoTagList", async () => {
+        const props = buildProps();
+        const user = userEvent.setup();
+        render(<SearchBookmark {...props}></SearchBookmark>);
+
+        const menubutton = screen.getByTestId("search-bookmark-menu-button");
+        await user.click(menubutton);
+        const goTagList = screen.getByText("Tag list");
+
+        expect(props.onClickGoTagList).toBeCalledTimes(0);
+        await user.click(goTagList);
+        expect(props.onClickGoTagList).toBeCalledTimes(1);
+        await user.click(goTagList);
+        expect(props.onClickGoTagList).toBeCalledTimes(2);
+    });
+
+    
+    test("case5 menuを閉じる", async () => {
+        const props = buildProps();
+        const user = userEvent.setup();
+        render(<SearchBookmark {...props}></SearchBookmark>);
+
+        const menubutton = screen.getByTestId("search-bookmark-menu-button");
+        await user.click(menubutton);
+
+        const goTagList = screen.getByText("Tag list");
+        expect(goTagList).toBeVisible()
+
+        await user.click(menubutton);
+        expect(() => screen.getByDisplayValue("Tag list")).toThrow()
+    });
+
 });

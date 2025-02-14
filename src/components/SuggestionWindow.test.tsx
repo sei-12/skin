@@ -48,6 +48,55 @@ describe("SuggestionWindow", () => {
         );
         expect(unmatchBlock).toMatchSnapshot();
     });
+
+    test("test2", () => {
+        const items: [string, boolean][][] = [[["helloworld", true]]];
+        const focusIndex = 0;
+        const colorTheme = DEFAULT_CONFIG.colorTheme;
+        const refs = renderHook(() => {
+            return useRef<(HTMLDivElement | null)[]>([]);
+        });
+
+        render(
+            <SuggestionWindow
+                items={items}
+                focusIndex={focusIndex}
+                itemRefs={refs.result.current}
+                colorTheme={colorTheme}
+            ></SuggestionWindow>
+        );
+
+        const matchBlock = screen.getByText("helloworld");
+        expect(matchBlock).toBeInTheDocument();
+        expect(matchBlock).toHaveStyle(
+            "color: " + colorTheme.suggestionWindow.match + ";"
+        );
+    });
+
+    test("test3", () => {
+        const items: [string, boolean][][] = [[["helloworld", false]]];
+        const focusIndex = 0;
+        const colorTheme = DEFAULT_CONFIG.colorTheme;
+        const refs = renderHook(() => {
+            return useRef<(HTMLDivElement | null)[]>([]);
+        });
+
+        render(
+            <SuggestionWindow
+                items={items}
+                focusIndex={focusIndex}
+                itemRefs={refs.result.current}
+                colorTheme={colorTheme}
+            ></SuggestionWindow>
+        );
+
+        const unmatchBlock = screen.getByText("helloworld");
+        expect(unmatchBlock).toBeInTheDocument();
+        expect(unmatchBlock).toHaveStyle(
+            "color: " + colorTheme.suggestionWindow.unmatch + ";"
+        );
+        expect(unmatchBlock).toMatchSnapshot();
+    });
 });
 
 describe("TextBlock", () => {
