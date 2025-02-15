@@ -40,3 +40,11 @@ exports[`SuggestionWindow > items 3`] = `
   ello
 </p>
 `;
+
+exports[`SuggestionWindow > test3 1`] = `
+<p
+  class="MuiTypography-root MuiTypography-body1 css-unoo7q-MuiTypography-root"
+>
+  helloworld
+</p>
+`;

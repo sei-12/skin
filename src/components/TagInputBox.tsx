@@ -20,6 +20,7 @@ export type TagInputBoxProps = {
 export const TagInputBox = (p: TagInputBoxProps) => {
     return (
         <Box
+            data-testid="taginputbox-root"
             sx={{
                 padding: 1,
                 position: "relative",

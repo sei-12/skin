@@ -5,10 +5,10 @@ import {
 } from "./SuggestionWindow";
 import { render, renderHook, screen } from "@testing-library/react";
 import "@testing-library/jest-dom/vitest";
-import { describe, expect, test } from "vitest";
+import { describe, expect, test, vi } from "vitest";
 import { useRef } from "react";
 import { DEFAULT_CONFIG } from "../providers/configProvider";
-import { highlightMatchedBlocks } from "../hooks/SuggestionWindow";
+import userEvent from "@testing-library/user-event";
 
 describe("SuggestionWindow", () => {
     test("items", () => {
@@ -18,7 +18,6 @@ describe("SuggestionWindow", () => {
                 ["ello", false],
             ],
         ];
-        const predicate = "h";
         const focusIndex = 0;
         const colorTheme = DEFAULT_CONFIG.colorTheme;
         const refs = renderHook(() => {
@@ -28,7 +27,7 @@ describe("SuggestionWindow", () => {
         const { container } = render(
             <SuggestionWindow
                 items={items}
-                predicate={predicate}
+                onClickItem={vi.fn()}
                 focusIndex={focusIndex}
                 itemRefs={refs.result.current}
                 colorTheme={colorTheme}
@@ -50,6 +49,100 @@ describe("SuggestionWindow", () => {
             "color: " + colorTheme.suggestionWindow.unmatch + ";"
         );
         expect(unmatchBlock).toMatchSnapshot();
+    });
+
+    test("test2", () => {
+        const items: [string, boolean][][] = [[["helloworld", true]]];
+        const focusIndex = 0;
+        const colorTheme = DEFAULT_CONFIG.colorTheme;
+        const refs = renderHook(() => {
+            return useRef<(HTMLDivElement | null)[]>([]);
+        });
+
+        render(
+            <SuggestionWindow
+                items={items}
+                onClickItem={vi.fn()}
+                focusIndex={focusIndex}
+                itemRefs={refs.result.current}
+                colorTheme={colorTheme}
+            ></SuggestionWindow>
+        );
+
+        const matchBlock = screen.getByText("helloworld");
+        expect(matchBlock).toBeInTheDocument();
+        expect(matchBlock).toHaveStyle(
+            "color: " + colorTheme.suggestionWindow.match + ";"
+        );
+    });
+
+    test("test3", () => {
+        const items: [string, boolean][][] = [[["helloworld", false]]];
+        const focusIndex = 0;
+        const colorTheme = DEFAULT_CONFIG.colorTheme;
+        const refs = renderHook(() => {
+            return useRef<(HTMLDivElement | null)[]>([]);
+        });
+
+        render(
+            <SuggestionWindow
+                items={items}
+                onClickItem={vi.fn()}
+                focusIndex={focusIndex}
+                itemRefs={refs.result.current}
+                colorTheme={colorTheme}
+            ></SuggestionWindow>
+        );
+
+        const unmatchBlock = screen.getByText("helloworld");
+        expect(unmatchBlock).toBeInTheDocument();
+        expect(unmatchBlock).toHaveStyle(
+            "color: " + colorTheme.suggestionWindow.unmatch + ";"
+        );
+        expect(unmatchBlock).toMatchSnapshot();
+    });
+
+    test("test3", async () => {
+        const items: [string, boolean][][] = [
+            [["helloworld", true]],
+            [["hello", true]],
+            [["aaaaa", true]],
+        ];
+
+        const focusIndex = 0;
+        const colorTheme = DEFAULT_CONFIG.colorTheme;
+        const refs = renderHook(() => {
+            return useRef<(HTMLDivElement | null)[]>([]);
+        });
+
+        const onClickItem = vi.fn();
+        render(
+            <SuggestionWindow
+                items={items}
+                onClickItem={onClickItem}
+                focusIndex={focusIndex}
+                itemRefs={refs.result.current}
+                colorTheme={colorTheme}
+            ></SuggestionWindow>
+        );
+
+        const user = userEvent.setup();
+
+        await user.click(screen.getByText("helloworld"))
+        expect(onClickItem).toBeCalledTimes(1)
+        expect(onClickItem).toBeCalledWith(0)
+
+        await user.click(screen.getByText("hello"))
+        expect(onClickItem).toBeCalledTimes(2)
+        expect(onClickItem).toBeCalledWith(1)
+
+        await user.click(screen.getByText("aaaaa"))
+        expect(onClickItem).toBeCalledTimes(3)
+        expect(onClickItem).toBeCalledWith(2)
+
+        await user.click(screen.getByText("helloworld"))
+        expect(onClickItem).toBeCalledTimes(4)
+        expect(onClickItem).toBeCalledWith(0)
     });
 });
 
@@ -81,8 +174,6 @@ describe("TextBlock", () => {
 
 describe("Item", () => {
     test("renders item with highlighted blocks", () => {
-        const predicate = "abc";
-        // const item = "aabbcc";
         const item: [string, boolean][] = [
             ["a", true],
             ["a", false],
@@ -93,9 +184,9 @@ describe("Item", () => {
         ];
         render(
             <SuggestionWindowItem
-                predicate={predicate}
                 item={item}
                 focus={false}
+                onClick={() => {}}
                 ref={null}
                 colorTheme={DEFAULT_CONFIG.colorTheme}
             />
@@ -108,60 +199,32 @@ describe("Item", () => {
         expect(screen.getAllByText("c")[0]).toBeInTheDocument();
         expect(screen.getAllByText("c")[1]).toBeInTheDocument();
     });
-});
 
-describe("highlightMatchedBlocks", () => {
-    test("完全一致の場合", () => {
-        const result = highlightMatchedBlocks("abc", "abc");
-        expect(result).toEqual([{ isMatch: true, text: "abc" }]);
-    });
+    test("test click", async () => {
+        const user = userEvent.setup();
+        const item: [string, boolean][] = [
+            ["a", true],
+            ["a", false],
+            ["b", true],
+            ["b", false],
+            ["c", true],
+            ["c", false],
+        ];
 
-    test("部分一致の場合", () => {
-        const result = highlightMatchedBlocks("abc", "aXbYc");
-        expect(result).toEqual([
-            { isMatch: true, text: "a" },
-            { isMatch: false, text: "X" },
-            { isMatch: true, text: "b" },
-            { isMatch: false, text: "Y" },
-            { isMatch: true, text: "c" },
-        ]);
-    });
+        const onClick = vi.fn();
+        render(
+            <SuggestionWindowItem
+                item={item}
+                focus={false}
+                onClick={onClick}
+                ref={null}
+                colorTheme={DEFAULT_CONFIG.colorTheme}
+            />
+        );
 
-    test("大文字小文字を区別しない", () => {
-        const result = highlightMatchedBlocks("abc", "aBc");
-        expect(result).toEqual([{ isMatch: true, text: "aBc" }]);
-    });
-
-    test("一致する文字がない場合", () => {
-        const result = highlightMatchedBlocks("abc", "xyz");
-        expect(result).toEqual([{ isMatch: false, text: "xyz" }]);
-    });
-
-    test("predicateが空の場合", () => {
-        const result = highlightMatchedBlocks("", "abc");
-        expect(result).toEqual([{ isMatch: false, text: "abc" }]);
-    });
-
-    test("itemが空の場合", () => {
-        const result = highlightMatchedBlocks("abc", "");
-        expect(result).toEqual([]);
-    });
-
-    test("両方が空の場合", () => {
-        const result = highlightMatchedBlocks("", "");
-        expect(result).toEqual([]);
-    });
-
-    test("長いpredicateと短いitem", () => {
-        const result = highlightMatchedBlocks("abcdef", "abc");
-        expect(result).toEqual([{ isMatch: true, text: "abc" }]);
-    });
-
-    test("短いpredicateと長いitem", () => {
-        const result = highlightMatchedBlocks("abc", "abcdef");
-        expect(result).toEqual([
-            { isMatch: true, text: "abc" },
-            { isMatch: false, text: "def" },
-        ]);
+        expect(onClick).toBeCalledTimes(0);
+        const a = screen.getByTestId("suggestion-item");
+        await user.click(a);
+        expect(onClick).toBeCalledTimes(1);
     });
 });

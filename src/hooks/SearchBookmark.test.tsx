@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, test, vi } from "vitest";
-import { act, render, screen } from "@testing-library/react";
+import { act, render, screen, within } from "@testing-library/react";
 import "@testing-library/jest-dom/vitest";
 import { HotkeysProvider } from "react-hotkeys-hook";
 import userEvent from "@testing-library/user-event";
@@ -234,5 +234,46 @@ describe("SearchBookmark", () => {
         // 通知が表示されている
         expect(screen.getByText("SUCCESS!")).toBeInTheDocument();
         expect(DB.deleteBookmark).toBeCalledTimes(1);
+    });
+
+    test("test7 クリックでタグを追加", async () => {
+        // https://stackoverflow.com/questions/53271193/typeerror-scrollintoview-is-not-a-function
+        window.HTMLElement.prototype.scrollIntoView = function () {};
+
+        const user = userEvent.setup();
+        const inputBox = screen.getByPlaceholderText("/");
+
+        expect(DB.fetchBookmarks).toBeCalledTimes(1);
+        await user.type(inputBox, "t");
+        expect(screen.getAllByTestId("suggestion-item").length).toBe(8);
+        expect(DB.fuzzyFindTag).toBeCalledTimes(1);
+
+        await user.click(screen.getByText("javascript"));
+        expect(screen.getAllByTestId("bkmkitem").length).toBe(3);
+        expect(screen.getAllByText("javascript").length).toBe(1);
+        expect(screen.getAllByText("#javascript").length).toBe(3);
+        await user.type(inputBox, "{Backspace}");
+        
+        await user.type(inputBox, "t");
+        await user.click(screen.getByText("typescript"));
+        expect(screen.getAllByText("typescript").length).toBe(1);
+        await user.type(inputBox, "{Backspace}");
+
+        await user.type(inputBox, "t");
+        await user.click(screen.getByText("python"));
+        expect(screen.getAllByText("python").length).toBe(1);
+        await user.type(inputBox, "{Backspace}");
+        
+        await user.type(inputBox, "t");
+        await user.click(screen.getByText("python"));
+        await user.type(inputBox, "t");
+        await user.click(screen.getByText("typescript"));
+        await user.type(inputBox, "kotl");
+        await user.click(screen.getByText("kotlin"));
+
+        const root = screen.getByTestId("taginputbox-root")
+        expect(within(root).getAllByText("typescript").length).toBe(1);
+        expect(within(root).getAllByText("python").length).toBe(1);
+        expect(within(root).getAllByText("kotlin").length).toBe(1);
     });
 });

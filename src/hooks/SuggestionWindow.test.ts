@@ -37,8 +37,10 @@ describe("useSuggestionWindow", () => {
         const mocked_findTagMethod = makeMockedFindTagMethod()
         const mocked_getInputedTags = makeMockedGetInputedTags()
 
+        const onClickItem = vi.fn()
         const hook = renderHook(() => useSuggestionWindow(
             mocked_findTagMethod,
+            onClickItem,
             mocked_getInputedTags
         ))
 

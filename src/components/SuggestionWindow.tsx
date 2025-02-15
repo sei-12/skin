@@ -10,10 +10,10 @@ export type FindTagMethod = (
 
 export type SuggestionWindowProps = {
     items: [string, boolean][][];
-    predicate: string;
     focusIndex: number;
     itemRefs: React.MutableRefObject<(HTMLDivElement | null)[]>;
     colorTheme: ColorTheme;
+    onClickItem: (index: number) => void;
 };
 
 export function SuggestionWindow(p: SuggestionWindowProps) {
@@ -40,11 +40,11 @@ export function SuggestionWindow(p: SuggestionWindowProps) {
             {p.items.map((item, i) => {
                 return (
                     <SuggestionWindowItem
-                        predicate={p.predicate}
                         colorTheme={p.colorTheme}
                         focus={p.focusIndex === i}
                         item={item}
                         key={i}
+                        onClick={() => p.onClickItem(i)}
                         ref={(el) => (p.itemRefs.current[i] = el)}
                     ></SuggestionWindowItem>
                 );
@@ -54,16 +54,17 @@ export function SuggestionWindow(p: SuggestionWindowProps) {
 }
 
 type ItemProps = {
-    predicate: string;
     item: [string, boolean][];
     focus: boolean;
     colorTheme: ColorTheme;
+    onClick: () => void;
 };
 
 export const SuggestionWindowItem = forwardRef<HTMLDivElement, ItemProps>(
     (p, ref) => {
         return (
             <Box
+                onClick={p.onClick}
                 data-testid="suggestion-item"
                 ref={ref}
                 sx={{
