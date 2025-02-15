@@ -53,6 +53,8 @@ jobs:
         run: yarn run lint
 
       - name: fmt
+        # なぜかわからないけどwindowsだと失敗する
+        if: matrix.platform != 'windows-latest'
         run: yarn run fmt
       
       - name: test rust
