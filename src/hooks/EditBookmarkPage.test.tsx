@@ -49,7 +49,7 @@ describe("EditBookmarkPage", () => {
             () => {
                 return useEditBookmarkPage();
             },
-            { wrapper }
+            { wrapper },
         );
 
         expect(DB.getBookmark).toBeCalledWith(1);
@@ -98,7 +98,7 @@ describe("EditBookmarkPage", () => {
             () => {
                 return useEditBookmarkPage();
             },
-            { wrapper }
+            { wrapper },
         );
 
         expect(DB.getBookmark).toBeCalledWith(1);

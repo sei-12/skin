@@ -1,11 +1,4 @@
-import {
-    Box,
-    Button,
-    Grid2,
-    Stack,
-    styled,
-    TextField,
-} from "@mui/material";
+import { Box, Button, Grid2, Stack, styled, TextField } from "@mui/material";
 import type { TagRecord } from "../../src-tauri/bindings/export/DbModels";
 import EditIcon from "@mui/icons-material/Edit";
 import type { ColorTheme } from "../../src-tauri/bindings/export/ColorTheme";
@@ -31,9 +24,7 @@ export function TagList(p: TagListProps) {
             }}
         >
             <Box>
-                <Button
-                onClick={p.onClickGoRoot}
-                >back</Button>
+                <Button onClick={p.onClickGoRoot}>back</Button>
             </Box>
             <Stack
                 spacing={1}

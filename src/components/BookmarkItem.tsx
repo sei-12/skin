@@ -92,7 +92,8 @@ export const BookmarkItem = forwardRef<HTMLDivElement, BookmarkItemProps>(
                                 color: p.colorTheme.bookmarkItem.desc,
                             }}
                         >
-                            created at {p.data.created_at === null
+                            created at{" "}
+                            {p.data.created_at === null
                                 ? "----/--/--"
                                 : p.data.created_at.split("-").join("/")}
                         </Typography>
@@ -116,7 +117,7 @@ export const BookmarkItem = forwardRef<HTMLDivElement, BookmarkItemProps>(
                 </Card>
             </div>
         );
-    }
+    },
 );
 
 function TagItem(p: { text: string; colorTheme: ColorTheme }) {

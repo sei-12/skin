@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, test, vi } from "vitest";
-import { act, render, screen  } from "@testing-library/react";
+import { act, render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom/vitest";
 import userEvent from "@testing-library/user-event";
 import { startMockWindowVisibleController } from "../services/windowVisibleController.test";
@@ -36,12 +36,10 @@ describe("autoInputUrl", () => {
         vi.clearAllMocks();
         startMockWindowVisibleController();
         startMockDB();
-
     });
 
     test("test1", async () => {
-
-        startMockClipboardManager("https://hello_world")
+        startMockClipboardManager("https://hello_world");
         await act(async () => {
             render(<App></App>);
         });
@@ -49,11 +47,14 @@ describe("autoInputUrl", () => {
         const user = userEvent.setup();
         await user.keyboard("{Control>}A{/Control}");
 
-        const urlInputBox: HTMLInputElement = screen.getByPlaceholderText("url");
-        const titleInputBox: HTMLInputElement = screen.getByPlaceholderText("title");
-        const descInputBox: HTMLInputElement = screen.getByPlaceholderText("desc");
-        expect(urlInputBox.value).toBe("https://hello_world")
-        expect(titleInputBox.value).toBe("a")
-        expect(descInputBox.value).toBe("b")
+        const urlInputBox: HTMLInputElement =
+            screen.getByPlaceholderText("url");
+        const titleInputBox: HTMLInputElement =
+            screen.getByPlaceholderText("title");
+        const descInputBox: HTMLInputElement =
+            screen.getByPlaceholderText("desc");
+        expect(urlInputBox.value).toBe("https://hello_world");
+        expect(titleInputBox.value).toBe("a");
+        expect(descInputBox.value).toBe("b");
     });
 });

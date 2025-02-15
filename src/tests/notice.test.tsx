@@ -134,6 +134,5 @@ describe("Notice", () => {
         expect(screen.getByText("ERROR!")).toBeInTheDocument();
 
         expect(screen.getByTestId("create-new-bookmark")).toBeInTheDocument();
-
     });
 });

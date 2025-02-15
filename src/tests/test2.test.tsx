@@ -47,13 +47,13 @@ describe("App.SearchBookmark2", () => {
         const menubutton = screen.getByTestId("search-bookmark-menu-button");
         expect(menubutton).toBeInTheDocument();
         expect(menubutton).toHaveStyle(
-            "background-color: " + DEFAULT_CONFIG.colorTheme.addButton.bgColor
+            "background-color: " + DEFAULT_CONFIG.colorTheme.addButton.bgColor,
         );
         expect(menubutton).toHaveStyle(
-            "color: " + DEFAULT_CONFIG.colorTheme.addButton.color
+            "color: " + DEFAULT_CONFIG.colorTheme.addButton.color,
         );
         expect(menubutton).toHaveStyle(
-            "border-color: " + DEFAULT_CONFIG.colorTheme.addButton.borderColor
+            "border-color: " + DEFAULT_CONFIG.colorTheme.addButton.borderColor,
         );
     });
 
@@ -63,7 +63,7 @@ describe("App.SearchBookmark2", () => {
             expect(screen.getAllByTestId("bkmkitem").length).toBe(20);
             const user = userEvent.setup();
             const menubutton = screen.getByTestId(
-                "search-bookmark-menu-button"
+                "search-bookmark-menu-button",
             );
             await user.click(menubutton);
             const addButton = screen.getByText("Create new Bookmark");
@@ -74,7 +74,7 @@ describe("App.SearchBookmark2", () => {
             expect(screen.getAllByTestId("bkmkitem").length).toBe(20);
             const user = userEvent.setup();
             const menubutton = screen.getByTestId(
-                "search-bookmark-menu-button"
+                "search-bookmark-menu-button",
             );
             await user.click(menubutton);
             const addButton = screen.getByText("Create new Bookmark");
@@ -85,7 +85,7 @@ describe("App.SearchBookmark2", () => {
             expect(screen.getAllByTestId("bkmkitem").length).toBe(20);
             const user = userEvent.setup();
             const menubutton = screen.getByTestId(
-                "search-bookmark-menu-button"
+                "search-bookmark-menu-button",
             );
             await user.click(menubutton);
             const addButton = screen.getByText("Create new Bookmark");
@@ -97,7 +97,7 @@ describe("App.SearchBookmark2", () => {
             expect(screen.getAllByTestId("bkmkitem").length).toBe(20);
             const user = userEvent.setup();
             const menubutton = screen.getByTestId(
-                "search-bookmark-menu-button"
+                "search-bookmark-menu-button",
             );
             await user.click(menubutton);
             const addButton = screen.getByText("Create new Bookmark");

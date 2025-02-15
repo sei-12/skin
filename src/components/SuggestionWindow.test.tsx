@@ -31,7 +31,7 @@ describe("SuggestionWindow", () => {
                 focusIndex={focusIndex}
                 itemRefs={refs.result.current}
                 colorTheme={colorTheme}
-            ></SuggestionWindow>
+            ></SuggestionWindow>,
         );
 
         expect(container).matchSnapshot();
@@ -39,14 +39,14 @@ describe("SuggestionWindow", () => {
         const matchBlock = screen.getByText("h");
         expect(matchBlock).toBeInTheDocument();
         expect(matchBlock).toHaveStyle(
-            "color: " + colorTheme.suggestionWindow.match + ";"
+            "color: " + colorTheme.suggestionWindow.match + ";",
         );
         expect(matchBlock).toMatchSnapshot();
 
         const unmatchBlock = screen.getByText("ello");
         expect(unmatchBlock).toBeInTheDocument();
         expect(unmatchBlock).toHaveStyle(
-            "color: " + colorTheme.suggestionWindow.unmatch + ";"
+            "color: " + colorTheme.suggestionWindow.unmatch + ";",
         );
         expect(unmatchBlock).toMatchSnapshot();
     });
@@ -66,13 +66,13 @@ describe("SuggestionWindow", () => {
                 focusIndex={focusIndex}
                 itemRefs={refs.result.current}
                 colorTheme={colorTheme}
-            ></SuggestionWindow>
+            ></SuggestionWindow>,
         );
 
         const matchBlock = screen.getByText("helloworld");
         expect(matchBlock).toBeInTheDocument();
         expect(matchBlock).toHaveStyle(
-            "color: " + colorTheme.suggestionWindow.match + ";"
+            "color: " + colorTheme.suggestionWindow.match + ";",
         );
     });
 
@@ -91,13 +91,13 @@ describe("SuggestionWindow", () => {
                 focusIndex={focusIndex}
                 itemRefs={refs.result.current}
                 colorTheme={colorTheme}
-            ></SuggestionWindow>
+            ></SuggestionWindow>,
         );
 
         const unmatchBlock = screen.getByText("helloworld");
         expect(unmatchBlock).toBeInTheDocument();
         expect(unmatchBlock).toHaveStyle(
-            "color: " + colorTheme.suggestionWindow.unmatch + ";"
+            "color: " + colorTheme.suggestionWindow.unmatch + ";",
         );
         expect(unmatchBlock).toMatchSnapshot();
     });
@@ -123,26 +123,26 @@ describe("SuggestionWindow", () => {
                 focusIndex={focusIndex}
                 itemRefs={refs.result.current}
                 colorTheme={colorTheme}
-            ></SuggestionWindow>
+            ></SuggestionWindow>,
         );
 
         const user = userEvent.setup();
 
-        await user.click(screen.getByText("helloworld"))
-        expect(onClickItem).toBeCalledTimes(1)
-        expect(onClickItem).toBeCalledWith(0)
+        await user.click(screen.getByText("helloworld"));
+        expect(onClickItem).toBeCalledTimes(1);
+        expect(onClickItem).toBeCalledWith(0);
 
-        await user.click(screen.getByText("hello"))
-        expect(onClickItem).toBeCalledTimes(2)
-        expect(onClickItem).toBeCalledWith(1)
+        await user.click(screen.getByText("hello"));
+        expect(onClickItem).toBeCalledTimes(2);
+        expect(onClickItem).toBeCalledWith(1);
 
-        await user.click(screen.getByText("aaaaa"))
-        expect(onClickItem).toBeCalledTimes(3)
-        expect(onClickItem).toBeCalledWith(2)
+        await user.click(screen.getByText("aaaaa"));
+        expect(onClickItem).toBeCalledTimes(3);
+        expect(onClickItem).toBeCalledWith(2);
 
-        await user.click(screen.getByText("helloworld"))
-        expect(onClickItem).toBeCalledTimes(4)
-        expect(onClickItem).toBeCalledWith(0)
+        await user.click(screen.getByText("helloworld"));
+        expect(onClickItem).toBeCalledTimes(4);
+        expect(onClickItem).toBeCalledWith(0);
     });
 });
 
@@ -153,7 +153,7 @@ describe("TextBlock", () => {
                 isMatch={true}
                 text="Match"
                 colorTheme={DEFAULT_CONFIG.colorTheme}
-            />
+            />,
         );
         const textElement = screen.getByText("Match");
         expect(textElement).toBeInTheDocument();
@@ -165,7 +165,7 @@ describe("TextBlock", () => {
                 isMatch={false}
                 text="Unmatch"
                 colorTheme={DEFAULT_CONFIG.colorTheme}
-            />
+            />,
         );
         const textElement = screen.getByText("Unmatch");
         expect(textElement).toBeInTheDocument();
@@ -189,7 +189,7 @@ describe("Item", () => {
                 onClick={() => {}}
                 ref={null}
                 colorTheme={DEFAULT_CONFIG.colorTheme}
-            />
+            />,
         );
 
         expect(screen.getAllByText("a")[0]).toBeInTheDocument();
@@ -219,7 +219,7 @@ describe("Item", () => {
                 onClick={onClick}
                 ref={null}
                 colorTheme={DEFAULT_CONFIG.colorTheme}
-            />
+            />,
         );
 
         expect(onClick).toBeCalledTimes(0);

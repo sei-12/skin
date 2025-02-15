@@ -38,7 +38,7 @@ describe("SearchBookmark", () => {
                     <NoticeProvider>
                         <SearchBookmarkPage></SearchBookmarkPage>
                     </NoticeProvider>
-                </HotkeysProvider>
+                </HotkeysProvider>,
             );
         });
     });
@@ -48,7 +48,7 @@ describe("SearchBookmark", () => {
         expect(screen.getByPlaceholderText("/")).not.toHaveFocus();
         await user.keyboard("/");
         const predicateInputBox = screen.getByTestId(
-            "taginputbox-predicateinputbox"
+            "taginputbox-predicateinputbox",
         );
         expect(predicateInputBox).toBeInTheDocument();
         expect(screen.getByPlaceholderText("/")).toHaveFocus();
@@ -253,7 +253,7 @@ describe("SearchBookmark", () => {
         expect(screen.getAllByText("javascript").length).toBe(1);
         expect(screen.getAllByText("#javascript").length).toBe(3);
         await user.type(inputBox, "{Backspace}");
-        
+
         await user.type(inputBox, "t");
         await user.click(screen.getByText("typescript"));
         expect(screen.getAllByText("typescript").length).toBe(1);
@@ -263,7 +263,7 @@ describe("SearchBookmark", () => {
         await user.click(screen.getByText("python"));
         expect(screen.getAllByText("python").length).toBe(1);
         await user.type(inputBox, "{Backspace}");
-        
+
         await user.type(inputBox, "t");
         await user.click(screen.getByText("python"));
         await user.type(inputBox, "t");
@@ -271,7 +271,7 @@ describe("SearchBookmark", () => {
         await user.type(inputBox, "kotl");
         await user.click(screen.getByText("kotlin"));
 
-        const root = screen.getByTestId("taginputbox-root")
+        const root = screen.getByTestId("taginputbox-root");
         expect(within(root).getAllByText("typescript").length).toBe(1);
         expect(within(root).getAllByText("python").length).toBe(1);
         expect(within(root).getAllByText("kotlin").length).toBe(1);

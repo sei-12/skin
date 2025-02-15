@@ -10,7 +10,7 @@ describe("CustomWindow", () => {
 
         expect(screen.getByText("hello")).toBeInTheDocument();
         expect(screen.getByTestId("custom-window")).toHaveStyle(
-            `background-color: ${DEFAULT_CONFIG.colorTheme.bg}`
+            `background-color: ${DEFAULT_CONFIG.colorTheme.bg}`,
         );
     });
 
@@ -18,12 +18,12 @@ describe("CustomWindow", () => {
         render(
             <CustomWindow>
                 <div data-testid="hello"></div>
-            </CustomWindow>
+            </CustomWindow>,
         );
 
         expect(screen.getByTestId("hello")).toBeInTheDocument();
         expect(screen.getByTestId("custom-window")).toHaveStyle(
-            `background-color: ${DEFAULT_CONFIG.colorTheme.bg}`
+            `background-color: ${DEFAULT_CONFIG.colorTheme.bg}`,
         );
     });
 });

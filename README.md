@@ -18,9 +18,9 @@
 
 # 特徴
 
--   グローバルホットキーからウィンドウを表示します
--   ほとんどの操作がキーボードでできます。
--   タグの入力時には IDE のようにポップアップウィンドウが表示され補完します。
+- グローバルホットキーからウィンドウを表示します
+- ほとんどの操作がキーボードでできます。
+- タグの入力時には IDE のようにポップアップウィンドウが表示され補完します。
 
 # インストール
 
@@ -52,9 +52,9 @@ brew install --cask skin
 
 # データベースの保存場所
 
--   Linux : `$XDG_DATA_HOME/com.skin.app/database.sqlite` or `$HOME/.local/share/com.skin.app/database.sqlite`
--   macOS : `$HOME/Library/Application Support/com.skin.app/database.sqlite`
--   Windows: `{FOLDERID_RoamingAppData}/com.skin.app/database.sqlite`
+- Linux : `$XDG_DATA_HOME/com.skin.app/database.sqlite` or `$HOME/.local/share/com.skin.app/database.sqlite`
+- macOS : `$HOME/Library/Application Support/com.skin.app/database.sqlite`
+- Windows: `{FOLDERID_RoamingAppData}/com.skin.app/database.sqlite`
 
 詳しくは以下を参照してください<br>
 https://docs.rs/tauri/2.2.5/tauri/path/struct.PathResolver.html#method.app_data_dir
@@ -63,9 +63,9 @@ https://docs.rs/tauri/2.2.5/tauri/path/struct.PathResolver.html#method.app_data_
 
 ### 保存場所
 
--   Linux : `$XDG_CONFIG_HOME/com.skin.app/config.json` or `$HOME/.config/com.skin.app/config.json`
--   macOS : `$HOME/Library/Application Support/com.skin.app/config.json`
--   Windows: `{FOLDERID_RoamingAppData}/com.skin.app/config.json`
+- Linux : `$XDG_CONFIG_HOME/com.skin.app/config.json` or `$HOME/.config/com.skin.app/config.json`
+- macOS : `$HOME/Library/Application Support/com.skin.app/config.json`
+- Windows: `{FOLDERID_RoamingAppData}/com.skin.app/config.json`
 
 詳しくは以下を参照してください<br>
 https://docs.rs/tauri/2.2.5/tauri/path/struct.PathResolver.html#method.app_config_dir

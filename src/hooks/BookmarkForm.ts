@@ -12,12 +12,12 @@ export function useBookmarkForm(
     onClickDone: () => void,
     onClickCancel: () => void,
     findTagMethod: FindTagMethod,
-    onChangeUrl: (url: string) => void
+    onChangeUrl: (url: string) => void,
 ) {
     const titleRef = useRef<HTMLInputElement>(null);
     const urlRef = useRef<HTMLInputElement>(null);
     const descRef = useRef<HTMLInputElement>(null);
-    const { addNotice } = useNotice()
+    const { addNotice } = useNotice();
 
     const tagInputBoxHook = useTagInputBox(findTagMethod);
 
@@ -32,18 +32,19 @@ export function useBookmarkForm(
         descRef.current.value = desc;
 
         const inputedTags = await Promise.all(
-            tags.map(t => DB.isExistsTag(t)
-                .then(a => ({ text: t, exists: a }))
-                .catch(() => {
-                    addNotice({
-                        message: "ERROR!",
-                        serverity: "error"
-                    })
-                    return { text: "ERROR", exists: false }
-                })
-            )
-        )
-        tagInputBoxHook.setInputedTags(inputedTags)
+            tags.map((t) =>
+                DB.isExistsTag(t)
+                    .then((a) => ({ text: t, exists: a }))
+                    .catch(() => {
+                        addNotice({
+                            message: "ERROR!",
+                            serverity: "error",
+                        });
+                        return { text: "ERROR", exists: false };
+                    }),
+            ),
+        );
+        tagInputBoxHook.setInputedTags(inputedTags);
     };
 
     const setUrl = (url: string) => {
@@ -56,18 +57,18 @@ export function useBookmarkForm(
     };
 
     const getInputData = useCallback(() => {
-        let title = ""
-        let url = ""
-        let desc = ""
+        let title = "";
+        let url = "";
+        let desc = "";
 
         if (titleRef.current !== null) {
-            title = titleRef.current.value
+            title = titleRef.current.value;
         }
         if (urlRef.current !== null) {
-            url = urlRef.current.value
+            url = urlRef.current.value;
         }
         if (descRef.current !== null) {
-            desc = descRef.current.value
+            desc = descRef.current.value;
         }
 
         return {
@@ -79,8 +80,7 @@ export function useBookmarkForm(
     }, [tagInputBoxHook.inputedTags]);
 
     const takeInputTag = useCallback(async () => {
-        const inputBox =
-            tagInputBoxHook.inputBoxRef.current;
+        const inputBox = tagInputBoxHook.inputBoxRef.current;
         if (inputBox === null) {
             return;
         }
@@ -91,19 +91,19 @@ export function useBookmarkForm(
             return;
         }
 
-        const inputedTags = tagInputBoxHook.inputedTags.map(e => e.text)
+        const inputedTags = tagInputBoxHook.inputedTags.map((e) => e.text);
 
         const has = inputedTags.find((t) => t == item) !== undefined;
         if (has) {
-            inputBox.value = ""
+            inputBox.value = "";
             return;
         }
 
         const exists = await DB.isExistsTag(item).catch(() => {
             addNotice({
                 message: "ERROR!",
-                serverity: "error"
-            })
+                serverity: "error",
+            });
             return false;
         });
 
@@ -112,13 +112,16 @@ export function useBookmarkForm(
         });
         tagInputBoxHook.suggestionWindowHook.close();
         inputBox.value = "";
-    }, [tagInputBoxHook.inputedTags])
+    }, [tagInputBoxHook.inputedTags]);
 
     const onKeyDownBackspace = useCallback(() => {
-        const hasFocus = tagInputBoxHook.inputBoxRef.current == document.activeElement
-        if (!hasFocus) { return }
-        tagInputBoxHook.popInputedTag()
-    }, [tagInputBoxHook])
+        const hasFocus =
+            tagInputBoxHook.inputBoxRef.current == document.activeElement;
+        if (!hasFocus) {
+            return;
+        }
+        tagInputBoxHook.popInputedTag();
+    }, [tagInputBoxHook]);
 
     const clearData = () => {
         if (titleRef.current === null) {
@@ -139,40 +142,29 @@ export function useBookmarkForm(
     };
 
     const appHotkeyHook = useAppHotkey();
-    const { keybinds } = useConfig()
+    const { keybinds } = useConfig();
 
     useEffect(() => {
-        if (
-            tagInputBoxHook.suggestionWindowHook.items
-                .length === 0
-        ) {
+        if (tagInputBoxHook.suggestionWindowHook.items.length === 0) {
             appHotkeyHook.switchScope(HOTKEY_SCOPES.CREATE_NEW_BOOKMARK);
         } else {
             appHotkeyHook.switchScope(
-                HOTKEY_SCOPES.CREATE_NEW_BOOKMARK_SUGGESTION_WINDOW
+                HOTKEY_SCOPES.CREATE_NEW_BOOKMARK_SUGGESTION_WINDOW,
             );
         }
     }, [tagInputBoxHook.suggestionWindowHook.items]);
 
-    useHotkeys(
-        keybinds.cancelCreateNewBookmark,
-        onClickCancel,
-        {
-            scopes: [HOTKEY_SCOPES.CREATE_NEW_BOOKMARK],
-            preventDefault: true,
-            enableOnFormTags: true,
-        },
-    );
+    useHotkeys(keybinds.cancelCreateNewBookmark, onClickCancel, {
+        scopes: [HOTKEY_SCOPES.CREATE_NEW_BOOKMARK],
+        preventDefault: true,
+        enableOnFormTags: true,
+    });
 
-    useHotkeys(
-        keybinds.doneCreateNewBookmark,
-        onClickDone,
-        {
-            scopes: [HOTKEY_SCOPES.CREATE_NEW_BOOKMARK],
-            preventDefault: true,
-            enableOnFormTags: true,
-        },
-    );
+    useHotkeys(keybinds.doneCreateNewBookmark, onClickDone, {
+        scopes: [HOTKEY_SCOPES.CREATE_NEW_BOOKMARK],
+        preventDefault: true,
+        enableOnFormTags: true,
+    });
 
     useHotkeys(
         keybinds.addFocusedSuggestionItem,
@@ -184,33 +176,25 @@ export function useBookmarkForm(
         },
     );
 
-    useHotkeys(
-        keybinds.popInputedTag,
-        onKeyDownBackspace,
-        { scopes: [HOTKEY_SCOPES.CREATE_NEW_BOOKMARK], enableOnFormTags: true },
-    );
+    useHotkeys(keybinds.popInputedTag, onKeyDownBackspace, {
+        scopes: [HOTKEY_SCOPES.CREATE_NEW_BOOKMARK],
+        enableOnFormTags: true,
+    });
 
+    useHotkeys("/", tagInputBoxHook.focusPredicateInputBox, {
+        scopes: [HOTKEY_SCOPES.CREATE_NEW_BOOKMARK],
+        preventDefault: true,
+    });
 
-    useHotkeys("/", tagInputBoxHook.focusPredicateInputBox,
-        {
-            scopes: [HOTKEY_SCOPES.CREATE_NEW_BOOKMARK],
-            preventDefault: true,
-        }
-    )
-
-    useHotkeys(
-        keybinds.takeInputTag,
-        takeInputTag,
-        {
-            scopes: [
-                HOTKEY_SCOPES.CREATE_NEW_BOOKMARK,
-                HOTKEY_SCOPES.CREATE_NEW_BOOKMARK_SUGGESTION_WINDOW,
-            ],
-            keyup: true,
-            keydown: false,
-            enableOnFormTags: true,
-        },
-    );
+    useHotkeys(keybinds.takeInputTag, takeInputTag, {
+        scopes: [
+            HOTKEY_SCOPES.CREATE_NEW_BOOKMARK,
+            HOTKEY_SCOPES.CREATE_NEW_BOOKMARK_SUGGESTION_WINDOW,
+        ],
+        keyup: true,
+        keydown: false,
+        enableOnFormTags: true,
+    });
 
     useHotkeys(
         keybinds.focusDownSuggestionWindow,
@@ -232,7 +216,7 @@ export function useBookmarkForm(
         },
     );
 
-    const { colorTheme } = useConfig()
+    const { colorTheme } = useConfig();
     const props: BookmarkFormProps = {
         titleRef,
         descRef,
@@ -242,7 +226,7 @@ export function useBookmarkForm(
         onClickDone,
         onChangeUrl,
         colorTheme,
-    }
+    };
 
     return {
         props,

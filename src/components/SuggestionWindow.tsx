@@ -5,7 +5,7 @@ import type { ColorTheme } from "../../src-tauri/bindings/export/ColorTheme";
 
 export type FindTagMethod = (
     predicate: string,
-    inputedTags: string[]
+    inputedTags: string[],
 ) => Promise<[string, boolean][][]>;
 
 export type SuggestionWindowProps = {
@@ -87,7 +87,7 @@ export const SuggestionWindowItem = forwardRef<HTMLDivElement, ItemProps>(
                 })}
             </Box>
         );
-    }
+    },
 );
 
 export const SuggestionWindowItemTextBlock = (p: {

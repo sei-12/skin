@@ -1,11 +1,14 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import type { FindTagMethod, SuggestionWindowProps } from "../components/SuggestionWindow";
+import type {
+    FindTagMethod,
+    SuggestionWindowProps,
+} from "../components/SuggestionWindow";
 import { useConfig } from "../providers/configProvider";
 
 export function useSuggestionWindow(
     findTagMethod: FindTagMethod,
     onClickItem: (index: number) => void,
-    getInputedTags: () => string[]
+    getInputedTags: () => string[],
 ) {
     const { colorTheme } = useConfig();
 
@@ -16,23 +19,21 @@ export function useSuggestionWindow(
     const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
 
     const getFocusedItem = useCallback(() => {
-        let focusedItem = ""
-        items.at(focusIndex)?.forEach(block => focusedItem += block[0]);
-        return focusedItem
-    }, [items, focusIndex])
+        let focusedItem = "";
+        items.at(focusIndex)?.forEach((block) => (focusedItem += block[0]));
+        return focusedItem;
+    }, [items, focusIndex]);
 
     const close = useCallback(() => {
         setItems([]);
         setPredicate("");
         setFocusIndex(0);
-    }, [])
+    }, []);
 
-    const onChangePredicateInputBox = async (
-        targetVal: string
-    ) => {
+    const onChangePredicateInputBox = async (targetVal: string) => {
         const suggestionItems = await findTagMethod(
             targetVal,
-            getInputedTags()
+            getInputedTags(),
         );
         setItems(suggestionItems);
         setPredicate(targetVal);
@@ -46,7 +47,6 @@ export function useSuggestionWindow(
         }
     }, [focusIndex]);
 
-
     const focusUp = useCallback(() => {
         setFocusIndex((cur) => {
             let newIndex = cur - 1;
@@ -54,8 +54,8 @@ export function useSuggestionWindow(
                 newIndex = items.length - 1;
             }
             return newIndex;
-        })
-    }, [items])
+        });
+    }, [items]);
 
     const focusDown = useCallback(() => {
         setFocusIndex((cur) => {
@@ -64,8 +64,8 @@ export function useSuggestionWindow(
                 newIndex = 0;
             }
             return newIndex;
-        })
-    }, [items])
+        });
+    }, [items]);
 
     const props: SuggestionWindowProps = {
         items,
@@ -82,7 +82,6 @@ export function useSuggestionWindow(
         getFocusedItem,
         focusDown,
         focusUp,
-
 
         items,
         setItems,

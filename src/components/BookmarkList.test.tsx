@@ -13,7 +13,7 @@ describe("BookmarkList.tsx", () => {
         const onClickCancelMock = vi.fn();
 
         const hook = renderHook(() =>
-            useBookmarkList(onClickRemoveMock, onClickCancelMock)
+            useBookmarkList(onClickRemoveMock, onClickCancelMock),
         );
 
         act(() => {
@@ -21,7 +21,7 @@ describe("BookmarkList.tsx", () => {
         });
 
         const result = render(
-            <BookmarkList {...hook.result.current.props}></BookmarkList>
+            <BookmarkList {...hook.result.current.props}></BookmarkList>,
         );
 
         const bkmkItems = screen.getAllByTestId("bkmkitem");
@@ -46,7 +46,7 @@ describe("BookmarkList.tsx", () => {
         const onClickCancelMock = vi.fn();
 
         const hook = renderHook(() =>
-            useBookmarkList(onClickRemoveMock, onClickCancelMock)
+            useBookmarkList(onClickRemoveMock, onClickCancelMock),
         );
 
         act(() => {
@@ -59,14 +59,14 @@ describe("BookmarkList.tsx", () => {
         act(() => hook.result.current.focusDown());
         act(() => hook.result.current.focusDown());
         expect(
-            window.HTMLElement.prototype.scrollIntoView
+            window.HTMLElement.prototype.scrollIntoView,
         ).toHaveBeenCalledTimes(3);
 
         act(() => hook.result.current.focusUp());
         act(() => hook.result.current.focusUp());
         act(() => hook.result.current.focusUp());
         expect(
-            window.HTMLElement.prototype.scrollIntoView
+            window.HTMLElement.prototype.scrollIntoView,
         ).toHaveBeenCalledTimes(6);
     });
 
@@ -78,7 +78,7 @@ describe("BookmarkList.tsx", () => {
         const onClickCancelMock = vi.fn();
 
         const hook = renderHook(() =>
-            useBookmarkList(onClickRemoveMock, onClickCancelMock)
+            useBookmarkList(onClickRemoveMock, onClickCancelMock),
         );
 
         render(<BookmarkList {...hook.result.current.props}></BookmarkList>);
@@ -89,14 +89,14 @@ describe("BookmarkList.tsx", () => {
 
         //
         expect(
-            window.HTMLElement.prototype.scrollIntoView
+            window.HTMLElement.prototype.scrollIntoView,
         ).toHaveBeenCalledTimes(0);
 
         act(() => hook.result.current.focusUp());
         act(() => hook.result.current.focusUp());
         act(() => hook.result.current.focusUp());
         expect(
-            window.HTMLElement.prototype.scrollIntoView
+            window.HTMLElement.prototype.scrollIntoView,
         ).toHaveBeenCalledTimes(0);
     });
 });

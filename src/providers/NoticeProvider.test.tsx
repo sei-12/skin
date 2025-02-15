@@ -47,7 +47,7 @@ describe("NoticeProvider", () => {
         render(
             <NoticeProvider>
                 <SampleComponent></SampleComponent>
-            </NoticeProvider>
+            </NoticeProvider>,
         );
 
         expect(() => {

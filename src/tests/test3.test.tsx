@@ -1,4 +1,3 @@
-
 import { beforeEach, describe, expect, test, vi } from "vitest";
 import { act, render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom/vitest";
@@ -76,7 +75,7 @@ describe("App.CreateNewBookmark", () => {
         const toCreate = async () => {
             await user.keyboard("{Control>}A{/Control}");
             expect(
-                screen.getByTestId("create-new-bookmark")
+                screen.getByTestId("create-new-bookmark"),
             ).toBeInTheDocument();
         };
         const toSearch = async () => {
@@ -109,7 +108,7 @@ describe("App.CreateNewBookmark", () => {
             await user.click(screen.getByPlaceholderText("/"));
             await user.keyboard("{Control>}A{/Control}");
             expect(
-                screen.getByTestId("create-new-bookmark")
+                screen.getByTestId("create-new-bookmark"),
             ).toBeInTheDocument();
         };
         const toSearch = async () => {
@@ -185,7 +184,7 @@ describe("App.CreateNewBookmark", () => {
             "hello",
             "url://hello",
             "description",
-            ["typescript"]
+            ["typescript"],
         );
         expect(screen.getByTestId("search-bookmark")).toBeInTheDocument();
     });
@@ -269,7 +268,7 @@ describe("App.CreateNewBookmark", () => {
             "hello",
             "url://hello",
             "description",
-            ["typescript", "helloworld-aaaa"]
+            ["typescript", "helloworld-aaaa"],
         );
         expect(screen.getByTestId("search-bookmark")).toBeInTheDocument();
     });
@@ -307,7 +306,7 @@ describe("App.CreateNewBookmark", () => {
             "hello",
             "url://hello",
             "description",
-            ["typescript"]
+            ["typescript"],
         );
         expect(screen.getByTestId("search-bookmark")).toBeInTheDocument();
     });
@@ -346,7 +345,7 @@ describe("App.CreateNewBookmark", () => {
             "hell",
             "url://hello",
             "description",
-            ["typescript", "helloworld-aaaa"]
+            ["typescript", "helloworld-aaaa"],
         );
         expect(screen.getByTestId("search-bookmark")).toBeInTheDocument();
     });
@@ -364,7 +363,7 @@ describe("App.CreateNewBookmark", () => {
             await user.type(predicateInputBox, "{Enter}");
             count += 1;
             expect(screen.getAllByTestId("taginputbox-tagitem").length).toBe(
-                count
+                count,
             );
         };
 
@@ -396,14 +395,14 @@ describe("App.CreateNewBookmark", () => {
             await user.type(predicateInputBox, "{Enter}");
             count += 1;
             expect(screen.getAllByTestId("taginputbox-tagitem").length).toBe(
-                count
+                count,
             );
         };
         const back = async () => {
             await user.type(predicateInputBox, "{Backspace}");
             count -= 1;
             expect(screen.getAllByTestId("taginputbox-tagitem").length).toBe(
-                count
+                count,
             );
         };
 
@@ -459,7 +458,7 @@ describe("App.CreateNewBookmark", () => {
             "hello",
             "url://hello",
             "description",
-            ["typescript"]
+            ["typescript"],
         );
         expect(screen.getByTestId("search-bookmark")).toBeInTheDocument();
     });
@@ -477,15 +476,14 @@ describe("App.CreateNewBookmark", () => {
         expect(descInputBox).toBeInTheDocument();
         expect(predicateInputBox).toBeInTheDocument();
 
-        await user.keyboard("/hello ")
+        await user.keyboard("/hello ");
         expect(screen.getAllByTestId("taginputbox-tagitem").length).toBe(1);
-        await user.keyboard("hello ")
+        await user.keyboard("hello ");
         expect(screen.getAllByTestId("taginputbox-tagitem").length).toBe(1);
         // ここで " hello"というタグを入力してしまうバグ
-        await user.keyboard("hello ")
+        await user.keyboard("hello ");
         expect(screen.getAllByTestId("taginputbox-tagitem").length).toBe(1); // バグっている状態だと2になる
-        await user.keyboard("hello ")
+        await user.keyboard("hello ");
         expect(screen.getAllByTestId("taginputbox-tagitem").length).toBe(1);
     });
-
 });

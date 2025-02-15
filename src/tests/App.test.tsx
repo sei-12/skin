@@ -50,7 +50,7 @@ describe("App.SearchBookmark", () => {
         expect(screen.getByPlaceholderText("/")).not.toHaveFocus();
         await user.keyboard("/");
         const predicateInputBox = screen.getByTestId(
-            "taginputbox-predicateinputbox"
+            "taginputbox-predicateinputbox",
         );
         expect(predicateInputBox).toBeInTheDocument();
         expect(screen.getByPlaceholderText("/")).toHaveFocus();
@@ -72,7 +72,7 @@ describe("App.SearchBookmark", () => {
         expect(DB.fuzzyFindTag).toBeCalledTimes(1);
 
         // TestingLibraryElementError
-        expect(screen.getAllByTestId("bkmkitem").length).toBe(20)
+        expect(screen.getAllByTestId("bkmkitem").length).toBe(20);
 
         await user.type(inputBox, "y");
         expect(screen.getAllByTestId("suggestion-item").length).toBe(1);
@@ -91,7 +91,7 @@ describe("App.SearchBookmark", () => {
 
         await user.type(inputBox, "{Backspace}");
         expect(DB.fetchBookmarks).toBeCalledTimes(2);
-        expect(screen.getAllByTestId("bkmkitem").length).toBe(20)
+        expect(screen.getAllByTestId("bkmkitem").length).toBe(20);
         expect(screen.getByTestId("suggestion-window")).not.toBeVisible();
     });
 
@@ -100,7 +100,7 @@ describe("App.SearchBookmark", () => {
         const inputBox = screen.getByPlaceholderText("/");
 
         await user.type(inputBox, "tya");
-        expect(screen.getAllByTestId("bkmkitem").length).toBe(20)
+        expect(screen.getAllByTestId("bkmkitem").length).toBe(20);
         expect(() => screen.getAllByTestId("suggestion-item")).toThrow();
         expect(screen.getByTestId("suggestion-window")).not.toBeVisible();
 
@@ -339,9 +339,7 @@ describe("App.SearchBookmark", () => {
 
     test("test10 AddButton", async () => {
         const user = userEvent.setup();
-        const menubutton = screen.getByTestId(
-            "search-bookmark-menu-button"
-        );
+        const menubutton = screen.getByTestId("search-bookmark-menu-button");
         await user.click(menubutton);
         const addButton = screen.getByText("Create new Bookmark");
 
@@ -354,14 +352,14 @@ describe("App.SearchBookmark", () => {
 
         const toCreate = async () => {
             const menubutton = screen.getByTestId(
-                "search-bookmark-menu-button"
+                "search-bookmark-menu-button",
             );
             await user.click(menubutton);
             const addButton = screen.getByText("Create new Bookmark");
-    
+
             await user.click(addButton);
             expect(
-                screen.getByTestId("create-new-bookmark")
+                screen.getByTestId("create-new-bookmark"),
             ).toBeInTheDocument();
         };
         const toSearch = async () => {
@@ -388,5 +386,4 @@ describe("App.SearchBookmark", () => {
         await toSearch();
         await toCreate();
     });
-
 });

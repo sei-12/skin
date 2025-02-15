@@ -37,7 +37,7 @@ export function NoticeProvider({ children }: { children: React.ReactNode }) {
 
     const handleClose = (
         _?: React.SyntheticEvent | Event,
-        reason?: SnackbarCloseReason
+        reason?: SnackbarCloseReason,
     ) => {
         if (reason === "clickaway") {
             return;

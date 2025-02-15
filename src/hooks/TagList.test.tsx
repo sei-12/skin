@@ -39,7 +39,7 @@ describe("TagListPage", () => {
                     <NoticeProvider>
                         <TagListPage></TagListPage>
                     </NoticeProvider>
-                </HotkeysProvider>
+                </HotkeysProvider>,
             );
         });
     });
@@ -68,8 +68,7 @@ describe("TagListPage", () => {
         const user = userEvent.setup();
         const backButton = screen.getByText("back");
         await user.click(backButton);
-        expect(nav).toBeCalledTimes(1)
-        expect(nav).toBeCalledWith("/")
-
+        expect(nav).toBeCalledTimes(1);
+        expect(nav).toBeCalledWith("/");
     });
 });
