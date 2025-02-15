@@ -10,8 +10,9 @@
     "tauri": "tauri",
     "test": "npx vitest --run",
     "lint": "eslint .",
-		"fmt": "npx prettier . --write",
-    "lint:fix": "eslint --fix src"
+    "lint:fix": "eslint --fix src",
+		"fmt": "npx prettier . --check",
+		"fmt:fix": "npx prettier . --write"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",

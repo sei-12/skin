@@ -51,6 +51,9 @@ jobs:
 
       - name: lint
         run: yarn run lint
+
+      - name: fmt
+        run: yarn run fmt
       
       - name: test rust
         working-directory: src-tauri
