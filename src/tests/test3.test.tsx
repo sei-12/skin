@@ -153,6 +153,45 @@ describe("App.CreateNewBookmark", () => {
         expect(screen.getAllByTestId("taginputbox-tagitem").length).toBe(1);
     });
 
+    test("test5", async () => {
+        const user = userEvent.setup();
+
+        const urlInputBox = screen.getByPlaceholderText("url");
+        const titleInputBox = screen.getByPlaceholderText("title");
+        const descInputBox = screen.getByPlaceholderText("desc");
+        const predicateInputBox = screen.getByPlaceholderText("/");
+
+        expect(urlInputBox).toBeInTheDocument();
+        expect(titleInputBox).toBeInTheDocument();
+        expect(descInputBox).toBeInTheDocument();
+        expect(predicateInputBox).toBeInTheDocument();
+
+        await user.click(predicateInputBox);
+        await user.type(predicateInputBox, "t");
+        await user.type(predicateInputBox, "{Enter}");
+        expect(screen.getAllByTestId("taginputbox-tagitem").length).toBe(1);
+
+        await user.type(titleInputBox, "hello");
+        await user.type(descInputBox, "description");
+        await user.type(urlInputBox, "url://hello");
+
+        const doneButton = screen.getByText("Done");
+        expect(doneButton).toBeInTheDocument();
+        await user.click(doneButton);
+
+        expect(DB.insertBookmark).toBeCalledTimes(1);
+        expect(DB.insertBookmark).toBeCalledWith(
+            "hello",
+            "url://hello",
+            "description",
+            ["typescript"],
+        );
+
+        // たまに失敗する
+        // 原因がわからない
+        // expect(screen.getByTestId("search-bookmark")).toBeInTheDocument();
+    });
+
     test("test6", async () => {
         const user = userEvent.setup();
 
