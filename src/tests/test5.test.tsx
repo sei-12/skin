@@ -43,8 +43,7 @@ describe("App.CreateNewBookmark", () => {
 
         await userEvent.keyboard("{Control>}A{/Control}");
     });
-    
-    
+
     // 原因がわからないエラーが時々発生するので分離
     test("test5", async () => {
         const user = userEvent.setup();
