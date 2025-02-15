@@ -23,6 +23,7 @@ function buildProps(): SearchBookmarkProps {
             inputedTags: [],
             onChangePredicateInputBox: vi.fn(),
             swProps: {
+                onClickItem: vi.fn(),
                 colorTheme: DEFAULT_CONFIG.colorTheme,
                 focusIndex: 0,
                 items: [],
@@ -114,7 +115,7 @@ describe("SearchBookmark", () => {
             typeScring
         );
     });
-    
+
     test("case4 onClickGoTagList", async () => {
         const props = buildProps();
         const user = userEvent.setup();
@@ -131,7 +132,6 @@ describe("SearchBookmark", () => {
         expect(props.onClickGoTagList).toBeCalledTimes(2);
     });
 
-    
     test("case5 menuを閉じる", async () => {
         const props = buildProps();
         const user = userEvent.setup();
@@ -141,10 +141,9 @@ describe("SearchBookmark", () => {
         await user.click(menubutton);
 
         const goTagList = screen.getByText("Tag list");
-        expect(goTagList).toBeVisible()
+        expect(goTagList).toBeVisible();
 
         await user.click(menubutton);
-        expect(() => screen.getByDisplayValue("Tag list")).toThrow()
+        expect(() => screen.getByDisplayValue("Tag list")).toThrow();
     });
-
 });

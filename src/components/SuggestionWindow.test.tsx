@@ -5,9 +5,10 @@ import {
 } from "./SuggestionWindow";
 import { render, renderHook, screen } from "@testing-library/react";
 import "@testing-library/jest-dom/vitest";
-import { describe, expect, test } from "vitest";
+import { describe, expect, test, vi } from "vitest";
 import { useRef } from "react";
 import { DEFAULT_CONFIG } from "../providers/configProvider";
+import userEvent from "@testing-library/user-event";
 
 describe("SuggestionWindow", () => {
     test("items", () => {
@@ -26,6 +27,7 @@ describe("SuggestionWindow", () => {
         const { container } = render(
             <SuggestionWindow
                 items={items}
+                onClickItem={vi.fn()}
                 focusIndex={focusIndex}
                 itemRefs={refs.result.current}
                 colorTheme={colorTheme}
@@ -60,6 +62,7 @@ describe("SuggestionWindow", () => {
         render(
             <SuggestionWindow
                 items={items}
+                onClickItem={vi.fn()}
                 focusIndex={focusIndex}
                 itemRefs={refs.result.current}
                 colorTheme={colorTheme}
@@ -84,6 +87,7 @@ describe("SuggestionWindow", () => {
         render(
             <SuggestionWindow
                 items={items}
+                onClickItem={vi.fn()}
                 focusIndex={focusIndex}
                 itemRefs={refs.result.current}
                 colorTheme={colorTheme}
@@ -96,6 +100,49 @@ describe("SuggestionWindow", () => {
             "color: " + colorTheme.suggestionWindow.unmatch + ";"
         );
         expect(unmatchBlock).toMatchSnapshot();
+    });
+
+    test("test3", async () => {
+        const items: [string, boolean][][] = [
+            [["helloworld", true]],
+            [["hello", true]],
+            [["aaaaa", true]],
+        ];
+
+        const focusIndex = 0;
+        const colorTheme = DEFAULT_CONFIG.colorTheme;
+        const refs = renderHook(() => {
+            return useRef<(HTMLDivElement | null)[]>([]);
+        });
+
+        const onClickItem = vi.fn();
+        render(
+            <SuggestionWindow
+                items={items}
+                onClickItem={onClickItem}
+                focusIndex={focusIndex}
+                itemRefs={refs.result.current}
+                colorTheme={colorTheme}
+            ></SuggestionWindow>
+        );
+
+        const user = userEvent.setup();
+
+        await user.click(screen.getByText("helloworld"))
+        expect(onClickItem).toBeCalledTimes(1)
+        expect(onClickItem).toBeCalledWith(0)
+
+        await user.click(screen.getByText("hello"))
+        expect(onClickItem).toBeCalledTimes(2)
+        expect(onClickItem).toBeCalledWith(1)
+
+        await user.click(screen.getByText("aaaaa"))
+        expect(onClickItem).toBeCalledTimes(3)
+        expect(onClickItem).toBeCalledWith(2)
+
+        await user.click(screen.getByText("helloworld"))
+        expect(onClickItem).toBeCalledTimes(4)
+        expect(onClickItem).toBeCalledWith(0)
     });
 });
 
@@ -139,6 +186,7 @@ describe("Item", () => {
             <SuggestionWindowItem
                 item={item}
                 focus={false}
+                onClick={() => {}}
                 ref={null}
                 colorTheme={DEFAULT_CONFIG.colorTheme}
             />
@@ -150,5 +198,33 @@ describe("Item", () => {
         expect(screen.getAllByText("b")[1]).toBeInTheDocument();
         expect(screen.getAllByText("c")[0]).toBeInTheDocument();
         expect(screen.getAllByText("c")[1]).toBeInTheDocument();
+    });
+
+    test("test click", async () => {
+        const user = userEvent.setup();
+        const item: [string, boolean][] = [
+            ["a", true],
+            ["a", false],
+            ["b", true],
+            ["b", false],
+            ["c", true],
+            ["c", false],
+        ];
+
+        const onClick = vi.fn();
+        render(
+            <SuggestionWindowItem
+                item={item}
+                focus={false}
+                onClick={onClick}
+                ref={null}
+                colorTheme={DEFAULT_CONFIG.colorTheme}
+            />
+        );
+
+        expect(onClick).toBeCalledTimes(0);
+        const a = screen.getByTestId("suggestion-item");
+        await user.click(a);
+        expect(onClick).toBeCalledTimes(1);
     });
 });

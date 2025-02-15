@@ -12,14 +12,24 @@ export function useTagInputBox(findTagMethod: FindTagMethod) {
     const [inputedTags, setInputedTags] = useState<
         { text: string; exists: boolean }[]
     >([]);
-    
+
     const { addNotice } = useNotice()
 
-    const suggestionWindowHook = useSuggestionWindow(findTagMethod, () => {
-        return inputedTags.map((t) => t.text);
-    });
+    const onClickItem = (index: number) => {
+        let item = ""
+        suggestionWindowHook.items[index].forEach((t) => {
+            item += t[0]
+        })
+        addItem(item)
+    }
 
-    const { colorTheme } = useConfig() 
+    const suggestionWindowHook = useSuggestionWindow(
+        findTagMethod,
+        onClickItem,
+        () => { return inputedTags.map((t) => t.text); }
+    );
+
+    const { colorTheme } = useConfig()
 
     const props: TagInputBoxProps = {
         swProps: suggestionWindowHook.props,
@@ -64,8 +74,7 @@ export function useTagInputBox(findTagMethod: FindTagMethod) {
         }, [inputedTags]
     )
 
-    const addFocusedSuggestionItem = useCallback(async () => {
-        const item = suggestionWindowHook.getFocusedItem();
+    const addItem = async (item: string) => {
         const inputBox = inputBoxRef.current;
 
         if (inputBox === null) {
@@ -82,21 +91,26 @@ export function useTagInputBox(findTagMethod: FindTagMethod) {
                 message: "ERROR!",
                 serverity: "error"
             })
-            
+
             return false;
         })
-;
+            ;
         setInputedTags((ary) => {
             return [...ary, { text: item, exists }];
         });
 
         suggestionWindowHook.close();
+    }
+
+    const addFocusedSuggestionItem = useCallback(async () => {
+        const item = suggestionWindowHook.getFocusedItem();
+        addItem(item)
     }, [suggestionWindowHook.getFocusedItem])
-    
+
 
     const focusPredicateInputBox = useCallback(() => {
         inputBoxRef.current?.focus();
-    },[])
+    }, [])
 
     return {
         inputBoxRef,

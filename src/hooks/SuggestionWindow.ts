@@ -4,6 +4,7 @@ import { useConfig } from "../providers/configProvider";
 
 export function useSuggestionWindow(
     findTagMethod: FindTagMethod,
+    onClickItem: (index: number) => void,
     getInputedTags: () => string[]
 ) {
     const { colorTheme } = useConfig();
@@ -68,6 +69,7 @@ export function useSuggestionWindow(
 
     const props: SuggestionWindowProps = {
         items,
+        onClickItem,
         focusIndex,
         itemRefs,
         colorTheme,
@@ -88,49 +90,3 @@ export function useSuggestionWindow(
         setPredicate,
     };
 }
-
-// export function highlightMatchedBlocks(
-//     predicate: string,
-//     item: string
-// ): { isMatch: boolean; text: string }[] {
-//     const blocks: ReturnType<typeof highlightMatchedBlocks> = [];
-
-//     const splitedPredicate = [...predicate];
-//     const splitedItem = [...item];
-
-//     while (splitedItem.length !== 0) {
-//         const p = splitedPredicate[0];
-
-//         if (p === undefined) {
-//             break;
-//         }
-
-//         const i = splitedItem.shift()!;
-
-//         // 大文字小文字を区別しない
-//         const match = i.toLowerCase() === p.toLocaleLowerCase();
-
-//         if (match) {
-//             splitedPredicate.shift();
-//         }
-//         const lastBlock = blocks.at(-1);
-//         if (lastBlock === undefined) {
-//             blocks.push({ isMatch: match, text: i });
-//         } else {
-//             if (lastBlock.isMatch === match) {
-//                 lastBlock.text += i;
-//             } else {
-//                 blocks.push({ isMatch: match, text: i });
-//             }
-//         }
-//     }
-
-//     // flag1からここにくる可能性あり
-//     if (splitedItem.length !== 0) {
-//         blocks.push({ text: splitedItem.join(""), isMatch: false }
-//         )
-//     }
-
-
-//     return blocks;
-// }

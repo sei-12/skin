@@ -11,6 +11,7 @@ import type { SuggestionWindowProps } from "./SuggestionWindow";
 function bulidSwProps(): SuggestionWindowProps {
     return {
         colorTheme: DEFAULT_CONFIG.colorTheme,
+        onClickItem: vi.fn(),
         focusIndex: 0,
         items: [],
         itemRefs: renderHook(() => useRef<(HTMLDivElement | null)[]>([])).result

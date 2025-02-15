@@ -67,4 +67,14 @@ describe("App.SearchBookmark4", () => {
         await user.keyboard("{Escape}")
         expect(inputBox.value).toBe("")
     })
+    
+    test("クリックでタグを追加",async () => {
+        const user = userEvent.setup();
+        await user.keyboard("/");
+        await user.keyboard("java")
+        await user.click(screen.getByText("javascript"));
+        expect(screen.getAllByText("javascript").length).toBe(1);
+        expect(screen.getAllByText("#javascript").length).toBe(3);
+        expect(screen.getByTestId("suggestion-window")).not.toBeVisible();
+    })
 });
