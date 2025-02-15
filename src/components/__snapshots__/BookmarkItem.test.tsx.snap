@@ -654,7 +654,8 @@ exports[`BookmarkItem > snapshot 1`] = `
     <p
       class="MuiTypography-root MuiTypography-body1 css-16to7o8-MuiTypography-root"
     >
-      created at 
+      created at
+       
       2025/02/07
     </p>
     <p

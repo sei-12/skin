@@ -56,6 +56,14 @@ jobs:
         working-directory: src-tauri
         run: cargo test
 
+      - name: rust lint
+        working-directory: src-tauri
+        run: cargo clippy
+      
+      - name: rust fmt
+        working-directory: src-tauri
+        run: cargo fmt --all -- --check
+
       - uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
