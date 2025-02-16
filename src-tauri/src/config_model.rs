@@ -77,6 +77,9 @@ pub struct Keybinds {
     #[serde_inline_default(Keys::Key("ctrl+shift+d".to_string()))]
     removeFocusedBookmark: Keys,
 
+    #[serde_inline_default(Keys::Key("ctrl+shift+e".to_string()))]
+    editFocusedBookmark: Keys,
+
     // placeholderに書いちゃってるし、keyupが複雑だからこいつは固定。
     // #[serde_inline_default(Keys::Key("/".to_string()))]
     // focusPredicateInputBox: Keys,
@@ -307,6 +310,7 @@ mod tests {
                     toggleWindowVisible: Keys::Key("alt+z".to_string()),
                 },
                 removeFocusedBookmark: Keys::Key("ctrl+shift+d".to_string()),
+                editFocusedBookmark: Keys::Key("ctrl+shift+e".to_string()),
                 focusDownBookmarkList: Keys::Keys(Vec::from([
                     "ctrl+n".to_string(),
                     "ArrowDown".to_string(),

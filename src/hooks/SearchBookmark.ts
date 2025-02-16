@@ -50,6 +50,14 @@ export function useSearchBookmarkPage(): SearchBookmarkProps {
 
     const appHotkeyHook = useAppHotkey();
 
+    const editFocusedBookmark = useCallback(() => {
+        const focusedItem = bkmkListHook.getFocusedItem();
+        if (focusedItem === undefined) {
+            return;
+        }
+        navigate("/edit-bookmark", { state: { bookmarkId: focusedItem.id } });
+    }, [bkmkListHook.getFocusedItem]);
+
     const removeFocusedBookmark = useCallback(async () => {
         const focusedItem = bkmkListHook.getFocusedItem();
         if (focusedItem === undefined) {
@@ -233,6 +241,12 @@ export function useSearchBookmarkPage(): SearchBookmarkProps {
     });
 
     useHotkeys(keybinds.removeFocusedBookmark, removeFocusedBookmark, {
+        scopes: [HOTKEY_SCOPES.SEARCH_BOOKMARK],
+        preventDefault: true,
+        enableOnFormTags: true,
+    });
+
+    useHotkeys(keybinds.editFocusedBookmark, editFocusedBookmark, {
         scopes: [HOTKEY_SCOPES.SEARCH_BOOKMARK],
         preventDefault: true,
         enableOnFormTags: true,

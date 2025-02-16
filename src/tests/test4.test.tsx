@@ -7,6 +7,7 @@ import { App } from "../App";
 import { DEFAULT_CONFIG } from "../providers/configProvider";
 import { startMockClipboardManager } from "../services/mockClipboard.test";
 import userEvent from "@testing-library/user-event";
+import { DB } from "../services/database";
 
 vi.mock("@tauri-apps/api/event", () => ({ listen: vi.fn() }));
 
@@ -75,5 +76,21 @@ describe("App.SearchBookmark4", () => {
         expect(screen.getAllByText("javascript").length).toBe(1);
         expect(screen.getAllByText("#javascript").length).toBe(3);
         expect(screen.getByTestId("suggestion-window")).not.toBeVisible();
+    });
+
+    test("ショートカットキーで編集画面に遷移", async () => {
+        const user = userEvent.setup();
+        await user.keyboard("{Control>}{Shift>}E{/Shift}{/Control}");
+        expect(screen.getByTestId("create-new-bookmark")).toBeInTheDocument();
+        await user.keyboard("/helloworld-aaaaaaaaaaa ");
+        await user.keyboard("{Control>}{Enter}{/Control}");
+        expect(DB.editBookmark).toBeCalledTimes(1);
+        expect(DB.editBookmark).toBeCalledWith(0, "hello0", "url", "d", [
+            "less",
+            "cpp",
+            "rust",
+            "javascript",
+            "helloworld-aaaaaaaaaaa",
+        ]);
     });
 });

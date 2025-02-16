@@ -2,4 +2,4 @@
 import type { GlobalKeybind } from "../GlobalKeybind";
 import type { Keys } from "../Keys";
 
-export type Keybinds = { global: GlobalKeybind, focusDownBookmarkList: Keys, focusUpBookmarkList: Keys, closeWindow: Keys, focusDownSuggestionWindow: Keys, focusUpSuggestionWindow: Keys, removeFocusedBookmark: Keys, addFocusedSuggestionItem: Keys, popInputedTag: Keys, closeSuggestionWindow: Keys, navigateCreateNewBookmark: Keys, openUrl: Keys, cancelCreateNewBookmark: Keys, doneCreateNewBookmark: Keys, takeInputTag: Keys, };
+export type Keybinds = { global: GlobalKeybind, focusDownBookmarkList: Keys, focusUpBookmarkList: Keys, closeWindow: Keys, focusDownSuggestionWindow: Keys, focusUpSuggestionWindow: Keys, removeFocusedBookmark: Keys, editFocusedBookmark: Keys, addFocusedSuggestionItem: Keys, popInputedTag: Keys, closeSuggestionWindow: Keys, navigateCreateNewBookmark: Keys, openUrl: Keys, cancelCreateNewBookmark: Keys, doneCreateNewBookmark: Keys, takeInputTag: Keys, };
