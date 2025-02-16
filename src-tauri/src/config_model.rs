@@ -46,6 +46,12 @@ pub struct Config {
     keybinds: Keybinds,
 }
 
+impl Default for Config {
+    fn default() -> Self {
+        serde_json::from_str("{}").expect("fail default config")
+    }
+}
+
 #[serde_inline_default]
 #[derive(Serialize, Deserialize, TS, Clone)]
 #[ts(export, export_to = "export/Keybinds.d.ts")]

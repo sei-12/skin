@@ -21,6 +21,7 @@ where
     T: serde::Serialize
         + serde::de::DeserializeOwned
         + Clone
+        + Default
         + std::marker::Sync
         + std::marker::Send
         + 'static,
@@ -32,15 +33,12 @@ where
         let config_file_path = config_dir.join(file_name);
 
         if !config_file_path.exists() {
-            let default = Self::default_config();
+            let default = T::default();
             let contents = serde_json::to_string(&default)?;
             fs::write(&config_file_path, contents)?;
         }
 
-        let config = match Self::read_file(&config_file_path) {
-            Ok(c) => c,
-            Err(_) => Self::default_config(),
-        };
+        let config = Self::read_file(&config_file_path).unwrap_or_default();
 
         let config = Mutex::new(config);
 
@@ -66,10 +64,6 @@ where
     pub fn get(&self) -> T {
         let c = self.config.lock().expect("todo");
         c.clone()
-    }
-
-    fn default_config() -> T {
-        serde_json::from_str("{}").expect("fail default_config")
     }
 
     fn read_file(path: impl AsRef<std::path::Path>) -> Result<T> {
