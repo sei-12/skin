@@ -13,8 +13,8 @@ export type TagInputBoxProps = {
         text: string;
         exists: boolean;
     }[];
-    onChangePredicateInputBox: ( targetVal: string) => Promise<void>;
-    colorTheme: ColorTheme
+    onChangePredicateInputBox: (targetVal: string) => Promise<void>;
+    colorTheme: ColorTheme;
 };
 
 export const TagInputBox = (p: TagInputBoxProps) => {
@@ -33,7 +33,13 @@ export const TagInputBox = (p: TagInputBoxProps) => {
             }}
         >
             {p.inputedTags.map((tag, i) => {
-                return <TagItem key={i} {...tag} colorTheme={p.colorTheme}></TagItem>;
+                return (
+                    <TagItem
+                        key={i}
+                        {...tag}
+                        colorTheme={p.colorTheme}
+                    ></TagItem>
+                );
             })}
             <Box
                 sx={{
@@ -41,8 +47,8 @@ export const TagInputBox = (p: TagInputBoxProps) => {
                     width: TEXT_FIELD_WIDTH,
                     position: "relative",
                     // color: p.colorTheme.predicateInputBox.textColor,
-                    
-                    color: "white"
+
+                    color: "white",
                 }}
             >
                 <TextField
@@ -50,11 +56,11 @@ export const TagInputBox = (p: TagInputBoxProps) => {
                         input: {
                             style: {
                                 color: p.colorTheme.predicateInputBox.textColor,
-                                caretColor: p.colorTheme.predicateInputBox.caretColor,
-                            }
-                        }
+                                caretColor:
+                                    p.colorTheme.predicateInputBox.caretColor,
+                            },
+                        },
                     }}
-
                     data-testid="taginputbox-predicateinputbox"
                     onChange={(e) => {
                         p.onChangePredicateInputBox(e.target.value);
@@ -73,7 +79,7 @@ export const TagInputBox = (p: TagInputBoxProps) => {
                         "& fieldset": { border: "none" },
                         "::placeholder": {
                             color: p.colorTheme.predicateInputBox.placeholder,
-                        }
+                        },
                     }}
                     placeholder="/"
                 ></TextField>
@@ -83,13 +89,15 @@ export const TagInputBox = (p: TagInputBoxProps) => {
     );
 };
 
-function TagItem(p: { text: string; exists: boolean, colorTheme: ColorTheme }) {
+function TagItem(p: { text: string; exists: boolean; colorTheme: ColorTheme }) {
     return (
         <Box
             data-testid="taginputbox-tagitem"
             sx={{
                 bgcolor: p.colorTheme.tagItem.bg,
-                color: p.exists ? p.colorTheme.tagItem.exists : p.colorTheme.tagItem.notExists,
+                color: p.exists
+                    ? p.colorTheme.tagItem.exists
+                    : p.colorTheme.tagItem.notExists,
                 display: "flex",
                 height: ITEM_HEIGHT,
                 minWidth: 60,

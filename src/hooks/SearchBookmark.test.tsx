@@ -10,6 +10,7 @@ import { WindowVisibleController } from "../services/windowVisibleController";
 import { startMockDB } from "../services/database.test";
 import { DB } from "../services/database";
 import { NoticeProvider } from "../providers/NoticeProvider";
+import { useNavigate } from "react-router-dom";
 
 vi.mock("@tauri-apps/api/event", () => ({ listen: vi.fn() }));
 vi.mock("@tauri-apps/api/window", () => ({
@@ -19,16 +20,17 @@ vi.mock("@tauri-apps/api/window", () => ({
 }));
 vi.mock("@tauri-apps/plugin-global-shortcut", () => ({ register: vi.fn() }));
 vi.mock("@tauri-apps/api/core", () => ({ invoke: vi.fn() }));
-vi.mock("react-router-dom", () => ({
-    useNavigate: () => vi.fn((a) => console.log(a)),
-}));
 
 window.HTMLElement.prototype.scrollIntoView = vi.fn();
 describe("SearchBookmark", () => {
+    let nav = vi.fn();
     beforeEach(async () => {
         vi.clearAllMocks();
+        vi.mock("react-router-dom");
         startMockWindowVisibleController();
         startMockDB();
+        nav = vi.fn();
+        vi.mocked(useNavigate).mockReturnValue(nav);
 
         await act(async () => {
             render(
@@ -38,7 +40,7 @@ describe("SearchBookmark", () => {
                     <NoticeProvider>
                         <SearchBookmarkPage></SearchBookmarkPage>
                     </NoticeProvider>
-                </HotkeysProvider>
+                </HotkeysProvider>,
             );
         });
     });
@@ -48,7 +50,7 @@ describe("SearchBookmark", () => {
         expect(screen.getByPlaceholderText("/")).not.toHaveFocus();
         await user.keyboard("/");
         const predicateInputBox = screen.getByTestId(
-            "taginputbox-predicateinputbox"
+            "taginputbox-predicateinputbox",
         );
         expect(predicateInputBox).toBeInTheDocument();
         expect(screen.getByPlaceholderText("/")).toHaveFocus();
@@ -201,6 +203,49 @@ describe("SearchBookmark", () => {
         const user = userEvent.setup();
         await user.keyboard("{Control>}{Shift>}D{/Shift}{/Control}");
         expect(DB.deleteBookmark).toBeCalledTimes(1);
+        expect(DB.deleteBookmark).toBeCalledWith(0);
+    });
+
+    test("ショートカットキーで項目を削除2", async () => {
+        const user = userEvent.setup();
+
+        await user.keyboard("{Control>}N{/Control}");
+        await user.keyboard("{Control>}N{/Control}");
+        await user.keyboard("{Control>}P{/Control}");
+        await user.keyboard("{Control>}N{/Control}");
+        await user.keyboard("{Control>}P{/Control}");
+        await user.keyboard("{Control>}P{/Control}");
+
+        await user.keyboard("{Control>}{Shift>}D{/Shift}{/Control}");
+
+        expect(DB.deleteBookmark).toBeCalledTimes(1);
+        expect(DB.deleteBookmark).toBeCalledWith(0);
+    });
+
+    test("ショートカットキーで編集画面に遷移", async () => {
+        const user = userEvent.setup();
+
+        await user.keyboard("{Control>}{Shift>}E{/Shift}{/Control}");
+
+        expect(nav).toBeCalledTimes(1);
+        expect(nav).toBeCalledWith("/edit-bookmark", {
+            state: { bookmarkId: 0 },
+        });
+    });
+
+    test("ショートカットキーで編集画面に遷移2", async () => {
+        const user = userEvent.setup();
+
+        await user.keyboard("{Control>}N{/Control}");
+        await user.keyboard("{Control>}N{/Control}");
+        await user.keyboard("{Control>}P{/Control}");
+
+        await user.keyboard("{Control>}{Shift>}E{/Shift}{/Control}");
+
+        expect(nav).toBeCalledTimes(1);
+        expect(nav).toBeCalledWith("/edit-bookmark", {
+            state: { bookmarkId: 1 },
+        });
     });
 
     test("削除した時に通知1 (ボタンを押す)", async () => {
@@ -253,7 +298,7 @@ describe("SearchBookmark", () => {
         expect(screen.getAllByText("javascript").length).toBe(1);
         expect(screen.getAllByText("#javascript").length).toBe(3);
         await user.type(inputBox, "{Backspace}");
-        
+
         await user.type(inputBox, "t");
         await user.click(screen.getByText("typescript"));
         expect(screen.getAllByText("typescript").length).toBe(1);
@@ -263,7 +308,7 @@ describe("SearchBookmark", () => {
         await user.click(screen.getByText("python"));
         expect(screen.getAllByText("python").length).toBe(1);
         await user.type(inputBox, "{Backspace}");
-        
+
         await user.type(inputBox, "t");
         await user.click(screen.getByText("python"));
         await user.type(inputBox, "t");
@@ -271,7 +316,7 @@ describe("SearchBookmark", () => {
         await user.type(inputBox, "kotl");
         await user.click(screen.getByText("kotlin"));
 
-        const root = screen.getByTestId("taginputbox-root")
+        const root = screen.getByTestId("taginputbox-root");
         expect(within(root).getAllByText("typescript").length).toBe(1);
         expect(within(root).getAllByText("python").length).toBe(1);
         expect(within(root).getAllByText("kotlin").length).toBe(1);

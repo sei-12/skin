@@ -24,7 +24,7 @@ function buildProps(
         text: string;
         exists: boolean;
     }[],
-    swProps: SuggestionWindowProps
+    swProps: SuggestionWindowProps,
 ): TagInputBoxProps {
     return {
         colorTheme: DEFAULT_CONFIG.colorTheme,
@@ -61,7 +61,7 @@ describe("TagInputBox", () => {
                 { text: "aaaaa", exists: false },
                 { text: "bbbbb", exists: true },
             ],
-            swProps
+            swProps,
         );
 
         render(<TagInputBox {...props}></TagInputBox>);
@@ -71,22 +71,22 @@ describe("TagInputBox", () => {
 
         const tag1 = screen.getByText("hello");
         expect(tag1).toHaveStyle(
-            "color: " + DEFAULT_CONFIG.colorTheme.tagItem.exists + ";"
+            "color: " + DEFAULT_CONFIG.colorTheme.tagItem.exists + ";",
         );
 
         const tag2 = screen.getByText("world");
         expect(tag2).toHaveStyle(
-            "color: " + DEFAULT_CONFIG.colorTheme.tagItem.notExists + ";"
+            "color: " + DEFAULT_CONFIG.colorTheme.tagItem.notExists + ";",
         );
 
         const tag3 = screen.getByText("abcde");
         expect(tag3).toHaveStyle(
-            "color: " + DEFAULT_CONFIG.colorTheme.tagItem.exists + ";"
+            "color: " + DEFAULT_CONFIG.colorTheme.tagItem.exists + ";",
         );
 
         const tag4 = screen.getByText("aaaaa");
         expect(tag4).toHaveStyle(
-            "color: " + DEFAULT_CONFIG.colorTheme.tagItem.notExists + ";"
+            "color: " + DEFAULT_CONFIG.colorTheme.tagItem.notExists + ";",
         );
     });
 });

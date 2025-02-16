@@ -51,10 +51,23 @@ jobs:
 
       - name: lint
         run: yarn run lint
+
+      - name: fmt
+        # なぜかわからないけどwindowsだと失敗する
+        if: matrix.platform != 'windows-latest'
+        run: yarn run fmt
       
       - name: test rust
         working-directory: src-tauri
         run: cargo test
+
+      - name: rust lint
+        working-directory: src-tauri
+        run: cargo clippy
+      
+      - name: rust fmt
+        working-directory: src-tauri
+        run: cargo fmt --all -- --check
 
       - uses: tauri-apps/tauri-action@v0
         env:

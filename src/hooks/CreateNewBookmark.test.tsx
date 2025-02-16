@@ -56,7 +56,7 @@ describe("CreateNewBookmark", () => {
                     <NoticeProvider>
                         <CreateNewBookmarkPage></CreateNewBookmarkPage>
                     </NoticeProvider>
-                </HotkeysProvider>
+                </HotkeysProvider>,
             );
         });
 
@@ -82,7 +82,7 @@ describe("CreateNewBookmark", () => {
                     <NoticeProvider>
                         <CreateNewBookmarkPage></CreateNewBookmarkPage>
                     </NoticeProvider>
-                </HotkeysProvider>
+                </HotkeysProvider>,
             );
         });
 
@@ -106,7 +106,7 @@ describe("CreateNewBookmark", () => {
                     <NoticeProvider>
                         <CreateNewBookmarkPage></CreateNewBookmarkPage>
                     </NoticeProvider>
-                </HotkeysProvider>
+                </HotkeysProvider>,
             );
         });
 
@@ -139,7 +139,7 @@ describe("CreateNewBookmark", () => {
             "hello",
             "url://hello",
             "description",
-            ["typescript"]
+            ["typescript"],
         );
     });
 
@@ -152,7 +152,7 @@ describe("CreateNewBookmark", () => {
                     <NoticeProvider>
                         <CreateNewBookmarkPage></CreateNewBookmarkPage>
                     </NoticeProvider>
-                </HotkeysProvider>
+                </HotkeysProvider>,
             );
         });
         const user = userEvent.setup();
@@ -176,7 +176,7 @@ describe("CreateNewBookmark", () => {
                     <NoticeProvider>
                         <CreateNewBookmarkPage></CreateNewBookmarkPage>
                     </NoticeProvider>
-                </HotkeysProvider>
+                </HotkeysProvider>,
             );
         });
         const user = userEvent.setup();
@@ -212,7 +212,7 @@ describe("CreateNewBookmark", () => {
         expect(descInputBox.value).toBe("b/");
         expect(predicateInputBox).not.toHaveFocus();
     });
-    
+
     test("test6 結果を通知", async () => {
         await act(async () => {
             render(
@@ -222,7 +222,7 @@ describe("CreateNewBookmark", () => {
                     <NoticeProvider>
                         <CreateNewBookmarkPage></CreateNewBookmarkPage>
                     </NoticeProvider>
-                </HotkeysProvider>
+                </HotkeysProvider>,
             );
         });
         const user = userEvent.setup();
@@ -256,21 +256,18 @@ describe("CreateNewBookmark", () => {
         const doneButton = screen.getByText("Done");
         expect(doneButton).toBeInTheDocument();
         await user.click(doneButton);
-        
+
         // 通知が表示されている
         expect(screen.getByText("SUCCESS!")).toBeInTheDocument();
-
 
         expect(DB.insertBookmark).toBeCalledTimes(1);
         expect(DB.insertBookmark).toBeCalledWith(
             "hello",
             "url://hello",
             "description",
-            ["typescript"]
+            ["typescript"],
         );
-        
-        
-    })
+    });
 });
 
 describe("CreateNewBookmark.insert1", () => {
@@ -288,7 +285,7 @@ describe("CreateNewBookmark.insert1", () => {
                     <NoticeProvider>
                         <CreateNewBookmarkPage></CreateNewBookmarkPage>
                     </NoticeProvider>
-                </HotkeysProvider>
+                </HotkeysProvider>,
             );
         });
     });
@@ -310,7 +307,7 @@ describe("CreateNewBookmark.insert1", () => {
             "a",
             "https://hello_world",
             "b",
-            ["typescript"]
+            ["typescript"],
         );
     });
 
@@ -333,7 +330,7 @@ describe("CreateNewBookmark.insert1", () => {
             "aa",
             "https://hello_worlda",
             "bdesc",
-            ["typescript"]
+            ["typescript"],
         );
     });
 });
@@ -361,7 +358,7 @@ describe("CreateNewBookmark.insert2", () => {
                     <NoticeProvider>
                         <CreateNewBookmarkPage></CreateNewBookmarkPage>
                     </NoticeProvider>
-                </HotkeysProvider>
+                </HotkeysProvider>,
             );
         });
     });
@@ -459,7 +456,7 @@ describe("fix bug", () => {
                     <NoticeProvider>
                         <CreateNewBookmarkPage></CreateNewBookmarkPage>
                     </NoticeProvider>
-                </HotkeysProvider>
+                </HotkeysProvider>,
             );
         });
     });

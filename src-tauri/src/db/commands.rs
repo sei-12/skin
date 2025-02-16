@@ -25,7 +25,6 @@ pub async fn edit_tag(
     tag_id: i64,
     new_name: String,
 ) -> Result<(), CommandError> {
-
     if new_name.is_empty() {
         return Err(CommandError::Validation);
     }

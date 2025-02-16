@@ -40,8 +40,8 @@ describe("BookmarkItem", () => {
         expect(screen.getByText("Sample Bookmark")).toBeVisible();
         expect(
             screen.getByText(
-                "This is a sample description for the bookmark item."
-            )
+                "This is a sample description for the bookmark item.",
+            ),
         ).toBeInTheDocument();
         expect(screen.getByText("#tag1")).toBeInTheDocument();
         expect(screen.getByText("#tag2")).toBeInTheDocument();
@@ -57,14 +57,14 @@ describe("BookmarkItem", () => {
                 onClickRemove={vi.fn()}
                 focus={false}
                 colorTheme={DEFAULT_CONFIG.colorTheme}
-            />
+            />,
         );
 
         expect(screen.getByText("Sample Bookmark")).toBeVisible();
         expect(
             screen.getByText(
-                "This is a sample description for the bookmark item."
-            )
+                "This is a sample description for the bookmark item.",
+            ),
         ).toBeInTheDocument();
         expect(screen.getByText("#tag1")).toBeInTheDocument();
         expect(screen.getByText("#tag2")).toBeInTheDocument();
@@ -74,20 +74,19 @@ describe("BookmarkItem", () => {
 
     it("applies the correct background color when focused", () => {
         const { container, rerender } = render(
-            <BookmarkItem {...defaultProps} focus={true} />
+            <BookmarkItem {...defaultProps} focus={true} />,
         );
 
         expect(container.querySelector(".MuiCard-root")).toHaveStyle(
-            `background-color: ${DEFAULT_CONFIG.colorTheme.bookmarkItem.focusBg}`
+            `background-color: ${DEFAULT_CONFIG.colorTheme.bookmarkItem.focusBg}`,
         );
 
         rerender(<BookmarkItem {...defaultProps} focus={false} />);
 
         expect(container.querySelector(".MuiCard-root")).toHaveStyle(
-            `background-color: ${DEFAULT_CONFIG.colorTheme.bookmarkItem.bg}`
+            `background-color: ${DEFAULT_CONFIG.colorTheme.bookmarkItem.bg}`,
         );
     });
-
 
     it("onclick edit", async () => {
         const user = userEvent.setup();
@@ -98,7 +97,7 @@ describe("BookmarkItem", () => {
                 {...defaultProps}
                 onClickRemove={handleClickRemove}
                 onClickEdit={handleClickEdit}
-            />
+            />,
         );
 
         // クリックする前は表示されていない
@@ -123,7 +122,7 @@ describe("BookmarkItem", () => {
                 {...defaultProps}
                 onClickRemove={handleClickRemove}
                 onClickEdit={handleClickEdit}
-            />
+            />,
         );
 
         // クリックする前は表示されていない
@@ -138,13 +137,12 @@ describe("BookmarkItem", () => {
         expect(handleClickRemove).toBeCalledTimes(1);
         expect(handleClickRemove).toBeCalledWith(defaultProps.data.id);
     });
-    
 
     it("tag style", async () => {
         render(<BookmarkItem {...defaultProps} />);
         const tag = screen.getByText("#tag1");
         expect(tag).toHaveStyle(
-            `color: ${DEFAULT_CONFIG.colorTheme.bookmarkItem.tag}`
+            `color: ${DEFAULT_CONFIG.colorTheme.bookmarkItem.tag}`,
         );
     });
 
@@ -163,7 +161,7 @@ describe("BookmarkItem", () => {
                 onClickRemove={() => {}}
                 focus={false}
                 colorTheme={DEFAULT_CONFIG.colorTheme}
-            ></BookmarkItem>
+            ></BookmarkItem>,
         );
 
         expect(container.querySelector(".MuiCard-root")).toMatchSnapshot();

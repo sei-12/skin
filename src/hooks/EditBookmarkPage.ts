@@ -7,44 +7,44 @@ import { DB } from "../services/database";
 import { useNotice } from "../providers/NoticeProvider";
 
 interface State {
-    bookmarkId: number
+    bookmarkId: number;
 }
 
 export function useEditBookmarkPage(): BookmarkFormProps {
     const navigate = useNavigate();
-    const { addNotice } = useNotice()
+    const { addNotice } = useNotice();
     const location = useLocation();
     const { bookmarkId } = location.state as State;
 
     const onClickDone = async () => {
-        const inputedData = bookmarkFormHook.getInputData()
+        const inputedData = bookmarkFormHook.getInputData();
         const success = await DB.editBookmark(
             bookmarkId,
             inputedData.title,
             inputedData.url,
             inputedData.desc,
-            inputedData.tags
+            inputedData.tags,
         )
             .then(() => {
-                return true
+                return true;
             })
             .catch(() => {
-                return false
-            })
+                return false;
+            });
 
         if (success) {
             addNotice({
                 message: "SUCCESS!",
-                serverity: "success"
-            })
-            goRoot()
+                serverity: "success",
+            });
+            goRoot();
         } else {
             addNotice({
                 message: "ERROR!",
                 serverity: "error",
-            })
+            });
         }
-    }
+    };
 
     const goRoot = () => {
         navigate("/");
@@ -55,18 +55,18 @@ export function useEditBookmarkPage(): BookmarkFormProps {
         onClickDone,
         goRoot,
         findTagMethod,
-        () => { }
-    )
+        () => {},
+    );
 
     const loadBookmarkData = async () => {
-        const bkmk = await DB.getBookmark(bookmarkId)
-        bookmarkFormHook.setContent(bkmk.title, bkmk.desc, bkmk.tags)
-        bookmarkFormHook.setUrl(bkmk.url)
-    }
+        const bkmk = await DB.getBookmark(bookmarkId);
+        bookmarkFormHook.setContent(bkmk.title, bkmk.desc, bkmk.tags);
+        bookmarkFormHook.setUrl(bkmk.url);
+    };
 
     useEffect(() => {
-        loadBookmarkData()
-    }, [])
+        loadBookmarkData();
+    }, []);
 
-    return bookmarkFormHook.props
+    return bookmarkFormHook.props;
 }

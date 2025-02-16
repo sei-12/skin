@@ -65,7 +65,7 @@ export const muiTheme = createTheme({
             default: "rgba(0,0,0,0)",
         },
     },
-})
+});
 
 // export const tokyonight = createTheme({
 //     palette: {

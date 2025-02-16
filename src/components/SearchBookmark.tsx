@@ -10,7 +10,6 @@ import type { BookmarkListProps } from "../components/BookmarkList";
 import { BookmarkList } from "../components/BookmarkList";
 import type { ColorTheme } from "../../src-tauri/bindings/export/ColorTheme";
 
-
 export type SearchBookmarkProps = {
     tagInputBoxProps: TagInputBoxProps;
     bkmkListProps: BookmarkListProps;

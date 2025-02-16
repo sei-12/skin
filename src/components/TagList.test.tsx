@@ -27,7 +27,7 @@ describe("TagList", () => {
 
         for (let i = 0; i < 10; i++) {
             const item = screen.getByTestId(
-                `tag-item-${TESTDATA[i].id}-${TESTDATA[i].name}`
+                `tag-item-${TESTDATA[i].id}-${TESTDATA[i].name}`,
             );
             const textBox = within(item).getByRole("textbox");
             expect(textBox).toBeInTheDocument();
@@ -35,7 +35,7 @@ describe("TagList", () => {
             await user.type(textBox, "hello");
 
             expect(
-                screen.getByDisplayValue(TESTDATA[i].name + "hello")
+                screen.getByDisplayValue(TESTDATA[i].name + "hello"),
             ).toBeInTheDocument();
 
             const buttons = within(item).getAllByRole("button");
@@ -48,9 +48,8 @@ describe("TagList", () => {
             expect(props.onClickEdit).toBeCalledTimes(1 + i);
             expect(props.onClickEdit).toBeCalledWith(
                 TESTDATA[i].id,
-                TESTDATA[i].name + "hello"
+                TESTDATA[i].name + "hello",
             );
-
         }
     });
 });

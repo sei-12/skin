@@ -1,11 +1,10 @@
-
 import type { FindTagMethod } from "../components/SuggestionWindow";
 import { DB } from "./database";
 
 function f(tags: [string, boolean][]): string {
-    let jointed = ""
-    tags.forEach(block => jointed += block[0])
-    return jointed
+    let jointed = "";
+    tags.forEach((block) => (jointed += block[0]));
+    return jointed;
 }
 export const findTagMethod: FindTagMethod = async (predicate, inputedTags) => {
     const inputedTagsSet = new Set(inputedTags);

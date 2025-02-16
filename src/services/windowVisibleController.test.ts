@@ -12,18 +12,24 @@ vi.mock("@tauri-apps/api/window", () => ({
 }));
 
 vi.mock("@tauri-apps/plugin-global-shortcut", () => ({
-    register: vi.fn(async() => {}),
-    unregisterAll: vi.fn(async() => {})
+    register: vi.fn(async () => {}),
+    unregisterAll: vi.fn(async () => {}),
 }));
 
 export function startMockWindowVisibleController() {
-    vi.spyOn(WindowVisibleController, "currentVisible").mockImplementation(async () => {
-        return true
-    })
-    vi.spyOn(WindowVisibleController, "hide").mockImplementation(async () => { })
-    vi.spyOn(WindowVisibleController, "show").mockImplementation(async () => { })
-    vi.spyOn(WindowVisibleController,"toggle")
+    vi.spyOn(WindowVisibleController, "currentVisible").mockImplementation(
+        async () => {
+            return true;
+        },
+    );
+    vi.spyOn(WindowVisibleController, "hide").mockImplementation(
+        async () => {},
+    );
+    vi.spyOn(WindowVisibleController, "show").mockImplementation(
+        async () => {},
+    );
+    vi.spyOn(WindowVisibleController, "toggle");
 }
 
 // テストがないファイルがエラーになる
-test("")
+test("");

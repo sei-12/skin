@@ -1,0 +1,11 @@
+.prettierrc
+node_modules/
+src-tauri/
+vite.config.ts
+eslint.config.js
+index.html
+package.json
+.github
+assets/
+public/
+dist/

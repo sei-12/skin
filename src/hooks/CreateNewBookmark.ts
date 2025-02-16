@@ -8,10 +8,9 @@ import { ClipBoardManager } from "../services/clipboard";
 import { useBookmarkForm } from "./BookmarkForm";
 import { useNotice } from "../providers/NoticeProvider";
 
-
 export function useCreateNewBookmarkPage() {
     const navigate = useNavigate();
-    const { addNotice } = useNotice()
+    const { addNotice } = useNotice();
 
     const onClickCreateDone = () => {
         const inputData = bookmarkFormHook.getInputData();
@@ -19,25 +18,24 @@ export function useCreateNewBookmarkPage() {
             return;
         }
 
-        DB
-            .insertBookmark(
-                inputData.title,
-                inputData.url,
-                inputData.desc,
-                inputData.tags
-            )
+        DB.insertBookmark(
+            inputData.title,
+            inputData.url,
+            inputData.desc,
+            inputData.tags,
+        )
             .then(() => {
                 onClickCreateCancel();
                 addNotice({
                     message: "SUCCESS!",
-                    serverity: "success"
-                })
+                    serverity: "success",
+                });
             })
             .catch(() => {
                 addNotice({
                     message: "ERROR!",
-                    serverity: "error"
-                })
+                    serverity: "error",
+                });
             });
     };
 
@@ -53,7 +51,10 @@ export function useCreateNewBookmarkPage() {
         };
         const currentContent = bookmarkFormHook.getInputData();
 
-        const setData = (cur: string | undefined, newContent: string | null) => {
+        const setData = (
+            cur: string | undefined,
+            newContent: string | null,
+        ) => {
             if (cur !== undefined && cur !== "") {
                 return cur;
             }
@@ -76,20 +77,20 @@ export function useCreateNewBookmarkPage() {
         onClickCreateDone,
         onClickCreateCancel,
         findTagMethod,
-        onChangeUrlInputBox
+        onChangeUrlInputBox,
     );
 
     const autoInputUrl = useCallback(async () => {
-        const clipboardText = await ClipBoardManager.read()
+        const clipboardText = await ClipBoardManager.read();
         if (!isUrl(clipboardText)) {
             return;
         }
-        bookmarkFormHook.setUrl(clipboardText)
-    }, [])
+        bookmarkFormHook.setUrl(clipboardText);
+    }, []);
 
     useEffect(() => {
-        autoInputUrl()
-    }, [])
+        autoInputUrl();
+    }, []);
 
-    return bookmarkFormHook.props
+    return bookmarkFormHook.props;
 }
