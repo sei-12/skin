@@ -492,3 +492,144 @@ describe("fix bug", () => {
         ]);
     });
 });
+
+test("キャンセル時にダイアログを表示", async () => {
+    const user = userEvent.setup();
+    vi.clearAllMocks();
+    vi.mocked(invoke).mockImplementation(async (cmd: string) => {
+        if (cmd === "get_config") {
+            return DEFAULT_CONFIG;
+        }
+        if (cmd === "fetch_website_content") {
+            return {
+                title: "",
+                desc: "",
+            };
+        }
+    });
+
+    await act(async () => {
+        render(
+            <HotkeysProvider
+                initiallyActiveScopes={[HOTKEY_SCOPES.SEARCH_BOOKMARK]}
+            >
+                <NoticeProvider>
+                    <CreateNewBookmarkPage></CreateNewBookmarkPage>
+                </NoticeProvider>
+            </HotkeysProvider>,
+        );
+    });
+
+    await user.click(screen.getByText("Cancel"));
+    expect(screen.getByText("このページを離れますか？")).toBeVisible();
+    expect(screen.getByText("編集した内容は破棄されます")).toBeVisible();
+    expect(screen.getByText("ページを離れる")).toBeVisible();
+    expect(screen.getByText("キャンセル")).toBeVisible();
+
+    await user.click(screen.getByText("キャンセル"));
+    expect(screen.getByText("このページを離れますか？")).not.toBeVisible();
+    expect(screen.getByText("編集した内容は破棄されます")).not.toBeVisible();
+    expect(screen.getByText("ページを離れる")).not.toBeVisible();
+    expect(screen.getByText("キャンセル")).not.toBeVisible();
+
+    expect(screen.getByTestId("create-new-bookmark"));
+
+    await user.click(screen.getByText("Cancel"));
+    expect(screen.getByText("このページを離れますか？")).toBeInTheDocument();
+    expect(screen.getByText("編集した内容は破棄されます")).toBeInTheDocument();
+    expect(screen.getByText("ページを離れる")).toBeInTheDocument();
+    expect(screen.getByText("キャンセル")).toBeInTheDocument();
+
+    await user.click(screen.getByText("ページを離れる"));
+    expect(screen.getByText("このページを離れますか？")).not.toBeVisible();
+    expect(screen.getByText("編集した内容は破棄されます")).not.toBeVisible();
+    expect(screen.getByText("ページを離れる")).not.toBeVisible();
+    expect(screen.getByText("キャンセル")).not.toBeVisible();
+});
+
+test("キャンセル時にダイアログを表示 キーボードショートカット", async () => {
+    const user = userEvent.setup();
+    vi.clearAllMocks();
+    vi.mocked(invoke).mockImplementation(async (cmd: string) => {
+        if (cmd === "get_config") {
+            return DEFAULT_CONFIG;
+        }
+        if (cmd === "fetch_website_content") {
+            return {
+                title: "",
+                desc: "",
+            };
+        }
+    });
+
+    await act(async () => {
+        render(
+            <HotkeysProvider
+                initiallyActiveScopes={[HOTKEY_SCOPES.SEARCH_BOOKMARK]}
+            >
+                <NoticeProvider>
+                    <CreateNewBookmarkPage></CreateNewBookmarkPage>
+                </NoticeProvider>
+            </HotkeysProvider>,
+        );
+    });
+
+    await user.keyboard("{Escape}");
+    expect(screen.getByText("このページを離れますか？")).toBeVisible();
+    expect(screen.getByText("編集した内容は破棄されます")).toBeVisible();
+    expect(screen.getByText("ページを離れる")).toBeVisible();
+    expect(screen.getByText("キャンセル")).toBeVisible();
+
+    await user.click(screen.getByText("キャンセル"));
+    expect(screen.getByText("このページを離れますか？")).not.toBeVisible();
+    expect(screen.getByText("編集した内容は破棄されます")).not.toBeVisible();
+    expect(screen.getByText("ページを離れる")).not.toBeVisible();
+    expect(screen.getByText("キャンセル")).not.toBeVisible();
+
+    expect(screen.getByTestId("create-new-bookmark"));
+
+    await user.keyboard("{Escape}");
+    expect(screen.getByText("このページを離れますか？")).toBeInTheDocument();
+    expect(screen.getByText("編集した内容は破棄されます")).toBeInTheDocument();
+    expect(screen.getByText("ページを離れる")).toBeInTheDocument();
+    expect(screen.getByText("キャンセル")).toBeInTheDocument();
+
+    await user.click(screen.getByText("ページを離れる"));
+    expect(screen.getByText("このページを離れますか？")).not.toBeVisible();
+    expect(screen.getByText("編集した内容は破棄されます")).not.toBeVisible();
+    expect(screen.getByText("ページを離れる")).not.toBeVisible();
+    expect(screen.getByText("キャンセル")).not.toBeVisible();
+});
+
+test("作成時にはダイアログを表示しない", async () => {
+    const user = userEvent.setup();
+    vi.clearAllMocks();
+    vi.mocked(invoke).mockImplementation(async (cmd: string) => {
+        if (cmd === "get_config") {
+            return DEFAULT_CONFIG;
+        }
+        if (cmd === "fetch_website_content") {
+            return {
+                title: "",
+                desc: "",
+            };
+        }
+    });
+
+    await act(async () => {
+        render(
+            <HotkeysProvider
+                initiallyActiveScopes={[HOTKEY_SCOPES.SEARCH_BOOKMARK]}
+            >
+                <NoticeProvider>
+                    <CreateNewBookmarkPage></CreateNewBookmarkPage>
+                </NoticeProvider>
+            </HotkeysProvider>,
+        );
+    });
+
+    await user.click(screen.getByText("Done"));
+    expect(() => {
+        screen.getByText("このページを離れますか？");
+    }).toThrow();
+});

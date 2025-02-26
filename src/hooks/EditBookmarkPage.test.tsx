@@ -11,6 +11,7 @@ import { BookmarkForm } from "../components/BookmarkForm";
 import userEvent from "@testing-library/user-event";
 import { DB } from "../services/database";
 import { NoticeProvider } from "../providers/NoticeProvider";
+import { EditBookmarkPage } from "../pages/pages";
 
 describe("EditBookmarkPage", () => {
     beforeEach(async () => {
@@ -63,10 +64,6 @@ describe("EditBookmarkPage", () => {
             "rust",
             "sass",
         ]);
-
-        await user.keyboard("{Escape}");
-        expect(nav).toBeCalledTimes(2);
-        expect(nav).toBeCalledWith("/");
     });
 
     test("test2 結果を通知", async () => {
@@ -121,9 +118,51 @@ describe("EditBookmarkPage", () => {
             "rust",
             "sass",
         ]);
+    });
 
-        await user.keyboard("{Escape}");
-        expect(nav).toBeCalledTimes(2);
-        expect(nav).toBeCalledWith("/");
+    test("test3 キャンセル時にダイアログを表示", async () => {
+        const nav = vi.fn();
+        const user = userEvent.setup();
+
+        vi.mocked(useNavigate).mockReturnValue(nav);
+        vi.mocked(useLocation).mockReturnValue({
+            state: {
+                bookmarkId: 1,
+            },
+            key: "",
+            hash: "",
+            pathname: "",
+            search: "",
+        });
+
+        render(
+            <HotkeysProvider
+                initiallyActiveScopes={[HOTKEY_SCOPES.SEARCH_BOOKMARK]}
+            >
+                <NoticeProvider>
+                    <EditBookmarkPage></EditBookmarkPage>
+                </NoticeProvider>
+            </HotkeysProvider>,
+        );
+
+        expect(DB.getBookmark).toBeCalledWith(1);
+
+        await user.click(screen.getByText("Cancel"));
+        expect(
+            screen.getByText("このページを離れますか？"),
+        ).toBeInTheDocument();
+        expect(
+            screen.getByText("編集した内容は破棄されます"),
+        ).toBeInTheDocument();
+        expect(screen.getByText("ページを離れる")).toBeInTheDocument();
+        expect(screen.getByText("キャンセル")).toBeInTheDocument();
+
+        await user.click(screen.getByText("ページを離れる"));
+        expect(screen.getByText("このページを離れますか？")).not.toBeVisible();
+        expect(
+            screen.getByText("編集した内容は破棄されます"),
+        ).not.toBeVisible();
+        expect(screen.getByText("ページを離れる")).not.toBeVisible();
+        expect(screen.getByText("キャンセル")).not.toBeVisible();
     });
 });

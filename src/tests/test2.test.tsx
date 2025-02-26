@@ -69,6 +69,7 @@ describe("App.SearchBookmark2", () => {
             const addButton = screen.getByText("Create new Bookmark");
             await user.click(addButton);
             await user.keyboard("{Escape}");
+            await user.click(screen.getByText("ページを離れる"));
         }
         {
             expect(screen.getAllByTestId("bkmkitem").length).toBe(20);
@@ -80,6 +81,7 @@ describe("App.SearchBookmark2", () => {
             const addButton = screen.getByText("Create new Bookmark");
             await user.click(addButton);
             await user.keyboard("{Escape}");
+            await user.click(screen.getByText("ページを離れる"));
         }
         {
             expect(screen.getAllByTestId("bkmkitem").length).toBe(20);
@@ -92,6 +94,7 @@ describe("App.SearchBookmark2", () => {
 
             await user.click(addButton);
             await user.keyboard("{Escape}");
+            await user.click(screen.getByText("ページを離れる"));
         }
         {
             expect(screen.getAllByTestId("bkmkitem").length).toBe(20);
@@ -103,6 +106,7 @@ describe("App.SearchBookmark2", () => {
             const addButton = screen.getByText("Create new Bookmark");
             await user.click(addButton);
             await user.keyboard("{Escape}");
+            await user.click(screen.getByText("ページを離れる"));
         }
     });
 

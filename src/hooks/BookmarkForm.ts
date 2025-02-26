@@ -7,10 +7,12 @@ import { DB } from "../services/database";
 import { useConfig } from "../providers/configProvider";
 import type { BookmarkFormProps } from "../components/BookmarkForm";
 import { useNotice } from "../providers/NoticeProvider";
+import type { BookmarkFormDialogProps } from "../components/BookmarkFormDialog";
 
 export function useBookmarkForm(
     onClickDone: () => void,
     onClickCancel: () => void,
+    dialogProps: BookmarkFormDialogProps,
     findTagMethod: FindTagMethod,
     onChangeUrl: (url: string) => void,
 ) {
@@ -225,6 +227,7 @@ export function useBookmarkForm(
         onClickCancel,
         onClickDone,
         onChangeUrl,
+        dialog: dialogProps,
         colorTheme,
     };
 

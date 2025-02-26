@@ -50,6 +50,7 @@ describe("App.CreateNewBookmark", () => {
         expect(screen.getByTestId("create-new-bookmark")).toBeInTheDocument();
 
         await user.keyboard("{Escape}");
+        await user.click(screen.getByText("ページを離れる"));
         expect(WindowVisibleController.hide).toBeCalledTimes(0);
         expect(screen.getByTestId("search-bookmark")).toBeInTheDocument();
 
@@ -57,6 +58,7 @@ describe("App.CreateNewBookmark", () => {
         expect(screen.getByTestId("create-new-bookmark")).toBeInTheDocument();
 
         await user.keyboard("{Escape}");
+        await user.click(screen.getByText("ページを離れる"));
         expect(WindowVisibleController.hide).toBeCalledTimes(0);
         expect(screen.getByTestId("search-bookmark")).toBeInTheDocument();
 
@@ -64,6 +66,7 @@ describe("App.CreateNewBookmark", () => {
         expect(screen.getByTestId("create-new-bookmark")).toBeInTheDocument();
 
         await user.keyboard("{Escape}");
+        await user.click(screen.getByText("ページを離れる"));
         expect(WindowVisibleController.hide).toBeCalledTimes(0);
         expect(screen.getByTestId("search-bookmark")).toBeInTheDocument();
     });
@@ -83,6 +86,8 @@ describe("App.CreateNewBookmark", () => {
             expect(cancelButton).toBeInTheDocument();
             await user.click(cancelButton);
             expect(WindowVisibleController.hide).toBeCalledTimes(0);
+
+            await user.click(screen.getByText("ページを離れる"));
             expect(screen.getByTestId("search-bookmark")).toBeInTheDocument();
         };
 
@@ -117,6 +122,7 @@ describe("App.CreateNewBookmark", () => {
             expect(cancelButton).toBeInTheDocument();
             await user.click(cancelButton);
             expect(WindowVisibleController.hide).toBeCalledTimes(0);
+            await user.click(screen.getByText("ページを離れる"));
             expect(screen.getByTestId("search-bookmark")).toBeInTheDocument();
         };
 
@@ -221,24 +227,6 @@ describe("App.CreateNewBookmark", () => {
         expect(titleInputBox.value).toBe("hello");
         expect(descInputBox.value).toBe("description");
         expect(urlInputBox.value).toBe("url://hello");
-
-        await user.keyboard("{Escape}");
-        expect(WindowVisibleController.hide).toBeCalledTimes(0);
-        // たまに失敗する
-        // 原因がわからない
-        // expect(screen.getByTestId("search-bookmark")).toBeInTheDocument();
-
-        await user.keyboard("{Control>}A{/Control}");
-        const urlInputBox2: HTMLInputElement =
-            screen.getByPlaceholderText("url");
-        const titleInputBox2: HTMLInputElement =
-            screen.getByPlaceholderText("title");
-        const descInputBox2: HTMLInputElement =
-            screen.getByPlaceholderText("desc");
-        expect(titleInputBox2.value).toBe("");
-        expect(descInputBox2.value).toBe("");
-        expect(urlInputBox2.value).toBe("");
-        expect(() => screen.getAllByTestId("taginputbox-tagitem")).toThrow();
     });
 
     test("test7", async () => {

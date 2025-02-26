@@ -367,6 +367,7 @@ describe("App.SearchBookmark", () => {
             await user.click(screen.getByPlaceholderText("/"));
             expect(cancelButton).toBeInTheDocument();
             await user.click(cancelButton);
+            await user.click(screen.getByText("ページを離れる"));
             expect(WindowVisibleController.hide).toBeCalledTimes(0);
             expect(screen.getByTestId("search-bookmark")).toBeInTheDocument();
         };

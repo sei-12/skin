@@ -7,6 +7,7 @@ import { isUrl } from "../vanilla/isUrl";
 import { ClipBoardManager } from "../services/clipboard";
 import { useBookmarkForm } from "./BookmarkForm";
 import { useNotice } from "../providers/NoticeProvider";
+import { useBookmarkFormDialog } from "./BookmarkFormDialog";
 
 export function useCreateNewBookmarkPage() {
     const navigate = useNavigate();
@@ -25,11 +26,12 @@ export function useCreateNewBookmarkPage() {
             inputData.tags,
         )
             .then(() => {
-                onClickCreateCancel();
                 addNotice({
                     message: "SUCCESS!",
                     serverity: "success",
                 });
+                bookmarkFormHook.clearData();
+                navigate("/");
             })
             .catch(() => {
                 addNotice({
@@ -37,11 +39,6 @@ export function useCreateNewBookmarkPage() {
                     serverity: "error",
                 });
             });
-    };
-
-    const onClickCreateCancel = () => {
-        bookmarkFormHook.clearData();
-        navigate("/");
     };
 
     const onChangeUrlInputBox = async (url: string) => {
@@ -73,9 +70,19 @@ export function useCreateNewBookmarkPage() {
         bookmarkFormHook.setContent(title, desc, tags);
     };
 
+    const dialogProps = useBookmarkFormDialog(() => {
+        bookmarkFormHook.clearData();
+        navigate("/");
+    });
+
+    const onClickCreateCancel = () => {
+        dialogProps.setOpen(true);
+    };
+
     const bookmarkFormHook = useBookmarkForm(
         onClickCreateDone,
         onClickCreateCancel,
+        dialogProps.props,
         findTagMethod,
         onChangeUrlInputBox,
     );

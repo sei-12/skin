@@ -5,6 +5,7 @@ import { useBookmarkForm } from "./BookmarkForm";
 import { findTagMethod } from "../services/findTagMethod";
 import { DB } from "../services/database";
 import { useNotice } from "../providers/NoticeProvider";
+import { useBookmarkFormDialog } from "./BookmarkFormDialog";
 
 interface State {
     bookmarkId: number;
@@ -37,7 +38,8 @@ export function useEditBookmarkPage(): BookmarkFormProps {
                 message: "SUCCESS!",
                 serverity: "success",
             });
-            goRoot();
+            navigate("/");
+            bookmarkFormHook.clearData();
         } else {
             addNotice({
                 message: "ERROR!",
@@ -46,14 +48,19 @@ export function useEditBookmarkPage(): BookmarkFormProps {
         }
     };
 
-    const goRoot = () => {
-        navigate("/");
+    const dialogProps = useBookmarkFormDialog(() => {
         bookmarkFormHook.clearData();
+        navigate("/");
+    });
+
+    const onClickCancel = () => {
+        dialogProps.setOpen(true);
     };
 
     const bookmarkFormHook = useBookmarkForm(
         onClickDone,
-        goRoot,
+        onClickCancel,
+        dialogProps.props,
         findTagMethod,
         () => {},
     );
