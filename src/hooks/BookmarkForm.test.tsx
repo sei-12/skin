@@ -10,6 +10,7 @@ import { startMockWindowVisibleController } from "../services/windowVisibleContr
 import { startMockDB } from "../services/database.test";
 import { findTagMethod } from "../services/findTagMethod";
 import userEvent from "@testing-library/user-event";
+import { DEFAULT_CONFIG } from "../providers/configProvider";
 
 describe("BookmarkForm", () => {
     beforeEach(async () => {
@@ -40,6 +41,12 @@ describe("BookmarkForm", () => {
                 return useBookmarkForm(
                     vi.fn(),
                     vi.fn(),
+                    {
+                        onClickCancel: vi.fn(),
+                        onClickDone: vi.fn(),
+                        open: false,
+                        colorTheme: DEFAULT_CONFIG.colorTheme,
+                    },
                     findTagMethod_,
                     vi.fn(),
                 );
@@ -162,6 +169,12 @@ describe("BookmarkForm", () => {
                 return useBookmarkForm(
                     vi.fn(),
                     vi.fn(),
+                    {
+                        onClickCancel: vi.fn(),
+                        onClickDone: vi.fn(),
+                        open: false,
+                        colorTheme: DEFAULT_CONFIG.colorTheme,
+                    },
                     findTagMethod_,
                     vi.fn(),
                 );

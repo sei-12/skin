@@ -2,6 +2,8 @@ import { Box, Button, TextField } from "@mui/material";
 import type { TagInputBoxProps } from "./TagInputBox";
 import { TagInputBox } from "./TagInputBox";
 import type { ColorTheme } from "../../src-tauri/bindings/export/ColorTheme";
+import type { BookmarkFormDialogProps } from "./BookmarkFormDialog";
+import { BookmarkFormDialog } from "./BookmarkFormDialog";
 
 export type BookmarkFormProps = {
     titleRef: React.RefObject<HTMLInputElement>;
@@ -11,6 +13,7 @@ export type BookmarkFormProps = {
     onClickDone: () => void;
     onChangeUrl: (url: string) => void;
 
+    dialog: BookmarkFormDialogProps;
     colorTheme: ColorTheme;
     tagInputBox: TagInputBoxProps;
 };
@@ -32,6 +35,7 @@ export function BookmarkForm(p: BookmarkFormProps) {
                 padding: 2,
             }}
         >
+            <BookmarkFormDialog {...p.dialog}></BookmarkFormDialog>
             <TextField
                 slotProps={inputStyle}
                 inputRef={p.urlRef}
