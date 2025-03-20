@@ -38,7 +38,7 @@ jobs:
         if: matrix.platform == 'ubuntu-latest'
         run: sudo apt-get update && sudo apt-get install javascriptcoregtk-4.1 libsoup-3.0 webkit2gtk-4.1 librsvg2-dev -y
 
-      - uses: actions/cache@v2
+      - uses: actions/cache@v4
         with:
           path: ${YARN_CACHE_FOLDER}
           key: ${{ runner.os }}-yarn-cache-v1
